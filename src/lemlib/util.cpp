@@ -1,8 +1,8 @@
 /**
- * @file util.cpp
+ * @file src/lemlib/util.cpp
  * @author Liam Teale
  * @brief File containing definitions for utility functions
- * @version 0.1
+ * @version 0.1.0
  * @date 2023-01-15
  * 
  * @copyright Copyright (c) 2023

@@ -1,3 +1,14 @@
+/**
+ * @file include/lemlib/util.hpp
+ * @author Liam Teale
+ * @brief Utility functions declarations
+ * @version 0.1.0
+ * @date 2023-01-15
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #pragma once
 
 

@@ -2,7 +2,7 @@
  * @file src/lemlib/pid.cpp
  * @author Liam Teale
  * @brief FAPID class member definitions
- * @version 1.0
+ * @version 0.1.0
  * @date 2023-01-15
  * 
  * @copyright Copyright (c) 2023
