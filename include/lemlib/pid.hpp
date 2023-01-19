@@ -48,9 +48,9 @@ namespace lemlib {
             /**
              * @brief Set the exit conditions
              * 
-             * @param largeError 
-             * @param smallError 
-             * @param largeTime 
+             * @param largeError range where error is considered large
+             * @param smallError range where error is considered small
+             * @param largeTime time in milliseconds t
              * @param smallTime 
              * @param maxTime 
              */
@@ -60,9 +60,10 @@ namespace lemlib {
              * 
              * @param target the target value
              * @param position the current value
+             * @param log whether to check the most recent terminal input for user input. Default is false because logging multiple PIDs could slow down the program.
              * @return float - output
              */
-            float update(float target, float position);
+            float update(float target, float position, bool log = false);
             /**
              * @brief Reset the FAPID
              */

@@ -15,6 +15,11 @@
 #include "lemlib/util.hpp"
 
 
+// define static variables
+std::string lemlib::FAPID::input = "FAPID";
+pros::Task *lemlib::FAPID::logTask = nullptr;
+pros::Mutex lemlib::FAPID::logMutex = pros::Mutex();
+
 
 /**
  * @brief Construct a new FAPID
@@ -80,10 +85,17 @@ void lemlib::FAPID::setExit(float largeError, float smallError, int largeTime, i
  * 
  * @param target the target value
  * @param position the current value
+ * @param log whether to check the most recent terminal input for user input. Default is false because logging multiple PIDs could slow down the program.
  * @return float - output
  */
-float lemlib::FAPID::update(float target, float position)
+float lemlib::FAPID::update(float target, float position, bool log)
 {
+    // check most recent input if logging is enabled
+    // this does not run by default because the mutexes could slow down the program
+    if (log) {
+        lemlib::FAPID::log();
+    }
+    // calculate output
     float error = target - position;
     float deltaError = error - prevError;
     float output = lemlib::slew(kF * target + kP * error + kI * totalError + kD * deltaError, prevOutput, kA);
@@ -190,7 +202,7 @@ void lemlib::FAPID::log()
 {
     // check if the input starts with the name of the FAPID
     // try to obtain the logging mutex
-    if (logMutex.take(10)) {
+    if (logMutex.take(5)) {
         if (input.find(name) == 0) {
             // remove the name from the input
             input.erase(0, name.length() + 1);

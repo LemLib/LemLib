@@ -19,7 +19,7 @@
  * @param maxChange maximum change. No maximum if set to 0
  * @return float - the limited value
  */
-float slew(float target, float current, float maxChange)
+float lemlib::slew(float target, float current, float maxChange)
 {
     float change = target - current;
     if (change > maxChange)
