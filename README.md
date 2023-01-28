@@ -10,9 +10,9 @@ This template is licensed under the MIT license. Check [LICENSE](https://github.
 
 ## Features
 - [X] PID
-- [ ] Chassis Class
+- [X] Chassis Class
 - [ ] LVGL C++ wrapper
 - [ ] Easy-To-Use SD Card class
-- [ ] Odometry
+- [X] Odometry
 - [ ] Pure Pursuit
 - [ ] Motion Profiling
