@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2023
  * 
  */
+#include <math.h>
 #include "lemlib/util.hpp"
 
 
@@ -31,4 +32,29 @@ float lemlib::slew(float target, float current, float maxChange)
         change = -maxChange;
     }
     return (!change) ? target : current + change;
+}
+
+
+
+/**
+ * @brief Convert radians to degrees
+ * 
+ * @param rad radians
+ * @return float degrees
+ */
+float lemlib::radToDeg(float rad)
+{
+    return rad * 180 / M_PI;
+}
+
+
+/**
+ * @brief Convert degrees to radians
+ * 
+ * @param deg degrees
+ * @return float radians
+ */
+float lemlib::degToRad(float deg)
+{
+    return deg * M_PI / 180;
 }

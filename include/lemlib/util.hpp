@@ -14,12 +14,29 @@
 
 namespace lemlib {
     /**
-    * @brief Slew rate limiter
-    * 
-    * @param target target value
-    * @param current current value
-    * @param maxChange maximum change. No maximum if set to 0
-    * @return float - the limited value
-    */
+     * @brief Slew rate limiter
+     * 
+     * @param target target value
+     * @param current current value
+     * @param maxChange maximum change. No maximum if set to 0
+     
+     * @return float - the limited value
+     */
     float slew(float target, float current, float maxChange);
+
+    /**
+     * @brief Convert radians to degrees
+     * 
+     * @param rad radians
+     * @return float degrees
+     */
+    float radToDeg(float rad);
+
+    /**
+     * @brief Convert degrees to radians
+     * 
+     * @param deg degrees
+     * @return float radians
+     */
+    float degToRad(float deg);
 }
