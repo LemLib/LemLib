@@ -173,9 +173,10 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, bool log)
         directTheta = atan2(y - pose.y, x - pose.x);
         hypot = std::hypot(x - pose.x, y - pose.y);
         diffTheta = pose.theta - directTheta;
+        diffLateral = hypot * cos(diffTheta);
 
         // calculate the speed
-        motorPower = pid.update(hypot, 0, log) * std::cos(diffTheta);
+        motorPower = pid.update(diffLateral, 0, log);
 
         // move the motors
         leftMotorGroup->move(-motorPower);
