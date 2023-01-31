@@ -16,3 +16,4 @@ This template is licensed under the MIT license. Check [LICENSE](https://github.
 - [X] Odometry
 - [ ] Pure Pursuit
 - [ ] Motion Profiling
+- [X] Angular and Lateral motion PIDs
