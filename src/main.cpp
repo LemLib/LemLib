@@ -93,7 +93,8 @@ void competition_initialize() {}
  */
 void autonomous() {
 	chassis.calibrate();
-	chassis.turnTo(10, 10, 1000000);
+	//chassis.moveTo(0, 10, 1000000);
+    
 }
 
 /**

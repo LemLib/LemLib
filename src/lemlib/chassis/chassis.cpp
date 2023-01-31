@@ -179,8 +179,8 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, bool log)
         motorPower = pid.update(diffLateral, 0, log);
 
         // move the motors
-        leftMotorGroup->move(-motorPower);
-        rightMotorGroup->move(-motorPower);
+        leftMotorGroup->move(motorPower);
+        rightMotorGroup->move(motorPower);
 
         pros::delay(10);
     }
