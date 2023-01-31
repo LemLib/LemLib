@@ -39,4 +39,14 @@ namespace lemlib {
      * @return float radians
      */
     float degToRad(float deg);
+
+    /**
+     * @brief Calculate the error between 2 angles. Useful when calculating the error between 2 headings
+     * 
+     * @param angle1
+     * @param angle2
+     * @param radians true if angle is in radians, false if not. False by default
+     * @return float wrapped angle
+     */
+    float angleError(float angle1, float angle2, bool radians = false);
 }

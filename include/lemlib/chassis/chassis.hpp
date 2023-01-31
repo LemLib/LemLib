@@ -39,6 +39,30 @@ namespace lemlib {
     } OdomSensors_t;
 
     /**
+     * @brief Struct containing constants for a chassis controller
+     *
+     * The constants are stored in a struct so that they can be easily passed to the chassis class
+     * Set a constant to 0 and it will be ignored
+     *
+     * @param kA maximum acceleration of the chassis motors in/s^2
+     * @param kP proportional constant for the chassis controller
+     * @param kD derivative constant for the chassis controller
+     * @param smallError the error at which the chassis controller will switch to a slower control loop
+     * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
+     * @param largeError the error at which the chassis controller will switch to a faster control loop
+     * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
+     */
+    typedef struct {
+        float kA;
+        float kP;
+        float kD;
+        float smallError; 
+        float smallErrorTimeout;
+        float largeError;
+        float largeErrorTimeout;
+    } ChassisController_t;
+
+    /**
      * @brief Chassis class
      * 
      */
@@ -49,9 +73,12 @@ namespace lemlib {
              * 
              * @param leftMotors motors on the left side of the drivetrain
              * @param rightMotors motors on the right side of the drivetrain
+             * @param lateralSettings settings for the lateral controller
+             * @param angularSetting settings for the angular controller
+             * @param topSpeed the top speed of the chassis. in/s
              * @param sensors sensors to be used for odometry
              */
-            Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, OdomSensors_t sensors);
+            Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float topSpeed, ChassisController_t lateralSettings, ChassisController_t angularSetting, OdomSensors_t sensors);
             /**
              * @brief Calibrate the chassis sensors
              * 
@@ -80,7 +107,27 @@ namespace lemlib {
              * @return Pose 
              */
             Pose getPose(bool radians = false);
+            /**
+             * @brief Move the chassis as close as possible to the target point in a straight line
+             * 
+             * @param x x location
+             * @param y y location
+             * @param timeout longest time the robot can spend moving
+             * @param reversed whether the robot should turn in the opposite direction. false by default
+             */
+            void turnTo(float x, float y, int timeout, bool reversed = false);
+            /**
+             * @brief Turn the chassis so it is facing the target point
+             * 
+             * @param x x location
+             * @param y y location
+             * @param timeout longest time the robot can spend moving
+             */
+            void moveTo(float x, float y, int timeout);
         private:
+            float topSpeed;
+            ChassisController_t lateralSettings;
+            ChassisController_t angularSettings;
             OdomSensors_t odomSensors;
             pros::Motor_Group *leftMotorGroup;
             pros::Motor_Group *rightMotorGroup;
