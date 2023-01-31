@@ -98,7 +98,8 @@ float lemlib::FAPID::update(float target, float position, bool log)
     // calculate output
     float error = target - position;
     float deltaError = error - prevError;
-    float output = lemlib::slew(kF * target + kP * error + kI * totalError + kD * deltaError, prevOutput, kA);
+    float output = kF * target + kP * error + kI * totalError + kD * deltaError;
+    if (kA != 0) output = lemlib::slew(output, prevOutput, kA);
     prevOutput = output;
     prevError = error;
     totalError += error;
@@ -127,7 +128,7 @@ void lemlib::FAPID::reset()
  */
 bool lemlib::FAPID::settled()
 {
-    if (maxTime == -1) { // if maxTime has not been set
+    if (startTime == 0) { // if maxTime has not been set
         startTime = pros::c::millis();
         return false;
     } else { // check if the FAPID has settled

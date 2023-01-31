@@ -15,6 +15,7 @@
 #include "lemlib/pid.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
+#include <iostream>
 
 
 /**
