@@ -92,14 +92,17 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians)
 
 
 /**
- * @brief Move the chassis as close as possible to the target point in a straight line
+ * @brief Move the chassis as close as possible to the target point in a straight line.
+ *
+ * The PID logging id is "angularPID"
  * 
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
  * @param reversed whether the robot should turn in the opposite direction. false by default
+ * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed)
+void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, bool log)
 {
     Pose pose(0, 0);
     float targetTheta;
@@ -125,7 +128,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed)
         deltaTheta = angleError(targetTheta, pose.theta);
 
         // calculate the speed
-        motorPower = pid.update(0, deltaTheta);
+        motorPower = pid.update(0, deltaTheta, log);
 
         // move the drivetrain
         leftMotorGroup->move(-motorPower);
@@ -141,14 +144,16 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed)
 
 
 /**
- * @brief Move the chassis as close as possible to the target point in a straight line
+ * @brief Turn the chassis so it is facing the target point
+ *
+ * The PID logging id is "lateralPID"
  * 
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
- * @param reversed whether the robot should turn in the opposite direction. false by default
+ * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, int timeout)
+void lemlib::Chassis::moveTo(float x, float y, int timeout, bool log)
 {
     Pose pose(0, 0);
     float directTheta, hypot, diffTheta, diffLateral, motorPower;
@@ -170,7 +175,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout)
         diffTheta = pose.theta - directTheta;
 
         // calculate the speed
-        motorPower = pid.update(hypot, 0) * std::cos(diffTheta);
+        motorPower = pid.update(hypot, 0, log) * std::cos(diffTheta);
 
         // move the motors
         leftMotorGroup->move(-motorPower);

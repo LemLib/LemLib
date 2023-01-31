@@ -108,22 +108,28 @@ namespace lemlib {
              */
             Pose getPose(bool radians = false);
             /**
-             * @brief Move the chassis as close as possible to the target point in a straight line
+             * @brief Move the chassis as close as possible to the target point in a straight line.
+             *
+             * The PID logging id is "angularPID"
              * 
              * @param x x location
              * @param y y location
              * @param timeout longest time the robot can spend moving
              * @param reversed whether the robot should turn in the opposite direction. false by default
+             * @param log whether the chassis should log the turnTo function. false by default
              */
-            void turnTo(float x, float y, int timeout, bool reversed = false);
+            void turnTo(float x, float y, int timeout, bool reversed = false, bool log = false);
             /**
              * @brief Turn the chassis so it is facing the target point
+             *
+             * The PID logging id is "lateralPID"
              * 
              * @param x x location
              * @param y y location
              * @param timeout longest time the robot can spend moving
+             * @param log whether the chassis should log the turnTo function. false by default
              */
-            void moveTo(float x, float y, int timeout);
+            void moveTo(float x, float y, int timeout, bool log = false);
         private:
             float topSpeed;
             ChassisController_t lateralSettings;
