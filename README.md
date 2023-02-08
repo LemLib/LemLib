@@ -11,9 +11,9 @@ This template is licensed under the MIT license. Check [LICENSE](https://github.
 ## Features
 - [X] PID
 - [X] Chassis Class
-- [ ] LVGL C++ wrapper
 - [ ] Easy-To-Use SD Card class
 - [X] Odometry
+- [ ] Extended Kalman Filter for Odometry
 - [ ] Pure Pursuit
 - [ ] Motion Profiling
 - [X] Angular and Lateral motion PIDs
