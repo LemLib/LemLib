@@ -77,10 +77,12 @@ void lemlib::setPose(lemlib::Pose pose, bool radians)
     if (radians)
     {
         odomPose = pose;
+        startPose = odomPose;
     }
     else
     {
         odomPose = lemlib::Pose(pose.x, pose.y, degToRad(pose.theta));
+        startPose = odomPose;
     }
 }
 
