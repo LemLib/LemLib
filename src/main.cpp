@@ -33,20 +33,20 @@ lemlib::ChassisController_t lateralController {
 	0,
 	10,
 	30,
-	1000000,
-	1000000,
-	1000000,
-	1000000
+	1,
+	100000000,
+	3,
+	500000000
 };
 
 lemlib::ChassisController_t angularController {
 	0,
 	2,
 	10,
-	1000000,
-	1000000,
-	1000000,
-	1000000
+	1,
+	100000000,
+	3,
+	5000000000
 };
 
 lemlib::Chassis chassis(&leftMotors, &rightMotors, 10000, lateralController, angularController, sensors);
@@ -93,7 +93,8 @@ void competition_initialize() {}
  */
 void autonomous() {
 	chassis.calibrate();
-	//chassis.moveTo(0, 10, 1000000);
+	chassis.setPose(0, 0, 180);
+	chassis.moveTo(0, 30, 1000000);
     
 }
 
