@@ -45,7 +45,7 @@ namespace lemlib {
              * @param other other pose
              * @return Pose 
              */
-            Pose operator * (const Pose &other);
+            float operator * (const Pose &other);
             /**
              * @brief Multiply a pose by a float
              * 

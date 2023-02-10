@@ -75,10 +75,10 @@ namespace lemlib {
              * @param rightMotors motors on the right side of the drivetrain
              * @param lateralSettings settings for the lateral controller
              * @param angularSetting settings for the angular controller
-             * @param topSpeed the top speed of the chassis. in/s
+             * @param trackWidth track width of the chassis
              * @param sensors sensors to be used for odometry
              */
-            Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float topSpeed, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors);
+            Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float trackWidth, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors);
             /**
              * @brief Calibrate the chassis sensors
              * 
@@ -133,6 +133,16 @@ namespace lemlib {
              * @param log whether the chassis should log the turnTo function. false by default
              */
             void moveTo(float x, float y, int timeout, float maxSpeed = 200, bool log = false);
+            /**
+             * @brief Move the chassis along a path
+             * 
+             * @param path file path to the path. No need to preface it with /usd/
+             * @param timeout the maximum time the robot can spend moving
+             * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
+             * @param maxSpeed the maximum speed the robot can move at
+             * @param log whether the chassis should log the path on a log file. false by default.
+             */
+            void follow(const char *path, int timeout, float lookahead, float maxSpeed = 200, bool log = false);
         private:
             float topSpeed;
             ChassisController_t *lateralSettings;

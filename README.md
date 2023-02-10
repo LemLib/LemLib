@@ -11,9 +11,9 @@ This template is licensed under the MIT license. Check [LICENSE](https://github.
 ## Features
 - [X] PID
 - [X] Chassis Class
-- [ ] Easy-To-Use SD Card class
+- [ ] Easy-To-Use File class
 - [X] Odometry
 - [ ] Extended Kalman Filter for Odometry
-- [ ] Pure Pursuit
+- [X] Pure Pursuit
 - [ ] Motion Profiling
 - [X] Angular and Lateral motion PIDs
