@@ -1,30 +1,28 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 
-pros::Motor lF(-1);
-pros::Motor lM(-3);
-pros::Motor lB(-11);
-pros::Motor rF(10);
-pros::Motor rM(4);
-pros::Motor rB(5);
+pros::Motor lF(-3);
+pros::Motor lM(-14);
+pros::Motor lB(-12);
+pros::Motor rF(19);
+pros::Motor rM(20);
+pros::Motor rB(1);
 
 pros::MotorGroup leftMotors({lF, lM, lB});
 pros::MotorGroup rightMotors({rF, rM, rB});
 
-pros::Imu imu(8);
+pros::Imu imu(6);
 
-pros::ADIEncoder verticalEnc('e', 'f');
-pros::ADIEncoder horizontalEnc('g', 'h');
+pros::ADIEncoder verticalEnc({7, 'A', 'B'}, false);
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 0);
-lemlib::TrackingWheel horizontal(&horizontalEnc, 2.75, -2.496);
 
 lemlib::OdomSensors_t sensors {
 	&vertical,
 	nullptr,
-	&horizontal,
+	nullptr,
 	nullptr,
 	&imu
 };
@@ -93,9 +91,7 @@ void competition_initialize() {}
  */
 void autonomous() {
 	chassis.calibrate();
-	chassis.setPose(0, 0, 180);
-	chassis.moveTo(0, 30, 1000000);
-    
+	chassis.follow("path.txt", 2000, 15);
 }
 
 /**

@@ -87,7 +87,7 @@ float lemlib::angleError(float angle1, float angle2, bool radians) {
  * @param x the number to get the sign of
  * @return float - -1 if negative, 1 if positive
  */
-float sgn(float x)
+float lemlib::sgn(float x)
 {
     if (x < 0) return -1; else return 1;
 }
