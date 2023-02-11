@@ -136,15 +136,16 @@ namespace lemlib {
             /**
              * @brief Move the chassis along a path
              * 
-             * @param path file path to the path. No need to preface it with /usd/
+             * @param filePath file path to the path. No need to preface it with /usd/
              * @param timeout the maximum time the robot can spend moving
              * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
+             * @param reverse whether the robot should follow the path in reverse. false by default
              * @param maxSpeed the maximum speed the robot can move at
              * @param log whether the chassis should log the path on a log file. false by default.
              */
-            void follow(const char *path, int timeout, float lookahead, float maxSpeed = 200, bool log = false);
+            void follow(const char *filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 200, bool log = false);
         private:
-            float topSpeed;
+            float trackWidth;
             ChassisController_t *lateralSettings;
             ChassisController_t *angularSettings;
             OdomSensors_t *odomSensors;

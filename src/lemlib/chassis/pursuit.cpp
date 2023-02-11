@@ -17,47 +17,6 @@
 #include "lemlib/util.hpp"
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * @brief function that returns elements in a file line, separated by a delimeter
  *
@@ -65,7 +24,7 @@
  * @param delimeter string separating the elements in the line
  * @return std::vector<std::string> array of elements read from the file
  */
-std::vector<std::string> read_element(std::string input, std::string delimiter) 
+std::vector<std::string> readElement(std::string input, std::string delimiter) 
 {
     std::string token;
     std::string s = input;
@@ -94,7 +53,7 @@ std::vector<std::string> read_element(std::string input, std::string delimiter)
  *
  * @return path
  */
-std::vector<lemlib::Pose> getData(std::string filePath, float targetHeading)
+std::vector<lemlib::Pose> getData(std::string filePath)
 {
     // init variables
     std::vector<lemlib::Pose> robotPath;
@@ -105,7 +64,7 @@ std::vector<lemlib::Pose> getData(std::string filePath, float targetHeading)
 
     // read the points until 'endData' is read
     while (getline(file, line) && line != "endData") {
-        pointInput = read_element(line, ", ");
+        pointInput = readElement(line, ", ");
         pathPoint.x = std::stof(pointInput.at(0)); // x position
         pathPoint.y = std::stof(pointInput.at(1)); // y position
         pathPoint.theta = std::stof(pointInput.at(2)); // velocity
@@ -227,230 +186,66 @@ double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lo
 
 
 /**
- * @brief calculate how to move the motors on the drivetrain
+ * @brief Move the chassis along a path
  * 
- * @param path the path to follow
- * @param leftInput the left motor velocity
- * @param rightInput the right motor velocity
- * @param curvature the curvature of the arc between the robot and the lookahead point
- * @param targetVel the target velocity of the robot
- * @param forward whether the robot should go forward (true) or backwards (false)
- * @param leftPID the left drivetrain PID
- * @param rightPID the right drivetrain PID
+ * @param filePath file path to the path. No need to preface it with /usd/
+ * @param timeout the maximum time the robot can spend moving
+ * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
+ * @param reverse whether the robot should follow the path in reverse. false by default
+ * @param maxSpeed the maximum speed the robot can move at
+ * @param log whether the chassis should log the path on a log file. false by default.
  */
-void moveMotors(std::vector<lemlib::Pose> path, float leftInput, float rightInput, float curvature, float targetVel, bool forward, PID* leftPID, PID* rightPID)
+void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead, bool reverse, float maxSpeed, bool log)
 {
-    float targetLeftVel = targetVel * (2 + curvature*TRACK_WIDTH) / 2;
-    float targetRightVel = targetVel * (2 - curvature*TRACK_WIDTH) / 2;
-
-    float leftOutput = leftPID->calc(leftInput, targetLeftVel);
-    float rightOutput = rightPID->calc(rightInput, targetRightVel);
-    
-    if (forward) {
-        leftDrive.move(leftOutput);
-        rightDrive.move(rightOutput);
-    } else {
-        leftDrive.move(-rightOutput);
-        rightDrive.move(-leftOutput);
-    }
-}
-
-
-
-/**
- * @brief follow the path
- * 
- * @param path the path to follow
- * @param forward whether the robot should go forwards (true) or backwards (false)
- * @param name the name of the debug file
- * @param smallErrorThreshold the threshold for small error
- * @param smallErrorTimeout the timeout for small error
- * @param largeErrorThreshold the threshold for large error
- * @param largeErrorTimeout the timeout for large error
- * @param maxTime the maximum time to follow the path
- */
-void pursuit(Path* path, bool forward, std::string name, float smallErrorThreshold, float smallErrorTimeout, float largeErrorThreshold, float largeErrorTimeout, float maxTime)
-{
-    // log path
-    logPath(path, name);
-    // initialize timeouts
-    float smallErrorTimer = -1;
-    float largeErrorTimer = -1;
-    float startTime = pros::millis();
+    // get the path
+    std::vector<lemlib::Pose> path = getData("/usd/" + std::string(filePath));
     // initialize variables
-    Point pos;
-    Point lookahead;
-    Point lastLookahead = path->points.at(0);
-    lastLookahead.velocity = 0;
+    Pose pose(0, 0, 0);
+    Pose lookaheadPose(0, 0, 0);
+    Pose lastLookahead = path.at(0);
+    lastLookahead.theta = 0;
     double heading;
     double curvature;
     float targetVel;
     int closestPoint;
-    bool finishedPursuit = false;
-    bool finishedPID = false;
     float leftInput = 0;
     float rightInput = 0;
-    // drivetrain PIDS
-    PID leftPID("left");
-    PID rightPID("right");
-    leftPID.setParams(2, 0, 0, 0, 0, 0, 1, 1);
-    rightPID.setParams(2, 0, 0, 0, 0, 0, 1, 1);
-
-    PID lateralPID("lateral");
-    PID angularPID("turning");
-    lateralPID.setParams(0, 0, LATERAL_J, LATERAL_P, 0, LATERAL_D, 1, 1);
-    lateralPID.setExit(0.5, 100, 2, 2000, 20000);
-    angularPID.setParams(0, 0, ANGULAR_J, ANGULAR_P, 0, ANGULAR_D, 1, 1);
-    leftPID.setLog(false);
-    rightPID.setLog(false);
-
-    // open debug file
-    std::ofstream debugFile;
-    debugFile.open("/usd/" + name + ".txt", std::ios_base::app);
 
     // loop until the robot is within the end tolerance
-    for (int i = 0; i < maxTime/10; i++) {
+    for (int i = 0; i < timeout/10; i++) {
         // get the current position of the robot
-        pos.x = getX();
-        pos.y = getY();
+        pose = this->getPose(true);
+        if (reverse) pose.theta -= M_PI;
 
-        // decide whether the robot should do the path forwards or backwards
-        if (forward) {
-            heading = getOrientation(true);
-        } else {
-            heading = getOrientation(true) - M_PI;
-        }
-
-        // check if the robot is within the end tolerance
-        if (dist(pos, path->points.at(path->points.size()-1)) < path->pidActiveDist) {
-            finishedPursuit = true;
-        }
         // find the closest point on the path to the robot
-        closestPoint = findClosest(pos, path);
+        closestPoint = findClosest(pose, path);
 
         // find the lookahead point
-        lookahead = lookaheadPoint(lastLookahead.velocity, lastLookahead, pos, path);
-        lastLookahead = lookahead;
+        lookaheadPose = lookaheadPoint(lastLookahead.theta, lastLookahead, pose, path, lookahead);
+        lastLookahead = lookaheadPose;
 
         // get the curvature of the arc between the robot and the lookahead point
         double curvatureHeading = M_PI/2 - heading;
-        curvature = findLookaheadCurvature(pos, curvatureHeading, lookahead);
+        curvature = findLookaheadCurvature(pose, curvatureHeading, lookaheadPose);
 
         // get the target velocity of the robot
-        targetVel = path->points.at(closestPoint).velocity;
+        targetVel = path.at(closestPoint).theta;
 
-        // move the motors
-        if (finishedPursuit) {
-            break;
+        float targetLeftVel = targetVel * (2 + curvature*trackWidth) / 2;
+        float targetRightVel = targetVel * (2 - curvature*trackWidth) / 2;
+          
+        if (reverse) {
+            leftMotorGroup->move(-targetRightVel);
+            rightMotorGroup->move(-targetLeftVel);
         } else {
-            leftInput = rpmToSpeed(leftFront.get_actual_velocity(), 3.25, GEAR_RATIO);
-            rightInput = rpmToSpeed(rightFront.get_actual_velocity(), 3.25, GEAR_RATIO);
-            moveMotors(path, leftInput, rightInput, curvature, targetVel, forward, &leftPID, &rightPID);
+            leftMotorGroup->move(targetLeftVel);
+            rightMotorGroup->move(targetRightVel);
         }
 
         pros::delay(10);
     }
-    debugFile.close();
 
     // stop the robot
-    leftDrive.move_voltage(0);
-    rightDrive.move_voltage(0);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * @brief Move the chassis along a path
- * 
- * @param path file path to the path. No need to preface it with /usd/
- * @param timeout the maximum time the robot can spend moving
- * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
- * @param maxSpeed the maximum speed the robot can move at
- * @param log whether the chassis should log the path on a log file. false by default.
- */
-void lemlib::Chassis::follow(const char *path, int timeout, float lookahead, float maxSpeed, bool log)
-{
-
+    leftMotorGroup->move(0);
+    rightMotorGroup->move(0);
 }

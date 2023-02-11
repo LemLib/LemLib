@@ -25,14 +25,14 @@
  * @param rightMotors motors on the right side of the drivetrain
  * @param lateralSettings settings for the lateral controller
  * @param angularSetting settings for the angular controller
- * @param topSpeed the top speed of the chassis. in/s
+ * @param trackWidth track width of the chassis
  * @param sensors sensors to be used for odometry
  */
-lemlib::Chassis::Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float topSpeed, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors)
+lemlib::Chassis::Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float trackWidth, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors)
 {
     leftMotorGroup = leftMotors;
     rightMotorGroup = rightMotors;
-    this->topSpeed = topSpeed;
+    this->trackWidth = trackWidth;
     this->lateralSettings = new ChassisController_t(lateralSettings);
     this->angularSettings = new ChassisController_t(angularSettings);
     odomSensors = new OdomSensors_t(sensors);
