@@ -47,7 +47,7 @@ lemlib::ChassisController_t angularController {
 	5000000000
 };
 
-lemlib::Chassis chassis(&leftMotors, &rightMotors, 10000, lateralController, angularController, sensors);
+lemlib::Chassis chassis(&leftMotors, &rightMotors, 10, lateralController, angularController, sensors);
 
 
 
@@ -58,6 +58,7 @@ lemlib::Chassis chassis(&leftMotors, &rightMotors, 10000, lateralController, ang
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+
 }
 
 /**
@@ -91,7 +92,7 @@ void competition_initialize() {}
  */
 void autonomous() {
 	chassis.calibrate();
-	chassis.follow("path.txt", 2000, 15);
+	chassis.follow("path.txt", 2000000, 5);
 }
 
 /**

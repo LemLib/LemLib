@@ -13,6 +13,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <iostream>
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/util.hpp"
 
@@ -32,7 +33,7 @@ std::vector<std::string> readElement(std::string input, std::string delimiter)
 
     size_t pos = 0;
     // main loop
-    while (s != "endData") { // while there are still delimiters in the string
+    while ((pos = s.find(delimiter)) != std::string::npos) { // while there are still delimiters in the string
         token = s.substr(0, pos); // processed substring
         output.push_back(token);
         s.erase(0, pos + delimiter.length()); // remove the read substring
@@ -59,7 +60,7 @@ std::vector<lemlib::Pose> getData(std::string filePath)
     std::vector<lemlib::Pose> robotPath;
     std::string line;
     std::vector<std::string> pointInput;
-    std::ifstream file(filePath);
+    std::ifstream file(filePath, std::ios::in);
     lemlib::Pose pathPoint(0, 0, 0);
 
     // read the points until 'endData' is read
@@ -71,7 +72,6 @@ std::vector<lemlib::Pose> getData(std::string filePath)
         robotPath.push_back(pathPoint);
     }
     file.close();
-
     return robotPath;
 }
 
@@ -108,14 +108,14 @@ int findClosest(lemlib::Pose pose, std::vector<lemlib::Pose> path)
  * @param path the path to follow
  * @return float how far along the line the 
  */
-float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, std::vector<lemlib::Pose> path, float lookaheadDist) 
+float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, float lookaheadDist) 
 {
     lemlib::Pose d = p2 - p1;
     lemlib::Pose f = p1 - pose;
 
     float a = d * d;
     float b = 2 * (f * d);
-    float c = (f* f) - lookaheadDist*lookaheadDist;
+    float c = (f * f) - lookaheadDist*lookaheadDist;
     float discriminant = b*b - 4*a*c;
     
     if (discriminant >= 0) {
@@ -147,16 +147,15 @@ float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, std::
  * @param path - the path to follow
  * @param forward - whether to go forward (true) or backwards (false)
  */
-lemlib::Pose lookaheadPoint(int lastLookaheadIndex, lemlib::Pose lastLookahead, lemlib::Pose pose, std::vector<lemlib::Pose> path, float lookaheadDist)
+lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::vector<lemlib::Pose> path, float lookaheadDist)
 {
     // initialize variables
     lemlib::Pose lookahead = lastLookahead;
     double t;
-
     // find the furthest lookahead point on the path
     for (int i = 0; i < path.size()-2; i++) {
-        t = circleIntersect(path.at(i), path.at(i+1), pose, path, lookaheadDist);
-        if (t != -1 && i >= lastLookaheadIndex) {
+        t = circleIntersect(path.at(i), path.at(i+1), pose, lookaheadDist);
+        if (t != -1 && i >= lastLookahead.theta) {
             lookahead = path.at(i).lerp(path.at(i+1), t);
             lookahead.theta = i;
         }
@@ -197,14 +196,13 @@ double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lo
  */
 void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead, bool reverse, float maxSpeed, bool log)
 {
-    // get the path
     std::vector<lemlib::Pose> path = getData("/usd/" + std::string(filePath));
+    pros::delay(1000);
     // initialize variables
     Pose pose(0, 0, 0);
     Pose lookaheadPose(0, 0, 0);
     Pose lastLookahead = path.at(0);
     lastLookahead.theta = 0;
-    double heading;
     double curvature;
     float targetVel;
     int closestPoint;
@@ -221,11 +219,11 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
         closestPoint = findClosest(pose, path);
 
         // find the lookahead point
-        lookaheadPose = lookaheadPoint(lastLookahead.theta, lastLookahead, pose, path, lookahead);
+        lookaheadPose = lookaheadPoint(lastLookahead, pose, path, lookahead);
         lastLookahead = lookaheadPose;
 
         // get the curvature of the arc between the robot and the lookahead point
-        double curvatureHeading = M_PI/2 - heading;
+        double curvatureHeading = M_PI/2 - pose.theta;
         curvature = findLookaheadCurvature(pose, curvatureHeading, lookaheadPose);
 
         // get the target velocity of the robot
