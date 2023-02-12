@@ -25,17 +25,17 @@
  * @param rightMotors motors on the right side of the drivetrain
  * @param lateralSettings settings for the lateral controller
  * @param angularSetting settings for the angular controller
- * @param topSpeed the top speed of the chassis. in/s
+ * @param trackWidth track width of the chassis
  * @param sensors sensors to be used for odometry
  */
-lemlib::Chassis::Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float topSpeed, ChassisController_t lateralSettings, ChassisController_t angularSetting, OdomSensors_t sensors)
+lemlib::Chassis::Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float trackWidth, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors)
 {
     leftMotorGroup = leftMotors;
     rightMotorGroup = rightMotors;
-    this->topSpeed = topSpeed;
-    this->lateralSettings = lateralSettings;
-    this->angularSettings = angularSetting;
-    odomSensors = sensors;
+    this->trackWidth = trackWidth;
+    this->lateralSettings = new ChassisController_t(lateralSettings);
+    this->angularSettings = new ChassisController_t(angularSettings);
+    odomSensors = new OdomSensors_t(sensors);
 }
 
 
@@ -46,9 +46,9 @@ lemlib::Chassis::Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *right
 void lemlib::Chassis::calibrate()
 {
     // calibrate the imu if it exists
-    if (odomSensors.imu != nullptr) odomSensors.imu->reset(true);
+    if (odomSensors->imu != nullptr) odomSensors->imu->reset(true);
     // initialize odom
-    lemlib::setSensors(odomSensors);
+    lemlib::setSensors(*odomSensors);
     lemlib::init();
 }
 
@@ -92,7 +92,7 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians)
 
 
 /**
- * @brief Move the chassis as close as possible to the target point in a straight line.
+ * @brief Turn the chassis so it is facing the target point
  *
  * The PID logging id is "angularPID"
  * 
@@ -100,9 +100,10 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians)
  * @param y y location
  * @param timeout longest time the robot can spend moving
  * @param reversed whether the robot should turn in the opposite direction. false by default
+ * @param maxSpeed the maximum speed the robot can turn at. Default is 200
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, bool log)
+void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log)
 {
     Pose pose(0, 0);
     float targetTheta;
@@ -110,8 +111,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, bool 
     float motorPower;
 
     // create a new PID controller
-    FAPID pid = FAPID(0, angularSettings.kA, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    pid.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout, angularSettings.smallErrorTimeout, timeout);
+    FAPID pid = FAPID(0, 0, angularSettings->kP, 0, angularSettings->kD, "angularPID");
+    pid.setExit(angularSettings->largeError, angularSettings->smallError, angularSettings->largeErrorTimeout, angularSettings->smallErrorTimeout, timeout);
 
     // main loop
     while (pros::competition::is_autonomous() && !pid.settled()) {
@@ -123,12 +124,16 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, bool 
         if (!deltaX) deltaX = 0.000001;
         deltaY = y - pose.y;
         targetTheta = fmod(radToDeg(M_PI/2 - atan2(deltaY, deltaX)), 360);
-        
+
         // calculate deltaTheta
         deltaTheta = angleError(targetTheta, pose.theta);
 
         // calculate the speed
         motorPower = pid.update(0, deltaTheta, log);
+
+        // cap the speed
+        if (motorPower > maxSpeed) motorPower = maxSpeed;
+        else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
 
         // move the drivetrain
         leftMotorGroup->move(-motorPower);
@@ -144,26 +149,29 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, bool 
 
 
 /**
- * @brief Turn the chassis so it is facing the target point
+ * @brief Move the chassis towards the target point
  *
- * The PID logging id is "lateralPID"
+ * The PID logging ids are "angularPID" and "lateralPID"
  * 
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
+ * @param maxSpeed the maximum speed the robot can move at
+ * @param reversed whether the robot should turn in the opposite direction. false by default
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, int timeout, bool log)
+void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log)
 {
     Pose pose(0, 0);
-    float directTheta, hypot, diffTheta, diffLateral, motorPower;
+    float directTheta, hypot, diffTheta, diffLateral, lateralPower, angularPower, leftPower, rightPower;
 
     // create a new PID controller
-    FAPID pid(0, lateralSettings.kA, lateralSettings.kP, 0, lateralSettings.kD, "lateralPID");
-    pid.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout, lateralSettings.smallErrorTimeout, timeout);
+    FAPID lateralPID(0, 0, lateralSettings->kP, 0, lateralSettings->kD, "lateralPID");
+    FAPID angularPID(0, 0, angularSettings->kP, 0, angularSettings->kD, "angularPID");
+    lateralPID.setExit(lateralSettings->largeError, lateralSettings->smallError, lateralSettings->largeErrorTimeout, lateralSettings->smallErrorTimeout, timeout);
 
     // main loop
-    while (pros::competition::is_autonomous() && !pid.settled()) {
+    while (pros::competition::is_autonomous() && !lateralPID.settled()) {
         // get the current position
         Pose pose = getPose(true);
         pose.theta = M_PI/2 - pose.theta;
@@ -175,12 +183,38 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, bool log)
         diffTheta = pose.theta - directTheta;
         diffLateral = hypot * cos(diffTheta);
 
-        // calculate the speed
-        motorPower = pid.update(diffLateral, 0, log);
+        // calculate the lateral speed
+        lateralPower = lateralPID.update(diffLateral, 0, log);
+
+        // calculate the angular speed
+        // the robot can face the target heading in two ways, so we need to check which one is faster
+        // these 2 ways are: facing the target heading directly, or 180 degrees away from the target heading
+        // the robot will choose the faster way
+        float diffTheta1 = radToDeg(angleError(pose.theta, directTheta, true));
+        float diffTheta2 = radToDeg(angleError(pose.theta, directTheta + M_PI, true));
+        // now decide which way is faster
+        float diffTheta = (fabs(diffTheta1) < fabs(diffTheta2)) ? diffTheta1 : diffTheta2;
+        
+        angularPower = angularPID.update(diffTheta, 0, log);
+
+        if (std::fabs(pose.distance(lemlib::Pose(x, y))) < 15) {
+            angularPower = 0;
+        } else {
+            lateralPower *= std::fabs(std::cos(degToRad(diffTheta)));
+        }
+
+        leftPower = lateralPower + angularPower;
+        rightPower = lateralPower - angularPower;
+
+        // cap the speed
+        if (leftPower > maxSpeed) leftPower = maxSpeed;
+        else if (leftPower < -maxSpeed) leftPower = -maxSpeed;
+        if (rightPower > maxSpeed) rightPower = maxSpeed;
+        else if (rightPower < -maxSpeed) rightPower = -maxSpeed;
 
         // move the motors
-        leftMotorGroup->move(motorPower);
-        rightMotorGroup->move(motorPower);
+        leftMotorGroup->move(leftPower);
+        rightMotorGroup->move(rightPower);
 
         pros::delay(10);
     }

@@ -53,7 +53,6 @@ namespace lemlib {
      * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
      */
     typedef struct {
-        float kA;
         float kP;
         float kD;
         float smallError; 
@@ -75,10 +74,10 @@ namespace lemlib {
              * @param rightMotors motors on the right side of the drivetrain
              * @param lateralSettings settings for the lateral controller
              * @param angularSetting settings for the angular controller
-             * @param topSpeed the top speed of the chassis. in/s
+             * @param trackWidth track width of the chassis
              * @param sensors sensors to be used for odometry
              */
-            Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float topSpeed, ChassisController_t lateralSettings, ChassisController_t angularSetting, OdomSensors_t sensors);
+            Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float trackWidth, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors);
             /**
              * @brief Calibrate the chassis sensors
              * 
@@ -108,7 +107,7 @@ namespace lemlib {
              */
             Pose getPose(bool radians = false);
             /**
-             * @brief Move the chassis as close as possible to the target point in a straight line.
+             * @brief Turn the chassis so it is facing the target point
              *
              * The PID logging id is "angularPID"
              * 
@@ -116,25 +115,39 @@ namespace lemlib {
              * @param y y location
              * @param timeout longest time the robot can spend moving
              * @param reversed whether the robot should turn in the opposite direction. false by default
+             * @param maxSpeed the maximum speed the robot can turn at. Default is 200
              * @param log whether the chassis should log the turnTo function. false by default
              */
-            void turnTo(float x, float y, int timeout, bool reversed = false, bool log = false);
+            void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 200, bool log = false);
             /**
-             * @brief Turn the chassis so it is facing the target point
+             * @brief Move the chassis towards the target point
              *
-             * The PID logging id is "lateralPID"
+             * The PID logging ids are "angularPID" and "lateralPID"
              * 
              * @param x x location
              * @param y y location
              * @param timeout longest time the robot can spend moving
+             * @param maxSpeed the maximum speed the robot can move at
+             * @param reversed whether the robot should turn in the opposite direction. false by default
              * @param log whether the chassis should log the turnTo function. false by default
              */
-            void moveTo(float x, float y, int timeout, bool log = false);
+            void moveTo(float x, float y, int timeout, float maxSpeed = 200, bool log = false);
+            /**
+             * @brief Move the chassis along a path
+             * 
+             * @param filePath file path to the path. No need to preface it with /usd/
+             * @param timeout the maximum time the robot can spend moving
+             * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
+             * @param reverse whether the robot should follow the path in reverse. false by default
+             * @param maxSpeed the maximum speed the robot can move at
+             * @param log whether the chassis should log the path on a log file. false by default.
+             */
+            void follow(const char *filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 200, bool log = false);
         private:
-            float topSpeed;
-            ChassisController_t lateralSettings;
-            ChassisController_t angularSettings;
-            OdomSensors_t odomSensors;
+            float trackWidth;
+            ChassisController_t *lateralSettings;
+            ChassisController_t *angularSettings;
+            OdomSensors_t *odomSensors;
             pros::Motor_Group *leftMotorGroup;
             pros::Motor_Group *rightMotorGroup;
     };

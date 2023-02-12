@@ -54,8 +54,8 @@ lemlib::Pose lemlib::Pose::operator - (const lemlib::Pose &other) {
  * @param other other pose
  * @return Pose 
  */
-lemlib::Pose lemlib::Pose::operator * (const lemlib::Pose &other) {
-    return lemlib::Pose(this->x * other.x, this->y * other.y, this->theta);
+float lemlib::Pose::operator * (const lemlib::Pose &other) {
+    return this->x * other.x + this->y * other.y;
 }
 
 

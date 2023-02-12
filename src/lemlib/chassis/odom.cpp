@@ -24,7 +24,6 @@ pros::Task *trackingTask = nullptr;
 // global variables
 lemlib::OdomSensors_t odomSensors; // the sensors to be used for odometry
 lemlib::Pose odomPose(0, 0, 0); // the pose of the robot
-lemlib::Pose startPose(0, 0, 0); // the starting pose of the robot
 
 float prevVertical = 0;
 float prevVertical1 = 0;
@@ -33,8 +32,6 @@ float prevHorizontal = 0;
 float prevHorizontal1 = 0;
 float prevHorizontal2 = 0;
 float prevImu = 0;
-float prevHeading = 0;
-
 
 /**
  * @brief Set the sensors to be used for odometry
@@ -77,12 +74,10 @@ void lemlib::setPose(lemlib::Pose pose, bool radians)
     if (radians)
     {
         odomPose = pose;
-        startPose = odomPose;
     }
     else
     {
         odomPose = lemlib::Pose(pose.x, pose.y, degToRad(pose.theta));
-        startPose = odomPose;
     }
 }
 
@@ -121,13 +116,12 @@ void lemlib::update()
     prevImu = imuRaw;
 
     // calculate the heading of the robot
-    float heading = startPose.theta + prevHeading;
-    if (odomSensors.vertical1 != nullptr && odomSensors.vertical2 != nullptr) heading += (deltaVertical1 - deltaVertical2) / (odomSensors.vertical1->getOffset() + odomSensors.vertical2->getOffset());
-    else if (odomSensors.horizontal1 != nullptr && odomSensors.horizontal2 != nullptr) heading += (deltaHorizontal1 - deltaHorizontal2) / (odomSensors.horizontal1->getOffset() + odomSensors.horizontal2->getOffset());
+    float heading = odomPose.theta;
+    if (odomSensors.vertical1 != nullptr && odomSensors.vertical2 != nullptr) heading += (deltaVertical1 - deltaVertical2) / (odomSensors.vertical1->getOffset() - odomSensors.vertical2->getOffset());
+    else if (odomSensors.horizontal1 != nullptr && odomSensors.horizontal2 != nullptr) heading += (deltaHorizontal1 - deltaHorizontal2) / (odomSensors.horizontal1->getOffset() - odomSensors.horizontal2->getOffset());
     else if (odomSensors.imu != nullptr) heading += deltaImu;
-    float deltaHeading = heading - prevHeading;
-    float avgHeading = prevHeading + deltaHeading / 2;
-    prevHeading = heading;
+    float deltaHeading = heading - odomPose.theta;
+    float avgHeading = odomPose.theta + deltaHeading / 2;
 
     // choose tracking wheels to use
     lemlib::TrackingWheel *verticalWheel = nullptr;

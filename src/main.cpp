@@ -1,55 +1,53 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 
-pros::Motor lF(-1);
-pros::Motor lM(-3);
-pros::Motor lB(-11);
-pros::Motor rF(10);
-pros::Motor rM(4);
-pros::Motor rB(5);
+// drive motors
+pros::Motor lF(-3); // left front motor. port 3, reversed
+pros::Motor lM(-14); // left middle motor. port 14, reversed
+pros::Motor lB(-12); // left back motor. port 12, reversed
+pros::Motor rF(19); // right front motor. port 19
+pros::Motor rM(20); // right middle motor. port 20
+pros::Motor rB(1); // right back motor. port 1
 
-pros::MotorGroup leftMotors({lF, lM, lB});
-pros::MotorGroup rightMotors({rF, rM, rB});
+// motor groups
+pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
+pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
-pros::Imu imu(8);
+// Inertial Sensor on port 6
+pros::Imu imu(6);
 
-pros::ADIEncoder verticalEnc('e', 'f');
-pros::ADIEncoder horizontalEnc('g', 'h');
-
-pros::Controller master(pros::E_CONTROLLER_MASTER);
-
-lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 0);
-lemlib::TrackingWheel horizontal(&horizontalEnc, 2.75, -2.496);
+// tracking wheels
+pros::ADIEncoder verticalEnc({7, 'A', 'B'}, false);
+// vertical tracking wheel. 2.75" diameter, 2.2" offset
+lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 2.2);
 
 lemlib::OdomSensors_t sensors {
 	&vertical,
 	nullptr,
-	&horizontal,
+	nullptr,
 	nullptr,
 	&imu
 };
 
 lemlib::ChassisController_t lateralController {
-	0,
 	10,
 	30,
-	1000000,
-	1000000,
-	1000000,
-	1000000
+	1,
+	100,
+	3,
+	500
 };
 
 lemlib::ChassisController_t angularController {
-	0,
 	2,
 	10,
-	1000000,
-	1000000,
-	1000000,
-	1000000
+	1,
+	100,
+	3,
+	500
 };
 
-lemlib::Chassis chassis(&leftMotors, &rightMotors, 10000, lateralController, angularController, sensors);
+lemlib::Chassis chassis(&leftMotors, &rightMotors, 10, lateralController, angularController, sensors);
 
 
 
@@ -60,6 +58,8 @@ lemlib::Chassis chassis(&leftMotors, &rightMotors, 10000, lateralController, ang
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	// calibrate sensors
+	chassis.calibrate();
 }
 
 /**
@@ -92,9 +92,14 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	chassis.calibrate();
-	//chassis.moveTo(0, 10, 1000000);
-    
+	// set the position of the chassis
+	chassis.setPose(10, 10, 90);
+	// turn to face point (53, 53) and move to it
+	chassis.turnTo(53, 53, 1000);
+	// move to point (20, 20)
+	chassis.moveTo(20, 20, 2000);
+	// use pure pursuit to follow a path
+	chassis.follow("path.txt", 1000, 15);
 }
 
 /**
