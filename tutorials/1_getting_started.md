@@ -35,4 +35,4 @@ To install LemLib, you need to download its zip file from [here](https://github.
 <img src="assets/1_getting_started/integrated_terminal.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
 
 
-Next, you need to run the following command in the terminal: `pros c fetch LemLib@1.0.0.zip; pros c apply LemLib@1.0.0`. Finally, you need to put `#include "lemlib/api.hpp" at the top of your main.cpp file. Now you are ready to start using LemLib!
+Next, you need to run the following command in the terminal: `pros c fetch LemLib@0.4.0.zip; pros c apply LemLib@0.4.0`. Finally, you need to put `#include "lemlib/api.hpp" at the top of your main.cpp file. Now you are ready to start using LemLib!
