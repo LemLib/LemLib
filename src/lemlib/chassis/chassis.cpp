@@ -25,14 +25,14 @@
  * @param rightMotors motors on the right side of the drivetrain
  * @param lateralSettings settings for the lateral controller
  * @param angularSetting settings for the angular controller
- * @param topSpeed the top speed of the chassis. in/s
+ * @param trackWidth track width of the chassis
  * @param sensors sensors to be used for odometry
  */
-lemlib::Chassis::Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float topSpeed, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors)
+lemlib::Chassis::Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float trackWidth, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors)
 {
     leftMotorGroup = leftMotors;
     rightMotorGroup = rightMotors;
-    this->topSpeed = topSpeed;
+    this->trackWidth = trackWidth;
     this->lateralSettings = new ChassisController_t(lateralSettings);
     this->angularSettings = new ChassisController_t(angularSettings);
     odomSensors = new OdomSensors_t(sensors);
@@ -111,7 +111,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
     float motorPower;
 
     // create a new PID controller
-    FAPID pid = FAPID(0, angularSettings->kA, angularSettings->kP, 0, angularSettings->kD, "angularPID");
+    FAPID pid = FAPID(0, 0, angularSettings->kP, 0, angularSettings->kD, "angularPID");
     pid.setExit(angularSettings->largeError, angularSettings->smallError, angularSettings->largeErrorTimeout, angularSettings->smallErrorTimeout, timeout);
 
     // main loop
@@ -166,8 +166,8 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     float directTheta, hypot, diffTheta, diffLateral, lateralPower, angularPower, leftPower, rightPower;
 
     // create a new PID controller
-    FAPID lateralPID(0, lateralSettings->kA, lateralSettings->kP, 0, lateralSettings->kD, "lateralPID");
-    FAPID angularPID(0, angularSettings->kA, angularSettings->kP, 0, angularSettings->kD, "angularPID");
+    FAPID lateralPID(0, 0, lateralSettings->kP, 0, lateralSettings->kD, "lateralPID");
+    FAPID angularPID(0, 0, angularSettings->kP, 0, angularSettings->kD, "angularPID");
     lateralPID.setExit(lateralSettings->largeError, lateralSettings->smallError, lateralSettings->largeErrorTimeout, lateralSettings->smallErrorTimeout, timeout);
 
     // main loop
@@ -197,7 +197,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         
         angularPower = angularPID.update(diffTheta, 0, log);
 
-        if (std::fabs(pose.distance(lemlib::Pose(x, y))) < 10) {
+        if (std::fabs(pose.distance(lemlib::Pose(x, y))) < 15) {
             angularPower = 0;
         } else {
             lateralPower *= std::fabs(std::cos(degToRad(diffTheta)));

@@ -49,4 +49,12 @@ namespace lemlib {
      * @return float wrapped angle
      */
     float angleError(float angle1, float angle2, bool radians = false);
+
+    /**
+     * @brief Return the sign of a number
+     * 
+     * @param x the number to get the sign of
+     * @return float - -1 if negative, 1 if positive
+     */
+    float sgn(float x);
 }
