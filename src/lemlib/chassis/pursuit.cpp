@@ -13,7 +13,6 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include <iostream>
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/util.hpp"
 
@@ -217,6 +216,10 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
 
         // find the closest point on the path to the robot
         closestPoint = findClosest(pose, path);
+        // if the robot is at the end of the path, then stop
+        if (path.at(closestPoint).theta == 0) {
+            break;
+        }
 
         // find the lookahead point
         lookaheadPose = lookaheadPoint(lastLookahead, pose, path, lookahead);

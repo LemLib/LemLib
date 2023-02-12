@@ -53,7 +53,6 @@ namespace lemlib {
      * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
      */
     typedef struct {
-        float kA;
         float kP;
         float kD;
         float smallError; 

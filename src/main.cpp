@@ -14,9 +14,6 @@ pros::MotorGroup rightMotors({rF, rM, rB});
 pros::Imu imu(6);
 
 pros::ADIEncoder verticalEnc({7, 'A', 'B'}, false);
-
-pros::Controller master(pros::E_CONTROLLER_MASTER);
-
 lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 0);
 
 lemlib::OdomSensors_t sensors {
@@ -28,23 +25,21 @@ lemlib::OdomSensors_t sensors {
 };
 
 lemlib::ChassisController_t lateralController {
-	0,
 	10,
 	30,
 	1,
-	100000000,
+	100,
 	3,
-	500000000
+	500
 };
 
 lemlib::ChassisController_t angularController {
-	0,
 	2,
 	10,
 	1,
-	100000000,
+	100,
 	3,
-	5000000000
+	500
 };
 
 lemlib::Chassis chassis(&leftMotors, &rightMotors, 10, lateralController, angularController, sensors);
@@ -58,7 +53,8 @@ lemlib::Chassis chassis(&leftMotors, &rightMotors, 10, lateralController, angula
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-
+	// calibrate sensors
+	chassis.calibrate();
 }
 
 /**
@@ -91,8 +87,14 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	chassis.calibrate();
-	chassis.follow("path.txt", 2000000, 5);
+	// set the position of the chassis
+	chassis.setPose(10, 10, 90);
+	// turn to face point (53, 53) and move to it
+	chassis.turnTo(53, 53, 1000);
+	// move to point (20, 20)
+	chassis.moveTo(20, 20, 2000);
+	// use pure pursuit to follow a path
+	chassis.follow("path.txt", 1000, 15);
 }
 
 /**

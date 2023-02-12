@@ -111,7 +111,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
     float motorPower;
 
     // create a new PID controller
-    FAPID pid = FAPID(0, angularSettings->kA, angularSettings->kP, 0, angularSettings->kD, "angularPID");
+    FAPID pid = FAPID(0, 0, angularSettings->kP, 0, angularSettings->kD, "angularPID");
     pid.setExit(angularSettings->largeError, angularSettings->smallError, angularSettings->largeErrorTimeout, angularSettings->smallErrorTimeout, timeout);
 
     // main loop
@@ -166,8 +166,8 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     float directTheta, hypot, diffTheta, diffLateral, lateralPower, angularPower, leftPower, rightPower;
 
     // create a new PID controller
-    FAPID lateralPID(0, lateralSettings->kA, lateralSettings->kP, 0, lateralSettings->kD, "lateralPID");
-    FAPID angularPID(0, angularSettings->kA, angularSettings->kP, 0, angularSettings->kD, "angularPID");
+    FAPID lateralPID(0, 0, lateralSettings->kP, 0, lateralSettings->kD, "lateralPID");
+    FAPID angularPID(0, 0, angularSettings->kP, 0, angularSettings->kD, "angularPID");
     lateralPID.setExit(lateralSettings->largeError, lateralSettings->smallError, lateralSettings->largeErrorTimeout, lateralSettings->smallErrorTimeout, timeout);
 
     // main loop
