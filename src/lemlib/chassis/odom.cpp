@@ -117,8 +117,8 @@ void lemlib::update()
 
     // calculate the heading of the robot
     float heading = odomPose.theta;
-    if (odomSensors.vertical1 != nullptr && odomSensors.vertical2 != nullptr) heading += (deltaVertical1 - deltaVertical2) / (std::fabs(odomSensors.vertical1->getOffset()) + std::fabs(odomSensors.vertical2->getOffset()));
-    else if (odomSensors.horizontal1 != nullptr && odomSensors.horizontal2 != nullptr) heading += (deltaHorizontal1 - deltaHorizontal2) / (std::fabs(odomSensors.horizontal1->getOffset()) + std::fabs(odomSensors.horizontal2->getOffset()));
+    if (odomSensors.vertical1 != nullptr && odomSensors.vertical2 != nullptr) heading += (deltaVertical1 - deltaVertical2) / (odomSensors.vertical1->getOffset() - odomSensors.vertical2->getOffset());
+    else if (odomSensors.horizontal1 != nullptr && odomSensors.horizontal2 != nullptr) heading += (deltaHorizontal1 - deltaHorizontal2) / (odomSensors.horizontal1->getOffset() - odomSensors.horizontal2->getOffset());
     else if (odomSensors.imu != nullptr) heading += deltaImu;
     float deltaHeading = heading - odomPose.theta;
     float avgHeading = odomPose.theta + deltaHeading / 2;

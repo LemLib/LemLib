@@ -197,7 +197,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         
         angularPower = angularPID.update(diffTheta, 0, log);
 
-        if (std::fabs(pose.distance(lemlib::Pose(x, y))) < 10) {
+        if (std::fabs(pose.distance(lemlib::Pose(x, y))) < 15) {
             angularPower = 0;
         } else {
             lateralPower *= std::fabs(std::cos(degToRad(diffTheta)));
