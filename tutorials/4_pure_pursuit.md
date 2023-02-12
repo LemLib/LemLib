@@ -45,10 +45,12 @@ void autonomous() {
     // timeout: 2000 ms
     // lookahead distance: 15 inches
     chassis.follow("path.txt", 2000, 15);
+    // follow the next path, but with the robot going backwards
+    chassis.follow("path2.txt", 2000, 15, true);
 }
 ```
 
-In the above example, the robot reads the path in "path.txt", has a timeout of 2000 milliseconds, and a lookahead distance of 15 inches. Thats it!
+In the above example, the robot reads the path in "path.txt", has a timeout of 2000 milliseconds, and a lookahead distance of 15 inches. After it finishes following the path, it will read the path in "path2.txt" and follow it. The robot will be going backwards this time, so the last parameter is set to true.
 
 <br>
 
