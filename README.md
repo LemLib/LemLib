@@ -18,7 +18,7 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 - [Path Generator](https://github.com/SizzinSeal/Path-Gen) support
 
 ## Tutorials
-The tutorials provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to 
+The tutorials provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to pure pursuit.
  - 1: [Getting Started](https://github.com/SizzinSeal/LemLib/blob/master/tutorials/1_getting_started.md)
  - 2: [Setting up the Chassis](https://github.com/SizzinSeal/LemLib/blob/master/tutorials/2_setting_up_the_chassis.md)
  - 3: [Tuning and Moving](https://github.com/SizzinSeal/LemLib/blob/master/tutorials/3_tuning_and_moving.md)
