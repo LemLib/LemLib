@@ -1,0 +1,335 @@
+\hypertarget{classlemlib_1_1_pose}{}\doxysection{lemlib\+::Pose Class Reference}
+\label{classlemlib_1_1_pose}\index{lemlib::Pose@{lemlib::Pose}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlemlib_1_1_pose_a766fa2bc5573f9eb0d1aae11ea89f1f2}{Pose}} (float x, float y, float theta=0)
+\begin{DoxyCompactList}\small\item\em Create a new pose. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \mbox{\hyperlink{classlemlib_1_1_pose_af1f92459bbb366dad6b7fba40fd0fbfb}{operator+}} (const \mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \&other)
+\begin{DoxyCompactList}\small\item\em Add a pose to this pose. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \mbox{\hyperlink{classlemlib_1_1_pose_accf67cfae9b9c68b5bdf562c2903edb4}{operator-\/}} (const \mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \&other)
+\begin{DoxyCompactList}\small\item\em Subtract a pose from this pose. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classlemlib_1_1_pose_a28b91d943426c46a53d1335c148cb790}{operator$\ast$}} (const \mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \&other)
+\begin{DoxyCompactList}\small\item\em Multiply a pose by this pose. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \mbox{\hyperlink{classlemlib_1_1_pose_a1b050556e9c8800819ac68b65a1e455b}{operator$\ast$}} (const float \&other)
+\begin{DoxyCompactList}\small\item\em Multiply a pose by a float. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \mbox{\hyperlink{classlemlib_1_1_pose_adc98b93d1894165d02b1a632bfc14f19}{operator/}} (const float \&other)
+\begin{DoxyCompactList}\small\item\em Divide a pose by a float. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \mbox{\hyperlink{classlemlib_1_1_pose_a5b5b203be9d57987c39c6ded00c68b7d}{lerp}} (\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} other, float t)
+\begin{DoxyCompactList}\small\item\em Linearly interpolate between two poses. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classlemlib_1_1_pose_a7e70d5f0826acb9be7b7939261ef2a52}{distance}} (\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} other)
+\begin{DoxyCompactList}\small\item\em Get the distance between two poses. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classlemlib_1_1_pose_ace080e77f79472a22ca78c8dd1fd7650}{angle}} (\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} other)
+\begin{DoxyCompactList}\small\item\em Get the angle between two poses. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \mbox{\hyperlink{classlemlib_1_1_pose_ad31467ca87a620e83e93a7a263fed77d}{rotate}} (float \mbox{\hyperlink{classlemlib_1_1_pose_ace080e77f79472a22ca78c8dd1fd7650}{angle}})
+\begin{DoxyCompactList}\small\item\em Rotate a pose by an angle. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classlemlib_1_1_pose_af42d0fce9ed1ac418f8ea6353e4ba661}\label{classlemlib_1_1_pose_af42d0fce9ed1ac418f8ea6353e4ba661}} 
+float {\bfseries x}
+\item 
+\mbox{\Hypertarget{classlemlib_1_1_pose_a9dbf4b9c0a2a2569dd87e9a239a448c6}\label{classlemlib_1_1_pose_a9dbf4b9c0a2a2569dd87e9a239a448c6}} 
+float {\bfseries y}
+\item 
+\mbox{\Hypertarget{classlemlib_1_1_pose_a15d50588dd9e593a72a75e3d2d125150}\label{classlemlib_1_1_pose_a15d50588dd9e593a72a75e3d2d125150}} 
+float {\bfseries theta}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classlemlib_1_1_pose_a766fa2bc5573f9eb0d1aae11ea89f1f2}\label{classlemlib_1_1_pose_a766fa2bc5573f9eb0d1aae11ea89f1f2}} 
+\index{lemlib::Pose@{lemlib::Pose}!Pose@{Pose}}
+\index{Pose@{Pose}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{Pose()}{Pose()}}
+{\footnotesize\ttfamily lemlib\+::\+Pose\+::\+Pose (\begin{DoxyParamCaption}\item[{float}]{x,  }\item[{float}]{y,  }\item[{float}]{theta = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Create a new pose. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & component \\
+\hline
+{\em y} & component \\
+\hline
+{\em theta} & heading. Defaults to 0\\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & component \\
+\hline
+{\em y} & component \\
+\hline
+{\em theta} & heading. Defaults to 0 \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classlemlib_1_1_pose_ace080e77f79472a22ca78c8dd1fd7650}\label{classlemlib_1_1_pose_ace080e77f79472a22ca78c8dd1fd7650}} 
+\index{lemlib::Pose@{lemlib::Pose}!angle@{angle}}
+\index{angle@{angle}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{angle()}{angle()}}
+{\footnotesize\ttfamily float lemlib\+::\+Pose\+::angle (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{other }\end{DoxyParamCaption})}
+
+
+
+Get the angle between two poses. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & the other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float in radians
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & the other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float in radians 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classlemlib_1_1_pose_a7e70d5f0826acb9be7b7939261ef2a52}\label{classlemlib_1_1_pose_a7e70d5f0826acb9be7b7939261ef2a52}} 
+\index{lemlib::Pose@{lemlib::Pose}!distance@{distance}}
+\index{distance@{distance}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{distance()}{distance()}}
+{\footnotesize\ttfamily float lemlib\+::\+Pose\+::distance (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{other }\end{DoxyParamCaption})}
+
+
+
+Get the distance between two poses. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & the other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & the other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classlemlib_1_1_pose_a5b5b203be9d57987c39c6ded00c68b7d}\label{classlemlib_1_1_pose_a5b5b203be9d57987c39c6ded00c68b7d}} 
+\index{lemlib::Pose@{lemlib::Pose}!lerp@{lerp}}
+\index{lerp@{lerp}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{lerp()}{lerp()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} lemlib\+::\+Pose\+::lerp (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{other,  }\item[{float}]{t }\end{DoxyParamCaption})}
+
+
+
+Linearly interpolate between two poses. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & the other pose \\
+\hline
+{\em t} & t value \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}}
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & the other pose \\
+\hline
+{\em t} & t value \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classlemlib_1_1_pose_a1b050556e9c8800819ac68b65a1e455b}\label{classlemlib_1_1_pose_a1b050556e9c8800819ac68b65a1e455b}} 
+\index{lemlib::Pose@{lemlib::Pose}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} lemlib\+::\+Pose\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Multiply a pose by a float. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & float \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}}
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & float \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classlemlib_1_1_pose_a28b91d943426c46a53d1335c148cb790}\label{classlemlib_1_1_pose_a28b91d943426c46a53d1335c148cb790}} 
+\index{lemlib::Pose@{lemlib::Pose}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily float lemlib\+::\+Pose\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Multiply a pose by this pose. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}}
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classlemlib_1_1_pose_af1f92459bbb366dad6b7fba40fd0fbfb}\label{classlemlib_1_1_pose_af1f92459bbb366dad6b7fba40fd0fbfb}} 
+\index{lemlib::Pose@{lemlib::Pose}!operator+@{operator+}}
+\index{operator+@{operator+}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{operator+()}{operator+()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} lemlib\+::\+Pose\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Add a pose to this pose. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}}
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classlemlib_1_1_pose_accf67cfae9b9c68b5bdf562c2903edb4}\label{classlemlib_1_1_pose_accf67cfae9b9c68b5bdf562c2903edb4}} 
+\index{lemlib::Pose@{lemlib::Pose}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{operator-\/()}{operator-()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} lemlib\+::\+Pose\+::operator-\/ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Subtract a pose from this pose. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}}
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & other pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classlemlib_1_1_pose_adc98b93d1894165d02b1a632bfc14f19}\label{classlemlib_1_1_pose_adc98b93d1894165d02b1a632bfc14f19}} 
+\index{lemlib::Pose@{lemlib::Pose}!operator/@{operator/}}
+\index{operator/@{operator/}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{operator/()}{operator/()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} lemlib\+::\+Pose\+::operator/ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Divide a pose by a float. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & float \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}}
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & float \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classlemlib_1_1_pose_ad31467ca87a620e83e93a7a263fed77d}\label{classlemlib_1_1_pose_ad31467ca87a620e83e93a7a263fed77d}} 
+\index{lemlib::Pose@{lemlib::Pose}!rotate@{rotate}}
+\index{rotate@{rotate}!lemlib::Pose@{lemlib::Pose}}
+\doxysubsubsection{\texorpdfstring{rotate()}{rotate()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} lemlib\+::\+Pose\+::rotate (\begin{DoxyParamCaption}\item[{float}]{angle }\end{DoxyParamCaption})}
+
+
+
+Rotate a pose by an angle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em angle} & angle in radians \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}}
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em angle} & angle in radians \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/lemlib/\mbox{\hyperlink{pose_8hpp}{pose.\+hpp}}\item 
+src/lemlib/\mbox{\hyperlink{pose_8cpp}{pose.\+cpp}}\end{DoxyCompactItemize}

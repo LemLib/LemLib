@@ -1,0 +1,53 @@
+\hypertarget{pid_8hpp_source}{}\doxysection{pid.\+hpp}
+\label{pid_8hpp_source}\index{include/lemlib/pid.hpp@{include/lemlib/pid.hpp}}
+\mbox{\hyperlink{pid_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}pros/rtos.hpp"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{namespace\ }lemlib\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classlemlib_1_1_f_a_p_i_d}{FAPID}}}
+\DoxyCodeLine{00025\ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classlemlib_1_1_f_a_p_i_d}{FAPID}}(\textcolor{keywordtype}{float}\ kF,\ \textcolor{keywordtype}{float}\ kA,\ \textcolor{keywordtype}{float}\ kP,\ \textcolor{keywordtype}{float}\ kI,\ \textcolor{keywordtype}{float}\ kD,\ std::string\ name);}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_f_a_p_i_d_a4823d606603b425654deb0093b8df285}{setGains}}(\textcolor{keywordtype}{float}\ kF,\ \textcolor{keywordtype}{float}\ kA,\ \textcolor{keywordtype}{float}\ kP,\ \textcolor{keywordtype}{float}\ kI,\ \textcolor{keywordtype}{float}\ kD);}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_f_a_p_i_d_a1caf8ac21a6840ac81c898c077bf9e99}{setExit}}(\textcolor{keywordtype}{float}\ largeError,\ \textcolor{keywordtype}{float}\ smallError,\ \textcolor{keywordtype}{int}\ largeTime,\ \textcolor{keywordtype}{int}\ smallTime,\ \textcolor{keywordtype}{int}\ maxTime);}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classlemlib_1_1_f_a_p_i_d_a1ba432b60cf1ac786b7d3b29b156468a}{update}}(\textcolor{keywordtype}{float}\ target,\ \textcolor{keywordtype}{float}\ position,\ \textcolor{keywordtype}{bool}\ log\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_f_a_p_i_d_a96e0727d79b357e9313833ae4c13f501}{reset}}();}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classlemlib_1_1_f_a_p_i_d_a50eb9d8e0b8c834824e78a1dbc5c18ef}{settled}}();}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_f_a_p_i_d_ae3cf09cd3692f529b345323291889cf5}{init}}();}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ kF;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ kA;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ kP;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ kI;}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ kD;}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ largeError;}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ smallError;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ largeTime\ =\ 0;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ smallTime\ =\ 0;}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ maxTime\ =\ -\/1;\ \textcolor{comment}{//\ -\/1\ means\ no\ max\ time\ set,\ run\ forever}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ largeTimeCounter\ =\ 0;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ smallTimeCounter\ =\ 0;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ startTime\ =\ 0;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ prevError\ =\ 0;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ totalError\ =\ 0;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ prevOutput\ =\ 0;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ log();}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ name;}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ std::string\ input;}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ pros::Task\ *logTask;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ pros::Mutex\ logMutex;}
+\DoxyCodeLine{00127\ \ \ \ \ \};}
+\DoxyCodeLine{00128\ \}}
+
+\end{DoxyCode}

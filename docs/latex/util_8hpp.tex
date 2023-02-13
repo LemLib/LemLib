@@ -1,0 +1,196 @@
+\hypertarget{util_8hpp}{}\doxysection{include/lemlib/util.hpp File Reference}
+\label{util_8hpp}\index{include/lemlib/util.hpp@{include/lemlib/util.hpp}}
+
+
+Utility functions declarations.  
+
+
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+float \mbox{\hyperlink{util_8hpp_aea7b79f4712ffab86924bb4b4e75c60b}{lemlib\+::slew}} (float target, float current, float max\+Change)
+\begin{DoxyCompactList}\small\item\em Slew rate limiter. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{util_8hpp_ab49886e4b922eefe08c814afe5e79bcb}{lemlib\+::rad\+To\+Deg}} (float rad)
+\begin{DoxyCompactList}\small\item\em Convert radians to degrees. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{util_8hpp_acd74b6b9986ac4847c8ab51fcb5911be}{lemlib\+::deg\+To\+Rad}} (float deg)
+\begin{DoxyCompactList}\small\item\em Convert degrees to radians. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{util_8hpp_afcbe5dfa92cfa736ea34c43042a70666}{lemlib\+::angle\+Error}} (float angle1, float angle2, bool radians=false)
+\begin{DoxyCompactList}\small\item\em Calculate the error between 2 angles. Useful when calculating the error between 2 headings. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{util_8hpp_a818648aded7a132cefe8e2883b212a3f}{lemlib\+::sgn}} (float x)
+\begin{DoxyCompactList}\small\item\em Return the sign of a number. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Utility functions declarations. 
+
+\begin{DoxyAuthor}{Author}
+Liam Teale 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2023-\/01-\/15
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2023 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{util_8hpp_afcbe5dfa92cfa736ea34c43042a70666}\label{util_8hpp_afcbe5dfa92cfa736ea34c43042a70666}} 
+\index{util.hpp@{util.hpp}!angleError@{angleError}}
+\index{angleError@{angleError}!util.hpp@{util.hpp}}
+\doxysubsubsection{\texorpdfstring{angleError()}{angleError()}}
+{\footnotesize\ttfamily float lemlib\+::angle\+Error (\begin{DoxyParamCaption}\item[{float}]{angle1,  }\item[{float}]{angle2,  }\item[{bool}]{radians = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Calculate the error between 2 angles. Useful when calculating the error between 2 headings. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em angle1} & \\
+\hline
+{\em angle2} & \\
+\hline
+{\em radians} & true if angle is in radians, false if not. False by default \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float wrapped angle
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em angle1} & \\
+\hline
+{\em angle2} & \\
+\hline
+{\em radians} & true if angle is in radians, false if not. False by default \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float wrapped angle 
+\end{DoxyReturn}
+\mbox{\Hypertarget{util_8hpp_acd74b6b9986ac4847c8ab51fcb5911be}\label{util_8hpp_acd74b6b9986ac4847c8ab51fcb5911be}} 
+\index{util.hpp@{util.hpp}!degToRad@{degToRad}}
+\index{degToRad@{degToRad}!util.hpp@{util.hpp}}
+\doxysubsubsection{\texorpdfstring{degToRad()}{degToRad()}}
+{\footnotesize\ttfamily float lemlib\+::deg\+To\+Rad (\begin{DoxyParamCaption}\item[{float}]{deg }\end{DoxyParamCaption})}
+
+
+
+Convert degrees to radians. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em deg} & degrees \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float radians
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em deg} & degrees \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float radians 
+\end{DoxyReturn}
+\mbox{\Hypertarget{util_8hpp_ab49886e4b922eefe08c814afe5e79bcb}\label{util_8hpp_ab49886e4b922eefe08c814afe5e79bcb}} 
+\index{util.hpp@{util.hpp}!radToDeg@{radToDeg}}
+\index{radToDeg@{radToDeg}!util.hpp@{util.hpp}}
+\doxysubsubsection{\texorpdfstring{radToDeg()}{radToDeg()}}
+{\footnotesize\ttfamily float lemlib\+::rad\+To\+Deg (\begin{DoxyParamCaption}\item[{float}]{rad }\end{DoxyParamCaption})}
+
+
+
+Convert radians to degrees. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rad} & radians \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float degrees
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em rad} & radians \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float degrees 
+\end{DoxyReturn}
+\mbox{\Hypertarget{util_8hpp_a818648aded7a132cefe8e2883b212a3f}\label{util_8hpp_a818648aded7a132cefe8e2883b212a3f}} 
+\index{util.hpp@{util.hpp}!sgn@{sgn}}
+\index{sgn@{sgn}!util.hpp@{util.hpp}}
+\doxysubsubsection{\texorpdfstring{sgn()}{sgn()}}
+{\footnotesize\ttfamily float lemlib\+::sgn (\begin{DoxyParamCaption}\item[{float}]{x }\end{DoxyParamCaption})}
+
+
+
+Return the sign of a number. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the number to get the sign of \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float -\/ -\/1 if negative, 1 if positive
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the number to get the sign of \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float -\/ -\/1 if negative, 1 if positive 
+\end{DoxyReturn}
+\mbox{\Hypertarget{util_8hpp_aea7b79f4712ffab86924bb4b4e75c60b}\label{util_8hpp_aea7b79f4712ffab86924bb4b4e75c60b}} 
+\index{util.hpp@{util.hpp}!slew@{slew}}
+\index{slew@{slew}!util.hpp@{util.hpp}}
+\doxysubsubsection{\texorpdfstring{slew()}{slew()}}
+{\footnotesize\ttfamily float lemlib\+::slew (\begin{DoxyParamCaption}\item[{float}]{target,  }\item[{float}]{current,  }\item[{float}]{max\+Change }\end{DoxyParamCaption})}
+
+
+
+Slew rate limiter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em target} & target value \\
+\hline
+{\em current} & current value \\
+\hline
+{\em max\+Change} & maximum change. No maximum if set to 0\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float -\/ the limited value
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em target} & target value \\
+\hline
+{\em current} & current value \\
+\hline
+{\em max\+Change} & maximum change. No maximum if set to 0 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float -\/ the limited value 
+\end{DoxyReturn}

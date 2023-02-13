@@ -1,0 +1,170 @@
+\hypertarget{pursuit_8cpp}{}\doxysection{src/lemlib/chassis/pursuit.cpp File Reference}
+\label{pursuit_8cpp}\index{src/lemlib/chassis/pursuit.cpp@{src/lemlib/chassis/pursuit.cpp}}
+{\ttfamily \#include $<$cmath$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include \char`\"{}lemlib/chassis/chassis.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lemlib/util.\+hpp\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{pursuit_8cpp_ae2dc034f4ecfdc050cb931537de841e7}{read\+Element}} (std\+::string input, std\+::string delimiter)
+\begin{DoxyCompactList}\small\item\em function that returns elements in a file line, separated by a delimeter \end{DoxyCompactList}\item 
+std\+::vector$<$ \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} $>$ \mbox{\hyperlink{pursuit_8cpp_afbf1ffd7ad322764cfaf96035d7ae197}{get\+Data}} (std\+::string file\+Path)
+\begin{DoxyCompactList}\small\item\em Get a path from the sd card. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{pursuit_8cpp_ae37dd3e5339757355a607a5c31f4e280}{find\+Closest}} (\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} pose, std\+::vector$<$ \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} $>$ path)
+\begin{DoxyCompactList}\small\item\em find the closest point on the path to the robot \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{pursuit_8cpp_a66f4bfc743c472da41f292f4737ca79c}{circle\+Intersect}} (\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} p1, \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} p2, \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} pose, float lookahead\+Dist)
+\begin{DoxyCompactList}\small\item\em Function that finds the intersection point between a circle and a line. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} \mbox{\hyperlink{pursuit_8cpp_a27a476d1b512cd009af2f783d6f58837}{lookahead\+Point}} (\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} last\+Lookahead, \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} pose, std\+::vector$<$ \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} $>$ path, float lookahead\+Dist)
+\begin{DoxyCompactList}\small\item\em returns the lookahead point \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{pursuit_8cpp_ab24857bbb8e839cf900e96f947b4e928}{find\+Lookahead\+Curvature}} (\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} pose, double heading, \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} lookahead)
+\begin{DoxyCompactList}\small\item\em Get the curvature of a circle that intersects the robot and the lookahead point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Liam Teale 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2023-\/02-\/09 Definition of the chassis .follow() function 
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2023 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{pursuit_8cpp_a66f4bfc743c472da41f292f4737ca79c}\label{pursuit_8cpp_a66f4bfc743c472da41f292f4737ca79c}} 
+\index{pursuit.cpp@{pursuit.cpp}!circleIntersect@{circleIntersect}}
+\index{circleIntersect@{circleIntersect}!pursuit.cpp@{pursuit.cpp}}
+\doxysubsubsection{\texorpdfstring{circleIntersect()}{circleIntersect()}}
+{\footnotesize\ttfamily float circle\+Intersect (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{p1,  }\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{p2,  }\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{pose,  }\item[{float}]{lookahead\+Dist }\end{DoxyParamCaption})}
+
+
+
+Function that finds the intersection point between a circle and a line. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p1} & start point of the line \\
+\hline
+{\em p2} & end point of the line \\
+\hline
+{\em pos} & position of the robot \\
+\hline
+{\em path} & the path to follow \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float how far along the line the 
+\end{DoxyReturn}
+\texorpdfstring{$<$}{<} no intersection was found
+
+\texorpdfstring{$<$}{<} no intersection was found\mbox{\Hypertarget{pursuit_8cpp_ae37dd3e5339757355a607a5c31f4e280}\label{pursuit_8cpp_ae37dd3e5339757355a607a5c31f4e280}} 
+\index{pursuit.cpp@{pursuit.cpp}!findClosest@{findClosest}}
+\index{findClosest@{findClosest}!pursuit.cpp@{pursuit.cpp}}
+\doxysubsubsection{\texorpdfstring{findClosest()}{findClosest()}}
+{\footnotesize\ttfamily int find\+Closest (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{pose,  }\item[{std\+::vector$<$ \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} $>$}]{path }\end{DoxyParamCaption})}
+
+
+
+find the closest point on the path to the robot 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pose} & the current pose of the robot \\
+\hline
+{\em path} & the path to follow \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int index to the closest point 
+\end{DoxyReturn}
+\mbox{\Hypertarget{pursuit_8cpp_ab24857bbb8e839cf900e96f947b4e928}\label{pursuit_8cpp_ab24857bbb8e839cf900e96f947b4e928}} 
+\index{pursuit.cpp@{pursuit.cpp}!findLookaheadCurvature@{findLookaheadCurvature}}
+\index{findLookaheadCurvature@{findLookaheadCurvature}!pursuit.cpp@{pursuit.cpp}}
+\doxysubsubsection{\texorpdfstring{findLookaheadCurvature()}{findLookaheadCurvature()}}
+{\footnotesize\ttfamily double find\+Lookahead\+Curvature (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{pose,  }\item[{double}]{heading,  }\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{lookahead }\end{DoxyParamCaption})}
+
+
+
+Get the curvature of a circle that intersects the robot and the lookahead point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pos} & the position of the robot \\
+\hline
+{\em heading} & the heading of the robot \\
+\hline
+{\em lookahead} & the lookahead point \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+double curvature 
+\end{DoxyReturn}
+\mbox{\Hypertarget{pursuit_8cpp_afbf1ffd7ad322764cfaf96035d7ae197}\label{pursuit_8cpp_afbf1ffd7ad322764cfaf96035d7ae197}} 
+\index{pursuit.cpp@{pursuit.cpp}!getData@{getData}}
+\index{getData@{getData}!pursuit.cpp@{pursuit.cpp}}
+\doxysubsubsection{\texorpdfstring{getData()}{getData()}}
+{\footnotesize\ttfamily std\+::vector$<$ \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} $>$ get\+Data (\begin{DoxyParamCaption}\item[{std\+::string}]{file\+Path }\end{DoxyParamCaption})}
+
+
+
+Get a path from the sd card. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Path} & The file to read from\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+path 
+\end{DoxyReturn}
+\mbox{\Hypertarget{pursuit_8cpp_a27a476d1b512cd009af2f783d6f58837}\label{pursuit_8cpp_a27a476d1b512cd009af2f783d6f58837}} 
+\index{pursuit.cpp@{pursuit.cpp}!lookaheadPoint@{lookaheadPoint}}
+\index{lookaheadPoint@{lookaheadPoint}!pursuit.cpp@{pursuit.cpp}}
+\doxysubsubsection{\texorpdfstring{lookaheadPoint()}{lookaheadPoint()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} lookahead\+Point (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{last\+Lookahead,  }\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{pose,  }\item[{std\+::vector$<$ \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} $>$}]{path,  }\item[{float}]{lookahead\+Dist }\end{DoxyParamCaption})}
+
+
+
+returns the lookahead point 
+
+
+\begin{DoxyParams}{Parameters}
+{\em last\+Lookahead\+Index} & -\/ the index of the last lookahead point \\
+\hline
+{\em last\+Lookahead} & -\/ the last lookahead point \\
+\hline
+{\em pos} & -\/ the current position of the robot \\
+\hline
+{\em path} & -\/ the path to follow \\
+\hline
+{\em forward} & -\/ whether to go forward (true) or backwards (false) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{pursuit_8cpp_ae2dc034f4ecfdc050cb931537de841e7}\label{pursuit_8cpp_ae2dc034f4ecfdc050cb931537de841e7}} 
+\index{pursuit.cpp@{pursuit.cpp}!readElement@{readElement}}
+\index{readElement@{readElement}!pursuit.cpp@{pursuit.cpp}}
+\doxysubsubsection{\texorpdfstring{readElement()}{readElement()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::string $>$ read\+Element (\begin{DoxyParamCaption}\item[{std\+::string}]{input,  }\item[{std\+::string}]{delimiter }\end{DoxyParamCaption})}
+
+
+
+function that returns elements in a file line, separated by a delimeter 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & the raw string \\
+\hline
+{\em delimeter} & string separating the elements in the line \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::vector$<$std\+::string$>$ array of elements read from the file 
+\end{DoxyReturn}

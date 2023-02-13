@@ -1,0 +1,51 @@
+\hypertarget{chassis_8hpp_source}{}\doxysection{chassis.\+hpp}
+\label{chassis_8hpp_source}\index{include/lemlib/chassis/chassis.hpp@{include/lemlib/chassis/chassis.hpp}}
+\mbox{\hyperlink{chassis_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}pros/motors.hpp"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}pros/imu.hpp"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{tracking_wheel_8hpp}{lemlib/chassis/trackingWheel.hpp}}"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{pose_8hpp}{lemlib/pose.hpp}}"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{namespace\ }lemlib\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classlemlib_1_1_tracking_wheel}{TrackingWheel}}\ *vertical1;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classlemlib_1_1_tracking_wheel}{TrackingWheel}}\ *vertical2;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classlemlib_1_1_tracking_wheel}{TrackingWheel}}\ *horizontal1;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classlemlib_1_1_tracking_wheel}{TrackingWheel}}\ *horizontal2;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ pros::Imu\ *imu;}
+\DoxyCodeLine{00039\ \ \ \ \ \}\ \mbox{\hyperlink{structlemlib_1_1_odom_sensors__t}{OdomSensors\_t}};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ kP;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ kD;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ smallError;\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ smallErrorTimeout;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ largeError;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ largeErrorTimeout;}
+\DoxyCodeLine{00062\ \ \ \ \ \}\ \mbox{\hyperlink{structlemlib_1_1_chassis_controller__t}{ChassisController\_t}};}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classlemlib_1_1_chassis}{Chassis}}\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classlemlib_1_1_chassis}{Chassis}}(pros::Motor\_Group\ *leftMotors,\ pros::Motor\_Group\ *rightMotors,\ \textcolor{keywordtype}{float}\ trackWidth,\ \mbox{\hyperlink{structlemlib_1_1_chassis_controller__t}{ChassisController\_t}}\ lateralSettings,\ \mbox{\hyperlink{structlemlib_1_1_chassis_controller__t}{ChassisController\_t}}\ angularSettings,\ \mbox{\hyperlink{structlemlib_1_1_odom_sensors__t}{OdomSensors\_t}}\ sensors);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_chassis_a8b23b13453c7fceae8c5b001855f410f}{calibrate}}();}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_chassis_a9d272c748bcd8e42076f7bca68b4552c}{setPose}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y,\ \textcolor{keywordtype}{double}\ theta,\ \textcolor{keywordtype}{bool}\ radians\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_chassis_a9d272c748bcd8e42076f7bca68b4552c}{setPose}}(\mbox{\hyperlink{classlemlib_1_1_pose}{Pose}}\ pose,\ \textcolor{keywordtype}{bool}\ radians\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classlemlib_1_1_pose}{Pose}}\ \mbox{\hyperlink{classlemlib_1_1_chassis_a1c656cb344f84e428e04f89c0f0fc131}{getPose}}(\textcolor{keywordtype}{bool}\ radians\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_chassis_a0dbeb81ace742bf9461260f4b4df87b1}{turnTo}}(\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keywordtype}{int}\ timeout,\ \textcolor{keywordtype}{bool}\ reversed\ =\ \textcolor{keyword}{false},\ \textcolor{keywordtype}{float}\ maxSpeed\ =\ 200,\ \textcolor{keywordtype}{bool}\ log\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_chassis_a00edce017c843ba5080f6d7494dc52bd}{moveTo}}(\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keywordtype}{int}\ timeout,\ \textcolor{keywordtype}{float}\ maxSpeed\ =\ 200,\ \textcolor{keywordtype}{bool}\ log\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classlemlib_1_1_chassis_a98a9702647ddc75501ea0baa46c2d993}{follow}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filePath,\ \textcolor{keywordtype}{int}\ timeout,\ \textcolor{keywordtype}{float}\ lookahead,\ \textcolor{keywordtype}{bool}\ reverse\ =\ \textcolor{keyword}{false},\ \textcolor{keywordtype}{float}\ maxSpeed\ =\ 200,\ \textcolor{keywordtype}{bool}\ log\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ trackWidth;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structlemlib_1_1_chassis_controller__t}{ChassisController\_t}}\ *lateralSettings;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structlemlib_1_1_chassis_controller__t}{ChassisController\_t}}\ *angularSettings;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structlemlib_1_1_odom_sensors__t}{OdomSensors\_t}}\ *odomSensors;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ pros::Motor\_Group\ *leftMotorGroup;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ pros::Motor\_Group\ *rightMotorGroup;}
+\DoxyCodeLine{00153\ \ \ \ \ \};}
+\DoxyCodeLine{00154\ \}}
+
+\end{DoxyCode}

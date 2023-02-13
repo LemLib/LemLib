@@ -1,0 +1,54 @@
+\hypertarget{structlemlib_1_1_odom_sensors__t}{}\doxysection{lemlib\+::Odom\+Sensors\+\_\+t Struct Reference}
+\label{structlemlib_1_1_odom_sensors__t}\index{lemlib::OdomSensors\_t@{lemlib::OdomSensors\_t}}
+
+
+Struct containing all the sensors used for odometry.  
+
+
+
+
+{\ttfamily \#include $<$chassis.\+hpp$>$}
+
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structlemlib_1_1_odom_sensors__t_a1fd959195255a1ef44a0e6e58c88fd7b}\label{structlemlib_1_1_odom_sensors__t_a1fd959195255a1ef44a0e6e58c88fd7b}} 
+\mbox{\hyperlink{classlemlib_1_1_tracking_wheel}{Tracking\+Wheel}} $\ast$ {\bfseries vertical1}
+\item 
+\mbox{\Hypertarget{structlemlib_1_1_odom_sensors__t_a92e9c9f2efd49f6b0c3f33f612708e6a}\label{structlemlib_1_1_odom_sensors__t_a92e9c9f2efd49f6b0c3f33f612708e6a}} 
+\mbox{\hyperlink{classlemlib_1_1_tracking_wheel}{Tracking\+Wheel}} $\ast$ {\bfseries vertical2}
+\item 
+\mbox{\Hypertarget{structlemlib_1_1_odom_sensors__t_a9de0fed5ff60945f6f8c2baedad79c81}\label{structlemlib_1_1_odom_sensors__t_a9de0fed5ff60945f6f8c2baedad79c81}} 
+\mbox{\hyperlink{classlemlib_1_1_tracking_wheel}{Tracking\+Wheel}} $\ast$ {\bfseries horizontal1}
+\item 
+\mbox{\Hypertarget{structlemlib_1_1_odom_sensors__t_a0c318b6919436f658d6454fbc0370ebb}\label{structlemlib_1_1_odom_sensors__t_a0c318b6919436f658d6454fbc0370ebb}} 
+\mbox{\hyperlink{classlemlib_1_1_tracking_wheel}{Tracking\+Wheel}} $\ast$ {\bfseries horizontal2}
+\item 
+\mbox{\Hypertarget{structlemlib_1_1_odom_sensors__t_abfc8bd11d78b722a34dd4a467b77b2b0}\label{structlemlib_1_1_odom_sensors__t_abfc8bd11d78b722a34dd4a467b77b2b0}} 
+pros\+::\+Imu $\ast$ {\bfseries imu}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Struct containing all the sensors used for odometry. 
+
+The sensors are stored in a struct so that they can be easily passed to the chassis class The variables are pointers so that they can be set to nullptr if they are not used Otherwise the chassis class would have to have a constructor for each possible combination of sensors
+
+
+\begin{DoxyParams}{Parameters}
+{\em vertical1} & pointer to the first vertical tracking wheel \\
+\hline
+{\em vertical2} & pointer to the second vertical tracking wheel \\
+\hline
+{\em horizontal1} & pointer to the first horizontal tracking wheel \\
+\hline
+{\em horizontal2} & pointer to the second horizontal tracking wheel \\
+\hline
+{\em imu} & pointer to the IMU \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/lemlib/chassis/\mbox{\hyperlink{chassis_8hpp}{chassis.\+hpp}}\end{DoxyCompactItemize}
