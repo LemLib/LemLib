@@ -12,6 +12,10 @@
 #pragma once
 
 namespace lemlib {
+
+    static bool debug = false;
+    static bool verbose = false;
+
 namespace logger {
 
     /**
@@ -27,6 +31,8 @@ namespace logger {
     */
     enum class Level { DEBUG, INFO, WARN, ERROR, FATAL };
 
+    static Level lowestLevel = Level::INFO;
+
     /**
     * @brief Whether or not to log debug messages.
     *
@@ -34,7 +40,7 @@ namespace logger {
     */
     bool isDebug();
     /**
-    * @brief Sets lemlib::logger::debug
+    * @brief Sets lemlib::debug
     *
     * @param debug the new value
     */
@@ -48,7 +54,7 @@ namespace logger {
     */
     bool isVerbose();
     /**
-     * @brief Sets lemlib::logger::verbose
+     * @brief Sets lemlib::verbose
      * 
      * @param verbose the new value
      */
