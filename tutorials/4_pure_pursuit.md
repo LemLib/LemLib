@@ -58,3 +58,6 @@ In the above example, the robot reads the path in "path.txt", has a timeout of 2
 Thats it for the tutorials! I hope they were helpful. If you have any questions, feel free to ask me on Discord (SizzlinSeal#8682). You can also open issues and pull requests on the repos.
  - [LemLib](https://github.com/SizzinSeal/LemLib)
  - [Path Generator](https://github.com/SizzinSeal/Path-Gen)
+
+
+[Previous Tutorial](3_tuning_and_moving.md)

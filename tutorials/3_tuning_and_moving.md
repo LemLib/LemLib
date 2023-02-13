@@ -152,3 +152,7 @@ Note that the origin of the field is in the middle, and the field coordinates ar
 
 
 Thats it! You now know how to move the robot around the field using the `chassis.turnTo()` and `chassis.moveTo()` functions. In the next tutorial, we will be covering how to use the Path Generator to create a path for the robot to follow.
+
+
+[Previous Tutorial](2_setting_up_the_chassis.md) <br>
+[Next Tutorial](4_pure_pursuit.md)

@@ -190,3 +190,7 @@ lemlib::Chassis chassis(&left_side_motors, &right_side_motors, track_width, late
 <br>
 
 Thats it! You have now set up the chassis. In the next tutorial, we will learn how to use the chassis to move the robot and how to tune the PIDs.
+
+
+[Previous Tutorial](1_getting_started.md) <br>
+[Next Tutorial](3_tuning_and_moving.md)
