@@ -87,7 +87,7 @@ int findClosest(lemlib::Pose pose, std::vector<lemlib::Pose> path)
     int closestPoint;
     float closestDist = 1000000;
     float dist;
-    for (int i = 0; i < path.size()-1; i++) {
+    for (int i = 0; i < path.size(); i++) {
         dist = pose.distance(path.at(i));
         if (dist < closestDist) {
             closestDist = dist;
@@ -152,7 +152,7 @@ lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::
     lemlib::Pose lookahead = lastLookahead;
     double t;
     // find the furthest lookahead point on the path
-    for (int i = 0; i < path.size()-2; i++) {
+    for (int i = 0; i < path.size()-1; i++) {
         t = circleIntersect(path.at(i), path.at(i+1), pose, lookaheadDist);
         if (t != -1 && i >= lastLookahead.theta) {
             lookahead = path.at(i).lerp(path.at(i+1), t);
