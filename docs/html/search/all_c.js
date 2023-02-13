@@ -1,6 +1,5 @@
 var searchData=
 [
-<<<<<<< HEAD
   ['setdebug_0',['setDebug',['../logger_8hpp.html#a0ce0115ee10fc4a39627e772235c2801',1,'lemlib::logger']]],
   ['setexit_1',['setExit',['../classlemlib_1_1_f_a_p_i_d.html#a1caf8ac21a6840ac81c898c077bf9e99',1,'lemlib::FAPID']]],
   ['setgains_2',['setGains',['../classlemlib_1_1_f_a_p_i_d.html#a4823d606603b425654deb0093b8df285',1,'lemlib::FAPID']]],
@@ -11,10 +10,4 @@ var searchData=
   ['setverbose_7',['setVerbose',['../logger_8hpp.html#ae6b7e94c3eda9a2161b328f201ebf8cf',1,'lemlib::logger']]],
   ['sgn_8',['sgn',['../util_8hpp.html#a818648aded7a132cefe8e2883b212a3f',1,'lemlib']]],
   ['slew_9',['slew',['../util_8hpp.html#aea7b79f4712ffab86924bb4b4e75c60b',1,'lemlib']]]
-=======
-  ['trackingwheel_0',['TrackingWheel',['../classlemlib_1_1_tracking_wheel.html',1,'lemlib::TrackingWheel'],['../classlemlib_1_1_tracking_wheel.html#a24894519b426aa122aaf710c5a420b2a',1,'lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder *encoder, float diameter, float distance)'],['../classlemlib_1_1_tracking_wheel.html#a7b61b9c9779ae523d5b218c0f8f13d46',1,'lemlib::TrackingWheel::TrackingWheel(pros::Rotation *encoder, float diameter, float distance)']]],
-  ['trackingwheel_2ecpp_1',['trackingWheel.cpp',['../tracking_wheel_8cpp.html',1,'']]],
-  ['trackingwheel_2ehpp_2',['trackingWheel.hpp',['../tracking_wheel_8hpp.html',1,'']]],
-  ['turnto_3',['turnTo',['../classlemlib_1_1_chassis.html#a0dbeb81ace742bf9461260f4b4df87b1',1,'lemlib::Chassis']]]
->>>>>>> 188323dc7fa6aecdb99890cb0375d689f1cca66b
 ];
