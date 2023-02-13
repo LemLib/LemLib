@@ -1,0 +1,138 @@
+\hypertarget{odom_8hpp}{}\doxysection{include/lemlib/chassis/odom.hpp File Reference}
+\label{odom_8hpp}\index{include/lemlib/chassis/odom.hpp@{include/lemlib/chassis/odom.hpp}}
+
+
+This is the header file for the \mbox{\hyperlink{odom_8cpp}{odom.\+cpp}} file. Its not meant to be used directly, only through the chassis class.  
+
+
+{\ttfamily \#include \char`\"{}lemlib/chassis/chassis.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lemlib/pose.\+hpp\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{odom_8hpp_a2efcc2a7d71ea38bc9e3adefc353765c}{lemlib\+::set\+Sensors}} (Odom\+Sensors\+\_\+t sensors)
+\begin{DoxyCompactList}\small\item\em Set the sensors to be used for odometry. \end{DoxyCompactList}\item 
+Pose \mbox{\hyperlink{odom_8hpp_afad964fb583f3223fd072b0f6f32f094}{lemlib\+::get\+Pose}} (bool radians=false)
+\begin{DoxyCompactList}\small\item\em Get the pose of the robot. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{odom_8hpp_a6ccbbb9661558d512bd69036312180c3}{lemlib\+::set\+Pose}} (Pose pose, bool radians=false)
+\begin{DoxyCompactList}\small\item\em Set the \mbox{\hyperlink{classlemlib_1_1_pose}{Pose}} of the robot. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{odom_8hpp_a1425503c67714fa381536046e5d74028}{lemlib\+::update}} ()
+\begin{DoxyCompactList}\small\item\em Update the pose of the robot. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{odom_8hpp_a43274d1be6f774aa8c894ffa0013aedc}{lemlib\+::init}} ()
+\begin{DoxyCompactList}\small\item\em Initialize the odometry system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This is the header file for the \mbox{\hyperlink{odom_8cpp}{odom.\+cpp}} file. Its not meant to be used directly, only through the chassis class. 
+
+\begin{DoxyAuthor}{Author}
+Liam Teale (\href{mailto:you@domain.com}{\texttt{ you@domain.\+com}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2023-\/01-\/23
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2023 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{odom_8hpp_afad964fb583f3223fd072b0f6f32f094}\label{odom_8hpp_afad964fb583f3223fd072b0f6f32f094}} 
+\index{odom.hpp@{odom.hpp}!getPose@{getPose}}
+\index{getPose@{getPose}!odom.hpp@{odom.hpp}}
+\doxysubsubsection{\texorpdfstring{getPose()}{getPose()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}} lemlib\+::get\+Pose (\begin{DoxyParamCaption}\item[{bool}]{radians = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Get the pose of the robot. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em radians} & true for theta in radians, false for degrees. False by default \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pose
+\end{DoxyReturn}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em radians} & true for theta in radians, false for degrees. False by default \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pose 
+\end{DoxyReturn}
+\mbox{\Hypertarget{odom_8hpp_a43274d1be6f774aa8c894ffa0013aedc}\label{odom_8hpp_a43274d1be6f774aa8c894ffa0013aedc}} 
+\index{odom.hpp@{odom.hpp}!init@{init}}
+\index{init@{init}!odom.hpp@{odom.hpp}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily void lemlib\+::init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initialize the odometry system. 
+
+\mbox{\Hypertarget{odom_8hpp_a6ccbbb9661558d512bd69036312180c3}\label{odom_8hpp_a6ccbbb9661558d512bd69036312180c3}} 
+\index{odom.hpp@{odom.hpp}!setPose@{setPose}}
+\index{setPose@{setPose}!odom.hpp@{odom.hpp}}
+\doxysubsubsection{\texorpdfstring{setPose()}{setPose()}}
+{\footnotesize\ttfamily void lemlib\+::set\+Pose (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classlemlib_1_1_pose}{lemlib\+::\+Pose}}}]{pose,  }\item[{bool}]{radians = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Set the Pose of the robot. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pose} & the new pose \\
+\hline
+{\em radians} & true if theta is in radians, false if in degrees. False by default\\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em pose} & the new pose \\
+\hline
+{\em radians} & true if theta is in radians, false if in degrees. False by default \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{odom_8hpp_a2efcc2a7d71ea38bc9e3adefc353765c}\label{odom_8hpp_a2efcc2a7d71ea38bc9e3adefc353765c}} 
+\index{odom.hpp@{odom.hpp}!setSensors@{setSensors}}
+\index{setSensors@{setSensors}!odom.hpp@{odom.hpp}}
+\doxysubsubsection{\texorpdfstring{setSensors()}{setSensors()}}
+{\footnotesize\ttfamily void lemlib\+::set\+Sensors (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structlemlib_1_1_odom_sensors__t}{lemlib\+::\+Odom\+Sensors\+\_\+t}}}]{sensors }\end{DoxyParamCaption})}
+
+
+
+Set the sensors to be used for odometry. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sensors} & the sensors to be used\\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em sensors} & the sensors to be used \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{odom_8hpp_a1425503c67714fa381536046e5d74028}\label{odom_8hpp_a1425503c67714fa381536046e5d74028}} 
+\index{odom.hpp@{odom.hpp}!update@{update}}
+\index{update@{update}!odom.hpp@{odom.hpp}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void lemlib\+::update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Update the pose of the robot. 
+
