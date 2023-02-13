@@ -1,6 +1,6 @@
 # LemLib
 
-Welcome to LemLib! This open-source PROS template created by Liam Teale from VRC team 1010N aims to introduce common algorithms like PID and Odometry for new and experienced teams alike.
+Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like PID and Odometry for new and experienced teams alike.
 
 Currently, LemLib officially supports tank drive and differntial drive chassis only. Proper support for x-drive and mecanum drives have not yet been implemented, but some users have reported success with them.
 
