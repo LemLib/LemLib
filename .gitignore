@@ -15,3 +15,6 @@ temp.log
 temp.errors
 *.ini
 .d/
+
+# Doxygen
+latex

@@ -1,13 +1,13 @@
 # 03 - Tuning and Moving
 
-## **Introduction**
+## Introduction
 Welcome to the third LemLib tutorial! In this tutorial, we will be learning how to tune the PIDs, move the robot, and use odometry.
 
 <br>
 
-## **Odometry**
+## Odometry
 As mentioned in the previous tutorial, LemLib uses odometry to track the position of the robot. However, we need to calibrate it at the start of each match. To do this, we need to call the `chassis.calibrate()` function in `initialize()` Below is an example of how to do this:
-```c++
+```cpp
 void initialize() {
     chassis.calibrate();
 }
@@ -17,7 +17,7 @@ Note that the chassis should be stationary when you call this function. It will 
 
 
 Pretty simple, right? Now, we can use the `chassis.getPose()` function to get the current position of the robot. It returns a `lemlib::Pose` object, which contains the x, y, and heading. The code below uses the `chassis.getPose()` function to print the current position of the robot to the brain screen:
-```c++
+```cpp
 void screen() {
     // loop forever
     while (true) {
@@ -36,7 +36,7 @@ void initialize() {
 ```
 
 We can also set the position of the robot using the `chassis.setPose()` function. Below is an example of how to do this:
-```c++
+```cpp
 void initialize() {
     chassis.calibrate(); // calibrate the chassis
     chassis.setPose(0, 0, 0); // X: 0, Y: 0, Heading: 0
@@ -46,12 +46,12 @@ void initialize() {
 
 <br>
 
-## **Moving with turnTo and moveTo**
+## Moving with turnTo and moveTo
 
 LemLib has 3 functions for moving the to. We will be covering the first 2 in this tutorial, and the third in the next tutorial.
 
 The first function is `chassis.turnTo()`. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it:
-```c++
+```cpp
 void autonomous() {
     chassis.turnTo(53, 53, 1000); // turn to the point (53, 53) with a timeout of 1000 ms
     chassis.turnTo(-20, 32, 1500, true); // turn to the point (-20, 32) with the back of the robot facing the point, and a timeout of 1500 ms
@@ -64,7 +64,7 @@ As you can see, using this function is very easy. The first 2 parameters are the
 <br>
 
 The second function is `chassis.moveTo()`. This function moves the robot to the specified (x, y) point. It takes 3 or 4 arguments. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
-```c++
+```cpp
 void autonomous() {
     chassis.moveTo(53, 53, 1000); // move to the point (53, 53) with a timeout of 1000 ms
     chassis.moveTo(10, 0, 1000, 50); // move to the point (10, 0) with a timeout of 1000 ms, and a maximum speed of 50
@@ -74,11 +74,11 @@ void autonomous() {
 This function is very similar to the `chassis.turnTo()` function. The first 2 parameters are the X and Y location the robot should move towards. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is the maximum speed the robot can move at. If you don't specify a value for this parameter, the robot will move at full speed.
 
 
-## **Tuning the PIDs**
+## Tuning the PIDs
 Now that we know how to move the robot, we can start tuning the PIDs. Let's start with the lateral PIDs.
 
 The lateral PID is just a simple PD controller, with some minor optimizations. When we tune the lateral PD, we want the kP as high as possible with minimal oscillation. But how do we change these gains? The answer is the `lateralController` struct we created in the previous tutorial. Here is a reminder of what it looks like:
-```c++
+```cpp
 // forward/backward PID
 lemlib::ChassisController_t lateralController {
 	10, // kP
@@ -101,7 +101,7 @@ The first 2 parameters are the kP and kD gains. These are the ones we will be fo
 <br>
 
 The process for the angular PID is very similar. Here is a reminder of what the angular PID looks like:
-```c++
+```cpp
 // turn PID
 lemlib::ChassisController_t angularController {
     2, // kP
@@ -125,7 +125,7 @@ Here is the algorithm we will be using to tune these gains:
 <br>
 
 
-## **Optional - Tuning Timeouts**
+## Optional - Tuning Timeouts
 
 You may have noticed that there are 4 more values in the angularController and lateralController structs. These are values for the timeouts. Here is how they work:
 
@@ -140,13 +140,13 @@ Advanced users may wish to alter these values to decrease the time it takes to e
 <br>
 
 
-## **Using the Path Generator for Coordinates**
+## Using the Path Generator for Coordinates
 
 Another project we have been developing is the [Path Generator](https://sizzinseal.github.io/Path-Gen/). This web app allows you to create a path for the robot to follow using pure pursuit, which will be covered in the next tutorial. For now, we will be using it to view coordinates on the field. 
 
 When hovering your mouse over a location on the field, its coordinates will be displayed in the bottom left corner. You can then manually input these coordinates into the `chassis.moveTo()` and `chassis.turnTo()` functions. You can also view the starting position of the robot by simply hovering your mouse over where it would start. You can set the position of the robot by using the `chassis.setPose()` function, as documented in [tutorial 2](2_setting_up_the_chassis.md). Below is an image of the Path Generator:
 
-<img src="assets/3_tuning_and_moving/path_generator.png">
+<img src="../assets/3_tuning_and_moving/path_generator.png">
 
 Note that the origin of the field is in the middle, and the field coordinates are measured in inches. 0 degrees is facing up, and increases clockwise.
 

@@ -1,6 +1,6 @@
 # 02 - Setting Up The Chassis
 
-## **Introduction**
+## Introduction
 
 You have made it to the second tutorial! Now that you have LemLib installed, we can start using it. In this tutorial, we will be setting up the chassis.
 
@@ -8,13 +8,13 @@ The chassis has multiple components. LemLib will handle everything for you, but 
 
 <br>
 
-## **The Drivetrain**
+## The Drivetrain
 
 A vital component of any robot is the drivetrain. The drivetrain is what allows the robot to move around the field. LemLib needs to know what motors are in the drivetrain. Lets start by setting up the motors.
 
 In [PROS](https://pros.cs.purdue.edu/v5/api/cpp/index.html), setting up a motor is trivial. All you need to do is create a motor object, set its port, and if it is reversed or not. We need to do this for each motor on the drivetrain. Below is an example:
 
-```c++
+```cpp
 pros::Motor left_front_motor(1, false); // port 1, not reversed
 pros::Motor left_back_motor(2, false); // port 2, not reversed
 pros::Motor right_front_motor(3, true); // port 3, reversed
@@ -22,7 +22,7 @@ pros::Motor right_back_motor(4, true); // port 4, reversed
 ```
 
 Now we need to group the left side and right side motors so we can pass it to LemLib. To do this, we can use the `pros::MotorGroup` class. Here is an example:
-```c++
+```cpp
 pros::MotorGroup left_side_motors({left_front_motor, left_back_motor});
 pros::MotorGroup right_side_motors({right_front_motor, right_back_motor});
 ```
@@ -31,34 +31,34 @@ Thats it! Now we have all the motors set up. We will cover how to use them in th
 
 <br>
 
-## **Odometry**
+## Odometry
 
 A crucial component of a consistent autonomous is position tracking, commonly known as odometry. Odometry allows the robot to know where it is on the field. LemLib has built in odometry, and is compatible with most tracking wheel / inertial sensor combinations. To set up odometry, we need to tell LemLib what sensors we are using. Lets start with the tracking wheels.
 
 Tracking Wheels are unpowered wheels that are used to track the movement of the robot. Below is a photo of a typical tracking wheel:
-<img src="assets/2_setting_up_the_chassis/tracking_wheel.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+<img src="../assets/2_setting_up_the_chassis/tracking_wheel.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
 A tracking wheel can rotate freely on a screw joint, and rubber bands pull it down so it makes consistent contact with the field tiles. Tracking wheels can be connected to either an Optical Shaft Encoder or a V5 Rotation Sensor. Both are supported by LemLib. 
 
 The first step in setting up the tracking wheels is to create an object for the encoder. Below is an example of how to do this:
-```c++
+```cpp
 pros::ADIEncoder enc('A', 'B', true); // ports A and B, reversed
 pros::Rotation rot(1, false); // port 1, not reversed
 ```
 
 Next, we have to create a `lemlib::TrackingWheel` object. This contains information about the tracking wheel, such as the diameter and its offset from the tracking center. Below is an example of how to do this:
-```c++
+```cpp
 // uses "enc" as the encoder. 2.75" wheel diameter, 4.3" offset from tracking center
 lemlib::TrackingWheel left_tracking_wheel(&enc, 2.75, 4.3);
 ```
 
 Hold on, how far away from the tracking center is the tracking wheel? Turns out, its not the straight distance to the center of the robot, but only one component of it. Below is a diagram which shows the relationship between the tracking center and the tracking wheel:
-<img src="assets/2_setting_up_the_chassis/tracking_wheel_distance.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
+<img src="../assets/2_setting_up_the_chassis/tracking_wheel_distance.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
 
 Remember, vertical tracking wheels should have a negative offset if on the left of the tracking center, and horizontal tracking wheels should have a negative offset if in front of the tracking center.
 
 Now, we can put all the tracking wheels together into a struct. This struct will be passed to LemLib. Below is an example of how to do this:
-```c++
+```cpp
 // left tracking wheel encoder
 pros::ADIEncoder left_enc('A', 'B', true); // ports A and B, reversed
 // right tracking wheel encoder
@@ -89,10 +89,10 @@ You don't need all these sensors though. LemLib needs at least 1 vertical tracki
 
 <br>
 
-## **PIDs**
+## PIDs
 
 Lemlib uses 2 PIDs to control the motion of the robot (except for pure pursuit). Every chassis will have different constants however, so you will need to tune them. More about that in the next tutorial. For now, just copy and paste the following code into your `main.cpp` file:
-```c++
+```cpp
 // forward/backward PID
 lemlib::ChassisController_t lateralController {
 	10, // kP
@@ -116,15 +116,15 @@ lemlib::ChassisController_t angularController {
 
 <br>
 
-## **Putting it all together**
+## Putting it all together
 
 One last thing we need to do is find the track width of the robot. This is the distance between the left and right drivetrain wheels.
 
-<img src="assets/2_setting_up_the_chassis/track_width.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+<img src="../assets/2_setting_up_the_chassis/track_width.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 <br>
 
 Below is everything we have done so far, all passed to the `lemlib::Chassis` constructor:
-```c++
+```cpp
 // drivetrain motors
 pros::Motor left_front_motor(1, false); // port 1, not reversed
 pros::Motor left_back_motor(2, false); // port 2, not reversed
