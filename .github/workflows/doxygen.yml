@@ -1,0 +1,11 @@
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  doxygen:
+    name: Run Doxygen
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mattnotmitt/doxygen-action@v1.9.5
