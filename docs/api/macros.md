@@ -13,7 +13,7 @@ void opcontrol() {
 	// create a new macro
 	// it runs the intake when the Controller L2 button is pressed, and stops it when it is released
 	lemlib::macro::Macro intakeMacro = lemlib::macro::Macro(
-		{pros::E_CONTROLLER_DIGITAL_L1}, // the sequence of buttons to press, in this case, only L2
+		{pros::E_CONTROLLER_DIGITAL_L2}, // the sequence of buttons to press, in this case, only L2
 		[]() { intake.move_velocity(200); }, // the function to run when the sequence is pressed (starts the intake)
 		[]() { if (!intake.is_stopped()) intake.move_velocity(0); } // the function to run when the sequence is released (stops the intake)
 	);
