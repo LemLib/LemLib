@@ -19,7 +19,13 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 
 ## Tutorials
 The tutorials provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to pure pursuit.
- - 1: [Getting Started](https://github.com/SizzinSeal/LemLib/blob/master/tutorials/1_getting_started.md)
- - 2: [Setting up the Chassis](https://github.com/SizzinSeal/LemLib/blob/master/tutorials/2_setting_up_the_chassis.md)
- - 3: [Tuning and Moving](https://github.com/SizzinSeal/LemLib/blob/master/tutorials/3_tuning_and_moving.md)
- - 4: [Pure Pursuit](https://github.com/SizzinSeal/LemLib/blob/master/tutorials/4_pure_pursuit.md)
+ - 1: [Getting Started](https://sizzinseal.github.io/LemLib/html/md_docs_tutorials_1_getting_started.html)
+ - 2: [Setting up the Chassis](https://sizzinseal.github.io/LemLib/html/md_docs_tutorials_2_setting_up_the_chassis.html)
+ - 3: [Tuning and Moving](https://sizzinseal.github.io/LemLib/html/md_docs_tutorials_3_tuning_and_moving.html)
+ - 4: [Pure Pursuit](https://sizzinseal.github.io/LemLib/html/md_docs_tutorials_4_pure_pursuit.html)
+
+## Documentation
+You can check out the Doxygen documentation [here](https://sizzinseal.github.io/LemLib/html/index.html)
+
+## Contact Us
+Questions? Commens? Concerns? Feel free to [open an Issue](https://github.com/SizzinSeal/LemLib/issues/new)
