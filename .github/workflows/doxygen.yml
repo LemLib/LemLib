@@ -1,0 +1,16 @@
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  doxygen:
+    name: Run Doxygen
+    runs-on: ubuntu-latest
+    steps:
+      # use mattnotmitt/doxygen-action@v1.9.5 to run doxygen, with default settings
+
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+      - name: Run Doxygen
+        uses: mattnotmitt/doxygen-action@v1.9.5
