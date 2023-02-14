@@ -4,7 +4,7 @@ on:
       - master
 
 jobs:
-  compile-doxygen:
+  doxygen:
     runs-on: ubuntu-latest
     steps:
        - uses: mattnotmitt/doxygen-action@v1.9.5
