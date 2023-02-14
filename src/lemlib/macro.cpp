@@ -77,15 +77,6 @@ void lemlib::macro::MacroManager::check(pros::Controller controller) {
 }
 
 /**
-* @brief Add a macro to the manager
-* 
-* @param macro - the macro to add
-*/
-void lemlib::macro::MacroManager::addMacro(Macro macro) {
-    this->macros = lemlib::push_back(this->macros, macro);
-}
-
-/**
 * @brief Get the macros
 * 
 * @return std::initializer_list<Macro> 

@@ -126,18 +126,18 @@ namespace lemlib {
                 void check(pros::Controller controller);
 
                 /**
-                 * @brief Add a macro to the manager
-                 * 
-                 * @param macro - the macro to add
-                 */
-                void addMacro(Macro macro);
-
-                /**
                  * @brief Get the macros
                  * 
                  * @return std::initializer_list<Macro> 
                  */
                 std::initializer_list<Macro> getMacros();
+
+                /**
+                 * @brief Set the macros
+                 * 
+                 * @param macros - the new macros
+                 */
+                void setMacros(std::initializer_list<Macro> macros) { this->macros = macros; }
 
                 /**
                  * @brief Clear all of the macros

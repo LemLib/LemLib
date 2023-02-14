@@ -7,9 +7,6 @@ LemLib has a very simple way of tackling macros. Simply define a function with a
 Simple macro to toggle an intake:
 ```cpp
 void opcontrol() {
-	// create a new macro manager
-	lemlib::macro::MacroManager macros;
-
 	// create a new macro
 	// it runs the intake when the Controller L2 button is pressed, and stops it when it is released
 	lemlib::macro::Macro intakeMacro = lemlib::macro::Macro(
@@ -18,8 +15,8 @@ void opcontrol() {
 		[]() { if (!intake.is_stopped()) intake.move_velocity(0); } // the function to run when the sequence is released (stops the intake)
 	);
 
-	// add the macro to the macro manager
-	macros.addMacro(intakeMacro);
+	// create a new macro manager and add the macro to it
+	lemlib::macro::MacroManager macros({intakeMacro});
 
 	// the main controller
 	pros::Controller controller(pros::E_CONTROLLER_MASTER);
