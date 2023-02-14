@@ -150,6 +150,8 @@ void lemlib::logger::log(Level level, const char* message, const char* exception
     if (exception == nullptr) throw std::invalid_argument("exception cannot be null");
 
     std::string messageString = "[LemLib] " + getFormattedLevel(level) +  ": " + message + ": " + exception + RESET_ANSI;
+
+    std::cout << messageString << std::endl;
 }
 
 /**
@@ -167,6 +169,8 @@ void lemlib::logger::log(Level level, const char* message)
     if (message == nullptr) message = "";
 
     std::string messageString = "[LemLib] " + getFormattedLevel(level) +  ": " + message + RESET_ANSI;
+
+    std::cout << messageString << std::endl;
 }
 
 /**
