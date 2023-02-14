@@ -12,6 +12,7 @@
 #pragma once
 
 
+#include <initializer_list>
 namespace lemlib {
     /**
      * @brief Slew rate limiter
@@ -57,4 +58,16 @@ namespace lemlib {
      * @return float - -1 if negative, 1 if positive
      */
     float sgn(float x);
+
+    /**
+    * @brief Push to the back of an initializer list.
+    *
+    * @param list the list to push to
+    * @param value the value to push
+    * @tparam T the type of the list
+    *
+    * @return std::initializer_list<T> the new list
+    */
+    template<typename T>
+    std::initializer_list<T> push_back(std::initializer_list<T> list, T value);
 }

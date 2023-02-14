@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2023
  * 
  */
+#include <initializer_list>
 #include <math.h>
 #include "lemlib/util.hpp"
 
@@ -90,4 +91,19 @@ float lemlib::angleError(float angle1, float angle2, bool radians) {
 float lemlib::sgn(float x)
 {
     if (x < 0) return -1; else return 1;
+}
+
+/**
+ * @brief Push to the back of an initializer list.
+ *
+ * @param list the list to push to
+ * @param value the value to push
+ * @tparam T the type of the list
+ *
+ * @return std::initializer_list<T> the new list
+ */
+template <typename T>
+std::initializer_list<T> lemlib::push_back(std::initializer_list<T> list, T value) {
+    std::initializer_list<T> newList = {list, value};
+    return newList;
 }

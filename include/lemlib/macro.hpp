@@ -8,7 +8,10 @@
  * @copyright Copyright (c) 2023
  */
 
+#include "lemlib/util.hpp"
 #include "pros/misc.hpp"
+#include "pros/rtos.hpp"
+
 #include <initializer_list>
 #include <iostream>
 
@@ -22,11 +25,19 @@ namespace lemlib {
             public:
             /**
              * @brief Create a new ControllerSequence
-             * 
-             * @tparam sequence - the buttons in the sequence, in order
              */
-            template<pros::controller_digital_e_t... sequence>
-            ControllerSequence();
+            ControllerSequence() {
+                this->sequence = {};
+            }
+
+            /**
+             * @brief Create a new ControllerSequence
+             * 
+             * @param std::initializer_list<pros::controller_digital_e_t> sequence - the buttons in the sequence, in order
+             */
+            ControllerSequence(std::initializer_list<pros::controller_digital_e_t> sequence) {
+                this->sequence = sequence;
+            }
 
             /**
              * @brief Get the sequence of buttons
@@ -52,20 +63,45 @@ namespace lemlib {
                  */
                 Macro(ControllerSequence sequence, /* inline callback function */ void (*callback)());
 
-            /**
-             * @brief Check if the sequence is pressed, and run the callback if it is
-             * 
-             * @param controller - the controller to check for the sequence
-             */
-            void run(pros::Controller controller);
+                /**
+                * @brief Check if the sequence is pressed, and run the callback if it is
+                * 
+                * @param controller - the controller to check for the sequence
+                */
+                void check(pros::Controller controller);
+
+                /**
+                * @brief Set whether or not the macro should be run in a new thread
+                * 
+                * @param threaded - new value
+                * @return Macro - the current macro
+                */
+                Macro setThreaded(bool threaded) {
+                    this->threaded = threaded; return *this;
+                }
+
+                /**
+                * @brief Get whether or not the macro should be run in a new thread
+                * 
+                * @return bool 
+                */
+                bool isThreaded() { return this->threaded; }
 
             private:
                 ControllerSequence sequence;
+                bool threaded = false; /* to run in a new thread */
                 void (*callback)();
         };
 
         class MacroManager {
             public:
+                /**
+                 * @brief Create a new MacroManager
+                 */
+                MacroManager() {
+                    this->macros = {};
+                }
+
                 /**
                  * @brief Create a new MacroManager
                  * 
@@ -74,11 +110,11 @@ namespace lemlib {
                 MacroManager(std::initializer_list<Macro> macros);
 
                 /**
-                 * @brief Run all of the macros
+                 * @brief Check all of the macros
                  * 
                  * @param controller - the controller to check for the sequences
                  */
-                void run(pros::Controller controller);
+                void check(pros::Controller controller);
 
                 /**
                  * @brief Add a macro to the manager
@@ -86,13 +122,6 @@ namespace lemlib {
                  * @param macro - the macro to add
                  */
                 void addMacro(Macro macro);
-
-                /**
-                 * @brief Remove a macro from the manager
-                 * 
-                 * @param macro - the macro to remove
-                 */
-                void removeMacro(Macro macro);
 
                 /**
                  * @brief Get the macros
@@ -106,7 +135,7 @@ namespace lemlib {
                  * 
                  * @return bool - whether or not the macros were cleared
                  */
-                bool clearMacros();
+                bool clear();
             private:
                 std::initializer_list<Macro> macros;
         };
