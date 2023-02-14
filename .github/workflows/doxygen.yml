@@ -5,9 +5,9 @@ on:
 
 jobs:
   doxygen:
-    name: Install doxygen
+    name: Run doxygen
     runs-on: ubuntu-latest
     steps:
       - uses: mattnotmitt/doxygen-action@v1.9.5
         with:
-          doxyfile-path: 'Doxygen'
+          doxyfile-path: 'Doxyfile'
