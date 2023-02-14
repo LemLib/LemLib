@@ -75,6 +75,8 @@ int ordinal(lemlib::logger::Level level)
     return static_cast<int>(level);
 }
 
+const std::string RESET_ANSI = "\033[0m";
+
 std::string getColor(lemlib::logger::Level level)
 {
     switch (level) {
@@ -89,7 +91,7 @@ std::string getColor(lemlib::logger::Level level)
         case lemlib::logger::Level::FATAL:
             return "\033[0;31;2m";
         default:
-            return "\033[0m"; // reset (white)
+            return RESET_ANSI; // reset (white)
     }
 }
 
@@ -125,6 +127,8 @@ bool checkLowestLevel(lemlib::logger::Level level)
     return ordinal(level) >= ordinal(lemlib::logger::lowestLevel);
 }
 
+
+
 /*
 End of util functions
 */
@@ -145,7 +149,7 @@ void lemlib::logger::log(Level level, const char* message, const char* exception
     if (message == nullptr) message = "";
     if (exception == nullptr) throw std::invalid_argument("exception cannot be null");
 
-    std::string messageString = "[LemLib] " + getFormattedLevel(level) +  ": " + message + ": " + exception;
+    std::string messageString = "[LemLib] " + getFormattedLevel(level) +  ": " + message + ": " + exception + RESET_ANSI;
 }
 
 /**
@@ -162,7 +166,7 @@ void lemlib::logger::log(Level level, const char* message)
 
     if (message == nullptr) message = "";
 
-    std::string messageString = "[LemLib] " + getFormattedLevel(level) +  ": " + message;
+    std::string messageString = "[LemLib] " + getFormattedLevel(level) +  ": " + message + RESET_ANSI;
 }
 
 /**
