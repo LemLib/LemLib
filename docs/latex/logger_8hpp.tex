@@ -1,0 +1,422 @@
+\hypertarget{logger_8hpp}{}\doxysection{include/lemlib/logger.hpp File Reference}
+\label{logger_8hpp}\index{include/lemlib/logger.hpp@{include/lemlib/logger.hpp}}
+
+
+A Logger for Lem\+Lib.  
+
+
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{logger_8hpp_aba3f1a5300b77403c1c7c6a8cfcdd635}{lemlib\+::logger\+::\+Level}} \{ \newline
+{\bfseries DEBUG}
+, {\bfseries INFO}
+, {\bfseries WARN}
+, {\bfseries ERROR}
+, \newline
+{\bfseries FATAL}
+ \}
+\begin{DoxyCompactList}\small\item\em A level enumeration. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{logger_8hpp_a2bfa4c413a424797a5a701ec6f780470}{lemlib\+::logger\+::is\+Debug}} ()
+\begin{DoxyCompactList}\small\item\em Whether or not to log debug messages. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_a0ce0115ee10fc4a39627e772235c2801}{lemlib\+::logger\+::set\+Debug}} (bool debug)
+\begin{DoxyCompactList}\small\item\em Sets lemlib\+::debug. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{logger_8hpp_a2633e67214e3d01e154d7f2564063e04}{lemlib\+::logger\+::is\+Verbose}} ()
+\begin{DoxyCompactList}\small\item\em Whether or not to log info messages. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_ae6b7e94c3eda9a2161b328f201ebf8cf}{lemlib\+::logger\+::set\+Verbose}} (bool verbose)
+\begin{DoxyCompactList}\small\item\em Sets lemlib\+::verbose. \end{DoxyCompactList}\item 
+Level \mbox{\hyperlink{logger_8hpp_a77de5f8f41de64067af0a589e30de9ac}{lemlib\+::logger\+::get\+Lowest\+Level}} ()
+\begin{DoxyCompactList}\small\item\em The current lowest log level. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_aa782da877a9ba2afd0a27444f830ed54}{lemlib\+::logger\+::set\+Lowest\+Level}} (Level level)
+\begin{DoxyCompactList}\small\item\em Sets the lowest loggable level. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_ac3a9f6855f2dfb28b573ac034eba72f3}{lemlib\+::logger\+::log}} (Level level, const char $\ast$message, const char $\ast$exception)
+\begin{DoxyCompactList}\small\item\em Logs a message with an exception. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_a50ff7f75675d916948afe9fa7eb6d7c4}{lemlib\+::logger\+::log}} (Level level, const char $\ast$message)
+\begin{DoxyCompactList}\small\item\em Logs a message. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_ab4eaf11b42dd1ca10b0de833c124965a}{lemlib\+::logger\+::debug}} (const char $\ast$message)
+\begin{DoxyCompactList}\small\item\em Logs a debug message. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_adbb85eb079a1fb8a619d2865f664bad6}{lemlib\+::logger\+::info}} (const char $\ast$message)
+\begin{DoxyCompactList}\small\item\em Logs an info message. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_af5ce467348adfc89573781798ad7c6a3}{lemlib\+::logger\+::warn}} (const char $\ast$message)
+\begin{DoxyCompactList}\small\item\em Logs a warning message. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_ad8ac7356c901297d33d6705087daeed3}{lemlib\+::logger\+::error}} (const char $\ast$message, const char $\ast$exception)
+\begin{DoxyCompactList}\small\item\em Logs an error message. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_a8df04a68c5bb1618a6ee3838e85db61b}{lemlib\+::logger\+::error}} (const char $\ast$message)
+\begin{DoxyCompactList}\small\item\em Logs an error message. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_a3af99589274519baa373ac55632ea024}{lemlib\+::logger\+::fatal}} (const char $\ast$message, const char $\ast$exception)
+\begin{DoxyCompactList}\small\item\em Logs a fatal message. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logger_8hpp_aa906aec4e2f9f1546b8919e928ea793b}{lemlib\+::logger\+::fatal}} (const char $\ast$message)
+\begin{DoxyCompactList}\small\item\em Logs a fatal message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A Logger for Lem\+Lib. 
+
+\begin{DoxyAuthor}{Author}
+Lem\+Lib 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+4.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2023-\/02-\/12
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2023 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{logger_8hpp_aba3f1a5300b77403c1c7c6a8cfcdd635}\label{logger_8hpp_aba3f1a5300b77403c1c7c6a8cfcdd635}} 
+\index{logger.hpp@{logger.hpp}!Level@{Level}}
+\index{Level@{Level}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{Level}{Level}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{logger_8hpp_aba3f1a5300b77403c1c7c6a8cfcdd635}{lemlib\+::logger\+::\+Level}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+A level enumeration. 
+
+Debug\+: Only enabled if \mbox{\hyperlink{logger_8hpp_ab4eaf11b42dd1ca10b0de833c124965a}{lemlib\+::logger\+::debug}} is true Info\+: General information Warn\+: Warnings, usually not critical/doesn\textquotesingle{}t affect the robot Error\+: Errors, usually critical and affects the robot Fatal\+: Fatal errors, crashes the program
+
+\begin{DoxyNote}{Note}
+The log level is inclusive. For example, if the log level is set to 
+\end{DoxyNote}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{logger_8hpp_ab4eaf11b42dd1ca10b0de833c124965a}\label{logger_8hpp_ab4eaf11b42dd1ca10b0de833c124965a}} 
+\index{logger.hpp@{logger.hpp}!debug@{debug}}
+\index{debug@{debug}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{debug()}{debug()}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::debug (\begin{DoxyParamCaption}\item[{const char $\ast$}]{message }\end{DoxyParamCaption})}
+
+
+
+Logs a debug message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_a8df04a68c5bb1618a6ee3838e85db61b}\label{logger_8hpp_a8df04a68c5bb1618a6ee3838e85db61b}} 
+\index{logger.hpp@{logger.hpp}!error@{error}}
+\index{error@{error}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{error()}{error()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::error (\begin{DoxyParamCaption}\item[{const char $\ast$}]{message }\end{DoxyParamCaption})}
+
+
+
+Logs an error message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_ad8ac7356c901297d33d6705087daeed3}\label{logger_8hpp_ad8ac7356c901297d33d6705087daeed3}} 
+\index{logger.hpp@{logger.hpp}!error@{error}}
+\index{error@{error}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{error()}{error()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::error (\begin{DoxyParamCaption}\item[{const char $\ast$}]{message,  }\item[{const char $\ast$}]{exception }\end{DoxyParamCaption})}
+
+
+
+Logs an error message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+{\em exception} & \\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+{\em exception} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_aa906aec4e2f9f1546b8919e928ea793b}\label{logger_8hpp_aa906aec4e2f9f1546b8919e928ea793b}} 
+\index{logger.hpp@{logger.hpp}!fatal@{fatal}}
+\index{fatal@{fatal}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{fatal()}{fatal()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::fatal (\begin{DoxyParamCaption}\item[{const char $\ast$}]{message }\end{DoxyParamCaption})}
+
+
+
+Logs a fatal message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_a3af99589274519baa373ac55632ea024}\label{logger_8hpp_a3af99589274519baa373ac55632ea024}} 
+\index{logger.hpp@{logger.hpp}!fatal@{fatal}}
+\index{fatal@{fatal}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{fatal()}{fatal()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::fatal (\begin{DoxyParamCaption}\item[{const char $\ast$}]{message,  }\item[{const char $\ast$}]{exception }\end{DoxyParamCaption})}
+
+
+
+Logs a fatal message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+{\em exception} & \\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+{\em exception} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_a77de5f8f41de64067af0a589e30de9ac}\label{logger_8hpp_a77de5f8f41de64067af0a589e30de9ac}} 
+\index{logger.hpp@{logger.hpp}!getLowestLevel@{getLowestLevel}}
+\index{getLowestLevel@{getLowestLevel}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{getLowestLevel()}{getLowestLevel()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{logger_8hpp_aba3f1a5300b77403c1c7c6a8cfcdd635}{lemlib\+::logger\+::\+Level}} lemlib\+::logger\+::get\+Lowest\+Level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+The current lowest log level. 
+
+\begin{DoxyReturn}{Returns}
+the lowest loggable level
+\end{DoxyReturn}
+
+
+\begin{DoxyReturn}{Returns}
+the lowest loggable level 
+\end{DoxyReturn}
+\mbox{\Hypertarget{logger_8hpp_adbb85eb079a1fb8a619d2865f664bad6}\label{logger_8hpp_adbb85eb079a1fb8a619d2865f664bad6}} 
+\index{logger.hpp@{logger.hpp}!info@{info}}
+\index{info@{info}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{info()}{info()}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::info (\begin{DoxyParamCaption}\item[{const char $\ast$}]{message }\end{DoxyParamCaption})}
+
+
+
+Logs an info message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_a2bfa4c413a424797a5a701ec6f780470}\label{logger_8hpp_a2bfa4c413a424797a5a701ec6f780470}} 
+\index{logger.hpp@{logger.hpp}!isDebug@{isDebug}}
+\index{isDebug@{isDebug}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{isDebug()}{isDebug()}}
+{\footnotesize\ttfamily bool lemlib\+::logger\+::is\+Debug (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Whether or not to log debug messages. 
+
+\begin{DoxyReturn}{Returns}
+true if debug is enabled
+\end{DoxyReturn}
+
+
+\begin{DoxyReturn}{Returns}
+true if debug is enabled 
+\end{DoxyReturn}
+\mbox{\Hypertarget{logger_8hpp_a2633e67214e3d01e154d7f2564063e04}\label{logger_8hpp_a2633e67214e3d01e154d7f2564063e04}} 
+\index{logger.hpp@{logger.hpp}!isVerbose@{isVerbose}}
+\index{isVerbose@{isVerbose}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{isVerbose()}{isVerbose()}}
+{\footnotesize\ttfamily bool lemlib\+::logger\+::is\+Verbose (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Whether or not to log info messages. 
+
+If false, only log messages with a level of lemlib\+::logger\+::\+Level\+::\+WARN or higher will be logged
+
+If false, only log messages with a level of lemlib\+::logger\+::\+Level\+::\+WARN or higher will be logged \mbox{\Hypertarget{logger_8hpp_a50ff7f75675d916948afe9fa7eb6d7c4}\label{logger_8hpp_a50ff7f75675d916948afe9fa7eb6d7c4}} 
+\index{logger.hpp@{logger.hpp}!log@{log}}
+\index{log@{log}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{log()}{log()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::log (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{logger_8hpp_aba3f1a5300b77403c1c7c6a8cfcdd635}{Level}}}]{level,  }\item[{const char $\ast$}]{message }\end{DoxyParamCaption})}
+
+
+
+Logs a message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & the level of the message \\
+\hline
+{\em message} & the message\\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & the level of the message \\
+\hline
+{\em message} & the message \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_ac3a9f6855f2dfb28b573ac034eba72f3}\label{logger_8hpp_ac3a9f6855f2dfb28b573ac034eba72f3}} 
+\index{logger.hpp@{logger.hpp}!log@{log}}
+\index{log@{log}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{log()}{log()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::log (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{logger_8hpp_aba3f1a5300b77403c1c7c6a8cfcdd635}{Level}}}]{level,  }\item[{const char $\ast$}]{message,  }\item[{const char $\ast$}]{exception }\end{DoxyParamCaption})}
+
+
+
+Logs a message with an exception. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & the level of the message \\
+\hline
+{\em message} & the message \\
+\hline
+{\em exception} & the exception\\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & the level of the message \\
+\hline
+{\em message} & the message \\
+\hline
+{\em exception} & the exception \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_a0ce0115ee10fc4a39627e772235c2801}\label{logger_8hpp_a0ce0115ee10fc4a39627e772235c2801}} 
+\index{logger.hpp@{logger.hpp}!setDebug@{setDebug}}
+\index{setDebug@{setDebug}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{setDebug()}{setDebug()}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::set\+Debug (\begin{DoxyParamCaption}\item[{bool}]{debug }\end{DoxyParamCaption})}
+
+
+
+Sets lemlib\+::debug. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em debug} & the new value\\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em debug} & the new value \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_aa782da877a9ba2afd0a27444f830ed54}\label{logger_8hpp_aa782da877a9ba2afd0a27444f830ed54}} 
+\index{logger.hpp@{logger.hpp}!setLowestLevel@{setLowestLevel}}
+\index{setLowestLevel@{setLowestLevel}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{setLowestLevel()}{setLowestLevel()}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::set\+Lowest\+Level (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{logger_8hpp_aba3f1a5300b77403c1c7c6a8cfcdd635}{Level}}}]{level }\end{DoxyParamCaption})}
+
+
+
+Sets the lowest loggable level. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & the new lowest loggable level\\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & the new lowest loggable level \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_ae6b7e94c3eda9a2161b328f201ebf8cf}\label{logger_8hpp_ae6b7e94c3eda9a2161b328f201ebf8cf}} 
+\index{logger.hpp@{logger.hpp}!setVerbose@{setVerbose}}
+\index{setVerbose@{setVerbose}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{setVerbose()}{setVerbose()}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::set\+Verbose (\begin{DoxyParamCaption}\item[{bool}]{verbose }\end{DoxyParamCaption})}
+
+
+
+Sets lemlib\+::verbose. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em verbose} & the new value\\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em verbose} & the new value \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logger_8hpp_af5ce467348adfc89573781798ad7c6a3}\label{logger_8hpp_af5ce467348adfc89573781798ad7c6a3}} 
+\index{logger.hpp@{logger.hpp}!warn@{warn}}
+\index{warn@{warn}!logger.hpp@{logger.hpp}}
+\doxysubsubsection{\texorpdfstring{warn()}{warn()}}
+{\footnotesize\ttfamily void lemlib\+::logger\+::warn (\begin{DoxyParamCaption}\item[{const char $\ast$}]{message }\end{DoxyParamCaption})}
+
+
+
+Logs a warning message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}

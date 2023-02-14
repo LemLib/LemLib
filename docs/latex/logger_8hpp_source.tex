@@ -1,0 +1,43 @@
+\hypertarget{logger_8hpp_source}{}\doxysection{logger.\+hpp}
+\label{logger_8hpp_source}\index{include/lemlib/logger.hpp@{include/lemlib/logger.hpp}}
+\mbox{\hyperlink{logger_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{namespace\ }lemlib\ \{}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ debug\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ verbose\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{namespace\ }logger\ \{}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{logger_8hpp_aba3f1a5300b77403c1c7c6a8cfcdd635}{Level}}\ \{\ DEBUG,\ INFO,\ WARN,\ ERROR,\ FATAL\ \};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{static}\ Level\ lowestLevel\ =\ Level::INFO;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{bool}\ isDebug();}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ setDebug(\textcolor{keywordtype}{bool}\ debug);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{bool}\ isVerbose();}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}\ setVerbose(\textcolor{keywordtype}{bool}\ verbose);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00068\ \ \ \ \ Level\ getLowestLevel();}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ setLowestLevel(Level\ level);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ log(Level\ level,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ exception);}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ log(Level\ level,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{void}\ debug(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message);}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{void}\ info(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message);}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{void}\ warn(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message);}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{void}\ error(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ exception);}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{void}\ error(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message);}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{void}\ fatal(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ exception);}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{void}\ fatal(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \}}
+\DoxyCodeLine{00139\ \}}
+
+\end{DoxyCode}
