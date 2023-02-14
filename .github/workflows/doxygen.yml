@@ -1,12 +1,13 @@
 on:
   push:
     branches:
-      - master
+    - master
 
 jobs:
-  - doxygen:
+  doxygen:
+    name: Install doxygen
     runs-on: ubuntu-latest
     steps:
-       - uses: mattnotmitt/doxygen-action@v1.9.5
-      with:
+      - uses: mattnotmitt/doxygen-action@v1.9.5
+        with:
           doxyfile-path: 'Doxygen'
