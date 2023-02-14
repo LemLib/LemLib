@@ -1,11 +1,12 @@
 var indexSectionsWithContent =
 {
-  0: "0acdfgilmoprstu",
+  0: "0acdefgilmoprstuw",
   1: "cfopt",
-  2: "acmoptu",
-  3: "acdfgilmoprstu",
-  4: "p",
-  5: "0l"
+  2: "aclmoptu",
+  3: "acdefgilmoprstuw",
+  4: "l",
+  5: "p",
+  6: "0l"
 };
 
 var indexSectionNames =
@@ -14,8 +15,9 @@ var indexSectionNames =
   1: "classes",
   2: "files",
   3: "functions",
-  4: "defines",
-  5: "pages"
+  4: "enums",
+  5: "defines",
+  6: "pages"
 };
 
 var indexSectionLabels =
@@ -24,7 +26,8 @@ var indexSectionLabels =
   1: "Classes",
   2: "Files",
   3: "Functions",
-  4: "Macros",
-  5: "Pages"
+  4: "Enumerations",
+  5: "Macros",
+  6: "Pages"
 };
 
