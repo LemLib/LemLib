@@ -174,7 +174,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     while (pros::competition::is_autonomous() && !lateralPID.settled()) {
         // get the current position
         Pose pose = getPose(true);
-        pose.theta = M_PI/2 - pose.theta;
+        pose.theta = M_PI/2 - std::fmod(pose.theta, 360);
 
         // update error
         if (x == pose.x) pose.x += 0.000001;
@@ -197,7 +197,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         
         angularPower = angularPID.update(diffTheta, 0, log);
 
-        if (pose.distance(lemlib::Pose(x, y)) < 5) {
+        if (pose.distance(lemlib::Pose(x, y)) < 10) {
             close = true;
         }
         if (close) {

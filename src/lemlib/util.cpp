@@ -73,11 +73,14 @@ float lemlib::angleError(float angle1, float angle2, bool radians) {
     float half = radians ? M_PI : 180;
     angle1 = fmod(angle1, max);
     angle2 = fmod(angle2, max);
-    float difference = fmin(fabs(angle1 - angle2), max - fabs(angle1 - angle2));
-    if (difference != 0 && (angle1 < angle2 ? angle1 - angle2 < half : angle1 - angle2 > half)) {
-        difference = -difference;
+    float error = angle1 - angle2;
+    if (error > half) {
+        error -= max;
     }
-    return difference;
+    else if (error < -half) {
+        error += max;
+    }
+    return error;
 }
 
 
