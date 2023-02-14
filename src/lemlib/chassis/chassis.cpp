@@ -15,7 +15,6 @@
 #include "lemlib/pid.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
-#include <iostream>
 
 
 /**
@@ -164,6 +163,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
 {
     Pose pose(0, 0);
     float directTheta, hypot, diffTheta, diffLateral, lateralPower, angularPower, leftPower, rightPower;
+    bool close = false;
 
     // create a new PID controller
     FAPID lateralPID(0, 0, lateralSettings->kP, 0, lateralSettings->kD, "lateralPID");
@@ -197,10 +197,13 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         
         angularPower = angularPID.update(diffTheta, 0, log);
 
-        if (std::fabs(pose.distance(lemlib::Pose(x, y))) < 15) {
+        if (pose.distance(lemlib::Pose(x, y)) < 5) {
+            close = true;
+        }
+        if (close) {
             angularPower = 0;
         } else {
-            lateralPower *= std::fabs(std::cos(degToRad(diffTheta)));
+            lateralPower *= std::fabs(std::cos(diffTheta));
         }
 
         leftPower = lateralPower + angularPower;

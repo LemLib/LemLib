@@ -27,7 +27,7 @@ EXCLUDE_COLD_LIBRARIES:=
 IS_LIBRARY:=1
 # TODO: CHANGE THIS!
 LIBNAME:=LemLib
-VERSION:=0.4.0
+VERSION:=0.4.1
 
 # EXCLUDE_SRC_FROM_LIB= $(SRCDIR)/unpublishedfile.c
 # this line excludes opcontrol.c and similar files
