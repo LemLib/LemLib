@@ -127,8 +127,6 @@ $(document).ready(function(){initNavTree('md_docs_tutorials_3_tuning_and_moving.
 <div class="textblock"><h1><a class="anchor" id="autotoc_md11"></a>
 Introduction</h1>
 <p>Welcome to the third LemLib tutorial! In this tutorial, we will be learning how to tune the PIDs, move the robot, and use odometry.</p>
-<p><br  />
-</p>
 <h1><a class="anchor" id="autotoc_md12"></a>
 Odometry</h1>
 <p>As mentioned in the previous tutorial, LemLib uses odometry to track the position of the robot. However, we need to calibrate it at the start of each match. To do this, we need to call the <code>chassis.calibrate()</code> function in <code>initialize()</code> Below is an example of how to do this: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> initialize() {</div>
@@ -156,21 +154,17 @@ Odometry</h1>
 <div class="line">    chassis.setPose(0, 0, 0); <span class="comment">// X: 0, Y: 0, Heading: 0</span></div>
 <div class="line">    chassis.setPose(5.2, 10.333, 87); <span class="comment">// X: 5.2, Y: 10.333, Heading: 87</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p><br  />
-</p>
-<h1><a class="anchor" id="autotoc_md13"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md13"></a>
 Moving with turnTo and moveTo</h1>
 <p>LemLib has 3 functions for moving the to. We will be covering the first 2 in this tutorial, and the third in the next tutorial.</p>
-<p>The first function is <code>chassis.turnTo()</code>. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="main_8h.html#a2df3d06bc5bced154da27fce393f991f">autonomous</a>() {</div>
+<p>The first function is <code><a class="el" href="classlemlib_1_1_chassis.html#a0dbeb81ace742bf9461260f4b4df87b1" title="Turn the chassis so it is facing the target point.">lemlib::Chassis::turnTo</a></code>. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="main_8h.html#a2df3d06bc5bced154da27fce393f991f">autonomous</a>() {</div>
 <div class="line">    chassis.turnTo(53, 53, 1000); <span class="comment">// turn to the point (53, 53) with a timeout of 1000 ms</span></div>
 <div class="line">    chassis.turnTo(-20, 32, 1500, <span class="keyword">true</span>); <span class="comment">// turn to the point (-20, 32) with the back of the robot facing the point, and a timeout of 1500 ms</span></div>
 <div class="line">    chassis.turnTo(10, 0, 1000, <span class="keyword">false</span>, 50); <span class="comment">// turn to the point (10, 0) with a timeout of 1000 ms, and a maximum speed of 50</span></div>
 <div class="line">}</div>
 <div class="ttc" id="amain_8h_html_a2df3d06bc5bced154da27fce393f991f"><div class="ttname"><a href="main_8h.html#a2df3d06bc5bced154da27fce393f991f">autonomous</a></div><div class="ttdeci">void autonomous(void)</div></div>
 </div><!-- fragment --><p>As you can see, using this function is very easy. The first 2 parameters are the X and Y location the robot should be facing. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is whether the back of the robot should face the point (true) or the front of the robot should face the point (false). It defaults to false if not specified. The fifth parameter is the maximum speed the robot can turn at. If you don't specify a value for this parameter, the robot will turn at full speed.</p>
-<p><br  />
-</p>
-<p>The second function is <code>chassis.moveTo()</code>. This function moves the robot to the specified (x, y) point. It takes 3 or 4 arguments. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="main_8h.html#a2df3d06bc5bced154da27fce393f991f">autonomous</a>() {</div>
+<p>The second function is <code><a class="el" href="classlemlib_1_1_chassis.html#a00edce017c843ba5080f6d7494dc52bd" title="Move the chassis towards the target point.">lemlib::Chassis::moveTo</a></code>. This function moves the robot to the specified (x, y) point. It takes 3 or 4 arguments. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="main_8h.html#a2df3d06bc5bced154da27fce393f991f">autonomous</a>() {</div>
 <div class="line">    chassis.moveTo(53, 53, 1000); <span class="comment">// move to the point (53, 53) with a timeout of 1000 ms</span></div>
 <div class="line">    chassis.moveTo(10, 0, 1000, 50); <span class="comment">// move to the point (10, 0) with a timeout of 1000 ms, and a maximum speed of 50</span></div>
 <div class="line">}</div>
@@ -215,8 +209,6 @@ Tuning the PIDs</h1>
 <li>record kP and kD values</li>
 <li>repeat steps 2-4 until you can't stop the oscillation. At this point, use the last kP and kD values you recorded.</li>
 </ol>
-<p><br  />
-</p>
 <h1><a class="anchor" id="autotoc_md15"></a>
 Optional - Tuning Timeouts</h1>
 <p>You may have noticed that there are 4 more values in the angularController and lateralController structs. These are values for the timeouts. Here is how they work:</p>
@@ -226,8 +218,6 @@ Optional - Tuning Timeouts</h1>
 </ul>
 <p>The units for error in the <code>chassis.moveTo()</code> function are inches, and degrees for the <code>chassis.turnTo()</code> function. The units for time are milliseconds.</p>
 <p>Advanced users may wish to alter these values to decrease the time it takes to execute the next command. However, the default values should be fine for most users.</p>
-<p><br  />
-</p>
 <h1><a class="anchor" id="autotoc_md16"></a>
 Using the Path Generator for Coordinates</h1>
 <p>Another project we have been developing is the <a href="https://sizzinseal.github.io/Path-Gen/">Path Generator</a>. This web app allows you to create a path for the robot to follow using pure pursuit, which will be covered in the next tutorial. For now, we will be using it to view coordinates on the field.</p>

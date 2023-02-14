@@ -3,8 +3,6 @@
 ## Introduction
 Welcome to the third LemLib tutorial! In this tutorial, we will be learning how to tune the PIDs, move the robot, and use odometry.
 
-<br>
-
 ## Odometry
 As mentioned in the previous tutorial, LemLib uses odometry to track the position of the robot. However, we need to calibrate it at the start of each match. To do this, we need to call the `chassis.calibrate()` function in `initialize()` Below is an example of how to do this:
 ```cpp
@@ -44,13 +42,11 @@ void initialize() {
 }
 ```
 
-<br>
-
 ## Moving with turnTo and moveTo
 
 LemLib has 3 functions for moving the to. We will be covering the first 2 in this tutorial, and the third in the next tutorial.
 
-The first function is `chassis.turnTo()`. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it:
+The first function is `lemlib::Chassis::turnTo`. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
     chassis.turnTo(53, 53, 1000); // turn to the point (53, 53) with a timeout of 1000 ms
@@ -61,9 +57,7 @@ void autonomous() {
 
 As you can see, using this function is very easy. The first 2 parameters are the X and Y location the robot should be facing. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is whether the back of the robot should face the point (true) or the front of the robot should face the point (false). It defaults to false if not specified. The fifth parameter is the maximum speed the robot can turn at. If you don't specify a value for this parameter, the robot will turn at full speed.
 
-<br>
-
-The second function is `chassis.moveTo()`. This function moves the robot to the specified (x, y) point. It takes 3 or 4 arguments. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
+The second function is `lemlib::Chassis::moveTo`. This function moves the robot to the specified (x, y) point. It takes 3 or 4 arguments. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
     chassis.moveTo(53, 53, 1000); // move to the point (53, 53) with a timeout of 1000 ms
@@ -121,10 +115,6 @@ Here is the algorithm we will be using to tune these gains:
 4. record kP and kD values
 5. repeat steps 2-4 until you can't stop the oscillation. At this point, use the last kP and kD values you recorded.
 
-
-<br>
-
-
 ## Optional - Tuning Timeouts
 
 You may have noticed that there are 4 more values in the angularController and lateralController structs. These are values for the timeouts. Here is how they work:
@@ -135,10 +125,6 @@ You may have noticed that there are 4 more values in the angularController and l
 The units for error in the `chassis.moveTo()` function are inches, and degrees for the `chassis.turnTo()` function. The units for time are milliseconds.
 
 Advanced users may wish to alter these values to decrease the time it takes to execute the next command. However, the default values should be fine for most users.
-
-
-<br>
-
 
 ## Using the Path Generator for Coordinates
 

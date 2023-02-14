@@ -6,8 +6,6 @@ You have made it to the second tutorial! Now that you have LemLib installed, we 
 
 The chassis has multiple components. LemLib will handle everything for you, but you need to tell it what components you have.
 
-<br>
-
 ## The Drivetrain
 
 A vital component of any robot is the drivetrain. The drivetrain is what allows the robot to move around the field. LemLib needs to know what motors are in the drivetrain. Lets start by setting up the motors.
@@ -29,13 +27,12 @@ pros::MotorGroup right_side_motors({right_front_motor, right_back_motor});
 
 Thats it! Now we have all the motors set up. We will cover how to use them in the last section of this tutorial.
 
-<br>
-
 ## Odometry
 
 A crucial component of a consistent autonomous is position tracking, commonly known as odometry. Odometry allows the robot to know where it is on the field. LemLib has built in odometry, and is compatible with most tracking wheel / inertial sensor combinations. To set up odometry, we need to tell LemLib what sensors we are using. Lets start with the tracking wheels.
 
 Tracking Wheels are unpowered wheels that are used to track the movement of the robot. Below is a photo of a typical tracking wheel:
+
 <img src="../assets/2_setting_up_the_chassis/tracking_wheel.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
 A tracking wheel can rotate freely on a screw joint, and rubber bands pull it down so it makes consistent contact with the field tiles. Tracking wheels can be connected to either an Optical Shaft Encoder or a V5 Rotation Sensor. Both are supported by LemLib. 
@@ -57,7 +54,7 @@ Hold on, how far away from the tracking center is the tracking wheel? Turns out,
 
 Remember, vertical tracking wheels should have a negative offset if on the left of the tracking center, and horizontal tracking wheels should have a negative offset if in front of the tracking center.
 
-Now, we can put all the tracking wheels together into a struct. This struct will be passed to LemLib. Below is an example of how to do this:
+Now, we can put all the tracking wheels together into a struct with `lemlib::OdomSensors_t`. This struct will be passed to the LemLib chassis. Below is an example of how to do this:
 ```cpp
 // left tracking wheel encoder
 pros::ADIEncoder left_enc('A', 'B', true); // ports A and B, reversed
@@ -87,8 +84,6 @@ lemlib::OdomSensors_t sensors {
 
 You don't need all these sensors though. LemLib needs at least 1 vertical tracking wheel and 1 inertial sensor. An inertial sensor is not required if you have 2 tracking wheels in the same orientation however. If you don't have a specific sensor, set it to `nullptr` in the struct.
 
-<br>
-
 ## PIDs
 
 Lemlib uses 2 PIDs to control the motion of the robot (except for pure pursuit). Every chassis will have different constants however, so you will need to tune them. More about that in the next tutorial. For now, just copy and paste the following code into your `main.cpp` file:
@@ -113,8 +108,6 @@ lemlib::ChassisController_t angularController {
 	500 // largeErrorTimeout
 };
 ```
-
-<br>
 
 ## Putting it all together
 
@@ -186,8 +179,6 @@ float track_width = 15.5; // 15.5" track width
 // create the chassis object
 lemlib::Chassis chassis(&left_side_motors, &right_side_motors, track_width, lateralController, angularController, sensors);
 ```
-
-<br>
 
 Thats it! You have now set up the chassis. In the next tutorial, we will learn how to use the chassis to move the robot and how to tune the PIDs.
 

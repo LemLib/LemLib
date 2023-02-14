@@ -4,8 +4,6 @@
 
 Welcome to LemLib! This tutorial will walk you through the basics of LemLib and how to get everything set up.
 
-<br>
-
 ## Installation - Development Environment
 
 LemLib is a [PROS](https://pros.cs.purdue.edu) template, so you can use it with any text editor. However, we recommend using Visual Studio Code, as it has the best support for PROS.
@@ -24,17 +22,27 @@ And finally, we can create a new project. Navigate to the new PROS tab on the le
 
 Now we can install LemLib!
 <br>
-<br>
-
 
 ## Installation - LemLib Template
 
 
-To install LemLib, you need to download its zip file from [here](https://github.com/SizzinSeal/LemLib/releases/download/v0.4.0/LemLib@0.4.0.zip). Next you need to drag the zip file into your pros project folder. Once you have done that, open the pros integrated terminal by selecting the pros icon on the left, and clicking `integrated terminal` 
+To install LemLib, you need to download the `LemLib@ver.zip` from [here](https://github.com/SizzinSeal/LemLib/releases/). Next you need to drag the zip file into your pros project folder. Once you have done that, open the pros integrated terminal by selecting the pros icon on the left, and clicking `Integrated Terminal` 
 <br>
 <img src="../assets/1_getting_started/integrated_terminal.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
 
 
-Next, you need to run the following command in the terminal: `pros c fetch LemLib@0.4.0.zip; pros c apply LemLib@0.4.0`. Finally, you need to put `#include "lemlib/api.hpp"` at the top of your main.cpp file. Now you are ready to start using LemLib!
+Next, you need to run the following command in the terminal:
+
+```bash
+$ pros c fetch LemLib@0.4.0.zip
+$ pros c apply LemLib@0.4.0
+```
+
+Finally, put the following at the top of your main.cpp file:
+```cpp
+#include "lemlib/api.h"
+```
+
+You are now ready to start using LemLib!
 
 [Next Tutorial](2_setting_up_the_chassis.md)

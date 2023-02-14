@@ -12,8 +12,6 @@ Pure Pursuit is a path following algorithm that allows the robot to follow a pat
 
 Tuning Pure Pursuit is very simple. If you want the robot to follow the path more closely, decrease the lookahead distance. If you want the robot to follow the path more loosely, but faster, then increase the lookahead distance. A good starting point is 10 inches, but this will vary depending on each motion.
 
-<br>
-
 ## Creating Paths
 
 We have developed a Path Planner so you can quickly and easily generate paths for your robot to follow. You can find it [here](https://sizzinseal.github.io/Path-Gen/). Just like LemLib, it is [entirely open source](https://github.com/SizzinSeal/Path-Gen), so you can see how it works and even contribute to it.
@@ -30,15 +28,13 @@ Another feature of the Path Generator is the ability to make the robot go faster
 
 As you may have noticed, there are some sliders on the right. Unfortunately, the GIF shown is of a slightly older version of the Path Planner, and some sliders have been removed. Now, the only sliders on the Path Planner are the max speed, max deceleration, and turn speed multiplier. Max speed and max deceleration do exactly what you would expect. The turn speed multiplier determines how fast the robot will move around sharp corners. Higher values will make the robot move faster around corners, and lower values will make the robot move slower around corners.
 
-<br>
-
 ## Files
 
 The Path Generator saves paths as .txt files. You can obtain the file by clicking the "Download Path" button. The file will be saved to your downloads folder. You can upload this file to the Path Generator later on and it will load the path again.
 
 In order for the robot to read the file, we need to put it on a micro SD card. Simply drag the file onto the SD card and it will be copied over. You can then insert the SD card into the robot and it will be able to read the file.
 
-Almost there! Now we just need to tell the robot to follow the path. We can do this through the `chassis.follow()` function. Below is an example of how to use it:
+Almost there! Now we just need to tell the robot to follow the path. We can do this through the `lemlib::Chassis::follow` function. Below is an example of how to use it:
 ```cpp
 void autonomous() {
     // file name: path.txt
@@ -51,8 +47,6 @@ void autonomous() {
 ```
 
 In the above example, the robot reads the path in "path.txt", has a timeout of 2000 milliseconds, and a lookahead distance of 15 inches. After it finishes following the path, it will read the path in "path2.txt" and follow it. The robot will be going backwards this time, so the last parameter is set to true.
-
-<br>
 
 ## Conclusion
 Thats it for the tutorials! I hope they were helpful. If you have any questions, feel free to ask me on Discord (SizzlinSeal#8682). You can also open issues and pull requests on the repos.
