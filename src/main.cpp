@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "pros/misc.h"
 
 // drive motors
 pros::Motor lF(-3); // left front motor. port 3, reversed
@@ -8,6 +9,9 @@ pros::Motor lB(-12); // left back motor. port 12, reversed
 pros::Motor rF(19); // right front motor. port 19
 pros::Motor rM(20); // right middle motor. port 20
 pros::Motor rB(1); // right back motor. port 1
+
+// intake
+pros::Motor intake(2); // intake motor. port 2
 
 // motor groups
 pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
@@ -116,5 +120,29 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	
+	// create a new macro manager
+	lemlib::macro::MacroManager macros;
+
+	// create a new macro
+	// it runs the intake when the Controller L2 button is pressed, and stops it when it is released
+	lemlib::macro::Macro intakeMacro = lemlib::macro::Macro(
+		{pros::E_CONTROLLER_DIGITAL_L1}, // the sequence of buttons to press, in this case, only L2
+		[]() { intake.move_velocity(200); }, // the function to run when the sequence is pressed (starts the intake)
+		[]() { if (!intake.is_stopped()) intake.move_velocity(0); } // the function to run when the sequence is released (stops the intake)
+	);
+
+	// add the macro to the macro manager
+	macros.addMacro(intakeMacro);
+
+	// the main controller
+	pros::Controller controller(pros::E_CONTROLLER_MASTER);
+
+	while (true) {
+		// update the macro manager
+		macros.check(controller);
+
+		// delay the task to prevent hogging the CPU
+		// most devices poll at 10ms intervals, so this is a good value to use
+		pros::delay(10);
+	}
 }

@@ -5,7 +5,7 @@
 * 
 * @return std::initializer_list<pros::controller_digital_e_t> 
 */
-std::initializer_list<pros::controller_digital_e_t> lemlib::macro::ControllerSequence::getSequence() {
+std::initializer_list<pros::controller_digital_e_t> lemlib::ControllerSequence::getSequence() {
     return this->sequence;
 }
 
@@ -15,9 +15,22 @@ std::initializer_list<pros::controller_digital_e_t> lemlib::macro::ControllerSeq
 * @param sequence - the sequence of buttons that will trigger the macro
 * @param callback - the function that will be called when the sequence is pressed
 */
-lemlib::macro::Macro::Macro(lemlib::macro::ControllerSequence sequence, void (*callback)()) {
+lemlib::macro::Macro::Macro(lemlib::ControllerSequence sequence, void (*trigger)(), void (*release)()) {
     this->sequence = sequence;
-    this->callback = callback;
+    this->trigger = trigger;
+    this->release = release;
+}
+
+/**
+* @brief Create a new Macro
+* 
+* @param sequence - the sequence of buttons that will trigger the macro
+* @param trigger - the function that will be called when the sequence is pressed
+*/
+lemlib::macro::Macro::Macro(lemlib::ControllerSequence sequence, /* inline callback function */ void (*trigger)()) {
+    this->sequence = sequence;
+    this->trigger = trigger;
+    this->release = nullptr;
 }
 
 /**
@@ -36,10 +49,12 @@ void lemlib::macro::Macro::check(pros::Controller controller) {
     }
 
     if (fired) {
-        if (!this->isThreaded()) this->callback();
+        if (!this->isThreaded()) this->trigger();
         else {
-            pros::Task task(this->callback);
+            pros::Task task(this->trigger);
         }
+    } else {
+        if (this->release != nullptr) this->release();
     }
 }
 

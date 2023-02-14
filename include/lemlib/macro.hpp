@@ -16,38 +16,37 @@
 #include <iostream>
 
 namespace lemlib {
-    namespace macro {
+    /**
+    * @brief A sequence of controller buttons
+    */
+    class ControllerSequence {
+        public:
+        /**
+            * @brief Create a new ControllerSequence
+            */
+        ControllerSequence() {
+            this->sequence = {};
+        }
 
         /**
-         * @brief A sequence of controller buttons
-         */
-        class ControllerSequence {
-            public:
-            /**
-             * @brief Create a new ControllerSequence
-             */
-            ControllerSequence() {
-                this->sequence = {};
-            }
+            * @brief Create a new ControllerSequence
+            * 
+            * @param std::initializer_list<pros::controller_digital_e_t> sequence - the buttons in the sequence, in order
+            */
+        ControllerSequence(std::initializer_list<pros::controller_digital_e_t> sequence) {
+            this->sequence = sequence;
+        }
 
-            /**
-             * @brief Create a new ControllerSequence
-             * 
-             * @param std::initializer_list<pros::controller_digital_e_t> sequence - the buttons in the sequence, in order
-             */
-            ControllerSequence(std::initializer_list<pros::controller_digital_e_t> sequence) {
-                this->sequence = sequence;
-            }
-
-            /**
-             * @brief Get the sequence of buttons
-             * 
-             * @return std::initializer_list<pros::controller_digital_e_t> 
-             */
-            std::initializer_list<pros::controller_digital_e_t> getSequence();
-            private:
-            std::initializer_list<pros::controller_digital_e_t> sequence;
-        };
+        /**
+            * @brief Get the sequence of buttons
+            * 
+            * @return std::initializer_list<pros::controller_digital_e_t> 
+            */
+        std::initializer_list<pros::controller_digital_e_t> getSequence();
+        private:
+        std::initializer_list<pros::controller_digital_e_t> sequence;
+    };
+    namespace macro {
 
         /**
          * @brief A macro that can be run during teleop
@@ -59,9 +58,18 @@ namespace lemlib {
                  * @brief Create a new Macro
                  * 
                  * @param sequence - the sequence of buttons that will trigger the macro
-                 * @param callback - the function that will be called when the sequence is pressed
+                 * @param trigger - the function that will be called when the sequence is pressed
+                 * @param release - the function that will be called when the sequence is released
                  */
-                Macro(ControllerSequence sequence, /* inline callback function */ void (*callback)());
+                Macro(ControllerSequence sequence, /* inline callback function */ void (*trigger)(), void (*release)());
+
+                /**
+                 * @brief Create a new Macro
+                 * 
+                 * @param sequence - the sequence of buttons that will trigger the macro
+                 * @param trigger - the function that will be called when the sequence is pressed
+                 */
+                 Macro(ControllerSequence sequence, /* inline callback function */ void (*trigger)());
 
                 /**
                 * @brief Check if the sequence is pressed, and run the callback if it is
@@ -90,7 +98,8 @@ namespace lemlib {
             private:
                 ControllerSequence sequence;
                 bool threaded = false; /* to run in a new thread */
-                void (*callback)();
+                void (*trigger)();
+                void (*release)();
         };
 
         class MacroManager {
