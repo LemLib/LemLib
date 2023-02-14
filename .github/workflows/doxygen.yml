@@ -8,4 +8,9 @@ jobs:
     name: Run Doxygen
     runs-on: ubuntu-latest
     steps:
-      - uses: mattnotmitt/doxygen-action@v1.9.5
+      # use mattnotmitt/doxygen-action@v1.9.5 to run doxygen, with default settings
+
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Run Doxygen
+        uses: mattnotmitt/doxygen-action@v1.9.5
