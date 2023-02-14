@@ -99,16 +99,22 @@ std::string getFormattedLevel(lemlib::logger::Level level) {
     switch (level) {
         case lemlib::logger::Level::DEBUG:
             name = "DEBUG";
+            break;
         case lemlib::logger::Level::INFO:
             name = "INFO";
+            break;
         case lemlib::logger::Level::WARN:
             name = "WARN";
+            break;
         case lemlib::logger::Level::ERROR:
             name = "ERROR";
+            break;
         case lemlib::logger::Level::FATAL:
             name = "FATAL";
+            break;
         default:
             name = "UNKNOWN";
+            break;
     }
 
     return getColor(level) + name;
