@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <string>
 namespace lemlib {
 
     static bool debug = false;
@@ -95,45 +96,45 @@ namespace logger {
      * 
      * @param message 
      */
-    void debug(const char* message);
+    void debug(std::string message);
     /**
      * @brief Logs an info message
      * 
      * @param message 
      */
-    void info(const char* message);
+    void info(std::string message);
     /**
      * @brief Logs a warning message
      * 
      * @param message 
      */ 
-    void warn(const char* message);
+    void warn(std::string message);
     /**
      * @brief Logs an error message
      * 
      * @param message
      * @param exception
      */
-    void error(const char* message, const char* exception);
+    void error(std::string message, std::string exception);
     /**
      * @brief Logs an error message
      * 
      * @param message 
      */
-    void error(const char* message);
+    void error(std::string message);
     /**
      * @brief Logs a fatal message
      * 
      * @param message 
      * @param exception 
      */
-    void fatal(const char* message, const char* exception);
+    void fatal(std::string message, std::string* exception);
     /**
      * @brief Logs a fatal message
      * 
      * @param message 
      */
-    void fatal(const char* message);
+    void fatal(std::string message);
 
 }
 }

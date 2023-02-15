@@ -16,3 +16,4 @@
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/macro.hpp"
+#include "lemlib/logger.hpp"
