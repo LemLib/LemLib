@@ -22,27 +22,40 @@ namespace lemlib {
     class ControllerSequence {
         public:
         /**
-            * @brief Create a new ControllerSequence
-            */
+        * @brief Create a new ControllerSequence
+        */
         ControllerSequence() {
             this->sequence = {};
         }
 
         /**
-            * @brief Create a new ControllerSequence
-            * 
-            * @param std::initializer_list<pros::controller_digital_e_t> sequence - the buttons in the sequence, in order
-            */
+        * @brief Create a new ControllerSequence
+        * 
+        * @param std::initializer_list<pros::controller_digital_e_t> sequence - the buttons in the sequence, in order
+        */
         ControllerSequence(std::initializer_list<pros::controller_digital_e_t> sequence) {
+            std::cout << "Creating new ControllerSequence" << std::endl;
+            std::cout << "Sequence size: " << sequence.size() << std::endl;
+
             this->sequence = sequence;
         }
 
         /**
-            * @brief Get the sequence of buttons
-            * 
-            * @return std::initializer_list<pros::controller_digital_e_t> 
-            */
+        * @brief Get the sequence of buttons
+        * 
+        * @return std::initializer_list<pros::controller_digital_e_t> 
+        */
         std::initializer_list<pros::controller_digital_e_t> getSequence();
+        
+        /**
+         * @brief Get the string representation of the sequence
+         *
+         * @param controller - the controller to get the button values from
+         *
+         * @return std::string
+         */
+        std::string toString(pros::Controller controller);
+
         private:
         std::initializer_list<pros::controller_digital_e_t> sequence;
     };
@@ -61,7 +74,7 @@ namespace lemlib {
                  * @param trigger - the function that will be called when the sequence is pressed
                  * @param release - the function that will be called when the sequence is released
                  */
-                Macro(ControllerSequence sequence, /* inline callback function */ void (*trigger)(), void (*release)());
+                Macro(std::initializer_list<pros::controller_digital_e_t>, /* inline callback function */ void (*trigger)(), void (*release)());
 
                 /**
                  * @brief Create a new Macro
@@ -69,7 +82,7 @@ namespace lemlib {
                  * @param sequence - the sequence of buttons that will trigger the macro
                  * @param trigger - the function that will be called when the sequence is pressed
                  */
-                 Macro(ControllerSequence sequence, /* inline callback function */ void (*trigger)());
+                 Macro(std::initializer_list<pros::controller_digital_e_t>, /* inline callback function */ void (*trigger)());
 
                 /**
                 * @brief Check if the sequence is pressed, and run the callback if it is
@@ -95,8 +108,14 @@ namespace lemlib {
                 */
                 bool isThreaded() { return this->threaded; }
 
+                /**
+                 * @brief Get the sequence of buttons
+                 * 
+                 * @return ControllerSequence 
+                 */
+                std::initializer_list<pros::controller_digital_e_t> getSequence() { return this->sequence; }
             private:
-                ControllerSequence sequence;
+                std::initializer_list<pros::controller_digital_e_t> sequence;
                 bool threaded = false; /* to run in a new thread */
                 void (*trigger)();
                 void (*release)();

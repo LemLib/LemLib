@@ -1,4 +1,8 @@
 #include "lemlib/macro.hpp"
+#include "logger.hpp"
+#include "pros/misc.h"
+#include "pros/misc.hpp"
+#include <string>
 
 /**
 * @brief Get the sequence of buttons
@@ -10,12 +14,26 @@ std::initializer_list<pros::controller_digital_e_t> lemlib::ControllerSequence::
 }
 
 /**
+* @brief Get the string representation of the sequence
+*
+* @return std::string
+*/
+std::string lemlib::ControllerSequence::toString(pros::Controller controller) {
+    std::string str = "";
+    for (pros::controller_digital_e_t button : this->sequence) {
+        std::cout << button << std::endl;
+        str += controller.get_digital(button) ? "1" : "0";
+    }
+    return str;
+}
+
+/**
 * @brief Create a new Macro
 * 
 * @param sequence - the sequence of buttons that will trigger the macro
 * @param callback - the function that will be called when the sequence is pressed
 */
-lemlib::macro::Macro::Macro(lemlib::ControllerSequence sequence, void (*trigger)(), void (*release)()) {
+lemlib::macro::Macro::Macro(std::initializer_list<pros::controller_digital_e_t>, void (*trigger)(), void (*release)()) {
     this->sequence = sequence;
     this->trigger = trigger;
     this->release = release;
@@ -27,7 +45,7 @@ lemlib::macro::Macro::Macro(lemlib::ControllerSequence sequence, void (*trigger)
 * @param sequence - the sequence of buttons that will trigger the macro
 * @param trigger - the function that will be called when the sequence is pressed
 */
-lemlib::macro::Macro::Macro(lemlib::ControllerSequence sequence, /* inline callback function */ void (*trigger)()) {
+lemlib::macro::Macro::Macro(std::initializer_list<pros::controller_digital_e_t>, /* inline callback function */ void (*trigger)()) {
     this->sequence = sequence;
     this->trigger = trigger;
     this->release = nullptr;
@@ -41,18 +59,22 @@ lemlib::macro::Macro::Macro(lemlib::ControllerSequence sequence, /* inline callb
 void lemlib::macro::Macro::check(pros::Controller controller) {
     bool fired = true;
     
-    for (pros::controller_digital_e_t button : this->sequence.getSequence()) {
-        if (!controller.get_digital(button)) {
-            fired = false;
-            break;
-        }
+    int i = 0;
+
+    std::cout << this->sequence.size() << std::endl;
+
+    for (pros::controller_digital_e_t button : this->sequence) {
+        std::cout << i << std::endl;        
+
+        if (controller.get_digital(button) == 0) fired = false;
+    
+        i++;
     }
+    lemlib::logger::debug(std::to_string(fired));
 
     if (fired) {
         if (!this->isThreaded()) this->trigger();
-        else {
-            pros::Task task(this->trigger);
-        }
+        else pros::Task task(this->trigger);
     } else {
         if (this->release != nullptr) this->release();
     }
@@ -65,6 +87,8 @@ void lemlib::macro::Macro::check(pros::Controller controller) {
 */
 lemlib::macro::MacroManager::MacroManager(std::initializer_list<Macro> macros) {
     this->macros = macros;
+
+    lemlib::logger::debug("Created MacroManager with " + std::to_string(this->macros.size()) + " macro" + (this->macros.size() == 1 ? "" : "s") + ".");
 }
 
 /**

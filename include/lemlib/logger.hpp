@@ -128,7 +128,7 @@ namespace logger {
      * @param message 
      * @param exception 
      */
-    void fatal(std::string message, std::string* exception);
+    void fatal(std::string message, std::string exception);
     /**
      * @brief Logs a fatal message
      * 

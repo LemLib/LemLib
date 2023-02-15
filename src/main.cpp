@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "lemlib/logger.hpp"
 #include "pros/misc.h"
 
 // drive motors
@@ -120,6 +121,12 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	lemlib::logger::setDebug(true);
+	lemlib::logger::setVerbose(true);
+	lemlib::logger::setLowestLevel(lemlib::logger::Level::DEBUG);
+
+	lemlib::logger::info("Starting opcontrol");
+
 	// create a new macro
 	// it runs the intake when the Controller L2 button is pressed, and stops it when it is released
 	lemlib::macro::Macro intakeMacro = lemlib::macro::Macro(
@@ -134,12 +141,14 @@ void opcontrol() {
 	// the main controller
 	pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
+	lemlib::logger::debug("Controller connected: " + std::to_string(controller.is_connected()));
+
 	while (true) {
 		// update the macro manager
 		macros.check(controller);
 
 		// delay the task to prevent hogging the CPU
 		// most devices poll at 10ms intervals, so this is a good value to use
-		pros::delay(10);
+		pros::delay(500);
 	}
 }
