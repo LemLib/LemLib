@@ -118,7 +118,7 @@ namespace lemlib {
              * @param maxSpeed the maximum speed the robot can turn at. Default is 200
              * @param log whether the chassis should log the turnTo function. false by default
              */
-            void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 200, bool log = false);
+            void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 135, bool log = false);
             /**
              * @brief Move the chassis towards the target point
              *

@@ -206,14 +206,19 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
             lateralPower *= std::fabs(std::cos(diffTheta));
         }
 
+        // cap the speed
+        if (lateralPower > maxSpeed) lateralPower = maxSpeed;
+        else if (lateralPower < -maxSpeed) lateralPower = -maxSpeed;
+
         leftPower = lateralPower + angularPower;
         rightPower = lateralPower - angularPower;
 
-        // cap the speed
-        if (leftPower > maxSpeed) leftPower = maxSpeed;
-        else if (leftPower < -maxSpeed) leftPower = -maxSpeed;
-        if (rightPower > maxSpeed) rightPower = maxSpeed;
-        else if (rightPower < -maxSpeed) rightPower = -maxSpeed;
+        // ratio the speeds to respect the max speed
+        float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+        if (ratio > 1) {
+            leftPower /= ratio;
+            rightPower /= ratio;
+        }
 
         // move the motors
         leftMotorGroup->move(leftPower);
