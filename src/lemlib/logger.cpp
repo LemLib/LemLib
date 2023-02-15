@@ -140,14 +140,11 @@ End of util functions
     * @param message the message
     * @param exception the exception
     */
-void lemlib::logger::log(Level level, const char* message, const char* exception) 
+void lemlib::logger::log(Level level, std::string message, std::string exception) 
 {
     if (!checkLowestLevel(level)) return;
     if (level == Level::DEBUG && !lemlib::debug) return;
     if (level == Level::INFO && !lemlib::verbose) return;
-
-    if (message == nullptr) message = "";
-    if (exception == nullptr) throw std::invalid_argument("exception cannot be null");
 
     std::string messageString = "[LemLib] " + getFormattedLevel(level) +  ": " + message + ": " + exception + RESET_ANSI;
 
@@ -160,13 +157,11 @@ void lemlib::logger::log(Level level, const char* message, const char* exception
     * @param level the level of the message
     * @param message the message
     */
-void lemlib::logger::log(Level level, const char* message) 
+void lemlib::logger::log(Level level, std::string message) 
 {
     if (!checkLowestLevel(level)) return;
     if (level == Level::DEBUG && !lemlib::debug) return;
     if (level == Level::INFO && !lemlib::verbose) return;
-
-    if (message == nullptr) message = "";
 
     std::string messageString = "[LemLib] " + getFormattedLevel(level) +  ": " + message + RESET_ANSI;
 
@@ -178,7 +173,7 @@ void lemlib::logger::log(Level level, const char* message)
     * 
     * @param message 
     */
-void lemlib::logger::debug(const char *message) 
+void lemlib::logger::debug(std::string message) 
 {
     log(Level::DEBUG, message);
 }
@@ -188,7 +183,7 @@ void lemlib::logger::debug(const char *message)
     * 
     * @param message 
     */
-void lemlib::logger::info(const char *message) 
+void lemlib::logger::info(std::string message) 
 {
     log(Level::INFO, message);
 }
@@ -198,7 +193,7 @@ void lemlib::logger::info(const char *message)
     * 
     * @param message 
     */ 
-void lemlib::logger::warn(const char *message) 
+void lemlib::logger::warn(std::string message) 
 {
     log(Level::WARN, message);
 }
@@ -209,7 +204,7 @@ void lemlib::logger::warn(const char *message)
     * @param message
     * @param exception
     */
-void lemlib::logger::error(const char *message, const char *exception) 
+void lemlib::logger::error(std::string message, std::string exception) 
 {
     log(Level::ERROR, message, exception);
 }
@@ -219,7 +214,7 @@ void lemlib::logger::error(const char *message, const char *exception)
     * 
     * @param message 
     */
-void lemlib::logger::error(const char *message) 
+void lemlib::logger::error(std::string message) 
 {
     log(Level::ERROR, message);
 }
@@ -230,7 +225,7 @@ void lemlib::logger::error(const char *message)
     * @param message 
     * @param exception 
     */
-void lemlib::logger::fatal(const char *message, const char *exception) 
+void lemlib::logger::fatal(std::string message, std::string exception) 
 {
     log(Level::FATAL, message, exception);
 }
@@ -240,7 +235,7 @@ void lemlib::logger::fatal(const char *message, const char *exception)
     * 
     * @param message 
     */
-void lemlib::logger::fatal(const char *message) 
+void lemlib::logger::fatal(std::string message) 
 {
     log(Level::FATAL, message);
 }

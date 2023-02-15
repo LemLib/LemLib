@@ -82,14 +82,14 @@ namespace logger {
      * @param message the message
      * @param exception the exception
      */
-    void log(Level level, const char* message, const char* exception);
+    void log(Level level, std::string message, std::string exception);
     /**
      * @brief Logs a message
      * 
      * @param level the level of the message
      * @param message the message
      */
-    void log(Level level, const char* message);
+    void log(Level level, std::string message);
 
     /**
      * @brief Logs a debug message
