@@ -8,24 +8,24 @@ The creation of this template was inspired by [EZ-Template](https://github.com/E
 
 ## License
 
-This project is licensed under the MIT license. Check [LICENSE](https://github.com/SizzinSeal/LemLib/blob/master/LICENSE) for more details.
+This project is licensed under the MIT license. Check [LICENSE](https://github.com/LemLib/LemLib/blob/master/LICENSE) for more details.
 
 ## Features
 - Generic PID class
 - Odometry
 - Angular and Lateral motion PIDs
 - Pure Pursuit
-- [Path Generator](https://github.com/SizzinSeal/Path-Gen) support
+- [Path Generator](https://github.com/LemLib/Path-Gen) support
 
 ## Tutorials
 The tutorials provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to pure pursuit.
- - 1: [Getting Started](https://sizzinseal.github.io/LemLib/html/md_docs_tutorials_1_getting_started.html)
- - 2: [Setting up the Chassis](https://sizzinseal.github.io/LemLib/html/md_docs_tutorials_2_setting_up_the_chassis.html)
- - 3: [Tuning and Moving](https://sizzinseal.github.io/LemLib/html/md_docs_tutorials_3_tuning_and_moving.html)
- - 4: [Pure Pursuit](https://sizzinseal.github.io/LemLib/html/md_docs_tutorials_4_pure_pursuit.html)
+ - 1: [Getting Started](https://lemlib.github.io/LemLib/html/md_docs_tutorials_1_getting_started.html)
+ - 2: [Setting up the Chassis](https://lemlib.github.io/LemLib/html/md_docs_tutorials_2_setting_up_the_chassis.html)
+ - 3: [Tuning and Moving](https://lemlib.github.io/LemLib/html/md_docs_tutorials_3_tuning_and_moving.html)
+ - 4: [Pure Pursuit](https://lemlib.github.io/LemLib/html/md_docs_tutorials_4_pure_pursuit.html)
 
 ## Documentation
-You can check out the Doxygen documentation [here](https://sizzinseal.github.io/LemLib/html/index.html)
+You can check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/html/index.html)
 
 ## Contact Us
-Questions? Commens? Concerns? Feel free to [open an Issue](https://github.com/SizzinSeal/LemLib/issues/new)
+Questions? Commens? Concerns? Feel free to [open an Issue](https://github.com/LemLib/LemLib/issues/new)
