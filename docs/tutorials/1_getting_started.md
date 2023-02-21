@@ -40,7 +40,7 @@ $ pros c apply LemLib@0.4.2
 
 Finally, put the following at the top of your main.cpp file:
 ```cpp
-#include "lemlib/api.h"
+#include "lemlib/api.hpp"
 ```
 
 You are now ready to start using LemLib!
