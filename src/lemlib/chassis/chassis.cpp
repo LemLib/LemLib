@@ -20,21 +20,17 @@
 /**
  * @brief Construct a new Chassis
  * 
- * @param leftMotors motors on the left side of the drivetrain
- * @param rightMotors motors on the right side of the drivetrain
+ * @param drivetrain drivetrain to be used for the chassis
  * @param lateralSettings settings for the lateral controller
  * @param angularSetting settings for the angular controller
- * @param trackWidth track width of the chassis
  * @param sensors sensors to be used for odometry
  */
-lemlib::Chassis::Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float trackWidth, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors)
+lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors)
 {
-    leftMotorGroup = leftMotors;
-    rightMotorGroup = rightMotors;
-    this->trackWidth = trackWidth;
-    this->lateralSettings = new ChassisController_t(lateralSettings);
-    this->angularSettings = new ChassisController_t(angularSettings);
-    odomSensors = new OdomSensors_t(sensors);
+    this->drivetrain = drivetrain;
+    this->lateralSettings = lateralSettings;
+    this->angularSettings = angularSettings;
+    this->odomSensors = sensors;
 }
 
 
@@ -45,15 +41,15 @@ lemlib::Chassis::Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *right
 void lemlib::Chassis::calibrate()
 {
     // calibrate the imu if it exists
-    if (odomSensors->imu != nullptr) odomSensors->imu->reset(true);
+    if (odomSensors.imu != nullptr) odomSensors.imu->reset(true);
     // initialize odom
-    if (odomSensors->vertical1 != nullptr) odomSensors->vertical1->reset();
-    if (odomSensors->vertical2 != nullptr) odomSensors->vertical2->reset();
-    if (odomSensors->horizontal1 != nullptr) odomSensors->horizontal1->reset();
-    if (odomSensors->horizontal2 != nullptr) odomSensors->horizontal2->reset();
-    leftMotorGroup->tare_position();
-    rightMotorGroup->tare_position();
-    lemlib::setSensors(*odomSensors);
+    if (odomSensors.vertical1 != nullptr) odomSensors.vertical1->reset();
+    if (odomSensors.vertical2 != nullptr) odomSensors.vertical2->reset();
+    if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
+    if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
+    drivetrain.leftMotors->tare_position();
+    drivetrain.rightMotors->tare_position();
+    lemlib::setSensors(odomSensors);
     lemlib::init();
 }
 
@@ -116,8 +112,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
     float motorPower;
 
     // create a new PID controller
-    FAPID pid = FAPID(0, 0, angularSettings->kP, 0, angularSettings->kD, "angularPID");
-    pid.setExit(angularSettings->largeError, angularSettings->smallError, angularSettings->largeErrorTimeout, angularSettings->smallErrorTimeout, timeout);
+    FAPID pid = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    pid.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout, angularSettings.smallErrorTimeout, timeout);
 
     // main loop
     while (pros::competition::is_autonomous() && !pid.settled()) {
@@ -141,15 +137,15 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
         else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
 
         // move the drivetrain
-        leftMotorGroup->move(-motorPower);
-        rightMotorGroup->move(motorPower);
+        drivetrain.leftMotors->move(-motorPower);
+        drivetrain.rightMotors->move(motorPower);
 
         pros::delay(10);
     }
 
     // stop the drivetrain
-    leftMotorGroup->move(0);
-    rightMotorGroup->move(0);
+    drivetrain.leftMotors->move(0);
+    drivetrain.rightMotors->move(0);
 }
 
 
@@ -172,9 +168,9 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     bool close = false;
 
     // create a new PID controller
-    FAPID lateralPID(0, 0, lateralSettings->kP, 0, lateralSettings->kD, "lateralPID");
-    FAPID angularPID(0, 0, angularSettings->kP, 0, angularSettings->kD, "angularPID");
-    lateralPID.setExit(lateralSettings->largeError, lateralSettings->smallError, lateralSettings->largeErrorTimeout, lateralSettings->smallErrorTimeout, timeout);
+    FAPID lateralPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "lateralPID");
+    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout, lateralSettings.smallErrorTimeout, timeout);
 
     // main loop
     while (pros::competition::is_autonomous() && !lateralPID.settled()) {
@@ -227,13 +223,13 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         }
 
         // move the motors
-        leftMotorGroup->move(leftPower);
-        rightMotorGroup->move(rightPower);
+        drivetrain.leftMotors->move(leftPower);
+        drivetrain.rightMotors->move(rightPower);
 
         pros::delay(10);
     }
 
     // stop the drivetrain
-    leftMotorGroup->move(0);
-    rightMotorGroup->move(0);
+    drivetrain.leftMotors->move(0);
+    drivetrain.rightMotors->move(0);
 }

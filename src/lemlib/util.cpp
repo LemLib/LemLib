@@ -9,6 +9,7 @@
  * 
  */
 #include <math.h>
+#include <vector>
 #include "lemlib/util.hpp"
 
 
@@ -93,4 +94,38 @@ float lemlib::angleError(float angle1, float angle2, bool radians) {
 float lemlib::sgn(float x)
 {
     if (x < 0) return -1; else return 1;
+}
+
+
+/**
+ * @brief Return the average of a vector of numbers
+ * 
+ * @param values 
+ * @return float 
+ */
+float lemlib::avg(std::vector<float> values)
+{
+    float sum = 0;
+    for (float value : values)
+    {
+        sum += value;
+    }
+    return sum / values.size();
+}
+
+
+/**
+ * @brief Return the average of a vector of numbers
+ * 
+ * @param values 
+ * @return double 
+ */
+double lemlib::avg(std::vector<double> values)
+{
+    double sum = 0;
+    for (double value : values)
+    {
+        sum += value;
+    }
+    return sum / values.size();
 }

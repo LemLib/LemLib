@@ -9,6 +9,11 @@
  * 
  */
 
+// The implementation below is mostly based off of
+// the document written by 5225A (Pilons)
+// Here is a link to the original document
+// http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
+
 #include <math.h>
 #include "pros/rtos.hpp"
 #include "lemlib/util.hpp"
@@ -88,7 +93,7 @@ void lemlib::setPose(lemlib::Pose pose, bool radians)
  */
 void lemlib::update() 
 {
-    // TODO: add extended Kalman filter
+    // TODO: add particle filter
     // get the current sensor values
     float vertical1Raw = 0;
     float vertical2Raw = 0;

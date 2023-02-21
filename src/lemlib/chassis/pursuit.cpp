@@ -245,22 +245,22 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
         targetVel = path.at(closestPoint).theta;
     
         // calculate target left and right velocities
-        float targetLeftVel = targetVel * (2 + curvature*trackWidth) / 2;
-        float targetRightVel = targetVel * (2 - curvature*trackWidth) / 2;
+        float targetLeftVel = targetVel * (2 + curvature*drivetrain.trackWidth) / 2;
+        float targetRightVel = targetVel * (2 - curvature*drivetrain.trackWidth) / 2;
         
         // move the drivetrain
         if (reverse) {
-            leftMotorGroup->move(-targetRightVel);
-            rightMotorGroup->move(-targetLeftVel);
+            drivetrain.leftMotors->move(-targetRightVel);
+            drivetrain.rightMotors->move(-targetLeftVel);
         } else {
-            leftMotorGroup->move(targetLeftVel);
-            rightMotorGroup->move(targetRightVel);
+            drivetrain.leftMotors->move(targetLeftVel);
+            drivetrain.rightMotors->move(targetRightVel);
         }
 
         pros::delay(10);
     }
 
     // stop the robot
-    leftMotorGroup->move(0);
-    rightMotorGroup->move(0);
+    drivetrain.leftMotors->move(0);
+    drivetrain.rightMotors->move(0);
 }

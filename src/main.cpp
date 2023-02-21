@@ -1,6 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 
+
 // drive motors
 pros::Motor lF(-3); // left front motor. port 3, reversed
 pros::Motor lM(-14); // left middle motor. port 14, reversed
@@ -21,14 +22,18 @@ pros::ADIEncoder verticalEnc({7, 'A', 'B'}, false);
 // vertical tracking wheel. 2.75" diameter, 2.2" offset
 lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 2.2);
 
-lemlib::OdomSensors_t sensors {
-	&vertical,
-	nullptr,
-	nullptr,
-	nullptr,
-	&imu
+
+// drivetrain
+lemlib::Drivetrain_t drivetrain {
+	&leftMotors,
+	&rightMotors,
+	10,
+	4,
+	200,
+	pros::E_MOTOR_GEARSET_18
 };
 
+// lateral motion controller
 lemlib::ChassisController_t lateralController {
 	10,
 	30,
@@ -38,6 +43,7 @@ lemlib::ChassisController_t lateralController {
 	500
 };
 
+// angular motion controller
 lemlib::ChassisController_t angularController {
 	2,
 	10,
@@ -47,7 +53,17 @@ lemlib::ChassisController_t angularController {
 	500
 };
 
-lemlib::Chassis chassis(&leftMotors, &rightMotors, 10, lateralController, angularController, sensors);
+// sensors for odometry
+lemlib::OdomSensors_t sensors {
+	&vertical,
+	nullptr,
+	nullptr,
+	nullptr,
+	&imu
+};
+
+
+lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 
 
 
