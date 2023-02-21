@@ -47,6 +47,12 @@ void lemlib::Chassis::calibrate()
     // calibrate the imu if it exists
     if (odomSensors->imu != nullptr) odomSensors->imu->reset(true);
     // initialize odom
+    if (odomSensors->vertical1 != nullptr) odomSensors->vertical1->reset();
+    if (odomSensors->vertical2 != nullptr) odomSensors->vertical2->reset();
+    if (odomSensors->horizontal1 != nullptr) odomSensors->horizontal1->reset();
+    if (odomSensors->horizontal2 != nullptr) odomSensors->horizontal2->reset();
+    leftMotorGroup->tare_position();
+    rightMotorGroup->tare_position();
     lemlib::setSensors(*odomSensors);
     lemlib::init();
 }

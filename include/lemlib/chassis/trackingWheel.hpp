@@ -36,6 +36,11 @@ namespace lemlib {
              */
             TrackingWheel(pros::Rotation *encoder, float diameter, float distance);
             /**
+             * @brief Reset the tracking wheel position to 0
+             * 
+             */
+            void reset();
+            /**
              * @brief Get the distance traveled by the tracking wheel
              *
              * @return float distance traveled in inches
