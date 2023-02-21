@@ -42,6 +42,16 @@ lemlib::TrackingWheel::TrackingWheel(pros::Rotation *encoder, float diameter, fl
 
 
 /**
+ * @brief Reset the tracking wheel position to 0
+ * 
+ */
+void lemlib::TrackingWheel::reset() {
+    if (this->encoder != nullptr) this->encoder->reset();
+    if (this->rotation != nullptr) this->rotation->reset();
+}
+
+
+/**
  * @brief Get the distance traveled by the tracking wheel
  *
  * @return float distance traveled in inches
