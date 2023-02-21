@@ -118,7 +118,7 @@ namespace lemlib {
              * @param maxSpeed the maximum speed the robot can turn at. Default is 200
              * @param log whether the chassis should log the turnTo function. false by default
              */
-            void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 200, bool log = false);
+            void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 127, bool log = false);
             /**
              * @brief Move the chassis towards the target point
              *
@@ -142,7 +142,7 @@ namespace lemlib {
              * @param maxSpeed the maximum speed the robot can move at
              * @param log whether the chassis should log the path on a log file. false by default.
              */
-            void follow(const char *filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 200, bool log = false);
+            void follow(const char *filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127, bool log = false);
         private:
             float trackWidth;
             ChassisController_t *lateralSettings;
