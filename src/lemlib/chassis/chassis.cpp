@@ -49,7 +49,7 @@ void lemlib::Chassis::calibrate()
     if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
     drivetrain.leftMotors->tare_position();
     drivetrain.rightMotors->tare_position();
-    lemlib::setSensors(odomSensors);
+    lemlib::setSensors(odomSensors, drivetrain);
     lemlib::init();
 }
 

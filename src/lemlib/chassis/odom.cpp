@@ -28,6 +28,7 @@ pros::Task *trackingTask = nullptr;
 
 // global variables
 lemlib::OdomSensors_t odomSensors; // the sensors to be used for odometry
+lemlib::Drivetrain_t drive; // the drivetrain to be used for odometry
 lemlib::Pose odomPose(0, 0, 0); // the pose of the robot
 
 float prevVertical = 0;
@@ -42,10 +43,12 @@ float prevImu = 0;
  * @brief Set the sensors to be used for odometry
  * 
  * @param sensors the sensors to be used
+ * @param drivetrain drivetrain to be used
  */
-void lemlib::setSensors(lemlib::OdomSensors_t sensors)
+void lemlib::setSensors(lemlib::OdomSensors_t sensors, lemlib::Drivetrain_t drivetrain)
 {
     odomSensors = sensors;
+    drive = drivetrain;
 }
 
 

@@ -11,6 +11,7 @@
 
 #include <math.h>
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/util.hpp"
 
 
 /**
@@ -42,12 +43,36 @@ lemlib::TrackingWheel::TrackingWheel(pros::Rotation *encoder, float diameter, fl
 
 
 /**
+ * @brief Create a new tracking wheel
+ * 
+ * @param motors the motor group to use
+ * @param diameter diameter of the drivetrain wheels in inches
+ * @param distance half the track width of the drivetrain in inches
+ * @param gearset the cartridge used by the motors
+ * @param rpm theoretical maximum rpm of the drivetrain wheels
+ */
+lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group *motors, float diameter, float distance, pros::motor_gearset_e gearset, float rpm)
+{
+    this->motors = motors;
+    this->diameter = diameter;
+    this->distance = distance;
+    this->gearset = gearset;
+    this->rpm = rpm;
+}
+
+
+/**
  * @brief Reset the tracking wheel position to 0
  * 
  */
 void lemlib::TrackingWheel::reset() {
     if (this->encoder != nullptr) this->encoder->reset();
     if (this->rotation != nullptr) this->rotation->reset();
+    if (this->motors != nullptr) {
+        this->motors->tare_position();
+        this->motors->set_gearing(this->gearset);
+        this->motors->set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
+    }
 }
 
 
@@ -61,6 +86,23 @@ float lemlib::TrackingWheel::getDistanceTraveled() {
         return float(this->encoder->get_value()) * this->diameter * M_PI / 360;
     } else if (this->rotation != nullptr) {
         return float(this->rotation->get_position()) * this->diameter * M_PI / 36000;
+    } else if (this->motors != nullptr) {
+        // get the cartridge rpm
+        float in;
+        switch (this->gearset) {
+            case pros::E_MOTOR_GEARSET_06:
+                in = 600;
+                break;
+            case pros::E_MOTOR_GEARSET_18:
+                in = 200;
+                break;
+            case pros::E_MOTOR_GEARSET_36:
+                in = 100;
+                break;
+            default:
+                return 0;
+        }
+        return lemlib::avg(this->motors->get_positions()) * (diameter * M_PI) * (rpm / in);
     } else {
         return 0;
     }
