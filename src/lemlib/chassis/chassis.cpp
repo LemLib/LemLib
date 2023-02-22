@@ -203,14 +203,8 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         
         angularPower = angularPID.update(diffTheta, 0, log);
 
-        if (pose.distance(lemlib::Pose(x, y)) < 10) {
-            close = true;
-        }
-        if (close) {
-            angularPower = 0;
-        } else {
-            lateralPower *= std::fabs(std::cos(diffTheta));
-        }
+        if (pose.distance(lemlib::Pose(x, y)) < 10) close = true;
+        if (close) angularPower = 0;
 
         // cap the speed
         if (lateralPower > maxSpeed) lateralPower = maxSpeed;
