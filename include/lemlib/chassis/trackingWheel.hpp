@@ -63,6 +63,12 @@ namespace lemlib {
              * @return float offset in inches
              */
             float getOffset();
+            /**
+             * @brief Get the type of tracking wheel
+             * 
+             * @return int - 1 if motor group, 0 otherwise
+             */
+            int getType();
         private:
             float diameter;
             float distance;

@@ -54,6 +54,8 @@ lemlib::TrackingWheel::TrackingWheel(pros::Rotation *encoder, float diameter, fl
 lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group *motors, float diameter, float distance, pros::motor_gearset_e gearset, float rpm)
 {
     this->motors = motors;
+    this->motors->set_gearing(this->gearset);
+    this->motors->set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
     this->diameter = diameter;
     this->distance = distance;
     this->gearset = gearset;
@@ -68,11 +70,7 @@ lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group *motors, float diameter, 
 void lemlib::TrackingWheel::reset() {
     if (this->encoder != nullptr) this->encoder->reset();
     if (this->rotation != nullptr) this->rotation->reset();
-    if (this->motors != nullptr) {
-        this->motors->tare_position();
-        this->motors->set_gearing(this->gearset);
-        this->motors->set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
-    }
+    if (this->motors != nullptr) this->motors->tare_position();
 }
 
 
@@ -116,4 +114,16 @@ float lemlib::TrackingWheel::getDistanceTraveled() {
  */
 float lemlib::TrackingWheel::getOffset() {
     return this->distance;
+}
+
+
+/**
+ * @brief Get the type of tracking wheel
+ * 
+ * @return int - 1 if motor group, 0 otherwise
+ */
+int lemlib::TrackingWheel::getType()
+{
+    if (this->motors != nullptr) return 1;
+    return 0;
 }

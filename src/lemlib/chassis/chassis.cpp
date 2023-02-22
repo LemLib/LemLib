@@ -15,6 +15,7 @@
 #include "lemlib/pid.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
+#include "trackingWheel.hpp"
 
 
 /**
@@ -43,12 +44,12 @@ void lemlib::Chassis::calibrate()
     // calibrate the imu if it exists
     if (odomSensors.imu != nullptr) odomSensors.imu->reset(true);
     // initialize odom
-    if (odomSensors.vertical1 != nullptr) odomSensors.vertical1->reset();
-    if (odomSensors.vertical2 != nullptr) odomSensors.vertical2->reset();
+    if (odomSensors.vertical1 == nullptr) odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -(drivetrain.trackWidth/2), drivetrain.cartridge, drivetrain.rpm);
+    if (odomSensors.vertical2 == nullptr) odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter, drivetrain.trackWidth/2, drivetrain.cartridge, drivetrain.rpm);
+    odomSensors.vertical1->reset();
+    odomSensors.vertical2->reset();
     if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
     if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
-    drivetrain.leftMotors->tare_position();
-    drivetrain.rightMotors->tare_position();
     lemlib::setSensors(odomSensors, drivetrain);
     lemlib::init();
 }
