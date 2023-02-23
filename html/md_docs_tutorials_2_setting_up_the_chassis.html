@@ -140,13 +140,13 @@ The Drivetrain</h1>
 <div class="line">pros::MotorGroup right_side_motors({right_front_motor, right_back_motor});</div>
 </div><!-- fragment --><p>Now that we have the motors set up, we need to tell LemLib about the track width, wheel diameter, and wheel rpm of the drivetrain. Let's start with the track width. The track width is the distance between the left and right drivetrain wheels, as shown in the image below:</p>
 <p><img src="../assets/2_setting_up_the_chassis/track_width.png" alt="" height="400" style="display: block;margin-left: auto;margin-right: auto;" class="inline"/></p>
-<p>We also need to tell LemLib the diameter of the wheels. Wheels typically come in 3 sizes: 2.75&quot;, 3.25&quot;, and 4&quot;. After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to <a href="https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0">this spreadsheet</a> to find the rpm of the wheels.</p>
+<p>We also need to tell LemLib the diameter of the wheels. Wheels typically come in 4 sizes: 2.75&quot;, 3.25&quot;, 4&quot;, and 4.125&quot;. After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to <a href="https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0">this spreadsheet</a> to find the rpm of the wheels.</p>
 <p>Now that we have all the information we need, we can create a <code><a class="el" href="structlemlib_1_1_drivetrain__t.html">lemlib::Drivetrain_t</a></code> struct to pass to LemLib. Below is an example: </p><div class="fragment"><div class="line"><a class="code hl_struct" href="structlemlib_1_1_drivetrain__t.html">lemlib::Drivetrain_t</a> drivetrain {</div>
 <div class="line">    &amp;leftMotors, <span class="comment">// left drivetrain motors</span></div>
 <div class="line">    &amp;rightMotors, <span class="comment">// right drivetrain motors</span></div>
 <div class="line">    10, <span class="comment">// track width</span></div>
 <div class="line">    3.25, <span class="comment">// wheel diameter</span></div>
-<div class="line">    360, <span class="comment">// wheel rpm</span></div>
+<div class="line">    360 <span class="comment">// wheel rpm</span></div>
 <div class="line">};</div>
 <div class="ttc" id="astructlemlib_1_1_drivetrain__t_html"><div class="ttname"><a href="structlemlib_1_1_drivetrain__t.html">lemlib::Drivetrain_t</a></div><div class="ttdef"><b>Definition:</b> chassis.hpp:65</div></div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md7"></a>
@@ -225,11 +225,11 @@ Putting it all together</h1>
 <div class="line">pros::MotorGroup right_side_motors({right_front_motor, right_back_motor});</div>
 <div class="line"> </div>
 <div class="line"><a class="code hl_struct" href="structlemlib_1_1_drivetrain__t.html">lemlib::Drivetrain_t</a> drivetrain {</div>
-<div class="line">    &amp;leftMotors, <span class="comment">// left drivetrain motors</span></div>
-<div class="line">    &amp;rightMotors, <span class="comment">// right drivetrain motors</span></div>
+<div class="line">    &amp;left_side_motors, <span class="comment">// left drivetrain motors</span></div>
+<div class="line">    &amp;right_side_motors, <span class="comment">// right drivetrain motors</span></div>
 <div class="line">    10, <span class="comment">// track width</span></div>
 <div class="line">    3.25, <span class="comment">// wheel diameter</span></div>
-<div class="line">    360, <span class="comment">// wheel rpm</span></div>
+<div class="line">    360 <span class="comment">// wheel rpm</span></div>
 <div class="line">};</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// left tracking wheel encoder</span></div>
