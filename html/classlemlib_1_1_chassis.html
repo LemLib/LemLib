@@ -56,7 +56,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">LemLib
-   &#160;<span id="projectnumber">0.4.2</span>
+   &#160;<span id="projectnumber">0.4.3</span>
    </div>
    <div id="projectbrief">An easy to use and feature-rich PROS template</div>
   </td>
@@ -135,9 +135,9 @@ $(document).ready(function(){initNavTree('classlemlib_1_1_chassis.html',''); ini
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0ebcfb824c4ca106129eb5a1da17417d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1_chassis.html#a0ebcfb824c4ca106129eb5a1da17417d">Chassis</a> (pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float trackWidth, <a class="el" href="structlemlib_1_1_chassis_controller__t.html">ChassisController_t</a> lateralSettings, <a class="el" href="structlemlib_1_1_chassis_controller__t.html">ChassisController_t</a> angularSettings, <a class="el" href="structlemlib_1_1_odom_sensors__t.html">OdomSensors_t</a> sensors)</td></tr>
-<tr class="memdesc:a0ebcfb824c4ca106129eb5a1da17417d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classlemlib_1_1_chassis.html" title="Chassis class.">Chassis</a>.  <br /></td></tr>
-<tr class="separator:a0ebcfb824c4ca106129eb5a1da17417d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a414508346ba6325cd5d8b8ed49c0304b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1_chassis.html#a414508346ba6325cd5d8b8ed49c0304b">Chassis</a> (<a class="el" href="structlemlib_1_1_drivetrain__t.html">Drivetrain_t</a> drivetrain, <a class="el" href="structlemlib_1_1_chassis_controller__t.html">ChassisController_t</a> lateralSettings, <a class="el" href="structlemlib_1_1_chassis_controller__t.html">ChassisController_t</a> angularSettings, <a class="el" href="structlemlib_1_1_odom_sensors__t.html">OdomSensors_t</a> sensors)</td></tr>
+<tr class="memdesc:a414508346ba6325cd5d8b8ed49c0304b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classlemlib_1_1_chassis.html" title="Chassis class.">Chassis</a>.  <br /></td></tr>
+<tr class="separator:a414508346ba6325cd5d8b8ed49c0304b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b23b13453c7fceae8c5b001855f410f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1_chassis.html#a8b23b13453c7fceae8c5b001855f410f">calibrate</a> ()</td></tr>
 <tr class="memdesc:a8b23b13453c7fceae8c5b001855f410f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calibrate the chassis sensors.  <br /></td></tr>
 <tr class="separator:a8b23b13453c7fceae8c5b001855f410f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,21 +150,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1c656cb344f84e428e04f89c0f0fc131"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classlemlib_1_1_pose.html">Pose</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1_chassis.html#a1c656cb344f84e428e04f89c0f0fc131">getPose</a> (bool radians=false)</td></tr>
 <tr class="memdesc:a1c656cb344f84e428e04f89c0f0fc131"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the pose of the chassis.  <br /></td></tr>
 <tr class="separator:a1c656cb344f84e428e04f89c0f0fc131"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0dbeb81ace742bf9461260f4b4df87b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1_chassis.html#a0dbeb81ace742bf9461260f4b4df87b1">turnTo</a> (float x, float y, int timeout, bool reversed=false, float maxSpeed=200, bool log=false)</td></tr>
-<tr class="memdesc:a0dbeb81ace742bf9461260f4b4df87b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn the chassis so it is facing the target point.  <br /></td></tr>
-<tr class="separator:a0dbeb81ace742bf9461260f4b4df87b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6bafad2ac9224ef669eb3a8caec7085"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1_chassis.html#ab6bafad2ac9224ef669eb3a8caec7085">turnTo</a> (float x, float y, int timeout, bool reversed=false, float maxSpeed=127, bool log=false)</td></tr>
+<tr class="memdesc:ab6bafad2ac9224ef669eb3a8caec7085"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn the chassis so it is facing the target point.  <br /></td></tr>
+<tr class="separator:ab6bafad2ac9224ef669eb3a8caec7085"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00edce017c843ba5080f6d7494dc52bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1_chassis.html#a00edce017c843ba5080f6d7494dc52bd">moveTo</a> (float x, float y, int timeout, float maxSpeed=200, bool log=false)</td></tr>
 <tr class="memdesc:a00edce017c843ba5080f6d7494dc52bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the chassis towards the target point.  <br /></td></tr>
 <tr class="separator:a00edce017c843ba5080f6d7494dc52bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98a9702647ddc75501ea0baa46c2d993"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1_chassis.html#a98a9702647ddc75501ea0baa46c2d993">follow</a> (const char *filePath, int timeout, float lookahead, bool reverse=false, float maxSpeed=200, bool log=false)</td></tr>
-<tr class="memdesc:a98a9702647ddc75501ea0baa46c2d993"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the chassis along a path.  <br /></td></tr>
-<tr class="separator:a98a9702647ddc75501ea0baa46c2d993"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1_chassis.html#a7b4fbf2a7a402e046c7c2781ba42af7a">follow</a> (const char *filePath, int timeout, float lookahead, bool reverse=false, float maxSpeed=127, bool log=false)</td></tr>
+<tr class="memdesc:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the chassis along a path.  <br /></td></tr>
+<tr class="separator:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classlemlib_1_1_chassis.html" title="Chassis class.">Chassis</a> class. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0ebcfb824c4ca106129eb5a1da17417d" name="a0ebcfb824c4ca106129eb5a1da17417d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ebcfb824c4ca106129eb5a1da17417d">&#9670;&#160;</a></span>Chassis()</h2>
+<a id="a414508346ba6325cd5d8b8ed49c0304b" name="a414508346ba6325cd5d8b8ed49c0304b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a414508346ba6325cd5d8b8ed49c0304b">&#9670;&#160;</a></span>Chassis()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,20 +172,8 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">lemlib::Chassis::Chassis </td>
           <td>(</td>
-          <td class="paramtype">pros::Motor_Group *&#160;</td>
-          <td class="paramname"><em>leftMotors</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">pros::Motor_Group *&#160;</td>
-          <td class="paramname"><em>rightMotors</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>trackWidth</em>, </td>
+          <td class="paramtype"><a class="el" href="structlemlib_1_1_drivetrain__t.html">Drivetrain_t</a>&#160;</td>
+          <td class="paramname"><em>drivetrain</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -216,22 +204,18 @@ Public Member Functions</h2></td></tr>
 <p>Construct a new <a class="el" href="classlemlib_1_1_chassis.html" title="Chassis class.">Chassis</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">leftMotors</td><td>motors on the left side of the drivetrain </td></tr>
-    <tr><td class="paramname">rightMotors</td><td>motors on the right side of the drivetrain </td></tr>
+    <tr><td class="paramname">drivetrain</td><td>drivetrain to be used for the chassis </td></tr>
     <tr><td class="paramname">lateralSettings</td><td>settings for the lateral controller </td></tr>
     <tr><td class="paramname">angularSetting</td><td>settings for the angular controller </td></tr>
-    <tr><td class="paramname">trackWidth</td><td>track width of the chassis </td></tr>
     <tr><td class="paramname">sensors</td><td>sensors to be used for odometry</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">leftMotors</td><td>motors on the left side of the drivetrain </td></tr>
-    <tr><td class="paramname">rightMotors</td><td>motors on the right side of the drivetrain </td></tr>
+    <tr><td class="paramname">drivetrain</td><td>drivetrain to be used for the chassis </td></tr>
     <tr><td class="paramname">lateralSettings</td><td>settings for the lateral controller </td></tr>
     <tr><td class="paramname">angularSetting</td><td>settings for the angular controller </td></tr>
-    <tr><td class="paramname">trackWidth</td><td>track width of the chassis </td></tr>
     <tr><td class="paramname">sensors</td><td>sensors to be used for odometry </td></tr>
   </table>
   </dd>
@@ -259,8 +243,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a98a9702647ddc75501ea0baa46c2d993" name="a98a9702647ddc75501ea0baa46c2d993"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98a9702647ddc75501ea0baa46c2d993">&#9670;&#160;</a></span>follow()</h2>
+<a id="a7b4fbf2a7a402e046c7c2781ba42af7a" name="a7b4fbf2a7a402e046c7c2781ba42af7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b4fbf2a7a402e046c7c2781ba42af7a">&#9670;&#160;</a></span>follow()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -293,7 +277,7 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>maxSpeed</em> = <code>200</code>, </td>
+          <td class="paramname"><em>maxSpeed</em> = <code>127</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -546,8 +530,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a0dbeb81ace742bf9461260f4b4df87b1" name="a0dbeb81ace742bf9461260f4b4df87b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0dbeb81ace742bf9461260f4b4df87b1">&#9670;&#160;</a></span>turnTo()</h2>
+<a id="ab6bafad2ac9224ef669eb3a8caec7085" name="ab6bafad2ac9224ef669eb3a8caec7085"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6bafad2ac9224ef669eb3a8caec7085">&#9670;&#160;</a></span>turnTo()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -580,7 +564,7 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>maxSpeed</em> = <code>200</code>, </td>
+          <td class="paramname"><em>maxSpeed</em> = <code>127</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

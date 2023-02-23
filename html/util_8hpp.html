@@ -56,7 +56,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">LemLib
-   &#160;<span id="projectnumber">0.4.2</span>
+   &#160;<span id="projectnumber">0.4.3</span>
    </div>
    <div id="projectbrief">An easy to use and feature-rich PROS template</div>
   </td>
@@ -129,7 +129,8 @@ $(document).ready(function(){initNavTree('util_8hpp.html',''); initResizable(); 
 
 <p>Utility functions declarations.  
 <a href="#details">More...</a></p>
-
+<div class="textblock"><code>#include &lt;vector&gt;</code><br />
+</div>
 <p><a href="util_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -149,6 +150,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a818648aded7a132cefe8e2883b212a3f"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8hpp.html#a818648aded7a132cefe8e2883b212a3f">lemlib::sgn</a> (float x)</td></tr>
 <tr class="memdesc:a818648aded7a132cefe8e2883b212a3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the sign of a number.  <br /></td></tr>
 <tr class="separator:a818648aded7a132cefe8e2883b212a3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a121a30bad5b269e43d64aaf9b81e3242"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8hpp.html#a121a30bad5b269e43d64aaf9b81e3242">lemlib::avg</a> (std::vector&lt; float &gt; values)</td></tr>
+<tr class="memdesc:a121a30bad5b269e43d64aaf9b81e3242"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the average of a vector of numbers.  <br /></td></tr>
+<tr class="separator:a121a30bad5b269e43d64aaf9b81e3242"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32521fabc5207381d09a6342ca78e565"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8hpp.html#a32521fabc5207381d09a6342ca78e565">lemlib::avg</a> (std::vector&lt; double &gt; values)</td></tr>
+<tr class="memdesc:a32521fabc5207381d09a6342ca78e565"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the average of a vector of numbers.  <br /></td></tr>
+<tr class="separator:a32521fabc5207381d09a6342ca78e565"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Utility functions declarations. </p>
@@ -208,6 +215,74 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>float wrapped angle </dd></dl>
+
+</div>
+</div>
+<a id="a32521fabc5207381d09a6342ca78e565" name="a32521fabc5207381d09a6342ca78e565"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32521fabc5207381d09a6342ca78e565">&#9670;&#160;</a></span>avg() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double lemlib::avg </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; double &gt;&#160;</td>
+          <td class="paramname"><em>values</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the average of a vector of numbers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">values</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">values</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
+
+</div>
+</div>
+<a id="a121a30bad5b269e43d64aaf9b81e3242" name="a121a30bad5b269e43d64aaf9b81e3242"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a121a30bad5b269e43d64aaf9b81e3242">&#9670;&#160;</a></span>avg() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float lemlib::avg </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; float &gt;&#160;</td>
+          <td class="paramname"><em>values</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the average of a vector of numbers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">values</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>float</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">values</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>float </dd></dl>
 
 </div>
 </div>

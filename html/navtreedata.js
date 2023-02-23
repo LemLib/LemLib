@@ -28,6 +28,8 @@ var NAVTREE =
     [ "License", "index.html#autotoc_md24", null ],
     [ "Features", "index.html#autotoc_md25", null ],
     [ "Tutorials", "index.html#autotoc_md26", null ],
+    [ "Documentation", "index.html#autotoc_md27", null ],
+    [ "Contact Us", "index.html#autotoc_md28", null ],
     [ "01 - Getting Started", "md_docs_tutorials_1_getting_started.html", [
       [ "Introduction", "md_docs_tutorials_1_getting_started.html#autotoc_md1", null ],
       [ "Installation - Development Environment", "md_docs_tutorials_1_getting_started.html#autotoc_md2", null ],

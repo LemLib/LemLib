@@ -56,7 +56,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">LemLib
-   &#160;<span id="projectnumber">0.4.2</span>
+   &#160;<span id="projectnumber">0.4.3</span>
    </div>
    <div id="projectbrief">An easy to use and feature-rich PROS template</div>
   </td>
@@ -157,7 +157,7 @@ Odometry</h1>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md13"></a>
 Moving with turnTo and moveTo</h1>
 <p>LemLib has 3 functions for moving the to. We will be covering the first 2 in this tutorial, and the third in the next tutorial.</p>
-<p>The first function is <code><a class="el" href="classlemlib_1_1_chassis.html#a0dbeb81ace742bf9461260f4b4df87b1" title="Turn the chassis so it is facing the target point.">lemlib::Chassis::turnTo</a></code>. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="main_8h.html#a2df3d06bc5bced154da27fce393f991f">autonomous</a>() {</div>
+<p>The first function is <code><a class="el" href="classlemlib_1_1_chassis.html#ab6bafad2ac9224ef669eb3a8caec7085" title="Turn the chassis so it is facing the target point.">lemlib::Chassis::turnTo</a></code>. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="main_8h.html#a2df3d06bc5bced154da27fce393f991f">autonomous</a>() {</div>
 <div class="line">    chassis.turnTo(53, 53, 1000); <span class="comment">// turn to the point (53, 53) with a timeout of 1000 ms</span></div>
 <div class="line">    chassis.turnTo(-20, 32, 1500, <span class="keyword">true</span>); <span class="comment">// turn to the point (-20, 32) with the back of the robot facing the point, and a timeout of 1500 ms</span></div>
 <div class="line">    chassis.turnTo(10, 0, 1000, <span class="keyword">false</span>, 50); <span class="comment">// turn to the point (10, 0) with a timeout of 1000 ms, and a maximum speed of 50</span></div>
@@ -190,6 +190,7 @@ Tuning the PIDs</h1>
 <li>record kP and kD values</li>
 <li>repeat steps 2-4 until you can't stop the oscillation. At this point, use the last kP and kD values you recorded.</li>
 </ol>
+<p>After this, you need to tune the slew rate. This controls the maximum acceleration of the chassis in order to prevent tipping. To tune it, simply increase it until the robot starts tipping too much. Higher values make the robot accelerate faster, and slower values make the robot accelerate slower.</p>
 <p><br  />
 </p>
 <p>The process for the angular PID is very similar. Here is a reminder of what the angular PID looks like: </p><div class="fragment"><div class="line"><span class="comment">// turn PID</span></div>

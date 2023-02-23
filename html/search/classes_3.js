@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['pose_0',['Pose',['../classlemlib_1_1_pose.html',1,'lemlib']]]
+  ['odomsensors_5ft_0',['OdomSensors_t',['../structlemlib_1_1_odom_sensors__t.html',1,'lemlib']]]
 ];

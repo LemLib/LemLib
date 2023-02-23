@@ -56,7 +56,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">LemLib
-   &#160;<span id="projectnumber">0.4.2</span>
+   &#160;<span id="projectnumber">0.4.3</span>
    </div>
    <div id="projectbrief">An easy to use and feature-rich PROS template</div>
   </td>
@@ -132,19 +132,21 @@ $(document).ready(function(){initNavTree('odom_8hpp_source.html',''); initResiza
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span>lemlib {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="odom_8hpp.html#a2efcc2a7d71ea38bc9e3adefc353765c">setSensors</a>(OdomSensors_t sensors);</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    Pose <a class="code hl_function" href="odom_8hpp.html#afad964fb583f3223fd072b0f6f32f094">getPose</a>(<span class="keywordtype">bool</span> radians = <span class="keyword">false</span>);</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="odom_8hpp.html#a6ccbbb9661558d512bd69036312180c3">setPose</a>(Pose pose, <span class="keywordtype">bool</span> radians = <span class="keyword">false</span>);</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="odom_8hpp.html#a1425503c67714fa381536046e5d74028">update</a>();</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="odom_8hpp.html#a43274d1be6f774aa8c894ffa0013aedc">init</a>();</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>}</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="odom_8hpp.html#a49aaa967297fc10bf10c593c524abc7d">setSensors</a>(<a class="code hl_struct" href="structlemlib_1_1_odom_sensors__t.html">lemlib::OdomSensors_t</a> sensors, <a class="code hl_struct" href="structlemlib_1_1_drivetrain__t.html">lemlib::Drivetrain_t</a> drivetrain);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    Pose <a class="code hl_function" href="odom_8hpp.html#afad964fb583f3223fd072b0f6f32f094">getPose</a>(<span class="keywordtype">bool</span> radians = <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="odom_8hpp.html#a6ccbbb9661558d512bd69036312180c3">setPose</a>(Pose pose, <span class="keywordtype">bool</span> radians = <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="odom_8hpp.html#a1425503c67714fa381536046e5d74028">update</a>();</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="odom_8hpp.html#a43274d1be6f774aa8c894ffa0013aedc">init</a>();</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
 <div class="ttc" id="achassis_8hpp_html"><div class="ttname"><a href="chassis_8hpp.html">chassis.hpp</a></div><div class="ttdoc">Chassis class declarations.</div></div>
-<div class="ttc" id="aodom_8hpp_html_a1425503c67714fa381536046e5d74028"><div class="ttname"><a href="odom_8hpp.html#a1425503c67714fa381536046e5d74028">lemlib::update</a></div><div class="ttdeci">void update()</div><div class="ttdoc">Update the pose of the robot.</div><div class="ttdef"><b>Definition:</b> odom.cpp:89</div></div>
-<div class="ttc" id="aodom_8hpp_html_a2efcc2a7d71ea38bc9e3adefc353765c"><div class="ttname"><a href="odom_8hpp.html#a2efcc2a7d71ea38bc9e3adefc353765c">lemlib::setSensors</a></div><div class="ttdeci">void setSensors(OdomSensors_t sensors)</div><div class="ttdoc">Set the sensors to be used for odometry.</div><div class="ttdef"><b>Definition:</b> odom.cpp:41</div></div>
-<div class="ttc" id="aodom_8hpp_html_a43274d1be6f774aa8c894ffa0013aedc"><div class="ttname"><a href="odom_8hpp.html#a43274d1be6f774aa8c894ffa0013aedc">lemlib::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialize the odometry system.</div><div class="ttdef"><b>Definition:</b> odom.cpp:174</div></div>
-<div class="ttc" id="aodom_8hpp_html_a6ccbbb9661558d512bd69036312180c3"><div class="ttname"><a href="odom_8hpp.html#a6ccbbb9661558d512bd69036312180c3">lemlib::setPose</a></div><div class="ttdeci">void setPose(Pose pose, bool radians=false)</div><div class="ttdoc">Set the Pose of the robot.</div><div class="ttdef"><b>Definition:</b> odom.cpp:72</div></div>
-<div class="ttc" id="aodom_8hpp_html_afad964fb583f3223fd072b0f6f32f094"><div class="ttname"><a href="odom_8hpp.html#afad964fb583f3223fd072b0f6f32f094">lemlib::getPose</a></div><div class="ttdeci">Pose getPose(bool radians=false)</div><div class="ttdoc">Get the pose of the robot.</div><div class="ttdef"><b>Definition:</b> odom.cpp:53</div></div>
+<div class="ttc" id="aodom_8hpp_html_a1425503c67714fa381536046e5d74028"><div class="ttname"><a href="odom_8hpp.html#a1425503c67714fa381536046e5d74028">lemlib::update</a></div><div class="ttdeci">void update()</div><div class="ttdoc">Update the pose of the robot.</div><div class="ttdef"><b>Definition:</b> odom.cpp:97</div></div>
+<div class="ttc" id="aodom_8hpp_html_a43274d1be6f774aa8c894ffa0013aedc"><div class="ttname"><a href="odom_8hpp.html#a43274d1be6f774aa8c894ffa0013aedc">lemlib::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialize the odometry system.</div><div class="ttdef"><b>Definition:</b> odom.cpp:194</div></div>
+<div class="ttc" id="aodom_8hpp_html_a49aaa967297fc10bf10c593c524abc7d"><div class="ttname"><a href="odom_8hpp.html#a49aaa967297fc10bf10c593c524abc7d">lemlib::setSensors</a></div><div class="ttdeci">void setSensors(lemlib::OdomSensors_t sensors, lemlib::Drivetrain_t drivetrain)</div><div class="ttdoc">Set the sensors to be used for odometry.</div><div class="ttdef"><b>Definition:</b> odom.cpp:48</div></div>
+<div class="ttc" id="aodom_8hpp_html_a6ccbbb9661558d512bd69036312180c3"><div class="ttname"><a href="odom_8hpp.html#a6ccbbb9661558d512bd69036312180c3">lemlib::setPose</a></div><div class="ttdeci">void setPose(Pose pose, bool radians=false)</div><div class="ttdoc">Set the Pose of the robot.</div><div class="ttdef"><b>Definition:</b> odom.cpp:80</div></div>
+<div class="ttc" id="aodom_8hpp_html_afad964fb583f3223fd072b0f6f32f094"><div class="ttname"><a href="odom_8hpp.html#afad964fb583f3223fd072b0f6f32f094">lemlib::getPose</a></div><div class="ttdeci">Pose getPose(bool radians=false)</div><div class="ttdoc">Get the pose of the robot.</div><div class="ttdef"><b>Definition:</b> odom.cpp:61</div></div>
 <div class="ttc" id="apose_8hpp_html"><div class="ttname"><a href="pose_8hpp.html">pose.hpp</a></div><div class="ttdoc">Pose class declarations.</div></div>
+<div class="ttc" id="astructlemlib_1_1_drivetrain__t_html"><div class="ttname"><a href="structlemlib_1_1_drivetrain__t.html">lemlib::Drivetrain_t</a></div><div class="ttdef"><b>Definition:</b> chassis.hpp:65</div></div>
+<div class="ttc" id="astructlemlib_1_1_odom_sensors__t_html"><div class="ttname"><a href="structlemlib_1_1_odom_sensors__t.html">lemlib::OdomSensors_t</a></div><div class="ttdoc">Struct containing all the sensors used for odometry.</div><div class="ttdef"><b>Definition:</b> chassis.hpp:33</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.6-->

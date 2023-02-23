@@ -56,7 +56,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">LemLib
-   &#160;<span id="projectnumber">0.4.2</span>
+   &#160;<span id="projectnumber">0.4.3</span>
    </div>
    <div id="projectbrief">An easy to use and feature-rich PROS template</div>
   </td>
@@ -136,9 +136,9 @@ $(document).ready(function(){initNavTree('odom_8hpp.html',''); initResizable(); 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a2efcc2a7d71ea38bc9e3adefc353765c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="odom_8hpp.html#a2efcc2a7d71ea38bc9e3adefc353765c">lemlib::setSensors</a> (OdomSensors_t sensors)</td></tr>
-<tr class="memdesc:a2efcc2a7d71ea38bc9e3adefc353765c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the sensors to be used for odometry.  <br /></td></tr>
-<tr class="separator:a2efcc2a7d71ea38bc9e3adefc353765c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49aaa967297fc10bf10c593c524abc7d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="odom_8hpp.html#a49aaa967297fc10bf10c593c524abc7d">lemlib::setSensors</a> (<a class="el" href="structlemlib_1_1_odom_sensors__t.html">lemlib::OdomSensors_t</a> sensors, <a class="el" href="structlemlib_1_1_drivetrain__t.html">lemlib::Drivetrain_t</a> drivetrain)</td></tr>
+<tr class="memdesc:a49aaa967297fc10bf10c593c524abc7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the sensors to be used for odometry.  <br /></td></tr>
+<tr class="separator:a49aaa967297fc10bf10c593c524abc7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afad964fb583f3223fd072b0f6f32f094"><td class="memItemLeft" align="right" valign="top">Pose&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="odom_8hpp.html#afad964fb583f3223fd072b0f6f32f094">lemlib::getPose</a> (bool radians=false)</td></tr>
 <tr class="memdesc:afad964fb583f3223fd072b0f6f32f094"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the pose of the robot.  <br /></td></tr>
 <tr class="separator:afad964fb583f3223fd072b0f6f32f094"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -256,8 +256,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a2efcc2a7d71ea38bc9e3adefc353765c" name="a2efcc2a7d71ea38bc9e3adefc353765c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2efcc2a7d71ea38bc9e3adefc353765c">&#9670;&#160;</a></span>setSensors()</h2>
+<a id="a49aaa967297fc10bf10c593c524abc7d" name="a49aaa967297fc10bf10c593c524abc7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49aaa967297fc10bf10c593c524abc7d">&#9670;&#160;</a></span>setSensors()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -266,8 +266,18 @@ Functions</h2></td></tr>
           <td class="memname">void lemlib::setSensors </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structlemlib_1_1_odom_sensors__t.html">lemlib::OdomSensors_t</a>&#160;</td>
-          <td class="paramname"><em>sensors</em></td><td>)</td>
+          <td class="paramname"><em>sensors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="structlemlib_1_1_drivetrain__t.html">lemlib::Drivetrain_t</a>&#160;</td>
+          <td class="paramname"><em>drivetrain</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -275,13 +285,15 @@ Functions</h2></td></tr>
 <p>Set the sensors to be used for odometry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sensors</td><td>the sensors to be used</td></tr>
+    <tr><td class="paramname">sensors</td><td>the sensors to be used </td></tr>
+    <tr><td class="paramname">drivetrain</td><td>drivetrain to be used</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sensors</td><td>the sensors to be used </td></tr>
+    <tr><td class="paramname">drivetrain</td><td>drivetrain to be used </td></tr>
   </table>
   </dd>
 </dl>
