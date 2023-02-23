@@ -216,6 +216,8 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
     lastLookahead.theta = 0;
     double curvature;
     float targetVel;
+    float prevLeftVel = 0;
+    float prevRightVel = 0;
     int closestPoint;
     float leftInput = 0;
     float rightInput = 0;
@@ -247,6 +249,9 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
         // calculate target left and right velocities
         float targetLeftVel = targetVel * (2 + curvature*drivetrain.trackWidth) / 2;
         float targetRightVel = targetVel * (2 - curvature*drivetrain.trackWidth) / 2;
+
+        prevLeftVel = targetLeftVel;
+        prevRightVel = targetRightVel;
         
         // move the drivetrain
         if (reverse) {

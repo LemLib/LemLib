@@ -92,6 +92,8 @@ The first 2 parameters are the kP and kD gains. These are the ones we will be fo
 4. record kP and kD values
 5. repeat steps 2-4 until you can't stop the oscillation. At this point, use the last kP and kD values you recorded.
 
+After this, you need to tune the slew rate. This controls the maximum acceleration of the chassis in order to prevent tipping. To tune it, simply increase it until the robot starts tipping too much. Higher values make the robot accelerate faster, and slower values make the robot accelerate slower. 
+
 <br>
 
 The process for the angular PID is very similar. Here is a reminder of what the angular PID looks like:

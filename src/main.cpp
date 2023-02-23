@@ -39,7 +39,8 @@ lemlib::ChassisController_t lateralController {
 	1,
 	100,
 	3,
-	500
+	500,
+	1
 };
 
 // angular motion controller
@@ -49,7 +50,8 @@ lemlib::ChassisController_t angularController {
 	1,
 	100,
 	3,
-	500
+	500,
+	1
 };
 
 // sensors for odometry
@@ -58,26 +60,11 @@ lemlib::OdomSensors_t sensors {
 	nullptr,
 	nullptr,
 	nullptr,
-	nullptr
+	&imu
 };
 
 
 lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
-
-
-
-void tester()
-{
-	pros::lcd::initialize();
-	while (true) {
-		lemlib::Pose pose = chassis.getPose();
-		pros::lcd::print(0, "x: %f", pose.x);
-		pros::lcd::print(1, "y: %f", pose.y);
-		pros::lcd::print(2, "theta: %f", pose.theta);
-		pros::delay(10);
-	}
-}
-
 
 
 /**
@@ -88,9 +75,7 @@ void tester()
  */
 void initialize() {
 	// calibrate sensors
-	chassis.calibrate();
-	tester();
-}
+	chassis.calibrate();}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -122,14 +107,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	// set the position of the chassis
-	chassis.setPose(10, 10, 90);
-	// turn to face point (53, 53) and move to it
-	chassis.turnTo(53, 53, 1000);
-	// move to point (20, 20)
-	chassis.moveTo(20, 20, 2000);
-	// use pure pursuit to follow a path
-	chassis.follow("path.txt", 1000, 15);
+	
 }
 
 /**
@@ -146,5 +124,5 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	
+	chassis.moveTo(20, 20, 4000);
 }

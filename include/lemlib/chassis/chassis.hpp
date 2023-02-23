@@ -59,6 +59,7 @@ namespace lemlib {
         float smallErrorTimeout;
         float largeError;
         float largeErrorTimeout;
+        float slew;
     } ChassisController_t;
 
     typedef struct {

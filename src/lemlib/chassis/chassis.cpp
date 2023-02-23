@@ -165,7 +165,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log)
 {
     Pose pose(0, 0);
-    float directTheta, hypot, diffTheta, diffLateral, lateralPower, angularPower, leftPower, rightPower;
+    float directTheta, hypot, diffTheta, diffLateral, lateralPower, prevLateralPower, angularPower, leftPower, rightPower;
+    prevLateralPower = 0;
     bool close = false;
 
     // create a new PID controller
@@ -174,7 +175,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout, lateralSettings.smallErrorTimeout, timeout);
 
     // main loop
-    while (pros::competition::is_autonomous() && !lateralPID.settled()) {
+    while (!lateralPID.settled() && pros::competition::is_autonomous()) {
         // get the current position
         Pose pose = getPose(true);
         pose.theta = M_PI/2 - std::fmod(pose.theta, 360);
@@ -200,12 +201,20 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         
         angularPower = angularPID.update(diffTheta, 0, log);
 
-        if (pose.distance(lemlib::Pose(x, y)) < 10) close = true;
+        if (pose.distance(lemlib::Pose(x, y)) < 5) {
+            close = true;
+            maxSpeed = prevLateralPower;
+        }
         if (close) angularPower = 0;
 
         // cap the speed
         if (lateralPower > maxSpeed) lateralPower = maxSpeed;
         else if (lateralPower < -maxSpeed) lateralPower = -maxSpeed;
+
+        // limit acceleration
+        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
+
+        prevLateralPower = lateralPower;
 
         leftPower = lateralPower + angularPower;
         rightPower = lateralPower - angularPower;
