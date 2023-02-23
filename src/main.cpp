@@ -1,13 +1,14 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 
+
 // drive motors
-pros::Motor lF(-3); // left front motor. port 3, reversed
-pros::Motor lM(-14); // left middle motor. port 14, reversed
-pros::Motor lB(-12); // left back motor. port 12, reversed
-pros::Motor rF(19); // right front motor. port 19
-pros::Motor rM(20); // right middle motor. port 20
-pros::Motor rB(1); // right back motor. port 1
+pros::Motor lF(-3, pros::E_MOTOR_GEARSET_06); // left front motor. port 3, reversed
+pros::Motor lM(-14, pros::E_MOTOR_GEARSET_06); // left middle motor. port 14, reversed
+pros::Motor lB(-12, pros::E_MOTOR_GEARSET_06); // left back motor. port 12, reversed
+pros::Motor rF(19, pros::E_MOTOR_GEARSET_06); // right front motor. port 19
+pros::Motor rM(20, pros::E_MOTOR_GEARSET_06); // right middle motor. port 20
+pros::Motor rB(1, pros::E_MOTOR_GEARSET_06); // right back motor. port 1
 
 // motor groups
 pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
@@ -17,18 +18,21 @@ pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 pros::Imu imu(6);
 
 // tracking wheels
-pros::ADIEncoder verticalEnc({7, 'A', 'B'}, false);
+pros::ADIEncoder verticalEnc('A', 'B', false);
 // vertical tracking wheel. 2.75" diameter, 2.2" offset
 lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 2.2);
 
-lemlib::OdomSensors_t sensors {
-	&vertical,
-	nullptr,
-	nullptr,
-	nullptr,
-	&imu
+
+// drivetrain
+lemlib::Drivetrain_t drivetrain {
+	&leftMotors,
+	&rightMotors,
+	10,
+	3.25,
+	360,
 };
 
+// lateral motion controller
 lemlib::ChassisController_t lateralController {
 	10,
 	30,
@@ -38,6 +42,7 @@ lemlib::ChassisController_t lateralController {
 	500
 };
 
+// angular motion controller
 lemlib::ChassisController_t angularController {
 	2,
 	10,
@@ -47,7 +52,31 @@ lemlib::ChassisController_t angularController {
 	500
 };
 
-lemlib::Chassis chassis(&leftMotors, &rightMotors, 10, lateralController, angularController, sensors);
+// sensors for odometry
+lemlib::OdomSensors_t sensors {
+	&vertical,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr
+};
+
+
+lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
+
+
+
+void tester()
+{
+	pros::lcd::initialize();
+	while (true) {
+		lemlib::Pose pose = chassis.getPose();
+		pros::lcd::print(0, "x: %f", pose.x);
+		pros::lcd::print(1, "y: %f", pose.y);
+		pros::lcd::print(2, "theta: %f", pose.theta);
+		pros::delay(10);
+	}
+}
 
 
 
@@ -60,6 +89,7 @@ lemlib::Chassis chassis(&leftMotors, &rightMotors, 10, lateralController, angula
 void initialize() {
 	// calibrate sensors
 	chassis.calibrate();
+	tester();
 }
 
 /**

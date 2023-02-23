@@ -61,6 +61,14 @@ namespace lemlib {
         float largeErrorTimeout;
     } ChassisController_t;
 
+    typedef struct {
+        pros::Motor_Group *leftMotors;
+        pros::Motor_Group *rightMotors;
+        float trackWidth;
+        float wheelDiameter;
+        float rpm;
+    } Drivetrain_t;
+
     /**
      * @brief Chassis class
      * 
@@ -70,14 +78,12 @@ namespace lemlib {
             /**
              * @brief Construct a new Chassis
              * 
-             * @param leftMotors motors on the left side of the drivetrain
-             * @param rightMotors motors on the right side of the drivetrain
+             * @param drivetrain drivetrain to be used for the chassis
              * @param lateralSettings settings for the lateral controller
              * @param angularSetting settings for the angular controller
-             * @param trackWidth track width of the chassis
              * @param sensors sensors to be used for odometry
              */
-            Chassis(pros::Motor_Group *leftMotors, pros::Motor_Group *rightMotors, float trackWidth, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors);
+            Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors);
             /**
              * @brief Calibrate the chassis sensors
              * 
@@ -144,11 +150,9 @@ namespace lemlib {
              */
             void follow(const char *filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127, bool log = false);
         private:
-            float trackWidth;
-            ChassisController_t *lateralSettings;
-            ChassisController_t *angularSettings;
-            OdomSensors_t *odomSensors;
-            pros::Motor_Group *leftMotorGroup;
-            pros::Motor_Group *rightMotorGroup;
+            ChassisController_t lateralSettings;
+            ChassisController_t angularSettings;
+            Drivetrain_t drivetrain;
+            OdomSensors_t odomSensors;
     };
 }

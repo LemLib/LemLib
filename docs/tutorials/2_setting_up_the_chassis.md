@@ -10,13 +10,13 @@ The chassis has multiple components. LemLib will handle everything for you, but 
 
 A vital component of any robot is the drivetrain. The drivetrain is what allows the robot to move around the field. LemLib needs to know what motors are in the drivetrain. Lets start by setting up the motors.
 
-In [PROS](https://pros.cs.purdue.edu/v5/api/cpp/index.html), setting up a motor is trivial. All you need to do is create a motor object, set its port, and if it is reversed or not. We need to do this for each motor on the drivetrain. Below is an example:
+In [PROS](https://pros.cs.purdue.edu/v5/api/cpp/index.html), setting up a motor is trivial. All you need to do is create a motor object, set its port, what cartridge its using, and if it is reversed or not. We need to do this for each motor on the drivetrain. Below is an example:
 
 ```cpp
-pros::Motor left_front_motor(1, false); // port 1, not reversed
-pros::Motor left_back_motor(2, false); // port 2, not reversed
-pros::Motor right_front_motor(3, true); // port 3, reversed
-pros::Motor right_back_motor(4, true); // port 4, reversed
+pros::Motor left_front_motor(1, pros::E_MOTOR_GEARSET_06, false); // port 1, blue gearbox, not reversed
+pros::Motor left_back_motor(2, pros::E_MOTOR_GEARSET_18, false); // port 2, green gearbox, not reversed
+pros::Motor right_front_motor(3, pros::E_MOTOR_GEARSET_36, true); // port 3, red gearbox, reversed
+pros::Motor right_back_motor(4, pros::E_MOTOR_GEARSET_36, true); // port 4, red gearbox, reversed
 ```
 
 Now we need to group the left side and right side motors so we can pass it to LemLib. To do this, we can use the `pros::MotorGroup` class. Here is an example:
@@ -25,7 +25,22 @@ pros::MotorGroup left_side_motors({left_front_motor, left_back_motor});
 pros::MotorGroup right_side_motors({right_front_motor, right_back_motor});
 ```
 
-Thats it! Now we have all the motors set up. We will cover how to use them in the last section of this tutorial.
+Now that we have the motors set up, we need to tell LemLib about the track width, wheel diameter, and wheel rpm of the drivetrain. Let's start with the track width. The track width is the distance between the left and right drivetrain wheels, as shown in the image below:
+
+<img src="../assets/2_setting_up_the_chassis/track_width.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+
+We also need to tell LemLib the diameter of the wheels. Wheels typically come in 3 sizes: 2.75", 3.25", and 4". After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to [this spreadsheet](https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0) to find the rpm of the wheels.
+
+Now that we have all the information we need, we can create a `lemlib::Drivetrain_t` struct to pass to LemLib. Below is an example:
+```cpp
+lemlib::Drivetrain_t drivetrain {
+	&leftMotors, // left drivetrain motors
+	&rightMotors, // right drivetrain motors
+	10, // track width
+	3.25, // wheel diameter
+	360, // wheel rpm
+};
+``` 
 
 ## Odometry
 
@@ -82,7 +97,7 @@ lemlib::OdomSensors_t sensors {
 };
 ```
 
-You don't need all these sensors though. LemLib needs at least 1 vertical tracking wheel and 1 inertial sensor. An inertial sensor is not required if you have 2 tracking wheels in the same orientation however. If you don't have a specific sensor, set it to `nullptr` in the struct.
+You don't need all these sensors though. Even if you don't have any, you can still use LemLib. If you don't have a sensor, just set it to `nullptr`. Just remember that the more sensors you use, the more accurate the odometry will be.
 
 ## PIDs
 
@@ -111,11 +126,6 @@ lemlib::ChassisController_t angularController {
 
 ## Putting it all together
 
-One last thing we need to do is find the track width of the robot. This is the distance between the left and right drivetrain wheels.
-
-<img src="../assets/2_setting_up_the_chassis/track_width.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
-<br>
-
 Below is everything we have done so far, all passed to the `lemlib::Chassis` constructor:
 ```cpp
 // drivetrain motors
@@ -127,6 +137,14 @@ pros::Motor right_back_motor(4, true); // port 4, reversed
 // drivetrain motor groups
 pros::MotorGroup left_side_motors({left_front_motor, left_back_motor});
 pros::MotorGroup right_side_motors({right_front_motor, right_back_motor});
+
+lemlib::Drivetrain_t drivetrain {
+	&leftMotors, // left drivetrain motors
+	&rightMotors, // right drivetrain motors
+	10, // track width
+	3.25, // wheel diameter
+	360, // wheel rpm
+};
 
 // left tracking wheel encoder
 pros::ADIEncoder left_enc('A', 'B', true); // ports A and B, reversed
@@ -173,11 +191,9 @@ lemlib::ChassisController_t angularController {
 	500 // largeErrorTimeout
 };
 
-// track width
-float track_width = 15.5; // 15.5" track width
 
-// create the chassis object
-lemlib::Chassis chassis(&left_side_motors, &right_side_motors, track_width, lateralController, angularController, sensors);
+// create the chassis
+lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 ```
 
 Thats it! You have now set up the chassis. In the next tutorial, we will learn how to use the chassis to move the robot and how to tune the PIDs.

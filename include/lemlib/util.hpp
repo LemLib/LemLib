@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <vector>
+
 
 namespace lemlib {
     /**
@@ -57,4 +59,20 @@ namespace lemlib {
      * @return float - -1 if negative, 1 if positive
      */
     float sgn(float x);
+
+    /**
+     * @brief Return the average of a vector of numbers
+     * 
+     * @param values 
+     * @return float 
+     */
+    float avg(std::vector<float> values);
+    
+    /**
+     * @brief Return the average of a vector of numbers
+     * 
+     * @param values 
+     * @return double 
+     */
+    double avg(std::vector<double> values);
 }
