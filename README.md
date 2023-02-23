@@ -1,8 +1,8 @@
 # LemLib
 
-Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like PID and Odometry for new and experienced teams alike.
+Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.
 
-Currently, LemLib officially supports tank drive and differntial drive chassis only. Proper support for x-drive and mecanum drives have not yet been implemented, but some users have reported success with them. Implementation is planned for v0.5.0.
+Currently, LemLib officially supports tank drive and differential drive chassis only. Proper support for holonomic and mecanum drives have not yet been implemented, but some users have reported success with them. Implementation is planned for v0.5.0.
 
 The creation of this template was inspired by [EZ-Template](https://github.com/EZ-Robotics/EZ-Template) and [OkapiLib](https://github.com/OkapiLib/OkapiLib). We aim to develop a library that strikes a balance between ease-of-use, akin to that of EZ-Template, and comprehensive functionality, similar to that of OkapiLib.
 
@@ -28,4 +28,4 @@ The tutorials provide a detailed walkthrough through all the features of LemLib.
 You can check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/html/index.html)
 
 ## Contact Us
-Questions? Commens? Concerns? Feel free to [open an Issue](https://github.com/LemLib/LemLib/issues/new)
+Questions? Comments? Concerns? Feel free to [open an Issue](https://github.com/LemLib/LemLib/issues/new)
