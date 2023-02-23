@@ -14,7 +14,7 @@ Tuning Pure Pursuit is very simple. If you want the robot to follow the path mor
 
 ## Creating Paths
 
-We have developed a Path Planner so you can quickly and easily generate paths for your robot to follow. You can find it [here](https://sizzinseal.github.io/Path-Gen/). Just like LemLib, it is [entirely open source](https://github.com/SizzinSeal/Path-Gen), so you can see how it works and even contribute to it.
+We have developed a Path Planner so you can quickly and easily generate paths for your robot to follow. You can find it [here](https://lemlib.github.io/Path-Gen/). Just like LemLib, it is [entirely open source](https://github.com/LemLib/Path-Gen), so you can see how it works and even contribute to it.
 
 Using the Path Generator is simple:
  - Left Click Drag to move existing waypoints (big green circles)
