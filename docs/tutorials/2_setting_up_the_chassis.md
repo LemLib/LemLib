@@ -29,7 +29,7 @@ Now that we have the motors set up, we need to tell LemLib about the track width
 
 <img src="../assets/2_setting_up_the_chassis/track_width.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
-We also need to tell LemLib the diameter of the wheels. Wheels typically come in 3 sizes: 2.75", 3.25", and 4". After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to [this spreadsheet](https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0) to find the rpm of the wheels.
+We also need to tell LemLib the diameter of the wheels. Wheels typically come in 3 sizes: 2.75&quot;, 3.25&quot;, and 4&quot;. After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to [this spreadsheet](https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0) to find the rpm of the wheels.
 
 Now that we have all the information we need, we can create a `lemlib::Drivetrain_t` struct to pass to LemLib. Below is an example:
 ```cpp
