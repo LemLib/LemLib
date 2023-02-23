@@ -12,6 +12,7 @@
 #include <math.h>
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/util.hpp"
+#include "pros/llemu.hpp"
 
 
 /**
@@ -48,17 +49,13 @@ lemlib::TrackingWheel::TrackingWheel(pros::Rotation *encoder, float diameter, fl
  * @param motors the motor group to use
  * @param diameter diameter of the drivetrain wheels in inches
  * @param distance half the track width of the drivetrain in inches
- * @param gearset the cartridge used by the motors
  * @param rpm theoretical maximum rpm of the drivetrain wheels
  */
-lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group *motors, float diameter, float distance, pros::motor_gearset_e gearset, float rpm)
-{
+lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group *motors, float diameter, float distance, float rpm) {
     this->motors = motors;
-    this->motors->set_gearing(this->gearset);
     this->motors->set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
     this->diameter = diameter;
     this->distance = distance;
-    this->gearset = gearset;
     this->rpm = rpm;
 }
 
@@ -85,22 +82,29 @@ float lemlib::TrackingWheel::getDistanceTraveled() {
     } else if (this->rotation != nullptr) {
         return float(this->rotation->get_position()) * this->diameter * M_PI / 36000;
     } else if (this->motors != nullptr) {
-        // get the cartridge rpm
-        float in;
-        switch (this->gearset) {
-            case pros::E_MOTOR_GEARSET_06:
-                in = 600;
-                break;
-            case pros::E_MOTOR_GEARSET_18:
-                in = 200;
-                break;
-            case pros::E_MOTOR_GEARSET_36:
-                in = 100;
-                break;
-            default:
-                return 0;
+        // get distance traveled by each motor
+        std::vector<pros::motor_gearset_e_t> gearsets = this->motors->get_gearing();
+        std::vector<double> positions = this->motors->get_positions();
+        std::vector<float> distances;
+        for (int i = 0; i < this->motors->size(); i++) {
+            float in;
+            switch (gearsets[i]) {
+                case pros::E_MOTOR_GEARSET_36:
+                    in = 100;
+                    break;
+                case pros::E_MOTOR_GEARSET_18:
+                    in = 200;
+                    break;
+                case pros::E_MOTOR_GEARSET_06:
+                    in = 600;
+                    break;
+                default:
+                    in = 200;
+                    break;
+            }
+            distances.push_back(positions[i] * (diameter * M_PI) * (rpm / in));
         }
-        return lemlib::avg(this->motors->get_positions()) * (diameter * M_PI) * (rpm / in);
+        return lemlib::avg(distances);
     } else {
         return 0;
     }

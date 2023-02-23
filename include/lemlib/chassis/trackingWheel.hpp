@@ -42,10 +42,9 @@ namespace lemlib {
              * @param motors the motor group to use
              * @param diameter diameter of the drivetrain wheels in inches
              * @param distance half the track width of the drivetrain in inches
-             * @param gearset the cartridge used by the motors
              * @param rpm theoretical maximum rpm of the drivetrain wheels
              */
-            TrackingWheel(pros::Motor_Group *motors, float diameter, float distance, pros::motor_gearset_e gearset, float rpm);
+            TrackingWheel(pros::Motor_Group *motors, float diameter, float distance, float rpm);
             /**
              * @brief Reset the tracking wheel position to 0
              * 
@@ -73,7 +72,6 @@ namespace lemlib {
             float diameter;
             float distance;
             float rpm;
-            pros::motor_gearset_e gearset;
             pros::ADIEncoder *encoder = nullptr;
             pros::Rotation *rotation = nullptr;
             pros::Motor_Group *motors = nullptr;

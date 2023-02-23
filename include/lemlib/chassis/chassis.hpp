@@ -67,7 +67,6 @@ namespace lemlib {
         float trackWidth;
         float wheelDiameter;
         float rpm;
-        pros::motor_gearset_e cartridge;
     } Drivetrain_t;
 
     /**
