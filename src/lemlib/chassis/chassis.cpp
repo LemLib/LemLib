@@ -122,10 +122,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
         pose = getPose();
         pose.theta = (reversed) ? fmod(pose.theta-180, 360) : fmod(pose.theta, 360);
         deltaX = x - pose.x;
-        // if deltaX is 0, set it to 0.000001 to prevent division by 0 by the atan2 function
-        if (!deltaX) deltaX = 0.000001;
         deltaY = y - pose.y;
-        targetTheta = fmod(radToDeg(M_PI/2 - atan2(deltaY, deltaX)), 360);
+        targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
 
         // calculate deltaTheta
         deltaTheta = angleError(targetTheta, pose.theta);
@@ -165,9 +163,10 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log)
 {
     Pose pose(0, 0);
-    float directTheta, hypot, diffTheta, diffLateral, lateralPower, prevLateralPower, angularPower, leftPower, rightPower;
-    prevLateralPower = 0;
+    float prevLateralPower = 0;
+    float prevAngularPower = 0;
     bool close = false;
+    int start = pros::millis();
 
     // create a new PID controller
     FAPID lateralPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "lateralPID");
@@ -175,49 +174,45 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout, lateralSettings.smallErrorTimeout, timeout);
 
     // main loop
-    while (!lateralPID.settled() && pros::competition::is_autonomous()) {
+    while (pros::competition::is_autonomous() && (!lateralPID.settled() || pros::millis() - start < 300)) {
         // get the current position
-        Pose pose = getPose(true);
-        pose.theta = M_PI/2 - std::fmod(pose.theta, 360);
+        Pose pose = getPose();
+        pose.theta = std::fmod(pose.theta, 360);
 
         // update error
-        if (x == pose.x) pose.x += 0.000001;
-        directTheta = atan2(y - pose.y, x - pose.x);
-        hypot = std::hypot(x - pose.x, y - pose.y);
-        diffTheta = pose.theta - directTheta;
-        diffLateral = hypot * cos(diffTheta);
+        float deltaX = x - pose.x;
+        float deltaY = y - pose.y;
+        float targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
+        float hypot = std::hypot(deltaX, deltaY);
+        float diffTheta1 = angleError(pose.theta, targetTheta);
+        float diffTheta2 = angleError(pose.theta, targetTheta + 180);
+        float angularError = (std::fabs(diffTheta1) < std::fabs(diffTheta2)) ? diffTheta1 : diffTheta2;
+        float lateralError = hypot * cos(degToRad(std::fabs(diffTheta1)));
 
-        // calculate the lateral speed
-        lateralPower = lateralPID.update(diffLateral, 0, log);
+        // calculate speed
+        float lateralPower = lateralPID.update(lateralError, 0, log);
+        float angularPower = -angularPID.update(angularError, 0, log);
 
-        // calculate the angular speed
-        // the robot can face the target heading in two ways, so we need to check which one is faster
-        // these 2 ways are: facing the target heading directly, or 180 degrees away from the target heading
-        // the robot will choose the faster way
-        float diffTheta1 = radToDeg(angleError(pose.theta, directTheta, true));
-        float diffTheta2 = radToDeg(angleError(pose.theta, directTheta + M_PI, true));
-        // now decide which way is faster
-        float diffTheta = (fabs(diffTheta1) < fabs(diffTheta2)) ? diffTheta1 : diffTheta2;
-        
-        angularPower = angularPID.update(diffTheta, 0, log);
-
-        if (pose.distance(lemlib::Pose(x, y)) < 5) {
+        // if the robot is close to the target
+        if (pose.distance(lemlib::Pose(x, y)) < 7.5) {
             close = true;
-            maxSpeed = prevLateralPower;
+            maxSpeed = (std::fabs(prevLateralPower) <  30) ? 30 : std::fabs(prevLateralPower);
         }
-        if (close) angularPower = 0;
+
+        // limit acceleration
+        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
+        if (std::fabs(angularError) > 25) angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
 
         // cap the speed
         if (lateralPower > maxSpeed) lateralPower = maxSpeed;
         else if (lateralPower < -maxSpeed) lateralPower = -maxSpeed;
-
-        // limit acceleration
-        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
+        if (close) angularPower = 0;
 
         prevLateralPower = lateralPower;
+        prevAngularPower = angularPower;
 
-        leftPower = lateralPower + angularPower;
-        rightPower = lateralPower - angularPower;
+        float leftPower = lateralPower + angularPower;
+        float rightPower = lateralPower - angularPower;
 
         // ratio the speeds to respect the max speed
         float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;

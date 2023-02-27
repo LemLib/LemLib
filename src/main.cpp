@@ -20,7 +20,7 @@ pros::Imu imu(6);
 // tracking wheels
 pros::ADIEncoder verticalEnc('A', 'B', false);
 // vertical tracking wheel. 2.75" diameter, 2.2" offset
-lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 2.2);
+lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 0);
 
 
 // drivetrain
@@ -40,7 +40,7 @@ lemlib::ChassisController_t lateralController {
 	100,
 	3,
 	500,
-	1
+	20
 };
 
 // angular motion controller
@@ -51,7 +51,7 @@ lemlib::ChassisController_t angularController {
 	100,
 	3,
 	500,
-	1
+	3
 };
 
 // sensors for odometry
@@ -75,7 +75,9 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
  */
 void initialize() {
 	// calibrate sensors
-	chassis.calibrate();}
+	chassis.calibrate();
+}
+
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -83,6 +85,7 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {}
+
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -94,6 +97,7 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {}
+
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -107,8 +111,9 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	
+	chassis.moveTo(20, 0, 4000);
 }
+
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -124,5 +129,4 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	chassis.moveTo(20, 20, 4000);
 }

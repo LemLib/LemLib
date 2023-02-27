@@ -24,6 +24,7 @@
 float lemlib::slew(float target, float current, float maxChange)
 {
     float change = target - current;
+    if (maxChange == 0) return target;
     if (change > maxChange)
     {
         change = maxChange;
