@@ -136,7 +136,7 @@ When hovering your mouse over a location on the field, its coordinates will be d
 
 <img src="../assets/3_tuning_and_moving/path_generator.png">
 
-Note that the origin of the field is in the middle, and the field coordinates are measured in inches. 0 degrees is facing up, and increases clockwise.
+Note that the origin of the field is in the middle, and the field coordinates are measured in inches. **0 degrees is facing up, and increases clockwise**.
 
 
 Thats it! You now know how to move the robot around the field using the `chassis.turnTo()` and `chassis.moveTo()` functions. In the next tutorial, we will be covering how to use the Path Generator to create a path for the robot to follow.
