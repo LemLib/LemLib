@@ -28,4 +28,4 @@ The tutorials provide a detailed walkthrough through all the features of LemLib.
 Check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/html/index.html)
 
 ## Contact Us
-Questions? Comments? Concerns? Feel free to [open an Issue](https://github.com/LemLib/LemLib/issues/new)
+Questions? Comments? Concerns? Feel free to open an issue or reword
