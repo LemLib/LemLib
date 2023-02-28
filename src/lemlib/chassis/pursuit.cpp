@@ -17,6 +17,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include "pros/misc.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/util.hpp"
 
@@ -221,9 +222,10 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
     int closestPoint;
     float leftInput = 0;
     float rightInput = 0;
+    int compState = pros::competition::get_status();
 
     // loop until the robot is within the end tolerance
-    for (int i = 0; i < timeout/10; i++) {
+    for (int i = 0; i < timeout/10 && pros::competition::get_status() == compState; i++) {
         // get the current position of the robot
         pose = this->getPose(true);
         if (reverse) pose.theta -= M_PI;
@@ -250,6 +252,14 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
         float targetLeftVel = targetVel * (2 + curvature*drivetrain.trackWidth) / 2;
         float targetRightVel = targetVel * (2 - curvature*drivetrain.trackWidth) / 2;
 
+        // ratio the speeds to respect the max speed
+        float ratio = std::max(std::fabs(targetLeftVel), std::fabs(targetRightVel)) / maxSpeed;
+        if (ratio > 1) {
+            targetLeftVel /= ratio;
+            targetRightVel /= ratio;
+        }
+
+        // update previous velocities
         prevLeftVel = targetLeftVel;
         prevRightVel = targetRightVel;
         
