@@ -5,7 +5,7 @@
  * @version 0.1
  * @date 2023-02-09
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 // The implementation below is mostly based off of
@@ -29,7 +29,7 @@
  * @param delimeter string separating the elements in the line
  * @return std::vector<std::string> array of elements read from the file
  */
-std::vector<std::string> readElement(std::string input, std::string delimiter) 
+std::vector<std::string> readElement(std::string input, std::string delimiter)
 {
     std::string token;
     std::string s = input;
@@ -79,6 +79,29 @@ std::vector<lemlib::Pose> getData(std::string filePath)
     return robotPath;
 }
 
+std::vector<lemlib::Pose> getDataFromString(std::string data)
+{
+    //Read the data line by line
+    std::vector<lemlib::Pose> robotPath;
+    std::vector<std::string> pointInput;
+    std::string line;
+    lemlib::Pose pathPoint(0, 0, 0);
+
+    // read the points until 'endData' is read
+    while (data.find("endData") == std::string::npos) {
+        line = std::string(data.substr(0, data.find("\n")));
+
+        data = data.substr(data.find("\n") + 1);
+        pointInput = readElement(line, ", "); // parse line
+        pathPoint.x = std::stof(pointInput.at(0)); // x position
+        pathPoint.y = std::stof(pointInput.at(1)); // y position
+        pathPoint.theta = std::stof(pointInput.at(2)); // velocity
+        robotPath.push_back(pathPoint); // save data
+    }
+
+    return robotPath;
+}
+
 
 /**
  * @brief find the closest point on the path to the robot
@@ -92,7 +115,7 @@ int findClosest(lemlib::Pose pose, std::vector<lemlib::Pose> path)
     int closestPoint;
     float closestDist = 1000000;
     float dist;
-    
+
     // loop through all path points
     for (int i = 0; i < path.size(); i++) {
         dist = pose.distance(path.at(i));
@@ -108,14 +131,14 @@ int findClosest(lemlib::Pose pose, std::vector<lemlib::Pose> path)
 
 /**
  * @brief Function that finds the intersection point between a circle and a line
- * 
+ *
  * @param p1 start point of the line
  * @param p2 end point of the line
  * @param pos position of the robot
  * @param path the path to follow
- * @return float how far along the line the 
+ * @return float how far along the line the
  */
-float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, float lookaheadDist) 
+float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, float lookaheadDist)
 {
     // calculations
     // uses the quadratic formula to calculate intersection points
@@ -125,7 +148,7 @@ float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, float
     float b = 2 * (f * d);
     float c = (f * f) - lookaheadDist*lookaheadDist;
     float discriminant = b*b - 4*a*c;
-    
+
     // if a possible intersection was found
     if (discriminant >= 0) {
         discriminant = sqrt(discriminant);
@@ -170,20 +193,20 @@ lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::
             lookahead.theta = i;
         }
     }
-    
+
     return lookahead;
 }
 
 
 /**
  * @brief Get the curvature of a circle that intersects the robot and the lookahead point
- * 
+ *
  * @param pos the position of the robot
  * @param heading the heading of the robot
  * @param lookahead the lookahead point
  * @return double curvature
  */
-double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lookahead) 
+double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lookahead)
 {
     // calculate whether the robot is on the left or right side of the circle
     double side = lemlib::sgn(std::sin(heading)*(lookahead.x - pose.x) - std::cos(heading)*(lookahead.y - pose.y));
@@ -197,20 +220,8 @@ double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lo
     return side * ((2*x) / (d*d));
 }
 
-
-/**
- * @brief Move the chassis along a path
- * 
- * @param filePath file path to the path. No need to preface it with /usd/
- * @param timeout the maximum time the robot can spend moving
- * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
- * @param reverse whether the robot should follow the path in reverse. false by default
- * @param maxSpeed the maximum speed the robot can move at
- * @param log whether the chassis should log the path on a log file. false by default.
- */
-void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead, bool reverse, float maxSpeed, bool log)
+void lemlib::Chassis::follow(std::vector<lemlib::Pose> path, int timeout, float lookahead, bool reverse, float maxSpeed, bool log)
 {
-    std::vector<lemlib::Pose> path = getData("/usd/" + std::string(filePath)); // get list of path points
     Pose pose(0, 0, 0);
     Pose lookaheadPose(0, 0, 0);
     Pose lastLookahead = path.at(0);
@@ -247,7 +258,7 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
 
         // get the target velocity of the robot
         targetVel = path.at(closestPoint).theta;
-    
+
         // calculate target left and right velocities
         float targetLeftVel = targetVel * (2 + curvature*drivetrain.trackWidth) / 2;
         float targetRightVel = targetVel * (2 - curvature*drivetrain.trackWidth) / 2;
@@ -262,7 +273,7 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
         // update previous velocities
         prevLeftVel = targetLeftVel;
         prevRightVel = targetRightVel;
-        
+
         // move the drivetrain
         if (reverse) {
             drivetrain.leftMotors->move(-targetRightVel);
@@ -278,4 +289,24 @@ void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead,
     // stop the robot
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+}
+
+void lemlib::Chassis::follow(unsigned long size, const char *data, int timeout, float lookahead, bool reverse, float maxSpeed, bool log)
+{
+    follow(getDataFromString(std::string(data, size)), timeout, lookahead, reverse, maxSpeed, log);
+}
+
+/**
+ * @brief Move the chassis along a path
+ *
+ * @param filePath file path to the path. No need to preface it with /usd/
+ * @param timeout the maximum time the robot can spend moving
+ * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
+ * @param reverse whether the robot should follow the path in reverse. false by default
+ * @param maxSpeed the maximum speed the robot can move at
+ * @param log whether the chassis should log the path on a log file. false by default.
+ */
+void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead, bool reverse, float maxSpeed, bool log)
+{
+    follow(getData("/usd/" + std::string(filePath)), timeout, lookahead, reverse, maxSpeed, log);
 }
