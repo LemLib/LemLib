@@ -130,7 +130,7 @@ Advanced users may wish to alter these values to decrease the time it takes to e
 
 ## Using the Path Generator for Coordinates
 
-Another project we have been developing is the [Path Generator](https://sizzinseal.github.io/Path-Gen/). This web app allows you to create a path for the robot to follow using pure pursuit, which will be covered in the next tutorial. For now, we will be using it to view coordinates on the field. 
+Another project we have been developing is the [Path Generator](https://lemlib.github.io/Path-Gen/). This web app allows you to create a path for the robot to follow using pure pursuit, which will be covered in the next tutorial. For now, we will be using it to view coordinates on the field. 
 
 When hovering your mouse over a location on the field, its coordinates will be displayed in the bottom left corner. You can then manually input these coordinates into the `chassis.moveTo()` and `chassis.turnTo()` functions. You can also view the starting position of the robot by simply hovering your mouse over where it would start. You can set the position of the robot by using the `chassis.setPose()` function, as documented in [tutorial 2](2_setting_up_the_chassis.md). Below is an image of the Path Generator:
 

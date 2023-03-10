@@ -105,7 +105,7 @@ Lemlib uses 2 PIDs to control the motion of the robot (except for pure pursuit).
 ```cpp
 // forward/backward PID
 lemlib::ChassisController_t lateralController {
-	10, // kP
+	8, // kP
 	30, // kD
 	1, // smallErrorRange
 	100, // smallErrorTimeout
@@ -116,13 +116,13 @@ lemlib::ChassisController_t lateralController {
 
 // turning PID
 lemlib::ChassisController_t angularController {
-	2, // kP
-	10, // kD
+	4, // kP
+	40, // kD
 	1, // smallErrorRange
 	100, // smallErrorTimeout
 	3, // largeErrorRange
 	500, // largeErrorTimeout
-	5 // slew rate
+	0 // slew rate
 };
 ```
 
@@ -175,7 +175,7 @@ lemlib::OdomSensors_t sensors {
 
 // forward/backward PID
 lemlib::ChassisController_t lateralController {
-	10, // kP
+	8, // kP
 	30, // kD
 	1, // smallErrorRange
 	100, // smallErrorTimeout
@@ -186,8 +186,8 @@ lemlib::ChassisController_t lateralController {
 
 // turning PID
 lemlib::ChassisController_t angularController {
-	2, // kP
-	10, // kD
+	4, // kP
+	40, // kD
 	1, // smallErrorRange
 	100, // smallErrorTimeout
 	3, // largeErrorRange
