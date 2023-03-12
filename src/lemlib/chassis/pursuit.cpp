@@ -206,9 +206,8 @@ double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lo
  * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
  * @param reverse whether the robot should follow the path in reverse. false by default
  * @param maxSpeed the maximum speed the robot can move at
- * @param log whether the chassis should log the path on a log file. false by default.
  */
-void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead, bool reverse, float maxSpeed, bool log)
+void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead, bool reverse, float maxSpeed)
 {
     std::vector<lemlib::Pose> path = getData("/usd/" + std::string(filePath)); // get list of path points
     Pose pose(0, 0, 0);

@@ -105,7 +105,7 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians)
  * @param maxSpeed the maximum speed the robot can turn at. Default is 200
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log)
+void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed)
 {
     Pose pose(0, 0);
     float targetTheta;
@@ -130,7 +130,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
         deltaTheta = angleError(targetTheta, pose.theta);
 
         // calculate the speed
-        motorPower = pid.update(0, deltaTheta, log);
+        motorPower = pid.update(0, deltaTheta);
 
         // cap the speed
         if (motorPower > maxSpeed) motorPower = maxSpeed;
@@ -161,7 +161,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param reversed whether the robot should turn in the opposite direction. false by default
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log)
+void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed)
 {
     Pose pose(0, 0);
     float prevLateralPower = 0;
@@ -192,8 +192,8 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         float lateralError = hypot * cos(degToRad(std::fabs(diffTheta1)));
 
         // calculate speed
-        float lateralPower = lateralPID.update(lateralError, 0, log);
-        float angularPower = -angularPID.update(angularError, 0, log);
+        float lateralPower = lateralPID.update(lateralError, 0);
+        float angularPower = -angularPID.update(angularError, 0);
 
         // if the robot is close to the target
         if (pose.distance(lemlib::Pose(x, y)) < 7.5) {
@@ -234,3 +234,5 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
 }
+
+

@@ -123,9 +123,8 @@ namespace lemlib {
              * @param timeout longest time the robot can spend moving
              * @param reversed whether the robot should turn in the opposite direction. false by default
              * @param maxSpeed the maximum speed the robot can turn at. Default is 200
-             * @param log whether the chassis should log the turnTo function. false by default
              */
-            void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 127, bool log = false);
+            void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 127);
             /**
              * @brief Move the chassis towards the target point
              *
@@ -136,9 +135,8 @@ namespace lemlib {
              * @param timeout longest time the robot can spend moving
              * @param maxSpeed the maximum speed the robot can move at
              * @param reversed whether the robot should turn in the opposite direction. false by default
-             * @param log whether the chassis should log the turnTo function. false by default
              */
-            void moveTo(float x, float y, int timeout, float maxSpeed = 200, bool log = false);
+            void moveTo(float x, float y, int timeout, float maxSpeed = 200);
             /**
              * @brief Move the chassis along a path
              * 
@@ -147,9 +145,8 @@ namespace lemlib {
              * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
              * @param reverse whether the robot should follow the path in reverse. false by default
              * @param maxSpeed the maximum speed the robot can move at
-             * @param log whether the chassis should log the path on a log file. false by default.
              */
-            void follow(const char *filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127, bool log = false);
+            void follow(const char *filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127);
         private:
             ChassisController_t lateralSettings;
             ChassisController_t angularSettings;
