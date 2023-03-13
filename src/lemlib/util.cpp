@@ -139,6 +139,6 @@ double lemlib::avg(std::vector<double> values)
  * @param min minimum value of the bound
  * @param max maximum value of the bound
 */
-bool pointInBound(float pointX, float pointY, float min, float max) {
+bool lemlib::pointInBound(float pointX, float pointY, float min, float max) {
     return pointX >= min && pointX <= max && pointY >= min && pointY <= max;
 }
