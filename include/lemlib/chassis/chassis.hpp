@@ -4,9 +4,9 @@
  * @brief Chassis class declarations
  * @version 0.1
  * @date 2023-01-23
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #pragma once
@@ -19,7 +19,7 @@
 namespace lemlib {
     /**
      * @brief Struct containing all the sensors used for odometry
-     * 
+     *
      * The sensors are stored in a struct so that they can be easily passed to the chassis class
      * The variables are pointers so that they can be set to nullptr if they are not used
      * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
@@ -55,7 +55,7 @@ namespace lemlib {
     typedef struct {
         float kP;
         float kD;
-        float smallError; 
+        float smallError;
         float smallErrorTimeout;
         float largeError;
         float largeErrorTimeout;
@@ -72,13 +72,13 @@ namespace lemlib {
 
     /**
      * @brief Chassis class
-     * 
+     *
      */
     class Chassis {
         public:
             /**
              * @brief Construct a new Chassis
-             * 
+             *
              * @param drivetrain drivetrain to be used for the chassis
              * @param lateralSettings settings for the lateral controller
              * @param angularSetting settings for the angular controller
@@ -87,12 +87,12 @@ namespace lemlib {
             Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors);
             /**
              * @brief Calibrate the chassis sensors
-             * 
+             *
              */
             void calibrate();
             /**
              * @brief Set the pose of the chassis
-             * 
+             *
              * @param x new x value
              * @param y new y value
              * @param theta new theta value
@@ -100,7 +100,7 @@ namespace lemlib {
              */
             void setPose(double x, double y, double theta, bool radians = false);
             /**
-             * @brief Set the pose of the chassis 
+             * @brief Set the pose of the chassis
              *
              * @param pose the new pose
              * @param radians whether pose theta is in radians (true) or not (false). false by default
@@ -108,16 +108,16 @@ namespace lemlib {
             void setPose(Pose pose, bool radians = false);
             /**
              * @brief Get the pose of the chassis
-             * 
+             *
              * @param radians whether theta should be in radians (true) or degrees (false). false by default
-             * @return Pose 
+             * @return Pose
              */
             Pose getPose(bool radians = false);
             /**
              * @brief Turn the chassis so it is facing the target point
              *
              * The PID logging id is "angularPID"
-             * 
+             *
              * @param x x location
              * @param y y location
              * @param timeout longest time the robot can spend moving
@@ -130,7 +130,7 @@ namespace lemlib {
              * @brief Move the chassis towards the target point
              *
              * The PID logging ids are "angularPID" and "lateralPID"
-             * 
+             *
              * @param x x location
              * @param y y location
              * @param timeout longest time the robot can spend moving
@@ -141,7 +141,7 @@ namespace lemlib {
             void moveTo(float x, float y, int timeout, float maxSpeed = 200, bool log = false);
             /**
              * @brief Move the chassis along a path
-             * 
+             *
              * @param filePath file path to the path. No need to preface it with /usd/
              * @param timeout the maximum time the robot can spend moving
              * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
@@ -150,7 +150,22 @@ namespace lemlib {
              * @param log whether the chassis should log the path on a log file. false by default.
              */
             void follow(const char *filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127, bool log = false);
+
+            /**
+             * @brief Move the chassis along a path
+             *
+             * @param size size of the data array
+             * @param data array of characters containing the path data
+             * @param timeout the maximum time the robot can spend moving
+             * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately
+             * @param reverse whether the robot should follow the path in reverse. false by default
+             * @param maxSpeed the maximum speed the robot can move at
+             * @param log whether the chassis should log the path on a log file. false by default.
+             */
+            void follow(unsigned long int size, const char *data, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127, bool log = false);
         private:
+            void follow(std::vector<Pose> path, int timeout, float lookahead, bool reverse, float maxSpeed, bool log);
+
             ChassisController_t lateralSettings;
             ChassisController_t angularSettings;
             Drivetrain_t drivetrain;
