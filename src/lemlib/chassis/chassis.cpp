@@ -69,7 +69,11 @@ void lemlib::Chassis::calibrate()
     // calibrate the imu if it exists
     std::int32_t imuStatus = 0;
     if (odomSensors.imu != nullptr) imuStatus = odomSensors.imu->reset(true);
-    if (imuStatus == PROS_ERR) lemlib::logger::error("Failed to reset IMU [Errno " + std::to_string(imuStatus) + "]");
+    if (imuStatus == PROS_ERR) {
+        lemlib::logger::error("Failed to reset IMU [Errno " + std::to_string(imuStatus) + "]");
+        this->calibrated = false;
+        return;
+    }
     // initialize odom
     if (odomSensors.vertical1 == nullptr) odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -(drivetrain.trackWidth/2), drivetrain.rpm);
     if (odomSensors.vertical2 == nullptr) odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter, drivetrain.trackWidth/2, drivetrain.rpm);
@@ -78,9 +82,21 @@ void lemlib::Chassis::calibrate()
     if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
     if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
     lemlib::setSensors(odomSensors, drivetrain);
+
+    this->calibrated = true;
+
     lemlib::init();
 }
 
+/**
+ * @brief Check if the chassis is calibrated
+ * 
+ * @return true if the chassis is calibrated
+ */
+bool lemlib::Chassis::isCalibrated()
+{
+    return this->calibrated;
+}
 
 /**
  * @brief Set the Pose object
@@ -92,6 +108,8 @@ void lemlib::Chassis::calibrate()
  */
 void lemlib::Chassis::setPose(double x, double y, double theta, bool radians)
 {
+    lemlib::logger::debug("Location set to: (" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(theta) + ")");
+
     lemlib::setPose(lemlib::Pose(x, y, theta), radians);
 }
 
@@ -134,6 +152,13 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians)
  */
 void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log)
 {
+    if (!this->isCalibrated()) {
+        lemlib::logger::error("Chassis is attempting to turn before calibration - Check other logs, the chassis may have failed to calibrate");
+        return;
+    }
+
+    if (maxSpeed < 20) lemlib::logger::warn("Max speed is too small: " + std::to_string(maxSpeed));
+
     if (lemlib::pointInBound(x, y, -100, 100)) lemlib::logger::warn("Target point moves out of the field: " + std::to_string(x) + ", " + std::to_string(y) + " [Valid: -100-100]");
 
     Pose pose = getPose();
@@ -195,6 +220,13 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  */
 void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log)
 {
+    if (!this->isCalibrated()) {
+        lemlib::logger::error("Chassis is attempting to move before calibration - Check other logs, the chassis may have failed to calibrate");
+        return;
+    }
+
+    if (maxSpeed < 20) lemlib::logger::warn("Max speed is too small: " + std::to_string(maxSpeed));
+
     if (lemlib::pointInBound(x, y, -100, 100)) lemlib::logger::warn("Target point moves out of the field: " + std::to_string(x) + ", " + std::to_string(y) + " [Valid: -100-100]");
 
     Pose pose = getPose();

@@ -35,6 +35,7 @@ pros::Mutex lemlib::FAPID::logMutex = pros::Mutex();
 lemlib::FAPID::FAPID(float kF, float kA, float kP, float kI, float kD, std::string name)
 {
     if (name == "") lemlib::logger::warn("Empty name passed to PID constructor");
+    if (kP == 0) lemlib::logger::warn(name + " was passed a kP of 0");
 
     this->kF = kF;
     this->kA = kA;
@@ -61,6 +62,13 @@ void lemlib::FAPID::setGains(float kF, float kA, float kP, float kI, float kD)
     this->kP = kP;
     this->kI = kI;
     this->kD = kD;
+
+    lemlib::logger::info("Set gains for " + name + ": ");
+    lemlib::logger::info(" kF: " + std::to_string(kF));
+    lemlib::logger::info(" kA: " + std::to_string(kA));
+    lemlib::logger::info(" kP: " + std::to_string(kP));
+    lemlib::logger::info(" kI: " + std::to_string(kI));
+    lemlib::logger::info(" kD: " + std::to_string(kD));
 }
 
 
@@ -75,11 +83,24 @@ void lemlib::FAPID::setGains(float kF, float kA, float kP, float kI, float kD)
  */
 void lemlib::FAPID::setExit(float largeError, float smallError, int largeTime, int smallTime, int maxTime)
 {
+    if (largeError < 0) lemlib::logger::warn("Large error range for " + name + " is negative");
+    if (smallError < 0) lemlib::logger::warn("Small error range for " + name + " is negative");
+
+    if (largeTime < 0) lemlib::logger::warn("Large error timeout for " + name + " is negative");
+    if (smallTime < 0) lemlib::logger::warn("Small error timeout for " + name + " is negative");
+
     this->largeError = largeError;
     this->smallError = smallError;
     this->largeTime = largeTime;
     this->smallTime = smallTime;
     this->maxTime = maxTime;
+
+    lemlib::logger::info("Set exit conditions for " + name + ": ");
+    lemlib::logger::info(" Large error range: " + std::to_string(largeError));
+    lemlib::logger::info(" Small error range: " + std::to_string(smallError));
+    lemlib::logger::info(" Large error timeout: " + std::to_string(largeTime));
+    lemlib::logger::info(" Small error timeout: " + std::to_string(smallTime));
+    lemlib::logger::info(" Max timeout: " + std::to_string(maxTime));
 }
 
 
@@ -118,6 +139,8 @@ void lemlib::FAPID::reset()
     prevError = 0;
     totalError = 0;
     prevOutput = 0;
+
+    lemlib::logger::info("Reset " + name);
 }
 
 

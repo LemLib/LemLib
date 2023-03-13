@@ -17,6 +17,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include "lemlib/logger.hpp"
 #include "pros/misc.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/util.hpp"
@@ -210,6 +211,9 @@ double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lo
  */
 void lemlib::Chassis::follow(const char *filePath, int timeout, float lookahead, bool reverse, float maxSpeed, bool log)
 {
+    if (lookahead < 5) lemlib::logger::warn("Lookahead is too small (" + std::to_string(lookahead) + ") for path " + std::string(filePath) + ". Small lookahead values may cause the robot to oscillate.");
+    if (maxSpeed < 20) lemlib::logger::warn("Max speed is too small (" + std::to_string(maxSpeed) + ") for path " + std::string(filePath) + ".");
+
     std::vector<lemlib::Pose> path = getData("/usd/" + std::string(filePath)); // get list of path points
     Pose pose(0, 0, 0);
     Pose lookaheadPose(0, 0, 0);

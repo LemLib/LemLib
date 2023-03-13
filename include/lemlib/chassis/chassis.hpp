@@ -91,6 +91,12 @@ namespace lemlib {
              */
             void calibrate();
             /**
+             * @brief Check if the chassis is calibrated
+             * 
+             * @return true if the chassis is calibrated
+             */
+            bool isCalibrated();
+            /**
              * @brief Set the pose of the chassis
              * 
              * @param x new x value
@@ -151,6 +157,7 @@ namespace lemlib {
              */
             void follow(const char *filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127, bool log = false);
         private:
+            bool calibrated = false;
             ChassisController_t lateralSettings;
             ChassisController_t angularSettings;
             Drivetrain_t drivetrain;
