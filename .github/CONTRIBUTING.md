@@ -113,8 +113,9 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/LemLib
 
 - Use a **clear and descriptive title** for the issue to identify the suggestion.
 - Provide a **step-by-step description of the suggested enhancement** in as many details as possible.
-- **Describe the current behavior** and **explain which behavior you expected to see instead** and why. At this point you can also tell which alternatives do not work for you.
-- **Explain why this enhancement would be useful** to most LemLib users. You may also want to point out the other projects that solved it better and which could serve as inspiration.
+- **Describe the current behavior** so the project team can understand the difference between your suggestion and the current behavior.
+- **Explain why this enhancement would be useful** to most LemLib users and/or maintainers.
+- **(Optional) List possible implementations and alternatives** you have in mind.
 
 
 ### Your First Code Contribution
@@ -143,8 +144,8 @@ You can improve the documentation by:
 - Editing the [README](README.md)
 - Adding/Editing comments in the source code
 - Editing the [Doxygen configuration file](Doxyfile)
-- Changing the [Header HTML file](.docs/doxygen-awesome/header.html) and the [Footer HTML file](.docs/doxygen-awesome/footer.html)
-- Adding/Editing [Tutorials](.docs/tutorials)
+- Changing the [Header HTML file](docs/doxygen-awesome/header.html) and the [Footer HTML file](docs/doxygen-awesome/footer.html)
+- Adding/Editing [Tutorials](docs/tutorials)
 - Opening an [Issue](https://github.com/LemLib/LemLib/issues) to suggest a change or to report a bug
 
 Changes should be requested via a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](.github/PULL_REQUEST_TEMPLATE.md) to structure your pull request. Additionally, you should verify that the documentation builds correctly on your machine. You can do so by running `doxygen` in the root directory of the project. The documentation will be generated in the `docs` folder. You can then open the `index.html` file in your browser to view the documentation.
