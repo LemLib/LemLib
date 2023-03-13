@@ -25,7 +25,10 @@ The tutorials provide a detailed walkthrough through all the features of LemLib.
  - 4: [Pure Pursuit](https://lemlib.github.io/LemLib/html/md_docs_tutorials_4_pure_pursuit.html)
 
 ## Documentation
-You can check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/html/index.html)
+Check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/html/index.html)
 
-## Contact Us
-Questions? Comments? Concerns? Feel free to [open an Issue](https://github.com/LemLib/LemLib/issues/new)
+## Contributing
+Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/CONTRIBUTING.md)
+
+## Code of Conduct
+See the [Code of Conduct](https://github.com/LemLib/LemLib/blob/master/CODE_OF_CONDUCT.md) on how to behave like an adult.
