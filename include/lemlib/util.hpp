@@ -75,4 +75,14 @@ namespace lemlib {
      * @return double 
      */
     double avg(std::vector<double> values);
+
+    /**
+     * @brief Return if a point is within a bound
+     * 
+     * @param pointX x coordinate of the point
+     * @param pointY y coordinate of the point
+     * @param min minimum value of the bound
+     * @param max maximum value of the bound
+     */
+    bool pointInBound(float pointX, float pointY, float min, float max);
 }

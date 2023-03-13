@@ -9,8 +9,10 @@
  * 
  */
 
+#include <cstdint>
 #include <math.h>
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/logger.hpp"
 #include "lemlib/util.hpp"
 #include "pros/llemu.hpp"
 
@@ -23,6 +25,14 @@
  * @param distance distance between the tracking wheel and the center of rotation in inches
  */
 lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder *encoder, float diameter, float distance) {
+    if (encoder == nullptr) {
+        lemlib::logger::error("Cannot create tracking wheel with null encoder");
+        return;
+    }
+
+    if (diameter < 2.5 || diameter > 4.5) lemlib::logger::warn("Tracking wheel diameter should be between 2.5 and 4.5 inches");
+    if (distance > 12) lemlib::logger::warn("Tracking wheel distance should be less than 12 inches");
+
     this->encoder = encoder;
     this->diameter = diameter;
     this->distance = distance;
@@ -65,9 +75,14 @@ lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group *motors, float diameter, 
  * 
  */
 void lemlib::TrackingWheel::reset() {
-    if (this->encoder != nullptr) this->encoder->reset();
-    if (this->rotation != nullptr) this->rotation->reset();
+    std::int32_t encoderSuccess = 0;
+    std::int32_t rotationSuccess = 0;
+    if (this->encoder != nullptr) encoderSuccess = this->encoder->reset();
+    if (this->rotation != nullptr) rotationSuccess = this->rotation->reset();
     if (this->motors != nullptr) this->motors->tare_position();
+
+    if (this->encoder != nullptr && encoderSuccess == PROS_ERR) lemlib::logger::error("Failed to calibrate tracking wheel with Optical Shaft Encoder [Errno " + std::to_string(errno) + "] ");
+    if (this->rotation != nullptr && rotationSuccess == PROS_ERR) lemlib::logger::error("Failed to calibrate tracking wheel with Rotation Sensor [Errno " + std::to_string(errno) + "] ");
 }
 
 
