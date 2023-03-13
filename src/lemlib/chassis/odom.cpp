@@ -15,6 +15,7 @@
 // http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
 
 #include <math.h>
+#include "lemlib/logger.hpp"
 #include "pros/rtos.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/odom.hpp"
@@ -47,6 +48,14 @@ float prevImu = 0;
  */
 void lemlib::setSensors(lemlib::OdomSensors_t sensors, lemlib::Drivetrain_t drivetrain)
 {
+    if (sensors.horizontal1 != nullptr && sensors.horizontal2 != nullptr) {
+        if (sensors.horizontal1->getOffset() == sensors.horizontal2->getOffset()) lemlib::logger::error("Horizontal tracking wheels have the same offset");
+    }
+
+    if (sensors.vertical1 != nullptr && sensors.vertical2 != nullptr) {
+        if (sensors.vertical1->getOffset() == sensors.vertical2->getOffset()) lemlib::logger::error("Vertical tracking wheels have the same offset");
+    }
+
     odomSensors = sensors;
     drive = drivetrain;
 }

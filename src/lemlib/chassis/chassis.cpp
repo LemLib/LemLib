@@ -8,8 +8,10 @@
  * @copyright Copyright (c) 2023
  * 
  */
+#include <cstdint>
 #include <math.h>
-#include "pros/motors.hpp"
+#include "lemlib/logger.hpp"
+#include "pros/adi.h"
 #include "pros/misc.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/pid.hpp"
@@ -28,6 +30,29 @@
  */
 lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors)
 {
+    /* Drivetrain checks */
+    for (int i = 0; i < drivetrain.leftMotors->size(); i++) {
+        pros::Motor leftMotor = drivetrain.leftMotors->at(i);
+        for (int j = 0; j < drivetrain.rightMotors->size(); j++) {
+            pros::Motor rightMotor = drivetrain.rightMotors->at(j);
+            if (leftMotor.get_port() == rightMotor.get_port()) lemlib::logger::error("Left and right motors have the same port: " + std::to_string(leftMotor.get_port()));
+        }
+    }
+
+    if (drivetrain.trackWidth < 5) lemlib::logger::warn("Track width is too small: " + std::to_string(drivetrain.trackWidth));
+    else if (drivetrain.trackWidth > 24) lemlib::logger::warn("Track width is too large: " + std::to_string(drivetrain.trackWidth));
+
+    if (drivetrain.wheelDiameter < 2.5 || drivetrain.wheelDiameter > 4.5) lemlib::logger::warn("Wheel diameter is not valid: " + std::to_string(drivetrain.wheelDiameter) + " [Valid: 2.5-4.5\"]");
+    
+    if (drivetrain.rpm < 100) lemlib::logger::warn("Drivetrain RPM too small: " + std::to_string(drivetrain.rpm));
+
+    /* Odometry checks */
+    if (
+        sensors.horizontal1 == nullptr && sensors.horizontal2 == nullptr &&
+        sensors.vertical1 == nullptr && sensors.vertical2 == nullptr &&
+        sensors.imu == nullptr
+    ) lemlib::logger::warn("No sensors were provided for odometry");
+
     this->drivetrain = drivetrain;
     this->lateralSettings = lateralSettings;
     this->angularSettings = angularSettings;
@@ -42,7 +67,9 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
 void lemlib::Chassis::calibrate()
 {
     // calibrate the imu if it exists
-    if (odomSensors.imu != nullptr) odomSensors.imu->reset(true);
+    std::int32_t imuStatus = 0;
+    if (odomSensors.imu != nullptr) imuStatus = odomSensors.imu->reset(true);
+    if (imuStatus == PROS_ERR) lemlib::logger::error("Failed to reset IMU [Errno " + std::to_string(imuStatus) + "]");
     // initialize odom
     if (odomSensors.vertical1 == nullptr) odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -(drivetrain.trackWidth/2), drivetrain.rpm);
     if (odomSensors.vertical2 == nullptr) odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter, drivetrain.trackWidth/2, drivetrain.rpm);
@@ -107,7 +134,12 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians)
  */
 void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log)
 {
-    Pose pose(0, 0);
+    if (lemlib::pointInBound(x, y, -100, 100)) lemlib::logger::warn("Target point moves out of the field: " + std::to_string(x) + ", " + std::to_string(y) + " [Valid: -100-100]");
+
+    Pose pose = getPose();
+
+    if (pose.distance(lemlib::Pose(x, y)) < 1) lemlib::logger::warn("Target point is too close to the robot: " + std::to_string(x) + ", " + std::to_string(y));
+
     float targetTheta;
     float deltaX, deltaY, deltaTheta;
     float motorPower;
@@ -163,7 +195,12 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  */
 void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log)
 {
-    Pose pose(0, 0);
+    if (lemlib::pointInBound(x, y, -100, 100)) lemlib::logger::warn("Target point moves out of the field: " + std::to_string(x) + ", " + std::to_string(y) + " [Valid: -100-100]");
+
+    Pose pose = getPose();
+
+    if (pose.distance(lemlib::Pose(x, y)) < 1) lemlib::logger::warn("Target point is too close to the robot: " + std::to_string(x) + ", " + std::to_string(y));
+
     float prevLateralPower = 0;
     float prevAngularPower = 0;
     bool close = false;

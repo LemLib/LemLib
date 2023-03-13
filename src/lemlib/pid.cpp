@@ -13,6 +13,7 @@
 #include <math.h>
 #include "lemlib/pid.hpp"
 #include "lemlib/util.hpp"
+#include "lemlib/logger.hpp"
 
 
 // define static variables
@@ -33,6 +34,8 @@ pros::Mutex lemlib::FAPID::logMutex = pros::Mutex();
  */
 lemlib::FAPID::FAPID(float kF, float kA, float kP, float kI, float kD, std::string name)
 {
+    if (name == "") lemlib::logger::warn("Empty name passed to PID constructor");
+
     this->kF = kF;
     this->kA = kA;
     this->kP = kP;

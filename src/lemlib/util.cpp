@@ -130,3 +130,15 @@ double lemlib::avg(std::vector<double> values)
     }
     return sum / values.size();
 }
+
+/**
+ * @brief Return if a point is within a bound
+ * 
+ * @param pointX x coordinate of the point
+ * @param pointY y coordinate of the point
+ * @param min minimum value of the bound
+ * @param max maximum value of the bound
+*/
+bool pointInBound(float pointX, float pointY, float min, float max) {
+    return pointX >= min && pointX <= max && pointY >= min && pointY <= max;
+}
