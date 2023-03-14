@@ -4,9 +4,9 @@
  * @brief definitions for the chassis class
  * @version 0.1
  * @date 2023-01-27
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 #include <math.h>
 #include "pros/motors.hpp"
@@ -17,87 +17,77 @@
 #include "lemlib/chassis/odom.hpp"
 #include "trackingWheel.hpp"
 
-
 /**
  * @brief Construct a new Chassis
- * 
+ *
  * @param drivetrain drivetrain to be used for the chassis
  * @param lateralSettings settings for the lateral controller
  * @param angularSetting settings for the angular controller
  * @param sensors sensors to be used for odometry
  */
-lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings, OdomSensors_t sensors)
-{
+lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings,
+                         ChassisController_t angularSettings, OdomSensors_t sensors) {
     this->drivetrain = drivetrain;
     this->lateralSettings = lateralSettings;
     this->angularSettings = angularSettings;
     this->odomSensors = sensors;
 }
 
-
 /**
  * @brief Calibrate the chassis sensors
- * 
+ *
  */
-void lemlib::Chassis::calibrate()
-{
+void lemlib::Chassis::calibrate() {
     // calibrate the imu if it exists
-    if (odomSensors.imu != nullptr) odomSensors.imu->reset(true);
+    if (odomSensors.imu) odomSensors.imu->reset(true);
     // initialize odom
-    if (odomSensors.vertical1 == nullptr) odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -(drivetrain.trackWidth/2), drivetrain.rpm);
-    if (odomSensors.vertical2 == nullptr) odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter, drivetrain.trackWidth/2, drivetrain.rpm);
+    if (!odomSensors.vertical1)
+        odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
+                                                          -(drivetrain.trackWidth / 2), drivetrain.rpm);
+    if (!odomSensors.vertical2)
+        odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
+                                                          drivetrain.trackWidth / 2, drivetrain.rpm);
     odomSensors.vertical1->reset();
     odomSensors.vertical2->reset();
-    if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
-    if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
+    if (odomSensors.horizontal1) odomSensors.horizontal1->reset();
+    if (odomSensors.horizontal2) odomSensors.horizontal2->reset();
     lemlib::setSensors(odomSensors, drivetrain);
     lemlib::init();
 }
 
-
 /**
  * @brief Set the Pose object
- * 
+ *
  * @param x new x value
  * @param y new y value
  * @param theta new theta value
  * @param radians true if theta is in radians, false if not. False by default
  */
-void lemlib::Chassis::setPose(double x, double y, double theta, bool radians)
-{
+void lemlib::Chassis::setPose(double x, double y, double theta, bool radians) {
     lemlib::setPose(lemlib::Pose(x, y, theta), radians);
 }
 
-
 /**
- * @brief Set the pose of the chassis 
+ * @brief Set the pose of the chassis
  *
  * @param Pose the new pose
  * @param radians whether pose theta is in radians (true) or not (false). false by default
  */
-void lemlib::Chassis::setPose(Pose pose, bool radians)
-{
-    lemlib::setPose(pose, radians);
-}
-
+void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
 
 /**
  * @brief Get the pose of the chassis
- * 
+ *
  * @param radians whether theta should be in radians (true) or degrees (false). false by default
- * @return Pose 
+ * @return Pose
  */
-lemlib::Pose lemlib::Chassis::getPose(bool radians)
-{
-    return lemlib::getPose(radians);
-}
-
+lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(radians); }
 
 /**
  * @brief Turn the chassis so it is facing the target point
  *
  * The PID logging id is "angularPID"
- * 
+ *
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
@@ -105,8 +95,7 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians)
  * @param maxSpeed the maximum speed the robot can turn at. Default is 200
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log)
-{
+void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log) {
     Pose pose(0, 0);
     float targetTheta;
     float deltaX, deltaY, deltaTheta;
@@ -115,13 +104,14 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 
     // create a new PID controller
     FAPID pid = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    pid.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout, angularSettings.smallErrorTimeout, timeout);
+    pid.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
+                angularSettings.smallErrorTimeout, timeout);
 
     // main loop
     while (pros::competition::get_status() == compState && !pid.settled()) {
         // update variables
         pose = getPose();
-        pose.theta = (reversed) ? fmod(pose.theta-180, 360) : fmod(pose.theta, 360);
+        pose.theta = (reversed) ? fmod(pose.theta - 180, 360) : fmod(pose.theta, 360);
         deltaX = x - pose.x;
         deltaY = y - pose.y;
         targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
@@ -148,12 +138,11 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
     drivetrain.rightMotors->move(0);
 }
 
-
 /**
  * @brief Move the chassis towards the target point
  *
  * The PID logging ids are "angularPID" and "lateralPID"
- * 
+ *
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
@@ -161,8 +150,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param reversed whether the robot should turn in the opposite direction. false by default
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log)
-{
+void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log) {
     Pose pose(0, 0);
     float prevLateralPower = 0;
     float prevAngularPower = 0;
@@ -173,7 +161,8 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     // create a new PID controller
     FAPID lateralPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "lateralPID");
     FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout, lateralSettings.smallErrorTimeout, timeout);
+    lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
+                       lateralSettings.smallErrorTimeout, timeout);
 
     // main loop
     while (pros::competition::get_status() == compState && (!lateralPID.settled() || pros::millis() - start < 300)) {
@@ -198,12 +187,13 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         // if the robot is close to the target
         if (pose.distance(lemlib::Pose(x, y)) < 7.5) {
             close = true;
-            maxSpeed = (std::fabs(prevLateralPower) <  30) ? 30 : std::fabs(prevLateralPower);
+            maxSpeed = (std::fabs(prevLateralPower) < 30) ? 30 : std::fabs(prevLateralPower);
         }
 
         // limit acceleration
         if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
-        if (std::fabs(angularError) > 25) angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
+        if (std::fabs(angularError) > 25)
+            angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
 
         // cap the speed
         if (lateralPower > maxSpeed) lateralPower = maxSpeed;
