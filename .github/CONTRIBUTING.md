@@ -171,7 +171,6 @@ We use our own style guide for LemLib. Here are the most important rules:
 
 For further information, check out [.clang-format](../.clang-format).
 
-
 We use the [clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) extension to format our code. You can use the `.clang-format` file in the root directory of the project to configure your IDE to use the same formatting rules as we do. You can also use the `clang-format` command line tool to format your code. You can find more information about the tool [here](https://clang.llvm.org/docs/ClangFormat.html).
 
 
