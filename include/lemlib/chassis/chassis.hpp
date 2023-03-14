@@ -31,11 +31,11 @@ namespace lemlib {
  * @param imu pointer to the IMU
  */
 typedef struct {
-    TrackingWheel* vertical1;
-    TrackingWheel* vertical2;
-    TrackingWheel* horizontal1;
-    TrackingWheel* horizontal2;
-    pros::Imu* imu;
+        TrackingWheel* vertical1;
+        TrackingWheel* vertical2;
+        TrackingWheel* horizontal1;
+        TrackingWheel* horizontal2;
+        pros::Imu* imu;
 } OdomSensors_t;
 
 /**
@@ -53,21 +53,21 @@ typedef struct {
  * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
  */
 typedef struct {
-    float kP;
-    float kD;
-    float smallError;
-    float smallErrorTimeout;
-    float largeError;
-    float largeErrorTimeout;
-    float slew;
+        float kP;
+        float kD;
+        float smallError;
+        float smallErrorTimeout;
+        float largeError;
+        float largeErrorTimeout;
+        float slew;
 } ChassisController_t;
 
 typedef struct {
-    pros::Motor_Group* leftMotors;
-    pros::Motor_Group* rightMotors;
-    float trackWidth;
-    float wheelDiameter;
-    float rpm;
+        pros::Motor_Group* leftMotors;
+        pros::Motor_Group* rightMotors;
+        float trackWidth;
+        float wheelDiameter;
+        float rpm;
 } Drivetrain_t;
 
 /**
