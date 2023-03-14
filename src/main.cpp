@@ -56,7 +56,7 @@ lemlib::ChassisController_t angularController {
 
 // sensors for odometry
 lemlib::OdomSensors_t sensors {
-	&vertical,
+	nullptr,
 	nullptr,
 	nullptr,
 	nullptr,
@@ -74,8 +74,15 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	pros::lcd::initialize();
 	// calibrate sensors
 	chassis.calibrate();
+	while (true) {
+		pros::lcd::print(0, "X: %f", chassis.getPose().x);
+		pros::lcd::print(1, "Y: %f", chassis.getPose().y);
+		pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
+		pros::delay(10);
+	}
 }
 
 
