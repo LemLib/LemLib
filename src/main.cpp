@@ -1,6 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 
+
 // drive motors
 pros::Motor lF(-3, pros::E_MOTOR_GEARSET_06); // left front motor. port 3, reversed
 pros::Motor lM(-14, pros::E_MOTOR_GEARSET_06); // left middle motor. port 14, reversed
@@ -21,21 +22,50 @@ pros::ADIEncoder verticalEnc('A', 'B', false);
 // vertical tracking wheel. 2.75" diameter, 2.2" offset
 lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 0);
 
+
 // drivetrain
 lemlib::Drivetrain_t drivetrain {
-    &leftMotors, &rightMotors, 10, 3.25, 360,
+	&leftMotors,
+	&rightMotors,
+	10,
+	3.25,
+	360,
 };
 
 // lateral motion controller
-lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
+lemlib::ChassisController_t lateralController {
+	10,
+	30,
+	1,
+	100,
+	3,
+	500,
+	20
+};
 
 // angular motion controller
-lemlib::ChassisController_t angularController {2, 10, 1, 100, 3, 500, 3};
+lemlib::ChassisController_t angularController {
+	2,
+	10,
+	1,
+	100,
+	3,
+	500,
+	3
+};
 
 // sensors for odometry
-lemlib::OdomSensors_t sensors {&vertical, nullptr, nullptr, nullptr, &imu};
+lemlib::OdomSensors_t sensors {
+	&vertical,
+	nullptr,
+	nullptr,
+	nullptr,
+	&imu
+};
+
 
 lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -44,9 +74,10 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    // calibrate sensors
-    chassis.calibrate();
+	// calibrate sensors
+	chassis.calibrate();
 }
+
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -54,6 +85,7 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {}
+
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -66,6 +98,7 @@ void disabled() {}
  */
 void competition_initialize() {}
 
+
 /**
  * Runs the user autonomous code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -77,7 +110,10 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() { chassis.moveTo(20, 0, 4000); }
+void autonomous() {
+	chassis.moveTo(20, 0, 4000);
+}
+
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -92,4 +128,5 @@ void autonomous() { chassis.moveTo(20, 0, 4000); }
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {}
+void opcontrol() {
+}
