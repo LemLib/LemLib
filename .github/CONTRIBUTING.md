@@ -158,9 +158,18 @@ Changes should be requested via a [Pull Request](https://help.github.com/en/gith
 
 ### C++ Coding Style
 
-We use the [Mozilla C++ Coding Style](https://firefox-source-docs.mozilla.org/code-quality/coding-style/coding_style_cpp.html), with the following exceptions:
-- Use `lowerCamelCase` for variables **and** functions
-- Don't use prefixes for variables and functions
+We use our own style guide for LemLib. Here are the most important rules:
+ - Use `lowerCamelCase` for variables and functions
+ - Use `UpperCamelCase` for classes and structs
+ - Use `UPPER_SNAKE_CASE` for macros
+ - Braces should always be on the same line as the statement
+ - Pointers and references are always to the left
+ - Max column width is 120 characters
+ - Operators should be surrounded by spaces
+ - Commas should be followed by a space
+ - Indents are 4 spaces
+
+For further information, check out [.clang-format](../.clang-format).
 
 We use the [clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) extension to format our code. You can use the `.clang-format` file in the root directory of the project to configure your IDE to use the same formatting rules as we do. You can also use the `clang-format` command line tool to format your code. You can find more information about the tool [here](https://clang.llvm.org/docs/ClangFormat.html).
 
