@@ -28,7 +28,7 @@ The tutorials provide a detailed walkthrough through all the features of LemLib.
 Check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/html/index.html)
 
 ## Contributing
-Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/CONTRIBUTING.md)
+Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/.github/CONTRIBUTING.md)
 
 ## Code of Conduct
-See the [Code of Conduct](https://github.com/LemLib/LemLib/blob/master/CODE_OF_CONDUCT.md) on how to behave like an adult.
+See the [Code of Conduct](https://github.com/LemLib/LemLib/blob/master/.github/CODE_OF_CONDUCT.md) on how to behave like an adult.
