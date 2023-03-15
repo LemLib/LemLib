@@ -1,16 +1,39 @@
+name: Doxygen Action
+
 on:
   push:
-    branches:
-      - '*'
+    branches: [ master ]
 
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  doxygen:
-    name: Run Doxygen
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    steps:
-      # use mattnotmitt/doxygen-action@v1.9.5 to run doxygen, with default settings
+    permissions:
+      contents: write
 
-      - name: Checkout
-        uses: actions/checkout@v3.3.0
-      - name: Run Doxygen
-        uses: mattnotmitt/doxygen-action@v1.9.5
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    - name: Build
+      uses: mattnotmitt/doxygen-action@v1.9.5
+      with:
+        working-directory: .
+        doxyfile-path: './docs/Doxyfile'
+
+    - name: Create public
+      run: |
+        mkdir ./public
+        cp -r ./html/* ./docs/assets ./public
+    
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # Default Doxyfile build documentation to html directory.
+        # Change the directory if changes in Doxyfile
+        publish_dir: './public'

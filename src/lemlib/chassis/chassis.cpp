@@ -1,8 +1,8 @@
 /**
- * @file lemlib/chassis/chassis.cpp
- * @author Liam Teale
+ * @file src/lemlib/chassis/chassis.cpp
+ * @author LemLib Team
  * @brief definitions for the chassis class
- * @version 0.1
+ * @version 0.4.5
  * @date 2023-01-27
  *
  * @copyright Copyright (c) 2023

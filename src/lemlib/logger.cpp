@@ -1,3 +1,14 @@
+/**
+ * @file src/lemlib/logger.cpp
+ * @author LemLib Team
+ * @brief File containing definitions for the logger system
+ * @version 0.4.5
+ * @date 2023-03-15
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include <iostream>
 #include <string>
 

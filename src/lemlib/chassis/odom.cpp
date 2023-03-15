@@ -1,8 +1,8 @@
 /**
- * @file lemlib/chassis/odom.cpp
- * @author Liam Teale
+ * @file src/lemlib/chassis/odom.cpp
+ * @author LemLib Team
  * @brief Odometry source file. Contains odometry functions and global variables
- * @version 0.1
+ * @version 0.4.5
  * @date 2023-01-27
  *
  * @copyright Copyright (c) 2023

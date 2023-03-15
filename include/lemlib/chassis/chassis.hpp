@@ -1,8 +1,8 @@
 /**
- * @file lemlib/chassis/chassis.hpp
- * @author Liam Teale
+ * @file include/lemlib/chassis/chassis.hpp
+ * @author LemLib Team
  * @brief Chassis class declarations
- * @version 0.1
+ * @version 0.4.5
  * @date 2023-01-23
  *
  * @copyright Copyright (c) 2023
@@ -44,13 +44,13 @@ typedef struct {
  * The constants are stored in a struct so that they can be easily passed to the chassis class
  * Set a constant to 0 and it will be ignored
  *
- * @param kA maximum acceleration of the chassis motors in/s^2
  * @param kP proportional constant for the chassis controller
  * @param kD derivative constant for the chassis controller
  * @param smallError the error at which the chassis controller will switch to a slower control loop
  * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
  * @param largeError the error at which the chassis controller will switch to a faster control loop
  * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
+ * @param slew the maximum acceleration of the chassis controller
  */
 typedef struct {
         float kP;
@@ -62,6 +62,18 @@ typedef struct {
         float slew;
 } ChassisController_t;
 
+/**
+ * @brief Struct containing constants for a drivetrain
+ *
+ * The constants are stored in a struct so that they can be easily passed to the chassis class
+ * Set a constant to 0 and it will be ignored
+ *
+ * @param leftMotors pointer to the left motors
+ * @param rightMotors pointer to the right motors
+ * @param trackWidth the track width of the robot
+ * @param wheelDiameter the diameter of the wheels (2.75, 3.25, 4, 4.125)
+ * @param rpm the rpm of the wheels
+ */
 typedef struct {
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
@@ -81,7 +93,7 @@ class Chassis {
          *
          * @param drivetrain drivetrain to be used for the chassis
          * @param lateralSettings settings for the lateral controller
-         * @param angularSetting settings for the angular controller
+         * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          */
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
@@ -136,7 +148,6 @@ class Chassis {
          * @param y y location
          * @param timeout longest time the robot can spend moving
          * @param maxSpeed the maximum speed the robot can move at
-         * @param reversed whether the robot should turn in the opposite direction. false by default
          * @param log whether the chassis should log the turnTo function. false by default
          */
         void moveTo(float x, float y, int timeout, float maxSpeed = 200, bool log = false);

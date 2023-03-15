@@ -1,8 +1,8 @@
 /**
- * @file lemlib/chassis/pursuit.cpp
- * @author Liam Teale
+ * @file src/lemlib/chassis/pursuit.cpp
+ * @author LemLib Team
  * @brief Pure Pursuit implementation
- * @version 0.1
+ * @version 0.4.5
  * @date 2023-02-09
  * @copyright Copyright (c) 2023
  *

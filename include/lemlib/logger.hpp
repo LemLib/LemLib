@@ -1,8 +1,8 @@
 /**
- * @file logger.hpp
- * @author LemLib
+ * @file include/lemlib/logger.hpp
+ * @author LemLib Team
  * @brief A Logger for LemLib.
- * @version 0.4.0
+ * @version 0.4.5
  * @date 2023-02-12
  *
  * @copyright Copyright (c) 2023
