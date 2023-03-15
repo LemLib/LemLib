@@ -10,13 +10,13 @@ LemLib is a [PROS](https://pros.cs.purdue.edu) template, so you can use it with 
 
 To install visual studio code, go to [https://code.visualstudio.com](https://code.visualstudio.com) and download the installer for your operating system
 
-<img src="../assets/1_getting_started/download-visual-studio-code.png"  width="800">
+<img src="./assets/1_getting_started/download-visual-studio-code.png"  width="800">
 
 <br>
 
 Once you have installed it, open it and install the PROS extension. You can do this by clicking typing `Ctrl+Shift+X`, searching for "pros", and clicking the install button.
 <br>
-<img src="../assets/1_getting_started/install-pros.png" height=500 style="display: block;margin-left: auto;margin-right: auto;">
+<img src="./assets/1_getting_started/install-pros.png" height=500 style="display: block;margin-left: auto;margin-right: auto;">
 
 And finally, we can create a new project. Navigate to the new PROS tab on the left, and click the "Create New Project" button. Select a folder, a name, v5, and when asked to select a version, select "latest".
 
@@ -28,7 +28,7 @@ Now we can install LemLib!
 
 To install LemLib, you need to download the `LemLib@0.4.5.zip` from [here](https://github.com/SizzinSeal/LemLib/releases/latest/). Next you need to drag the zip file into your pros project folder. Once you have done that, open the pros integrated terminal by selecting the pros icon on the left, and clicking `Integrated Terminal` 
 <br>
-<img src="../assets/1_getting_started/integrated_terminal.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
+<img src="./assets/1_getting_started/integrated_terminal.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
 
 
 Next, you need to run the following command in the terminal:

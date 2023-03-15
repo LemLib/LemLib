@@ -8,7 +8,7 @@ In this tutorial, we will be be using Pure Pursuit. Pure Pursuit is a path follo
 
 Pure Pursuit is a path following algorithm that allows the robot to follow a path quickly. It works by drawing an imaginary circle around the robot, and then finding the intersection of the circle and the path. The robot will then drive towards the intersection. This is shown in the GIF below:
 
-<img src="../assets/4_pure_pursuit/pursuit.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+<img src="./assets/4_pure_pursuit/pursuit.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
 Tuning Pure Pursuit is very simple. If you want the robot to follow the path more closely, decrease the lookahead distance. If you want the robot to follow the path more loosely, but faster, then increase the lookahead distance. A good starting point is 10 inches, but this will vary depending on each motion.
 
@@ -24,7 +24,7 @@ Using the Path Generator is simple:
 
 Another feature of the Path Generator is the ability to make the robot go faster or slower at certain points. The planner will automatically slow down the robot around sharp corners and decelerate as it approaches the end of the path. You can modify the speed of the robot at certain sections by highlighting the section (right click drag) and then changing the speed in the textbox that will appear. The units of the checkbox are a percentage. Editing the path will reset any user defined speeds. Below is an example of a path with a user defined speed:
 
-<img src="../assets/4_pure_pursuit/custom_speed.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+<img src="./assets/4_pure_pursuit/custom_speed.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
 As you may have noticed, there are some sliders on the right. Unfortunately, the GIF shown is of a slightly older version of the Path Planner, and some sliders have been removed. Now, the only sliders on the Path Planner are the max speed, max deceleration, and turn speed multiplier. Max speed and max deceleration do exactly what you would expect. The turn speed multiplier determines how fast the robot will move around sharp corners. Higher values will make the robot move faster around corners, and lower values will make the robot move slower around corners.
 

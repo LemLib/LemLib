@@ -8,7 +8,7 @@ The creation of this template was inspired by [EZ-Template](https://github.com/E
 
 ## License
 
-This project is licensed under the MIT license. Check [LICENSE](https://github.com/LemLib/LemLib/blob/master/LICENSE) for more details.
+This project is licensed under the MIT license. Check [LICENSE](https://github.com/LemLib/LemLib/blob/master/.github/LICENSE) for more details.
 
 ## Features
 - Generic PID class

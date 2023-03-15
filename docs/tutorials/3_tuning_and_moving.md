@@ -134,7 +134,7 @@ Another project we have been developing is the [Path Generator](https://lemlib.g
 
 When hovering your mouse over a location on the field, its coordinates will be displayed in the bottom left corner. You can then manually input these coordinates into the `chassis.moveTo()` and `chassis.turnTo()` functions. You can also view the starting position of the robot by simply hovering your mouse over where it would start. You can set the position of the robot by using the `chassis.setPose()` function, as documented in [tutorial 2](2_setting_up_the_chassis.md). Below is an image of the Path Generator:
 
-<img src="../assets/3_tuning_and_moving/path_generator.png">
+<img src="./assets/3_tuning_and_moving/path_generator.png">
 
 Note that the origin of the field is in the middle, and the field coordinates are measured in inches. **0 degrees is facing up, and increases clockwise**.
 
