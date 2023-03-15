@@ -19,13 +19,13 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 
 ## Tutorials
 The tutorials provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to pure pursuit.
- - 1: [Getting Started](https://lemlib.github.io/LemLib/html/md_docs_tutorials_1_getting_started.html)
- - 2: [Setting up the Chassis](https://lemlib.github.io/LemLib/html/md_docs_tutorials_2_setting_up_the_chassis.html)
- - 3: [Tuning and Moving](https://lemlib.github.io/LemLib/html/md_docs_tutorials_3_tuning_and_moving.html)
- - 4: [Pure Pursuit](https://lemlib.github.io/LemLib/html/md_docs_tutorials_4_pure_pursuit.html)
+ - 1: [Getting Started](https://lemlib.github.io/LemLib/md_docs_tutorials_1_getting_started.html)
+ - 2: [Setting up the Chassis](https://lemlib.github.io/LemLib/md_docs_tutorials_2_setting_up_the_chassis.html)
+ - 3: [Tuning and Moving](https://lemlib.github.io/LemLib/md_docs_tutorials_3_tuning_and_moving.html)
+ - 4: [Pure Pursuit](https://lemlib.github.io/LemLib/md_docs_tutorials_4_pure_pursuit.html)
 
 ## Documentation
-Check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/html/index.html)
+Check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/index.html)
 
 ## Contributing
 Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/.github/CONTRIBUTING.md)

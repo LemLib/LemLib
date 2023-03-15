@@ -1,9 +1,9 @@
 /**
- * @file lemlib/chassis/odom.hpp
- * @author Liam Teale (you@domain.com)
+ * @file include/lemlib/chassis/odom.hpp
+ * @author LemLib Team
  * @brief This is the header file for the odom.cpp file. Its not meant to be used directly, only through the chassis
  * class
- * @version 0.1
+ * @version 0.4.5
  * @date 2023-01-23
  *
  * @copyright Copyright (c) 2023

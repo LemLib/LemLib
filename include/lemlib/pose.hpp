@@ -1,8 +1,8 @@
 /**
- * @file lemlib/pose.hpp
- * @author Liam Teale
+ * @file include/lemlib/pose.hpp
+ * @author LemLib Team
  * @brief Pose class declarations
- * @version 0.1
+ * @version 0.4.5
  * @date 2023-01-23
  *
  * @copyright Copyright (c) 2023
@@ -13,8 +13,11 @@
 namespace lemlib {
 class Pose {
     public:
+        /** @brief x value*/
         float x;
+        /** @brief y value*/
         float y;
+        /** @brief theta value*/
         float theta;
         /**
          * @brief Create a new pose
