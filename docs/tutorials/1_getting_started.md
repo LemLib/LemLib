@@ -34,8 +34,8 @@ To install LemLib, you need to download the `LemLib@0.4.5.zip` from [here](https
 Next, you need to run the following command in the terminal:
 
 ```bash
-pros c fetch LemLib@0.4.5.zip
-pros c apply LemLib@0.4.5
+pros c fetch LemLib@0.4.6.zip
+pros c apply LemLib@0.4.6
 ```
 
 Finally, put the following at the top of your main.cpp file:
