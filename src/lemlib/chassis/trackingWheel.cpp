@@ -21,10 +21,11 @@
  * @param diameter diameter of the tracking wheel in inches
  * @param distance distance between the tracking wheel and the center of rotation in inches
  */
-lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, float diameter, float distance) {
+lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, float diameter, float distance, float gearRatio) {
     this->encoder = encoder;
     this->diameter = diameter;
     this->distance = distance;
+    this->gearRatio = gearRatio;
 }
 
 /**
@@ -34,10 +35,11 @@ lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, float diameter, 
  * @param diameter diameter of the tracking wheel in inches
  * @param distance distance between the tracking wheel and the center of rotation in inches
  */
-lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, float diameter, float distance) {
+lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, float diameter, float distance, float gearRatio) {
     this->rotation = encoder;
     this->diameter = diameter;
     this->distance = distance;
+    this->gearRatio = gearRatio;
 }
 
 /**
@@ -73,9 +75,9 @@ void lemlib::TrackingWheel::reset() {
  */
 float lemlib::TrackingWheel::getDistanceTraveled() {
     if (this->encoder != nullptr) {
-        return float(this->encoder->get_value()) * this->diameter * M_PI / 360;
+        return (float(this->encoder->get_value()) * this->diameter * M_PI / 360) / this->gearRatio;
     } else if (this->rotation != nullptr) {
-        return float(this->rotation->get_position()) * this->diameter * M_PI / 36000;
+        return (float(this->rotation->get_position()) * this->diameter * M_PI / 36000) / this->gearRatio;
     } else if (this->motors != nullptr) {
         // get distance traveled by each motor
         std::vector<pros::motor_gearset_e_t> gearsets = this->motors->get_gearing();
