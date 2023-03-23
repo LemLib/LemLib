@@ -62,7 +62,7 @@ lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group* motors, float diameter, 
  */
 void lemlib::TrackingWheel::reset() {
     if (this->encoder != nullptr) this->encoder->reset();
-    if (this->rotation != nullptr) this->rotation->reset();
+    if (this->rotation != nullptr) this->rotation->reset_position();
     if (this->motors != nullptr) this->motors->tare_position();
 }
 
