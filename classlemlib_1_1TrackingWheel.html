@@ -169,12 +169,12 @@ $(document).ready(function(){initNavTree('classlemlib_1_1TrackingWheel.html','')
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a24894519b426aa122aaf710c5a420b2a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1TrackingWheel.html#a24894519b426aa122aaf710c5a420b2a">TrackingWheel</a> (pros::ADIEncoder *encoder, float diameter, float distance)</td></tr>
-<tr class="memdesc:a24894519b426aa122aaf710c5a420b2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new tracking wheel.  <a href="classlemlib_1_1TrackingWheel.html#a24894519b426aa122aaf710c5a420b2a">More...</a><br /></td></tr>
-<tr class="separator:a24894519b426aa122aaf710c5a420b2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b61b9c9779ae523d5b218c0f8f13d46"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1TrackingWheel.html#a7b61b9c9779ae523d5b218c0f8f13d46">TrackingWheel</a> (pros::Rotation *encoder, float diameter, float distance)</td></tr>
-<tr class="memdesc:a7b61b9c9779ae523d5b218c0f8f13d46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new tracking wheel.  <a href="classlemlib_1_1TrackingWheel.html#a7b61b9c9779ae523d5b218c0f8f13d46">More...</a><br /></td></tr>
-<tr class="separator:a7b61b9c9779ae523d5b218c0f8f13d46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6376015551083cc769e3afab5024fda"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1TrackingWheel.html#ac6376015551083cc769e3afab5024fda">TrackingWheel</a> (pros::ADIEncoder *encoder, float diameter, float distance, float gearRatio=1)</td></tr>
+<tr class="memdesc:ac6376015551083cc769e3afab5024fda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new tracking wheel.  <a href="classlemlib_1_1TrackingWheel.html#ac6376015551083cc769e3afab5024fda">More...</a><br /></td></tr>
+<tr class="separator:ac6376015551083cc769e3afab5024fda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08744ef3967ce157fb890a3a9b0bb4c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1TrackingWheel.html#a08744ef3967ce157fb890a3a9b0bb4c3">TrackingWheel</a> (pros::Rotation *encoder, float diameter, float distance, float gearRatio=1)</td></tr>
+<tr class="memdesc:a08744ef3967ce157fb890a3a9b0bb4c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new tracking wheel.  <a href="classlemlib_1_1TrackingWheel.html#a08744ef3967ce157fb890a3a9b0bb4c3">More...</a><br /></td></tr>
+<tr class="separator:a08744ef3967ce157fb890a3a9b0bb4c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a722d96ceab11756ce180f3cbf98728d8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1TrackingWheel.html#a722d96ceab11756ce180f3cbf98728d8">TrackingWheel</a> (pros::Motor_Group *motors, float diameter, float distance, float rpm)</td></tr>
 <tr class="memdesc:a722d96ceab11756ce180f3cbf98728d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new tracking wheel.  <a href="classlemlib_1_1TrackingWheel.html#a722d96ceab11756ce180f3cbf98728d8">More...</a><br /></td></tr>
 <tr class="separator:a722d96ceab11756ce180f3cbf98728d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -192,8 +192,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0155fa8304d31e820049bfc653fd0dec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a24894519b426aa122aaf710c5a420b2a" name="a24894519b426aa122aaf710c5a420b2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24894519b426aa122aaf710c5a420b2a">&#9670;&#160;</a></span>TrackingWheel() <span class="overload">[1/3]</span></h2>
+<a id="ac6376015551083cc769e3afab5024fda" name="ac6376015551083cc769e3afab5024fda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6376015551083cc769e3afab5024fda">&#9670;&#160;</a></span>TrackingWheel() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -214,7 +214,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>distance</em>&#160;</td>
+          <td class="paramname"><em>distance</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>gearRatio</em> = <code>1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -230,14 +236,15 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">encoder</td><td>the optical shaft encoder to use </td></tr>
     <tr><td class="paramname">diameter</td><td>diameter of the tracking wheel in inches </td></tr>
     <tr><td class="paramname">distance</td><td>distance between the tracking wheel and the center of rotation in inches </td></tr>
+    <tr><td class="paramname">gearRatio</td><td>gear ratio of the tracking wheel, defaults to 1 </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a7b61b9c9779ae523d5b218c0f8f13d46" name="a7b61b9c9779ae523d5b218c0f8f13d46"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b61b9c9779ae523d5b218c0f8f13d46">&#9670;&#160;</a></span>TrackingWheel() <span class="overload">[2/3]</span></h2>
+<a id="a08744ef3967ce157fb890a3a9b0bb4c3" name="a08744ef3967ce157fb890a3a9b0bb4c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08744ef3967ce157fb890a3a9b0bb4c3">&#9670;&#160;</a></span>TrackingWheel() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -258,7 +265,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>distance</em>&#160;</td>
+          <td class="paramname"><em>distance</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>gearRatio</em> = <code>1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -274,6 +287,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">encoder</td><td>the v5 rotation sensor to use </td></tr>
     <tr><td class="paramname">diameter</td><td>diameter of the tracking wheel in inches </td></tr>
     <tr><td class="paramname">distance</td><td>distance between the tracking wheel and the center of rotation in inches </td></tr>
+    <tr><td class="paramname">gearRatio</td><td>gear ratio of the tracking wheel, defaults to 1 </td></tr>
   </table>
   </dd>
 </dl>
