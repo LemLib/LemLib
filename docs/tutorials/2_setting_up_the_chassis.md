@@ -50,7 +50,9 @@ Tracking Wheels are unpowered wheels that are used to track the movement of the 
 
 <img src="./assets/2_setting_up_the_chassis/tracking_wheel.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
-A tracking wheel can rotate freely on a screw joint, and rubber bands pull it down so it makes consistent contact with the field tiles. Tracking wheels can be connected to either an Optical Shaft Encoder or a V5 Rotation Sensor. Both are supported by LemLib. 
+A tracking wheel can rotate freely on a screw joint, and rubber bands pull it down so it makes consistent contact with the field tiles. Tracking wheels can be connected to either an Optical Shaft Encoder or a V5 Rotation Sensor. Both are supported by LemLib.
+
+A gear ratio may be used to increase the resolution of the encoder. If you are using a gear ratio, you need to specify it to the `lemlib::TrackingWheel` constructor. Gear ratios are input/output, so if you have a 2:1 gear ratio, the actual ratio is 2.
 
 The first step in setting up the tracking wheels is to create an object for the encoder. Below is an example of how to do this:
 ```cpp
@@ -60,8 +62,8 @@ pros::Rotation rot(1, false); // port 1, not reversed
 
 Next, we have to create a `lemlib::TrackingWheel` object. This contains information about the tracking wheel, such as the diameter and its offset from the tracking center. Below is an example of how to do this:
 ```cpp
-// uses "enc" as the encoder. 2.75" wheel diameter, 4.3" offset from tracking center
-lemlib::TrackingWheel left_tracking_wheel(&enc, 2.75, 4.3);
+// uses "enc" as the encoder. 2.75" wheel diameter, 4.3" offset from tracking center, 2:1 gear ratio
+lemlib::TrackingWheel left_tracking_wheel(&enc, 2.75, 4.3, 2);
 ```
 
 Hold on, how far away from the tracking center is the tracking wheel? Turns out, its not the straight distance to the center of the robot, but only one component of it. Below is a diagram which shows the relationship between the tracking center and the tracking wheel:
