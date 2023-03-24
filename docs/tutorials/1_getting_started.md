@@ -13,8 +13,7 @@ To install visual studio code, go to [https://code.visualstudio.com](https://cod
 <img src="./assets/1_getting_started/download-visual-studio-code.png"  width="800">
 
 <br>
-
-Once you have installed it, open it and install the PROS extension. You can do this by clicking typing `Ctrl+Shift+X`, searching for "pros", and clicking the install button.
+Once you have installed it, open it and install the PROS extension. You can do this by clicking typing `Ctrl+Shift+X` (`⌘+Shift+X` on Mac), searching for "pros", and clicking the install button.
 <br>
 <img src="./assets/1_getting_started/install-pros.png" height=500 style="display: block;margin-left: auto;margin-right: auto;">
 
@@ -26,19 +25,19 @@ Now we can install LemLib!
 ## Installation - LemLib Template
 
 
-To install LemLib, you need to download the `LemLib@0.4.5.zip` from [here](https://github.com/SizzinSeal/LemLib/releases/latest/). Next you need to drag the zip file into your pros project folder. Once you have done that, open the pros integrated terminal by selecting the pros icon on the left, and clicking `Integrated Terminal` 
+To install LemLib, you need to download the `LemLib@0.4.5.zip` from [here](https://github.com/SizzinSeal/LemLib/releases/latest/). Next you need to drag the zip file into your pros project folder. Once you have done that, open the pros integrated terminal by selecting the pros icon on the left, and clicking `Integrated Terminal`.
 <br>
 <img src="./assets/1_getting_started/integrated_terminal.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
 
 
-Next, you need to run the following command in the terminal:
+Next, you need to run the following commands in your PROS terminal:
 
 ```bash
 pros c fetch LemLib@0.4.6.zip
 pros c apply LemLib@0.4.6
 ```
 
-Finally, put the following at the top of your main.cpp file:
+Finally, put the following at the top of your `main.cpp` file:
 ```cpp
 #include "lemlib/api.hpp"
 ```
