@@ -20,6 +20,7 @@
  * @param encoder the optical shaft encoder to use
  * @param diameter diameter of the tracking wheel in inches
  * @param distance distance between the tracking wheel and the center of rotation in inches
+ * @param gearRatio gear ratio of the tracking wheel, defaults to 1
  */
 lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, float diameter, float distance, float gearRatio) {
     this->encoder = encoder;
@@ -34,6 +35,7 @@ lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, float diameter, 
  * @param encoder the v5 rotation sensor to use
  * @param diameter diameter of the tracking wheel in inches
  * @param distance distance between the tracking wheel and the center of rotation in inches
+ * @param gearRatio gear ratio of the tracking wheel, defaults to 1
  */
 lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, float diameter, float distance, float gearRatio) {
     this->rotation = encoder;
