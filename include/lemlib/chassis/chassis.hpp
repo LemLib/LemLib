@@ -164,6 +164,40 @@ class Chassis {
          */
         void follow(const char* filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127,
                     bool log = false);
+        /**
+         * @brief Adjust the gain for the drive curves during opcontrol
+         *
+         * @param scale the new value of the gain
+         */
+        void setDriveCurveScale(double scale);
+
+        double driveCurveScale; // Yes I know its public
+                                //
+        /**
+         * @brief Tank Drive control scheme for driver control.
+         *
+         * @param leftSpeed the speed the left side of the drivetrain should move. Expects a value from -127 to 127
+         * @param rightSpeed the speed the right side of the drivetrain should move. Expects a value from -127 to 127
+         */
+        void tank(double leftSpeed, double rightSpeed, double deadzone = 0);
+
+        /**
+         * @brief Arcade Drive control scheme for driver control.
+         *
+         * @param forwardSpeed the speed the drivetrain should move forwards. Expects a value from -127 to 127
+         * @param yaw the speed the drivetrain should turn. Expects a value from -127 to 127
+         */
+        void arcade(double forwardSpeed, double yaw, double deadzone = 0);
+
+        /**
+         * @brief Curvature Drive control scheme for driver control. Similar to arcade drive, but instead of changing
+         * the speed, it changes the radius of the turn that the robot makes.
+         *
+         * @param forwardSpeed the speed the drivetrain should move forwards. Expects a value from -127 to 127
+         * @param curvature Controls the radius of the curvature of the chassis's movement. Expects a value from -127 to
+         * 127
+         */
+        void curvature(double forwardSpeed, double curvature, double deadzone = 0);
     private:
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;

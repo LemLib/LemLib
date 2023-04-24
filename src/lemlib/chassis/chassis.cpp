@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2023
  *
  */
+#include <algorithm>
 #include <math.h>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
@@ -31,6 +32,8 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
     this->lateralSettings = lateralSettings;
     this->angularSettings = angularSettings;
     this->odomSensors = sensors;
+
+    driveCurveScale = 0;
 }
 
 /**
@@ -223,4 +226,95 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+}
+
+double calcDriveCurve(double input, double scale) {
+    if (scale != 0) {
+        return (powf(2.718, -(scale / 10)) + powf(2.718, (fabs(input) - 127) / 10) * (1 - powf(2.718, -(scale / 10)))) *
+               input;
+    }
+    return input;
+}
+
+void lemlib::Chassis::setDriveCurveScale(double scale) { driveCurveScale = scale; }
+
+// Credit to Okapilib for these implementations:
+// https://github.com/purduesigbots/OkapiLib/blob/1355c29e1cc7a01dc2080434ecb7b32bec7b8328/src/api/chassis/model/skidSteerModel.cpp#L79
+
+void lemlib::Chassis::tank(double leftSpeed, double rightSpeed, double deadzone) {
+    leftSpeed = std::clamp(leftSpeed, -127.0, 127.0);
+    if (std::abs(leftSpeed) <= deadzone) { leftSpeed = 0; }
+
+    rightSpeed = std::clamp(rightSpeed, -127.0, 127.0);
+    if (std::abs(rightSpeed) <= deadzone) { rightSpeed = 0; }
+
+    drivetrain.leftMotors->move(calcDriveCurve(leftSpeed, 0));
+    drivetrain.rightMotors->move(calcDriveCurve(rightSpeed, 0));
+};
+
+void lemlib::Chassis::arcade(double forwardSpeed, double yaw, double deadzone) {
+    forwardSpeed = calcDriveCurve(forwardSpeed, driveCurveScale);
+    forwardSpeed = std::clamp(forwardSpeed, -127.0, 127.0);
+    if (std::abs(forwardSpeed) <= deadzone) { forwardSpeed = 0; }
+
+    yaw = calcDriveCurve(yaw, driveCurveScale);
+    yaw = std::clamp(yaw, -127.0, 127.0);
+    if (std::abs(yaw) <= deadzone) { yaw = 0; }
+
+    double maxInput = std::copysign(std::max(std::abs(forwardSpeed), std::abs(yaw)), forwardSpeed);
+
+    double leftOutput = forwardSpeed + yaw;
+    double rightOutput = forwardSpeed - yaw;
+
+    if (forwardSpeed >= 0) {
+        if (yaw >= 0) {
+            leftOutput = maxInput;
+            rightOutput = forwardSpeed - yaw;
+        } else {
+            leftOutput = forwardSpeed + yaw;
+            rightOutput = maxInput;
+        }
+    } else {
+        if (yaw >= 0) {
+            leftOutput = forwardSpeed + yaw;
+            rightOutput = maxInput;
+        } else {
+            leftOutput = maxInput;
+            rightOutput = forwardSpeed - yaw;
+        }
+    }
+
+    drivetrain.leftMotors->move(static_cast<int>(leftOutput));
+    drivetrain.rightMotors->move(static_cast<int>(rightOutput));
+}
+
+void lemlib::Chassis::curvature(double iforwardSpeed, double icurvature, double deadzone) {
+    double forwardSpeed = calcDriveCurve(iforwardSpeed, driveCurveScale);
+    forwardSpeed /= 127;
+    forwardSpeed = std::clamp(forwardSpeed, -1.0, 1.0);
+    if (std::abs(forwardSpeed) < deadzone) { forwardSpeed = 0; }
+
+    double curvature = calcDriveCurve(icurvature, driveCurveScale);
+    curvature /= 127;
+    curvature = std::clamp(curvature, -1.0, 1.0);
+    if (std::abs(curvature) < deadzone) { curvature = 0; }
+
+    // the algorithm switches to arcade when forward speed is 0 to allow point turns.
+    if (forwardSpeed == 0) {
+        arcade(iforwardSpeed, icurvature, deadzone);
+        return;
+    }
+
+    double leftSpeed = forwardSpeed + std::abs(forwardSpeed) * curvature;
+    double rightSpeed = forwardSpeed - std::abs(forwardSpeed) * curvature;
+    double maxSpeed = std::max(leftSpeed, rightSpeed);
+
+    // normalizes output
+    if (maxSpeed > 1) {
+        leftSpeed /= maxSpeed;
+        rightSpeed /= maxSpeed;
+    }
+
+    drivetrain.leftMotors->move(static_cast<int>(leftSpeed * 127));
+    drivetrain.rightMotors->move(static_cast<int>(rightSpeed * 127));
 }
