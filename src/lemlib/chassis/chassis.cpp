@@ -39,7 +39,15 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
  */
 void lemlib::Chassis::calibrate() {
     // calibrate the imu if it exists
-    if (odomSensors.imu != nullptr) odomSensors.imu->reset(true);
+    if (odomSensors.imu != nullptr) {
+        odomSensors.imu->reset(true);
+        // keep on calibrating until it calibrates successfully
+        while (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) {
+            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
+            odomSensors.imu->reset(true);
+            pros::delay(10);
+        }
+    }
     // initialize odom
     if (odomSensors.vertical1 == nullptr)
         odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
@@ -53,6 +61,8 @@ void lemlib::Chassis::calibrate() {
     if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
     lemlib::setSensors(odomSensors, drivetrain);
     lemlib::init();
+    // rumble to controller to indicate success
+    pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
 }
 
 /**
