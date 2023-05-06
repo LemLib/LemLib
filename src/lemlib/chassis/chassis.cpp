@@ -14,7 +14,6 @@
 #include "lemlib/util.hpp"
 #include "lemlib/pid.hpp"
 #include "lemlib/chassis/chassis.hpp"
-#include "lemlib/chassis/odom.hpp"
 #include "trackingWheel.hpp"
 
 /**
@@ -59,8 +58,8 @@ void lemlib::Chassis::calibrate() {
     odomSensors.vertical2->reset();
     if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
     if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
-    lemlib::setSensors(odomSensors, drivetrain);
-    lemlib::init();
+    // start the odom task
+    if (odomTask == nullptr) odomTask = new pros::Task {[=] { odom(); }};
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
 }
@@ -74,24 +73,31 @@ void lemlib::Chassis::calibrate() {
  * @param radians true if theta is in radians, false if not. False by default
  */
 void lemlib::Chassis::setPose(double x, double y, double theta, bool radians) {
-    lemlib::setPose(lemlib::Pose(x, y, theta), radians);
+    if (radians) Chassis::pose = lemlib::Pose(x, y, theta);
+    else Chassis::pose = lemlib::Pose(x, y, degToRad(theta));
 }
 
 /**
- * @brief Set the pose of the chassis
+ * @brief Set the Pose of the robot
  *
- * @param Pose the new pose
- * @param radians whether pose theta is in radians (true) or not (false). false by default
+ * @param pose the new pose
+ * @param radians true if theta is in radians, false if in degrees. False by default
  */
-void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
+void lemlib::Chassis::setPose(lemlib::Pose pose, bool radians) {
+    if (radians) Chassis::pose = pose;
+    else Chassis::pose = lemlib::Pose(pose.x, pose.y, degToRad(pose.theta));
+}
 
 /**
- * @brief Get the pose of the chassis
+ * @brief Get the pose of the robot
  *
- * @param radians whether theta should be in radians (true) or degrees (false). false by default
+ * @param radians true for theta in radians, false for degrees. False by default
  * @return Pose
  */
-lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(radians); }
+lemlib::Pose lemlib::Chassis::getPose(bool radians) {
+    if (radians) return pose;
+    else return lemlib::Pose(pose.x, pose.y, radToDeg(pose.theta));
+}
 
 /**
  * @brief Turn the chassis so it is facing the target point
@@ -233,4 +239,112 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+}
+
+void lemlib::Chassis::odom() {
+    float prevVertical = 0;
+    float prevVertical1 = 0;
+    float prevVertical2 = 0;
+    float prevHorizontal = 0;
+    float prevHorizontal1 = 0;
+    float prevHorizontal2 = 0;
+    float prevImu = 0;
+    float vertical1Raw = 0;
+    float vertical2Raw = 0;
+    float horizontal1Raw = 0;
+    float horizontal2Raw = 0;
+    float imuRaw = 0;
+    // loop forever
+    while (true) {
+        if (odomSensors.vertical1 != nullptr) vertical1Raw = odomSensors.vertical1->getDistanceTraveled();
+        if (odomSensors.vertical2 != nullptr) vertical2Raw = odomSensors.vertical2->getDistanceTraveled();
+        if (odomSensors.horizontal1 != nullptr) horizontal1Raw = odomSensors.horizontal1->getDistanceTraveled();
+        if (odomSensors.horizontal2 != nullptr) horizontal2Raw = odomSensors.horizontal2->getDistanceTraveled();
+        if (odomSensors.imu != nullptr) imuRaw = degToRad(odomSensors.imu->get_rotation());
+
+        // calculate the change in sensor values
+        float deltaVertical1 = vertical1Raw - prevVertical1;
+        float deltaVertical2 = vertical2Raw - prevVertical2;
+        float deltaHorizontal1 = horizontal1Raw - prevHorizontal1;
+        float deltaHorizontal2 = horizontal2Raw - prevHorizontal2;
+        float deltaImu = imuRaw - prevImu;
+
+        // update the previous sensor values
+        prevVertical1 = vertical1Raw;
+        prevVertical2 = vertical2Raw;
+        prevHorizontal1 = horizontal1Raw;
+        prevHorizontal2 = horizontal2Raw;
+        prevImu = imuRaw;
+
+        // calculate the heading of the robot
+        // Priority:
+        // 1. Horizontal tracking wheels
+        // 2. Vertical tracking wheels
+        // 3. Inertial Sensor
+        // 4. Drivetrain
+        float heading = pose.theta;
+        // calculate the heading using the horizontal tracking wheels
+        if (odomSensors.horizontal1 != nullptr && odomSensors.horizontal2 != nullptr)
+            heading += (deltaHorizontal1 - deltaHorizontal2) /
+                       (odomSensors.horizontal1->getOffset() - odomSensors.horizontal2->getOffset());
+        // else, if both vertical tracking wheels aren't substituted by the drivetrain, use the vertical tracking wheels
+        else if (!odomSensors.vertical1->getType() && !odomSensors.vertical2->getType())
+            heading += (deltaVertical1 - deltaVertical2) /
+                       (odomSensors.vertical1->getOffset() - odomSensors.vertical2->getOffset());
+        // else, if the inertial sensor exists, use it
+        else if (odomSensors.imu != nullptr) heading += deltaImu;
+        // else, use the the substituted tracking wheels
+        else
+            heading += (deltaVertical1 - deltaVertical2) /
+                       (odomSensors.vertical1->getOffset() - odomSensors.vertical2->getOffset());
+        float deltaHeading = heading - pose.theta;
+        float avgHeading = pose.theta + deltaHeading / 2;
+
+        // choose tracking wheels to use
+        // Prioritize non-powered tracking wheels
+        lemlib::TrackingWheel* verticalWheel = nullptr;
+        lemlib::TrackingWheel* horizontalWheel = nullptr;
+        if (!odomSensors.vertical1->getType()) verticalWheel = odomSensors.vertical1;
+        else if (!odomSensors.vertical2->getType()) verticalWheel = odomSensors.vertical2;
+        else verticalWheel = odomSensors.vertical1;
+        if (odomSensors.horizontal1 != nullptr) horizontalWheel = odomSensors.horizontal1;
+        else if (odomSensors.horizontal2 != nullptr) horizontalWheel = odomSensors.horizontal2;
+        float rawVertical = 0;
+        float rawHorizontal = 0;
+        if (verticalWheel != nullptr) rawVertical = verticalWheel->getDistanceTraveled();
+        if (horizontalWheel != nullptr) rawHorizontal = horizontalWheel->getDistanceTraveled();
+        float horizontalOffset = 0;
+        float verticalOffset = 0;
+        if (verticalWheel != nullptr) verticalOffset = verticalWheel->getOffset();
+        if (horizontalWheel != nullptr) horizontalOffset = horizontalWheel->getOffset();
+
+        // calculate change in x and y
+        float deltaX = 0;
+        float deltaY = 0;
+        if (verticalWheel != nullptr) deltaY = rawVertical - prevVertical;
+        if (horizontalWheel != nullptr) deltaX = rawHorizontal - prevHorizontal;
+        prevVertical = rawVertical;
+        prevHorizontal = rawHorizontal;
+
+        // calculate local x and y
+        float localX = 0;
+        float localY = 0;
+        if (deltaHeading == 0) { // prevent divide by 0
+            localX = deltaX;
+            localY = deltaY;
+        } else {
+            localX = 2 * sin(deltaHeading / 2) * (deltaX / deltaHeading + horizontalOffset);
+            localY = 2 * sin(deltaHeading / 2) * (deltaY / deltaHeading + verticalOffset);
+        }
+
+        // calculate global x and y
+        pose.x += localY * sin(avgHeading);
+        pose.y += localY * cos(avgHeading);
+        pose.x += localX * -cos(avgHeading);
+        pose.y += localX * sin(avgHeading);
+        pose.theta = heading;
+
+        // delay to save resources
+        pros::delay(10);
+    }
 }

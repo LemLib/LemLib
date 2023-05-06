@@ -13,6 +13,7 @@
 
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
+#include "pros/rtos.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
 
@@ -165,9 +166,13 @@ class Chassis {
         void follow(const char* filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127,
                     bool log = false);
     private:
-        ChassisController_t lateralSettings;
-        ChassisController_t angularSettings;
-        Drivetrain_t drivetrain;
-        OdomSensors_t odomSensors;
+        ChassisController_t lateralSettings; // lateral PID setting
+        ChassisController_t angularSettings; // angular PID settings
+        Drivetrain_t drivetrain; // drivetrain to be used
+        OdomSensors_t odomSensors; // sensors to be used for odometry
+
+        pros::Task* odomTask = nullptr; // odometry task
+        void odom(); // odometry task function
+        lemlib::Pose pose = lemlib::Pose(0, 0, 0); // the pose of the robot
 };
 } // namespace lemlib
