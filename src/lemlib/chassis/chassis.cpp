@@ -373,6 +373,8 @@ void lemlib::Chassis::odom() {
         pose.y += localX * sin(avgHeading);
         pose.theta = heading;
 
+        // give the mutex back
+        odomMutex.give();
         // delay to save resources
         pros::delay(10);
     }
