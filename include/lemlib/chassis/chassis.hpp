@@ -102,8 +102,9 @@ class Chassis {
         /**
          * @brief Calibrate the chassis sensors
          *
+         * @param preservePose true if the pose should be preserved, false if not. False by default
          */
-        void calibrate();
+        void calibrate(bool preservePose = false);
         /**
          * @brief Set the pose of the chassis
          *
@@ -171,6 +172,7 @@ class Chassis {
         Drivetrain_t drivetrain; // drivetrain to be used
         OdomSensors_t odomSensors; // sensors to be used for odometry
 
+        pros::Mutex odomMutex; // mutex for odometry
         pros::Task* odomTask = nullptr; // odometry task
         void odom(); // odometry task function
         lemlib::Pose pose = lemlib::Pose(0, 0, 0); // the pose of the robot

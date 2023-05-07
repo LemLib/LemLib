@@ -35,8 +35,13 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
 /**
  * @brief Calibrate the chassis sensors
  *
+ * @param preservePose true if the pose should be preserved, false if not. False by default
  */
-void lemlib::Chassis::calibrate() {
+void lemlib::Chassis::calibrate(bool preservePose) {
+    // if preservePose is false, set the pose to 0, 0, 0
+    if (!preservePose) pose = lemlib::Pose(0, 0, 0);
+    // take the odom mutex
+    odomMutex.take(TIMEOUT_MAX);
     // calibrate the imu if it exists
     if (odomSensors.imu != nullptr) {
         odomSensors.imu->reset(true);
@@ -62,6 +67,8 @@ void lemlib::Chassis::calibrate() {
     if (odomTask == nullptr) odomTask = new pros::Task {[=] { odom(); }};
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
+    // give the odom mutex back
+    odomMutex.give();
 }
 
 /**
@@ -241,6 +248,10 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     drivetrain.rightMotors->move(0);
 }
 
+/**
+ * @brief Odometry update function
+ *
+ */
 void lemlib::Chassis::odom() {
     float prevVertical = 0;
     float prevVertical1 = 0;
@@ -254,8 +265,26 @@ void lemlib::Chassis::odom() {
     float horizontal1Raw = 0;
     float horizontal2Raw = 0;
     float imuRaw = 0;
+
     // loop forever
     while (true) {
+        // take the odom mutex
+        if (!odomMutex.take(100)) { // if the mutex could not be taken
+            // reset previous values
+            prevVertical = 0;
+            prevVertical1 = 0;
+            prevVertical2 = 0;
+            prevHorizontal = 0;
+            prevHorizontal1 = 0;
+            prevHorizontal2 = 0;
+            prevImu = 0;
+            // wait for 10 ms to save resources
+            pros::delay(10);
+            // continue to the next iteration
+            continue;
+        }
+
+        // see what sensors are available
         if (odomSensors.vertical1 != nullptr) vertical1Raw = odomSensors.vertical1->getDistanceTraveled();
         if (odomSensors.vertical2 != nullptr) vertical2Raw = odomSensors.vertical2->getDistanceTraveled();
         if (odomSensors.horizontal1 != nullptr) horizontal1Raw = odomSensors.horizontal1->getDistanceTraveled();
