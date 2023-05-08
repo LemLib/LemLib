@@ -38,19 +38,35 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
  * @param preservePose true if the pose should be preserved, false if not. False by default
  */
 void lemlib::Chassis::calibrate(bool preservePose) {
-    // if preservePose is false, set the pose to 0, 0, 0
     if (!preservePose) pose = lemlib::Pose(0, 0, 0);
-    // take the odom mutex
     odomMutex.take(TIMEOUT_MAX);
     // calibrate the imu if it exists
     if (odomSensors.imu != nullptr) {
-        odomSensors.imu->reset(true);
-        // keep on calibrating until it calibrates successfully
-        while (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) {
-            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
-            odomSensors.imu->reset(true);
-            pros::delay(10);
-        }
+        bool imuCalibrated = false; // whether the imu has been calibrated successfully
+        do {
+            int32_t imuReturn = odomSensors.imu->reset(); // call the imu reset function
+            // check if the imu reset failed loudly
+            if (imuReturn == PROS_ERR) {
+                // rumble the controller to indicate failure
+                pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
+                // try again
+                pros::delay(10);
+                continue;
+            }
+            // wait for the imu to calibrate
+            while (odomSensors.imu->is_calibrating()) { pros::delay(10); }
+            // check if the imu reset failed quietly
+            double imuTestRotation = odomSensors.imu->get_rotation();
+            if (std::isinf(imuTestRotation) || std::isnan(imuTestRotation)) {
+                // rumble the controller to indicate failure
+                pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
+                // try agin
+                pros::delay(10);
+                continue;
+            }
+            // imu calibrated successfully
+            imuCalibrated = true;
+        } while (!imuCalibrated);
     }
     // initialize odom
     if (odomSensors.vertical1 == nullptr)
