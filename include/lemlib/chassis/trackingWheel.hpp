@@ -18,6 +18,7 @@
 namespace lemlib {
 class TrackingWheel {
     public:
+        enum class Type { POD, DRIVE };
         /**
          * @brief Create a new tracking wheel
          *
@@ -65,9 +66,9 @@ class TrackingWheel {
         /**
          * @brief Get the type of tracking wheel
          *
-         * @return int - 1 if motor group, 0 otherwise
+         * @return Type type of tracking wheel (POD or DRIVE)
          */
-        int getType();
+        Type getType();
     private:
         float diameter;
         float distance;

@@ -113,7 +113,7 @@ float lemlib::TrackingWheel::getOffset() { return this->distance; }
  *
  * @return int - 1 if motor group, 0 otherwise
  */
-int lemlib::TrackingWheel::getType() {
-    if (this->motors != nullptr) return 1;
-    return 0;
+lemlib::TrackingWheel::Type lemlib::TrackingWheel::getType() {
+    if (this->motors != nullptr) return Type::DRIVE;
+    return Type::POD;
 }
