@@ -11,6 +11,9 @@
 
 #pragma once
 
+#include <string>
+#include "lemlib/util.hpp"
+
 namespace lemlib {
 
 static bool debug = false;
@@ -75,65 +78,62 @@ Level getLowestLevel();
 void setLowestLevel(Level level);
 
 /**
- * @brief Logs a message with an exception
- *
- * @param level the level of the message
- * @param message the message
- * @param exception the exception
- */
-void log(Level level, const char* message, const char* exception);
-/**
  * @brief Logs a message
  *
  * @param level the level of the message
  * @param message the message
  */
-void log(Level level, const char* message);
+void log(Level level, const std::string& message);
 
 /**
  * @brief Logs a debug message
  *
  * @param message
  */
-void debug(const char* message);
+template <typename... Args>
+void debug(const std::string& message, Args const&... args) {
+    log(Level::DEBUG, util::format(message, args...));
+}
+
 /**
  * @brief Logs an info message
  *
  * @param message
  */
-void info(const char* message);
+template <typename... Args>
+void info(const std::string& message, Args const&... args) {
+    log(Level::INFO, util::format(message, args...));
+}
+
 /**
  * @brief Logs a warning message
  *
  * @param message
  */
-void warn(const char* message);
+template <typename... Args>
+void warn(const std::string& message, Args const&... args) {
+    log(Level::WARN, util::format(message, args...));
+}
+
 /**
  * @brief Logs an error message
  *
  * @param message
- * @param exception
  */
-void error(const char* message, const char* exception);
-/**
- * @brief Logs an error message
- *
- * @param message
- */
-void error(const char* message);
-/**
- * @brief Logs a fatal message
- *
- * @param message
- * @param exception
- */
-void fatal(const char* message, const char* exception);
+template <typename... Args>
+void error(const std::string& message, Args const&... args) {
+    log(Level::ERROR, util::format(message, args...));
+}
+
 /**
  * @brief Logs a fatal message
  *
  * @param message
  */
-void fatal(const char* message);
+template <typename... Args>
+void fatal(const std::string& message, Args const&... args) {
+    log(Level::FATAL, util::format(message, args...));
+}
 
 } // namespace logger
 } // namespace lemlib

@@ -73,6 +73,28 @@ lemlib::Pose lemlib::Pose::operator/(const float& other) {
 }
 
 /**
+ * @brief Check if two poses are equal
+ *
+ * @param other
+ * @return true
+ * @return false
+ */
+bool lemlib::Pose::operator==(const lemlib::Pose& other) {
+    return this->x == other.x && this->y == other.y && this->theta == other.theta;
+}
+
+/**
+ * @brief Check if two poses are not equal
+ *
+ * @param other
+ * @return true
+ * @return false
+ */
+bool lemlib::Pose::operator!=(const lemlib::Pose& other) {
+    return this->x != other.x || this->y != other.y || this->theta != other.theta;
+}
+
+/**
  * @brief Linearly interpolate between two poses
  *
  * @param other the other pose

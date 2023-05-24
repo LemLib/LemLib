@@ -12,7 +12,9 @@
 #include <iostream>
 #include <string>
 
+#include "pros/rtos.hpp"
 #include "lemlib/logger.hpp"
+#include "lemlib/util.hpp"
 
 /**
  * @brief Whether or not to log debug messages.
@@ -99,90 +101,16 @@ End of util functions
 */
 
 /**
- * @brief Logs a message with an exception
- *
- * @param level the level of the message
- * @param message the message
- * @param exception the exception
- */
-void lemlib::logger::log(Level level, const char* message, const char* exception) {
-    if (!checkLowestLevel(level)) return;
-    if (level == Level::DEBUG && !lemlib::debug) return;
-    if (level == Level::INFO && !lemlib::verbose) return;
-
-    if (message == nullptr) message = "";
-    if (exception == nullptr) throw std::invalid_argument("exception cannot be null");
-
-    std::string messageString = "[LemLib] " + getFormattedLevel(level) + ": " + message + ": " + exception + RESET_ANSI;
-
-    std::cout << messageString << std::endl;
-}
-
-/**
  * @brief Logs a message
  *
  * @param level the level of the message
  * @param message the message
  */
-void lemlib::logger::log(Level level, const char* message) {
+void lemlib::logger::log(Level level, const std::string& message) {
     if (!checkLowestLevel(level)) return;
     if (level == Level::DEBUG && !lemlib::debug) return;
     if (level == Level::INFO && !lemlib::verbose) return;
-
-    if (message == nullptr) message = "";
-
-    std::string messageString = "[LemLib] " + getFormattedLevel(level) + ": " + message + RESET_ANSI;
-
+    std::string messageString =
+        std::to_string(pros::millis()) + " [LemLib]" + getFormattedLevel(level) + ": " + message + RESET_ANSI;
     std::cout << messageString << std::endl;
 }
-
-/**
- * @brief Logs a debug message
- *
- * @param message
- */
-void lemlib::logger::debug(const char* message) { log(Level::DEBUG, message); }
-
-/**
- * @brief Logs an info message
- *
- * @param message
- */
-void lemlib::logger::info(const char* message) { log(Level::INFO, message); }
-
-/**
- * @brief Logs a warning message
- *
- * @param message
- */
-void lemlib::logger::warn(const char* message) { log(Level::WARN, message); }
-
-/**
- * @brief Logs an error message
- *
- * @param message
- * @param exception
- */
-void lemlib::logger::error(const char* message, const char* exception) { log(Level::ERROR, message, exception); }
-
-/**
- * @brief Logs an error message
- *
- * @param message
- */
-void lemlib::logger::error(const char* message) { log(Level::ERROR, message); }
-
-/**
- * @brief Logs a fatal message
- *
- * @param message
- * @param exception
- */
-void lemlib::logger::fatal(const char* message, const char* exception) { log(Level::FATAL, message, exception); }
-
-/**
- * @brief Logs a fatal message
- *
- * @param message
- */
-void lemlib::logger::fatal(const char* message) { log(Level::FATAL, message); }

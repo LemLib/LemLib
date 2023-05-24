@@ -89,7 +89,7 @@ float lemlib::FAPID::update(float target, float position, bool log) {
     float error = target - position;
     float deltaError = error - prevError;
     float output = kF * target + kP * error + kI * totalError + kD * deltaError;
-    if (kA != 0) output = lemlib::slew(output, prevOutput, kA);
+    if (kA != 0) output = util::slew(output, prevOutput, kA);
     prevOutput = output;
     prevError = error;
     totalError += error;

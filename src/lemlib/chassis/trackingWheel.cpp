@@ -95,7 +95,7 @@ float lemlib::TrackingWheel::getDistanceTraveled() {
             }
             distances.push_back(positions[i] * (diameter * M_PI) * (rpm / in));
         }
-        return lemlib::avg(distances);
+        return util::avg(distances);
     } else {
         return 0;
     }

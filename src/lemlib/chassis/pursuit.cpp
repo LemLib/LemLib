@@ -20,6 +20,7 @@
 #include "pros/misc.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/util.hpp"
+#include "lemlib/logger.hpp"
 
 /**
  * @brief function that returns elements in a file line, separated by a delimeter
@@ -63,10 +64,10 @@ std::vector<lemlib::Pose> getData(std::string filePath) {
     // read the points until 'endData' is read
     while (getline(file, line) && line != "endData") {
         pointInput = readElement(line, ", "); // parse line
-        pathPoint.x = std::stof(pointInput.at(0)); // x position
-        pathPoint.y = std::stof(pointInput.at(1)); // y position
-        pathPoint.theta = std::stof(pointInput.at(2)); // velocity
-        robotPath.push_back(pathPoint); // save data
+        pathPoint.x = std::stof(pointInput.at(0));
+        pathPoint.y = std::stof(pointInput.at(1));
+        pathPoint.theta = std::stof(pointInput.at(2));
+        robotPath.push_back(pathPoint);
     }
 
     file.close();
@@ -107,7 +108,6 @@ int findClosest(lemlib::Pose pose, std::vector<lemlib::Pose> path) {
  * @return float how far along the line the
  */
 float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, float lookaheadDist) {
-    // calculations
     // uses the quadratic formula to calculate intersection points
     lemlib::Pose d = p2 - p1;
     lemlib::Pose f = p1 - pose;
@@ -154,7 +154,9 @@ lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::
             lookahead.theta = i;
         }
     }
-
+    if (lookahead == lastLookahead) {
+        lemlib::logger::debug("No new lookahead point found! Is the lookahead distance too large?");
+    }
     return lookahead;
 }
 
@@ -168,7 +170,8 @@ lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::
  */
 double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lookahead) {
     // calculate whether the robot is on the left or right side of the circle
-    double side = lemlib::sgn(std::sin(heading) * (lookahead.x - pose.x) - std::cos(heading) * (lookahead.y - pose.y));
+    double side =
+        lemlib::util::sgn(std::sin(heading) * (lookahead.x - pose.x) - std::cos(heading) * (lookahead.y - pose.y));
     // calculate center point and radius
     double a = -std::tan(heading);
     double c = std::tan(heading) * pose.x - pose.y;

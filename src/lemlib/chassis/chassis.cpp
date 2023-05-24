@@ -14,7 +14,8 @@
 #include "lemlib/util.hpp"
 #include "lemlib/pid.hpp"
 #include "lemlib/chassis/chassis.hpp"
-#include "trackingWheel.hpp"
+#include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/logger.hpp"
 
 /**
  * @brief Construct a new Chassis
@@ -38,18 +39,18 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
  * @param preservePose true if the pose should be preserved, false if not. False by default
  */
 void lemlib::Chassis::calibrate(bool preservePose) {
+    logger::info("Calibrating chassis...");
     if (!preservePose) pose = lemlib::Pose(0, 0, 0);
     odomMutex.take(TIMEOUT_MAX);
     // calibrate the imu if it exists
     if (odomSensors.imu != nullptr) {
-        bool imuCalibrated = false; // whether the imu has been calibrated successfully
+        bool imuCalibrated = false;
         do {
-            int32_t imuReturn = odomSensors.imu->reset(); // call the imu reset function
+            int32_t imuReturn = odomSensors.imu->reset();
             // check if the imu reset failed loudly
             if (imuReturn == PROS_ERR) {
-                // rumble the controller to indicate failure
+                logger::error("IMU calibration failed: IMU returned PROS_ERR. Retrying...");
                 pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
-                // try again
                 pros::delay(10);
                 continue;
             }
@@ -58,9 +59,8 @@ void lemlib::Chassis::calibrate(bool preservePose) {
             // check if the imu reset failed quietly
             double imuTestRotation = odomSensors.imu->get_rotation();
             if (std::isinf(imuTestRotation) || std::isnan(imuTestRotation)) {
-                // rumble the controller to indicate failure
+                logger::error("IMU calibration failed: IMU returned NaN or Inf. Retrying...");
                 pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
-                // try agin
                 pros::delay(10);
                 continue;
             }
@@ -68,7 +68,7 @@ void lemlib::Chassis::calibrate(bool preservePose) {
             imuCalibrated = true;
         } while (!imuCalibrated);
     }
-    // initialize odom
+    // initialize tracking wheels
     if (odomSensors.vertical1 == nullptr)
         odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
                                                           -(drivetrain.trackWidth / 2), drivetrain.rpm);
@@ -83,7 +83,7 @@ void lemlib::Chassis::calibrate(bool preservePose) {
     if (odomTask == nullptr) odomTask = new pros::Task {[=] { odom(); }};
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
-    // give the odom mutex back
+    logger::info("Chassis calibrated");
     odomMutex.give();
 }
 
@@ -97,7 +97,7 @@ void lemlib::Chassis::calibrate(bool preservePose) {
  */
 void lemlib::Chassis::setPose(double x, double y, double theta, bool radians) {
     if (radians) Chassis::pose = lemlib::Pose(x, y, theta);
-    else Chassis::pose = lemlib::Pose(x, y, degToRad(theta));
+    else Chassis::pose = lemlib::Pose(x, y, util::degToRad(theta));
 }
 
 /**
@@ -108,7 +108,7 @@ void lemlib::Chassis::setPose(double x, double y, double theta, bool radians) {
  */
 void lemlib::Chassis::setPose(lemlib::Pose pose, bool radians) {
     if (radians) Chassis::pose = pose;
-    else Chassis::pose = lemlib::Pose(pose.x, pose.y, degToRad(pose.theta));
+    else Chassis::pose = lemlib::Pose(pose.x, pose.y, util::degToRad(pose.theta));
 }
 
 /**
@@ -119,7 +119,7 @@ void lemlib::Chassis::setPose(lemlib::Pose pose, bool radians) {
  */
 lemlib::Pose lemlib::Chassis::getPose(bool radians) {
     if (radians) return pose;
-    else return lemlib::Pose(pose.x, pose.y, radToDeg(pose.theta));
+    else return lemlib::Pose(pose.x, pose.y, util::radToDeg(pose.theta));
 }
 
 /**
@@ -135,6 +135,7 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians) {
  * @param log whether the chassis should log the turnTo function. false by default
  */
 void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log) {
+    logger::debug("Turning to (%f, %f)", x, y);
     Pose pose(0, 0);
     float targetTheta;
     float deltaX, deltaY, deltaTheta;
@@ -148,31 +149,24 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 
     // main loop
     while (pros::competition::get_status() == compState && !pid.settled()) {
-        // update variables
         pose = getPose();
         pose.theta = (reversed) ? fmod(pose.theta - 180, 360) : fmod(pose.theta, 360);
         deltaX = x - pose.x;
         deltaY = y - pose.y;
-        targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
-
-        // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta);
-
-        // calculate the speed
+        targetTheta = fmod(util::radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
+        deltaTheta = util::angleError(targetTheta, pose.theta);
         motorPower = pid.update(0, deltaTheta, log);
 
         // cap the speed
         if (motorPower > maxSpeed) motorPower = maxSpeed;
         else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
 
-        // move the drivetrain
         drivetrain.leftMotors->move(-motorPower);
         drivetrain.rightMotors->move(motorPower);
 
         pros::delay(10);
     }
-
-    // stop the drivetrain
+    logger::debug("Finished turning to (%f, %f)", x, y);
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
 }
@@ -190,6 +184,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param log whether the chassis should log the turnTo function. false by default
  */
 void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log) {
+    logger::debug("Moving to (%f, %f)", x, y);
     Pose pose(0, 0);
     float prevLateralPower = 0;
     float prevAngularPower = 0;
@@ -212,12 +207,12 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         // update error
         float deltaX = x - pose.x;
         float deltaY = y - pose.y;
-        float targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
+        float targetTheta = fmod(util::radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
         float hypot = std::hypot(deltaX, deltaY);
-        float diffTheta1 = angleError(pose.theta, targetTheta);
-        float diffTheta2 = angleError(pose.theta, targetTheta + 180);
+        float diffTheta1 = util::angleError(pose.theta, targetTheta);
+        float diffTheta2 = util::angleError(pose.theta, targetTheta + 180);
         float angularError = (std::fabs(diffTheta1) < std::fabs(diffTheta2)) ? diffTheta1 : diffTheta2;
-        float lateralError = hypot * cos(degToRad(std::fabs(diffTheta1)));
+        float lateralError = hypot * cos(util::degToRad(std::fabs(diffTheta1)));
 
         // calculate speed
         float lateralPower = lateralPID.update(lateralError, 0, log);
@@ -230,9 +225,9 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         }
 
         // limit acceleration
-        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
+        if (!close) lateralPower = util::slew(lateralPower, prevLateralPower, lateralSettings.slew);
         if (std::fabs(angularError) > 25)
-            angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
+            angularPower = util::slew(angularPower, prevAngularPower, angularSettings.slew);
 
         // cap the speed
         if (lateralPower > maxSpeed) lateralPower = maxSpeed;
@@ -259,7 +254,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
         pros::delay(10);
     }
 
-    // stop the drivetrain
+    logger::debug("Finished moving to (%f, %f)", x, y);
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
 }
@@ -269,6 +264,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
  *
  */
 void lemlib::Chassis::odom() {
+    logger::debug("Starting odometry");
     float prevVertical = 0;
     float prevVertical1 = 0;
     float prevVertical2 = 0;
@@ -285,8 +281,7 @@ void lemlib::Chassis::odom() {
     // loop forever
     while (true) {
         // take the odom mutex
-        if (!odomMutex.take(100)) { // if the mutex could not be taken
-            // reset previous values
+        if (!odomMutex.take(100)) {
             prevVertical = 0;
             prevVertical1 = 0;
             prevVertical2 = 0;
@@ -294,9 +289,7 @@ void lemlib::Chassis::odom() {
             prevHorizontal1 = 0;
             prevHorizontal2 = 0;
             prevImu = 0;
-            // wait for 10 ms to save resources
             pros::delay(10);
-            // continue to the next iteration
             continue;
         }
 
@@ -305,16 +298,14 @@ void lemlib::Chassis::odom() {
         if (odomSensors.vertical2 != nullptr) vertical2Raw = odomSensors.vertical2->getDistanceTraveled();
         if (odomSensors.horizontal1 != nullptr) horizontal1Raw = odomSensors.horizontal1->getDistanceTraveled();
         if (odomSensors.horizontal2 != nullptr) horizontal2Raw = odomSensors.horizontal2->getDistanceTraveled();
-        if (odomSensors.imu != nullptr) imuRaw = degToRad(odomSensors.imu->get_rotation());
+        if (odomSensors.imu != nullptr) imuRaw = util::degToRad(odomSensors.imu->get_rotation());
 
-        // calculate the change in sensor values
         float deltaVertical1 = vertical1Raw - prevVertical1;
         float deltaVertical2 = vertical2Raw - prevVertical2;
         float deltaHorizontal1 = horizontal1Raw - prevHorizontal1;
         float deltaHorizontal2 = horizontal2Raw - prevHorizontal2;
         float deltaImu = imuRaw - prevImu;
 
-        // update the previous sensor values
         prevVertical1 = vertical1Raw;
         prevVertical2 = vertical2Raw;
         prevHorizontal1 = horizontal1Raw;
@@ -347,7 +338,6 @@ void lemlib::Chassis::odom() {
         float avgHeading = pose.theta + deltaHeading / 2;
 
         // choose tracking wheels to use
-        // Prioritize non-powered tracking wheels
         lemlib::TrackingWheel* verticalWheel = nullptr;
         lemlib::TrackingWheel* horizontalWheel = nullptr;
         if (odomSensors.vertical1->getType() == TrackingWheel::Type::POD) verticalWheel = odomSensors.vertical1;
@@ -375,7 +365,7 @@ void lemlib::Chassis::odom() {
         // calculate local x and y
         float localX = 0;
         float localY = 0;
-        if (deltaHeading == 0) { // prevent divide by 0
+        if (deltaHeading == 0) {
             localX = deltaX;
             localY = deltaY;
         } else {
@@ -390,9 +380,7 @@ void lemlib::Chassis::odom() {
         pose.y += localX * sin(avgHeading);
         pose.theta = heading;
 
-        // give the mutex back
         odomMutex.give();
-        // delay to save resources
         pros::delay(10);
     }
 }
