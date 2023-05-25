@@ -12,6 +12,7 @@
 #include <math.h>
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/util.hpp"
+#include "lemlib/logger.hpp"
 #include "pros/llemu.hpp"
 
 /**
@@ -64,10 +65,13 @@ lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group* motors, float diameter, 
  * @brief Reset the tracking wheel position to 0
  *
  */
-void lemlib::TrackingWheel::reset() {
+bool lemlib::TrackingWheel::reset() {
     if (this->encoder != nullptr) this->encoder->reset();
     if (this->rotation != nullptr) this->rotation->reset_position();
     if (this->motors != nullptr) this->motors->tare_position();
+    bool status = this->getStatus();
+    if (status) logger::error("Tracking wheel reset failed. Is it plugged in the correct port?");
+    return status;
 }
 
 /**
@@ -116,4 +120,28 @@ float lemlib::TrackingWheel::getOffset() { return this->distance; }
 lemlib::TrackingWheel::Type lemlib::TrackingWheel::getType() {
     if (this->motors != nullptr) return Type::DRIVE;
     return Type::POD;
+}
+
+/**
+ * @brief Get the status of the tracking wheel
+ * 
+ * @return 0 - the tracking wheel is working properly
+ * @return 1 - the tracking wheel is not working properly (error)
+ */
+bool lemlib::TrackingWheel::getStatus() {
+    int status = 0;
+    // if the first check fails, the second check will not be performed
+    // fun fact: this is called short-circuit evaluation
+    if (this->encoder != nullptr && this->encoder->get_value() == PROS_ERR) status = 1;
+    if (this->rotation != nullptr && this->rotation->get_position() == PROS_ERR) status = 1;
+    if (this->motors != nullptr) {
+        std::vector<pros::motor_gearset_e_t> gearsets = this->motors->get_gearing();
+        std::vector<double> positions = this->motors->get_positions();
+        // check if any of the motors threw an error
+        for (int i = 0; i < this->motors->size(); i++) {
+            if (positions[i] == PROS_ERR) status = 1;
+            break;
+        }
+    }
+    return status;
 }

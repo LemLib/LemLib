@@ -49,8 +49,9 @@ class TrackingWheel {
         /**
          * @brief Reset the tracking wheel position to 0
          *
+         * @return bool - status of the tracking wheel. 0 if OK, 1 if error
          */
-        void reset();
+        bool reset();
         /**
          * @brief Get the distance traveled by the tracking wheel
          *
@@ -69,6 +70,13 @@ class TrackingWheel {
          * @return Type type of tracking wheel (POD or DRIVE)
          */
         Type getType();
+        /**
+         * @brief Get the status of the tracking wheel
+         * 
+         * @return 0 - the tracking wheel is working properly
+         * @return 1 - the tracking wheel is not working properly (error)
+         */
+        bool getStatus();
     private:
         float diameter;
         float distance;
