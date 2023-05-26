@@ -10,7 +10,7 @@
 
 namespace lemlib {
 
-    class abstractChassis {
+    class AbstractChassis {
     public:
     /**
      * @brief Struct containing all the sensors used for odometry
@@ -65,8 +65,8 @@ namespace lemlib {
         } Drivetrain_t;
 
 
-        abstractChassis() = delete;
-        void operator=(const abstractChassis& rhs) = delete;
+        AbstractChassis() = delete;
+        void operator=(const AbstractChassis& rhs) = delete;
 
         template<class ChassisType> friend class chassisBuilder;
         /**

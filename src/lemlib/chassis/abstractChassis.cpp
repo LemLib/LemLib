@@ -15,7 +15,7 @@ namespace lemlib {
      * @param theta new theta value
      * @param radians true if theta is in radians, false if not. False by default
  */
-    void abstractChassis::setPose(double x, double y, double theta, bool radians) {
+    void AbstractChassis::setPose(double x, double y, double theta, bool radians) {
         lemlib::setPose(lemlib::Pose(x, y, theta), radians);
     }
     /**
@@ -24,13 +24,13 @@ namespace lemlib {
      * @param Pose the new pose
      * @param radians whether pose theta is in radians (true) or not (false). false by default
      */
-    void abstractChassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
+    void AbstractChassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
     /**
      * @brief Get the pose of the chassis
      *
      * @param radians whether theta should be in radians (true) or degrees (false). false by default
      * @return Pose
      */
-    Pose abstractChassis::getPose(bool radians) { return lemlib::getPose(radians); }
+    Pose AbstractChassis::getPose(bool radians) { return lemlib::getPose(radians); }
 
 } // lemlib
