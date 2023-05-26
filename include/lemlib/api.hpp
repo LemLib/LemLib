@@ -15,3 +15,7 @@
 #include "lemlib/pose.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/chassis/abstractChassis.hpp"
+#include "lemlib/chassis/chassisBuilder.hpp"
+#include "lemlib/chassis/differentialDrive.hpp"
+#include "lemlib/chassis/holonomicDrive.hpp"
