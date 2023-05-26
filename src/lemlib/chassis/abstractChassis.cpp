@@ -1,7 +1,6 @@
 //
 // Created by Rocky Chen on 2023/5/26.
 //
-#pragma once
 #include "pros/misc.hpp"
 #include "lemlib/chassis/abstractChassis.hpp"
 #include "lemlib/chassis/odom.hpp"
