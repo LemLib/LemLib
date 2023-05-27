@@ -135,11 +135,10 @@ bool lemlib::TrackingWheel::getStatus() {
     if (this->encoder != nullptr && this->encoder->get_value() == PROS_ERR) status = 1;
     if (this->rotation != nullptr && this->rotation->get_position() == PROS_ERR) status = 1;
     if (this->motors != nullptr) {
-        std::vector<pros::motor_gearset_e_t> gearsets = this->motors->get_gearing();
         std::vector<double> positions = this->motors->get_positions();
         // check if any of the motors threw an error
-        for (int i = 0; i < this->motors->size(); i++) {
-            if (positions[i] == PROS_ERR) status = 1;
+        for (double position : positions) {
+            if (std::isinf(position)) status = 1;
             break;
         }
     }
