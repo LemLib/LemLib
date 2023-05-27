@@ -15,6 +15,6 @@ temp.log
 temp.errors
 *.ini
 .d/
-
+.idea
 # Doxygen
 latex
