@@ -64,11 +64,19 @@ namespace lemlib {
         typedef struct {
         } Drivetrain_t;
 
+    protected:
+        AbstractChassis() = default;
 
-        AbstractChassis() = delete;
+        AbstractChassis(ChassisController_t lateralSettings, ChassisController_t angularSettings,
+                        OdomSensors_t odomSensors);
+
+        AbstractChassis(ChassisController_t lateralSettings, ChassisController_t angularSettings,
+                        ChassisController_t strafeSettings, OdomSensors_t odomSensors);
+
         void operator=(const AbstractChassis& rhs) = delete;
 
-        template<class ChassisType> friend class chassisBuilder;
+       template<class> friend class ChassisBuilder;
+    public:
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -82,21 +90,21 @@ namespace lemlib {
          * @param theta new theta value
          * @param radians true if theta is in radians, false if not. False by default
          */
-        virtual void setPose(double x, double y, double theta, bool radians = false);
+         void setPose(double x, double y, double theta, bool radians = false);
         /**
          * @brief Set the pose of the chassis
          *
          * @param pose the new pose
          * @param radians whether pose theta is in radians (true) or not (false). false by default
          */
-        virtual void setPose(Pose pose, bool radians = false);
+         void setPose(Pose pose, bool radians = false);
         /**
          * @brief Get the pose of the chassis
          *
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          */
-        virtual Pose getPose(bool radians = false);
+         Pose getPose(bool radians = false);
 
     protected:
 

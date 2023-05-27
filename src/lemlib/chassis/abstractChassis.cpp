@@ -7,6 +7,29 @@
 
 namespace lemlib {
 
+    AbstractChassis::AbstractChassis(ChassisController_t lateralSettings, ChassisController_t angularSettings,
+            OdomSensors_t odomSensors):
+            lateralSettings(lateralSettings), angularSettings(angularSettings), odomSensors(odomSensors){};
+
+    AbstractChassis::AbstractChassis(ChassisController_t lateralSettings, ChassisController_t angularSettings,
+            ChassisController_t strafeSettings, OdomSensors_t odomSensors):
+            lateralSettings(lateralSettings), angularSettings(angularSettings),
+            strafeSettings(strafeSettings), odomSensors(odomSensors){};
+
+    void AbstractChassis::calibrate() {
+        if (this->odomSensors.imu != nullptr) {
+            this->odomSensors.imu->reset(true);
+            // keep on calibrating until it calibrates successfully
+            while (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) {
+                pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
+                odomSensors.imu->reset(true);
+                pros::delay(10);
+            }
+        }
+        if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
+        if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
+    }
+
     /**
      * @brief Set the Pose object
      *
