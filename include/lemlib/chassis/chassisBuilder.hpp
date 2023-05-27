@@ -24,17 +24,25 @@ namespace lemlib {
 
         ChassisBuilder& withSensor(AbstractChassis::OdomSensors_t sensors);
 
-        std::shared_ptr<ChassisType> build();
+        ChassisType build();
+
+
 
     private:
+        template <typename... Args>
+        ChassisType buildSFINAE(std::true_type, Args... args);
+
+        template <typename... Args>
+        ChassisType buildSFINAE(std::false_type, Args... args);
+
         typename ChassisType::Drivetrain_t driveSetting;
         AbstractChassis::ChassisController_t lateralController;
         AbstractChassis::ChassisController_t angularController;
         AbstractChassis::ChassisController_t strafeController;
         AbstractChassis::OdomSensors_t sensors;
-        bool hasDriveSetting;
-        bool hasLateralController, hasAngularController, hasStrafeController;
-        bool hasSensors;
+        bool hasDriveSetting = false;
+        bool hasLateralController = false, hasAngularController = false, hasStrafeController = false;
+        bool hasSensors = false;
     };
 
 

@@ -5,8 +5,21 @@
 #include <iostream>
 #include "lemlib/chassis/chassisBuilder.hpp"
 #include "lemlib/chassis/holonomicDrive.hpp"
+#include "lemlib/chassis/differentialDrive.hpp"
+#include <type_traits>
 
 namespace lemlib {
+
+    template <typename ChassisType> template <typename... Args>
+    ChassisType ChassisBuilder<ChassisType>::buildSFINAE(std::true_type, Args... args) {
+        return ChassisType(args...);
+    }
+
+    template <typename ChassisType> template <typename... Args>
+    ChassisType ChassisBuilder<ChassisType>::buildSFINAE(std::false_type, Args... args) {
+        throw std::runtime_error("ChassisBuilder: Invalid constructor arguments");
+    }
+
 
     template<class ChassisType>
     ChassisBuilder<ChassisType>::ChassisBuilder() {
@@ -64,30 +77,22 @@ namespace lemlib {
 
 
     template<class ChassisType>
-    std::shared_ptr<ChassisType> ChassisBuilder<ChassisType>::build(){
-        if(this->hasDriveSetting && this->hasLateralController && this->hasAngularController
-        && this->hasStrafeController && this->hasSensors && std::is_convertible<HolonomicDrive, ChassisType>::value){
-            std::cout<< "ChassisBuilder: Build successful"<< std::endl;
-            return ChassisType(this->driveSetting,
-                               this->hasLateralController,
-                               this->hasAngularController,
-                               this->hasStrafeController,
-                               this->sensors);
+    ChassisType ChassisBuilder<ChassisType>::build(){
+        if (this->hasDriveSetting && this->hasLateralController && this->hasAngularController
+            && this->hasStrafeController && this->hasSensors) {
+            return this->buildSFINAE(std::is_convertible<ChassisType, HolonomicDrive>(),
+                this->driveSetting, this->lateralController, this->angularController,
+                               this->strafeController, this->sensors);
         }
-        else if(this->hasDriveSetting && this->hasLateralController && this->hasAngularController && this->hasSensors){
-            std::cout<< "ChassisBuilder: Build successful"<< std::endl;
-            return ChassisType(this->driveSetting,
-                               this->hasLateralController,
-                               this->hasAngularController,
-                               this->sensors);
+        if (this->hasDriveSetting && this->hasLateralController && this->hasAngularController && this->hasSensors) {
+            return this->buildSFINAE(std::is_convertible<ChassisType, AbstractChassis>(),
+                this->driveSetting, this->lateralController, this->angularController, this->sensors);
         }
-        else if(this->hasDriveSetting && this->hasLateralController && this->hasAngularController){
-            std::cout<< "ChassisBuilder: Build successful"<< std::endl;
-            return ChassisType(this->driveSetting,
-                               this->hasLateralController,
-                               this->hasAngularController);
+        else if (this->hasDriveSetting && this->hasLateralController && this->hasAngularController) {
+            return this->buildSFINAE(std::is_convertible<ChassisType, AbstractChassis>(),
+                this->driveSetting, this->lateralController, this->angularController);
         }
-        else{
+        else {
             throw std::runtime_error("ChassisBuilder: Not all parameters supplied, failed to build");
         }
     }
