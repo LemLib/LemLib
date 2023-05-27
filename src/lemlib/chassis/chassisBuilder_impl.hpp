@@ -80,16 +80,25 @@ namespace lemlib {
     ChassisType ChassisBuilder<ChassisType>::build(){
         if (this->hasDriveSetting && this->hasLateralController && this->hasAngularController
             && this->hasStrafeController && this->hasSensors) {
-            return this->buildSFINAE(std::is_convertible<ChassisType, HolonomicDrive>(),
+            return this->buildSFINAE(std::is_constructible<ChassisType, typename ChassisType::Drivetrain_t,
+                                                         AbstractChassis::ChassisController_t,
+                                                         AbstractChassis::ChassisController_t,
+                                                         AbstractChassis::ChassisController_t,
+                                                         AbstractChassis::OdomSensors_t>(),
                 this->driveSetting, this->lateralController, this->angularController,
                                this->strafeController, this->sensors);
         }
         if (this->hasDriveSetting && this->hasLateralController && this->hasAngularController && this->hasSensors) {
-            return this->buildSFINAE(std::is_convertible<ChassisType, AbstractChassis>(),
+            return this->buildSFINAE(std::is_constructible<ChassisType, typename ChassisType::Drivetrain_t,
+                                                           AbstractChassis::ChassisController_t,
+                                                           AbstractChassis::ChassisController_t,
+                                                           AbstractChassis::OdomSensors_t>(),
                 this->driveSetting, this->lateralController, this->angularController, this->sensors);
         }
         else if (this->hasDriveSetting && this->hasLateralController && this->hasAngularController) {
-            return this->buildSFINAE(std::is_convertible<ChassisType, AbstractChassis>(),
+            return this->buildSFINAE(std::is_constructible<ChassisType, typename ChassisType::Drivetrain_t,
+                                                           AbstractChassis::ChassisController_t,
+                                                           AbstractChassis::ChassisController_t>(),
                 this->driveSetting, this->lateralController, this->angularController);
         }
         else {
