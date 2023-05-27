@@ -124,7 +124,7 @@ lemlib::TrackingWheel::Type lemlib::TrackingWheel::getType() {
 
 /**
  * @brief Get the status of the tracking wheel
- * 
+ *
  * @return 0 - the tracking wheel is working properly
  * @return 1 - the tracking wheel is not working properly (error)
  */
