@@ -61,7 +61,7 @@ namespace lemlib {
     template<class ChassisType>
     ChassisBuilder<ChassisType>& ChassisBuilder<ChassisType>::withStrafeController(
             AbstractChassis::ChassisController_t strafeController) {
-        static_assert(std::is_convertible<HolonomicDrive, ChassisType>::value,
+        static_assert(std::is_convertible<ChassisType, HolonomicDrive>::value,
                 "\nError: Only Holonomic Drives are allow to have strafeController\n");
         this->strafeController = strafeController;
         this->hasStrafeController = true;
