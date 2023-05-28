@@ -24,7 +24,7 @@ lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 0);
 
 
 // drivetrain
-lemlib::Drivetrain_t drivetrain {
+lemlib::DifferentialDrive::Drivetrain_t drivetrain {
 	&leftMotors,
 	&rightMotors,
 	10,
@@ -32,8 +32,18 @@ lemlib::Drivetrain_t drivetrain {
 	360,
 };
 
+lemlib::XDrive::Drivetrain_t holoDrivetrain {
+        &rF,
+        &rB,
+        &lF,
+        &lB,
+        10,
+        3.25,
+        360,
+};
+
 // lateral motion controller
-lemlib::ChassisController_t lateralController {
+lemlib::DifferentialDrive::ChassisController_t lateralController {
 	10,
 	30,
 	1,
@@ -44,7 +54,7 @@ lemlib::ChassisController_t lateralController {
 };
 
 // angular motion controller
-lemlib::ChassisController_t angularController {
+lemlib::DifferentialDrive::ChassisController_t angularController {
 	2,
 	10,
 	1,
@@ -55,7 +65,7 @@ lemlib::ChassisController_t angularController {
 };
 
 // sensors for odometry
-lemlib::OdomSensors_t sensors {
+lemlib::DifferentialDrive::OdomSensors_t sensors {
 	nullptr,
 	nullptr,
 	nullptr,
@@ -63,9 +73,32 @@ lemlib::OdomSensors_t sensors {
 	&imu
 };
 
+lemlib::XDrive::ChassisController_t strafeController{
+    2,
+    10,
+    1,
+    100,
+    3,
+    500,
+    3
+};
 
-lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 
+
+auto diffDrive = lemlib::ChassisBuilder<lemlib::DifferentialDrive>()
+        .withSetting(drivetrain)
+        .withLateralController(lateralController)
+        .withAngularController(angularController)
+        .withSensor(sensors)
+        .build();
+
+auto holoDrive = lemlib::ChassisBuilder<lemlib::XDrive>()//Holonomic = XDrive = MecanumDrive
+        .withSetting(holoDrivetrain)
+        .withLateralController(lateralController)
+        .withAngularController(angularController)
+        .withStrafeController(strafeController)
+        .withSensor(sensors)
+        .build();
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -76,12 +109,8 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
 void initialize() {
 	pros::lcd::initialize();
 	// calibrate sensors
-	chassis.calibrate();
 	while (true) {
-		pros::lcd::print(0, "X: %f", chassis.getPose().x);
-		pros::lcd::print(1, "Y: %f", chassis.getPose().y);
-		pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
-		pros::delay(10);
+
 	}
 }
 
@@ -118,7 +147,6 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	chassis.moveTo(20, 0, 4000);
 }
 
 
