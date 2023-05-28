@@ -71,6 +71,13 @@ class Pose {
          */
         Pose lerp(Pose other, float t);
         /**
+         * @brief Rotate a pose by an angle
+         *
+         * @param angle angle in radians
+         * @return Pose
+         */
+        Pose rotate(float angle);
+        /**
          * @brief Get the distance between two poses
          *
          * @param other the other pose
@@ -81,15 +88,16 @@ class Pose {
          * @brief Get the angle between two poses
          *
          * @param other the other pose
+         * @param radians whether to return the angle in radians or degrees. Defaults to radians
          * @return float in radians
          */
-        float angle(Pose other);
+        float angle(Pose other, bool radians = true);
         /**
-         * @brief Rotate a pose by an angle
+         * @brief Get the angle of this pose relative to the origin
          *
-         * @param angle angle in radians
-         * @return Pose
+         * @param radians whether to return the angle in radians or degrees. Defaults to radians
+         * @return float
          */
-        Pose rotate(float angle);
+        float angle(bool radians = true);
 };
 } // namespace lemlib

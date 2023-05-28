@@ -10,6 +10,7 @@
  */
 #include <math.h>
 #include "lemlib/pose.hpp"
+#include "lemlib/util.hpp"
 
 /**
  * @brief Create a new pose
@@ -84,6 +85,17 @@ lemlib::Pose lemlib::Pose::lerp(lemlib::Pose other, float t) {
 }
 
 /**
+ * @brief Rotate a pose by an angle
+ *
+ * @param angle angle in radians
+ * @return Pose
+ */
+lemlib::Pose lemlib::Pose::rotate(float angle) {
+    return lemlib::Pose(this->x * std::cos(angle) - this->y * std::sin(angle),
+                        this->x * std::sin(angle) + this->y * std::cos(angle), this->theta);
+}
+
+/**
  * @brief Get the distance between two poses
  *
  * @param other the other pose
@@ -95,17 +107,18 @@ float lemlib::Pose::distance(lemlib::Pose other) { return std::hypot(this->x - o
  * @brief Get the angle between two poses
  *
  * @param other the other pose
+ * @param radians whether to return the angle in radians or degrees. Defaults to radians
  * @return float in radians
  */
-float lemlib::Pose::angle(lemlib::Pose other) { return std::atan2(other.y - this->y, other.x - this->x); }
+float lemlib::Pose::angle(lemlib::Pose other, bool radians) {
+    if (radians) return std::atan2(other.y - this->y, other.x - this->x);
+    return radToDeg(std::atan2(other.y - this->y, other.x - this->x));
+}
 
 /**
- * @brief Rotate a pose by an angle
+ * @brief Get the angle of this pose relative to the origin
  *
- * @param angle angle in radians
- * @return Pose
+ * @param radians whether to return the angle in radians or degrees. Defaults to radians
+ * @return float
  */
-lemlib::Pose lemlib::Pose::rotate(float angle) {
-    return lemlib::Pose(this->x * std::cos(angle) - this->y * std::sin(angle),
-                        this->x * std::sin(angle) + this->y * std::cos(angle), this->theta);
-}
+float lemlib::Pose::angle(bool radians) { return this->angle(Pose(0, 0, 0), radians); }
