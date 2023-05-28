@@ -140,7 +140,7 @@ class Chassis {
          */
         void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 127, bool log = false);
         /**
-         * @brief Move the chassis towards the target point
+         * @brief Move the chassis to a target point
          *
          * The PID logging ids are "angularPID" and "lateralPID"
          *
@@ -150,7 +150,7 @@ class Chassis {
          * @param maxSpeed the maximum speed the robot can move at
          * @param log whether the chassis should log the turnTo function. false by default
          */
-        void moveTo(float x, float y, int timeout, float maxSpeed = 200, bool log = false);
+        void moveToPoint(float x, float y, int timeout, float maxSpeed = 200, bool log = false);
         /**
          * @brief Move the chassis along a path
          *

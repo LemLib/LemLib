@@ -149,7 +149,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 }
 
 /**
- * @brief Move the chassis towards the target point
+ * @brief Move the chassis to a target point
  *
  * The PID logging ids are "angularPID" and "lateralPID"
  *
@@ -160,7 +160,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param reversed whether the robot should turn in the opposite direction. false by default
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log) {
+void lemlib::Chassis::moveToPoint(float x, float y, int timeout, float maxSpeed, bool log) {
     Pose pose(0, 0);
     float prevLateralPower = 0;
     float prevAngularPower = 0;
