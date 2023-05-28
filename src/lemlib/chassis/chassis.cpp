@@ -122,10 +122,6 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 
         // calculate speed
         float motorPower = pid.update(0, delta.theta);
-        if (motorPower > maxSpeed) motorPower = maxSpeed;
-        else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
-
-        // move the drivetrain
         drivetrain.leftMotors->move(-motorPower);
         drivetrain.rightMotors->move(motorPower);
 
