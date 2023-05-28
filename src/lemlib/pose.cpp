@@ -131,3 +131,15 @@ lemlib::Pose lemlib::Pose::rotate(float angle) {
     return lemlib::Pose(this->x * std::cos(angle) - this->y * std::sin(angle),
                         this->x * std::sin(angle) + this->y * std::cos(angle), this->theta);
 }
+
+/**
+ * @brief Check if the pose is valid (no NaNs or Infs)
+ *
+ * @return true the pose is valid
+ * @return false the pose is invalid
+ */
+bool lemlib::Pose::isValid() {
+    if (std::isnan(this->x) || std::isnan(this->y) || std::isnan(this->theta)) return false;
+    if (std::isinf(this->x) || std::isinf(this->y) || std::isinf(this->theta)) return false;
+    return true;
+}

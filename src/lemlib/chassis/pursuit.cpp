@@ -59,11 +59,18 @@ std::vector<lemlib::Pose> getData(std::string filePath) {
     std::string line;
     std::vector<std::string> pointInput;
     std::ifstream file(filePath, std::ios::in);
+    if (!file.is_open()) {
+        lemlib::logger::error("Error opening file %s. Aborting path following!", filePath.c_str());
+        return robotPath;
+    }
     lemlib::Pose pathPoint(0, 0, 0);
 
     // read the points until 'endData' is read
     while (getline(file, line) && line != "endData") {
         pointInput = readElement(line, ", "); // parse line
+        if (pointInput.size() != 3) {
+            lemlib::logger::error("Error reading file %s. Aborting path following!", filePath.c_str());
+        }
         pathPoint.x = std::stof(pointInput.at(0));
         pathPoint.y = std::stof(pointInput.at(1));
         pathPoint.theta = std::stof(pointInput.at(2));
@@ -188,13 +195,13 @@ double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lo
  * @param filePath file path to the path. No need to preface it with /usd/
  * @param timeout the maximum time the robot can spend moving
  * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will
- * follow the path less accurately
+ * follow the path less accurately. Recommended value is between 10 and 20 inches
  * @param reverse whether the robot should follow the path in reverse. false by default
  * @param maxSpeed the maximum speed the robot can move at
- * @param log whether the chassis should log the path on a log file. false by default.
  */
-void lemlib::Chassis::follow(const char* filePath, int timeout, float lookahead, bool reverse, float maxSpeed,
-                             bool log) {
+void lemlib::Chassis::follow(const char* filePath, int timeout, float lookahead, bool reverse, float maxSpeed) {
+    logger::debug("Following path %s", filePath);
+    if (!pros::usd::is_installed()) { logger::error("Could not read path %s. SD card not installed!", filePath); }
     std::vector<lemlib::Pose> path = getData("/usd/" + std::string(filePath)); // get list of path points
     Pose pose(0, 0, 0);
     Pose lookaheadPose(0, 0, 0);
@@ -261,4 +268,5 @@ void lemlib::Chassis::follow(const char* filePath, int timeout, float lookahead,
     // stop the robot
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    logger::debug("Finished following path %s", filePath);
 }

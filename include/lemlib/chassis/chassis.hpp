@@ -162,10 +162,8 @@ class Chassis {
          * will follow the path less accurately
          * @param reverse whether the robot should follow the path in reverse. false by default
          * @param maxSpeed the maximum speed the robot can move at
-         * @param log whether the chassis should log the path on a log file. false by default.
          */
-        void follow(const char* filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127,
-                    bool log = false);
+        void follow(const char* filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127);
     private:
         ChassisController_t lateralSettings; // lateral PID setting
         ChassisController_t angularSettings; // angular PID settings

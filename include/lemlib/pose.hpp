@@ -107,5 +107,12 @@ class Pose {
          * @return Pose
          */
         Pose rotate(float angle);
+        /**
+         * @brief Check if the pose is valid (no NaNs or Infs)
+         *
+         * @return true the pose is valid
+         * @return false the pose is invalid
+         */
+        bool isValid();
 };
 } // namespace lemlib

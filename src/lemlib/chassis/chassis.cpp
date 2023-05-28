@@ -39,7 +39,7 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
  * @param preservePose true if the pose should be preserved, false if not. False by default
  */
 void lemlib::Chassis::calibrate(bool preservePose) {
-    logger::info("Calibrating chassis...");
+    logger::debug("Calibrating chassis...");
     if (!preservePose) pose = lemlib::Pose(0, 0, 0);
     odomMutex.take(TIMEOUT_MAX);
     // calibrate the imu if it exists
@@ -83,7 +83,7 @@ void lemlib::Chassis::calibrate(bool preservePose) {
     if (odomTask == nullptr) odomTask = new pros::Task {[=] { odom(); }};
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
-    logger::info("Chassis calibrated");
+    logger::debug("Chassis calibrated");
     odomMutex.give();
 }
 
@@ -135,7 +135,7 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians) {
  * @param log whether the chassis should log the turnTo function. false by default
  */
 void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log) {
-    logger::debug("Turning to (%f, %f)", x, y);
+    logger::debug("Turning to face (%f, %f)", x, y);
     Pose pose(0, 0);
     float targetTheta;
     float deltaX, deltaY, deltaTheta;
@@ -379,6 +379,11 @@ void lemlib::Chassis::odom() {
         pose.x += localX * -cos(avgHeading);
         pose.y += localX * sin(avgHeading);
         pose.theta = heading;
+
+        if (!pose.isValid()) {
+            logger::error("Odometry error. Did a sensor or motor disconnect?");
+            return;
+        }
 
         odomMutex.give();
         pros::delay(10);
