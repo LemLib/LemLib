@@ -9,7 +9,9 @@
 namespace lemlib {
 
     class HolonomicDrive : public AbstractChassis{
-        public:
+        template<class> friend class ChassisBuilder;
+    public:
+
         typedef struct {
             pros::Motor* rf;
             pros::Motor* rb;
@@ -22,8 +24,8 @@ namespace lemlib {
     protected:
         HolonomicDrive() = default;
         HolonomicDrive(HolonomicDrive::Drivetrain_t driveSetting, ChassisController_t lateralController,
-                       ChassisController_t angularController, ChassisController_t strafeController, OdomSensors_t sensors = {nullptr, nullptr, nullptr,
-                                                                                       nullptr, nullptr});
+                       ChassisController_t angularController, ChassisController_t strafeController,
+                       OdomSensors_t sensors = {nullptr, nullptr, nullptr,nullptr, nullptr});
     private:
         HolonomicDrive::Drivetrain_t driveSetting;
     };

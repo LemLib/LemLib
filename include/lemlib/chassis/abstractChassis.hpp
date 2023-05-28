@@ -11,6 +11,7 @@
 namespace lemlib {
 
     class AbstractChassis {
+        template<class> friend class ChassisBuilder;
     public:
     /**
      * @brief Struct containing all the sensors used for odometry
@@ -65,7 +66,6 @@ namespace lemlib {
         } Drivetrain_t;
 
     protected:
-        AbstractChassis() = default;
 
         AbstractChassis(ChassisController_t lateralSettings, ChassisController_t angularSettings,
                         OdomSensors_t odomSensors);
@@ -73,10 +73,14 @@ namespace lemlib {
         AbstractChassis(ChassisController_t lateralSettings, ChassisController_t angularSettings,
                         ChassisController_t strafeSettings, OdomSensors_t odomSensors);
 
-        void operator=(const AbstractChassis& rhs) = delete;
 
-       template<class> friend class ChassisBuilder;
+
     public:
+        AbstractChassis() = delete;
+
+        AbstractChassis(const AbstractChassis& rhs) = delete;
+
+        void operator=(const AbstractChassis& rhs) = delete;
         /**
          * @brief Calibrate the chassis sensors
          *

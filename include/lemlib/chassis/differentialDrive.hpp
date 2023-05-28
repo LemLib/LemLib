@@ -17,13 +17,18 @@ namespace lemlib {
             float wheelDiameter;
             float rpm;
         } Drivetrain_t;
-    private:
+    protected:
 
-        DifferentialDrive();
-
+        DifferentialDrive() = default;
         DifferentialDrive(DifferentialDrive::Drivetrain_t driveSetting, ChassisController_t lateralController,
-                          ChassisController_t angularController, OdomSensors_t sensors = {nullptr, nullptr, nullptr,
-                                                                                          nullptr, nullptr});
+                          ChassisController_t angularController,
+                          OdomSensors_t sensors = {nullptr, nullptr, nullptr,nullptr, nullptr});
+
+    public:
+        ~DifferentialDrive() = default;
+
+
+    private:
         DifferentialDrive::Drivetrain_t drivetrain;
     };
 
