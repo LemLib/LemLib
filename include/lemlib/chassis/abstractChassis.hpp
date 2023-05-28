@@ -66,7 +66,7 @@ namespace lemlib {
         } Drivetrain_t;
 
     protected:
-
+        AbstractChassis(const AbstractChassis& rhs) = default;
         AbstractChassis(ChassisController_t lateralSettings, ChassisController_t angularSettings,
                         OdomSensors_t odomSensors);
 
@@ -78,7 +78,6 @@ namespace lemlib {
     public:
         AbstractChassis() = delete;
 
-        AbstractChassis(const AbstractChassis& rhs) = delete;
 
         void operator=(const AbstractChassis& rhs) = delete;
         /**
