@@ -28,14 +28,14 @@ class Pose {
          */
         Pose(float x, float y, float theta = 0);
         /**
-         * @brief Add a pose to this pose
+         * @brief Add a pose to this pose.
          *
          * @param other other pose
          * @return Pose
          */
         Pose operator+(const Pose& other);
         /**
-         * @brief Subtract a pose from this pose
+         * @brief Subtract a pose from this pose. Assumes theta is in radians
          *
          * @param other other pose
          * @return Pose

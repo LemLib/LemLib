@@ -36,13 +36,13 @@ lemlib::Pose lemlib::Pose::operator+(const lemlib::Pose& other) {
 }
 
 /**
- * @brief Subtract a pose from this pose
+ * @brief Subtract a pose from this pose. Assumes theta is in radians
  *
  * @param other other pose
  * @return Pose
  */
 lemlib::Pose lemlib::Pose::operator-(const lemlib::Pose& other) {
-    return lemlib::Pose(this->x - other.x, this->y - other.y, this->theta);
+    return lemlib::Pose(this->x - other.x, this->y - other.y, angleError(this->theta, other.theta));
 }
 
 /**
