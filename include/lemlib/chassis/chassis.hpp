@@ -122,10 +122,10 @@ class Chassis {
         /**
          * @brief Get the pose of the chassis
          *
-         * @param radians whether theta should be in radians (true) or degrees (false). false by default
+         * @param radians whether theta should be in radians (true) or degrees (false). true by default
          * @return Pose
          */
-        Pose getPose(bool radians = false);
+        Pose getPose(bool radians = true);
         /**
          * @brief Turn the chassis so it is facing the target point
          *
@@ -136,9 +136,8 @@ class Chassis {
          * @param timeout longest time the robot can spend moving
          * @param reversed whether the robot should turn in the opposite direction. false by default
          * @param maxSpeed the maximum speed the robot can turn at. Default is 200
-         * @param log whether the chassis should log the turnTo function. false by default
          */
-        void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 127, bool log = false);
+        void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 127);
         /**
          * @brief Move the chassis to a target point
          *

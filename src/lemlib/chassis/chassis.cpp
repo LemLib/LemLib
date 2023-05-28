@@ -103,36 +103,25 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(rad
  * @param timeout longest time the robot can spend moving
  * @param reversed whether the robot should turn in the opposite direction. false by default
  * @param maxSpeed the maximum speed the robot can turn at. Default is 200
- * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log) {
-    Pose pose(0, 0);
-    float targetTheta;
-    float deltaX, deltaY, deltaTheta;
-    float motorPower;
+void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed) {
+    Pose target(x, y);
     std::uint8_t compState = pros::competition::get_status();
-
     // create a new PID controller
-    FAPID pid = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    lemlib::FAPID pid = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     pid.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
                 angularSettings.smallErrorTimeout, timeout);
 
-    // main loop
+    // loop until the PID settles or the competition mode changes
     while (pros::competition::get_status() == compState && !pid.settled()) {
-        // update variables
-        pose = getPose();
-        pose.theta = (reversed) ? fmod(pose.theta - 180, 360) : fmod(pose.theta, 360);
-        deltaX = x - pose.x;
-        deltaY = y - pose.y;
-        targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
+        // calculate delta
+        Pose pose = getPose();
+        pose.theta = (reversed) ? fmod(pose.theta - M_PI, 2 * M_PI) : fmod(pose.theta, 2 * M_PI);
+        target.theta = pose.angle(target);
+        Pose delta = target - pose;
 
-        // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta);
-
-        // calculate the speed
-        motorPower = pid.update(0, deltaTheta, log);
-
-        // cap the speed
+        // calculate speed
+        float motorPower = pid.update(0, delta.theta);
         if (motorPower > maxSpeed) motorPower = maxSpeed;
         else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
 
