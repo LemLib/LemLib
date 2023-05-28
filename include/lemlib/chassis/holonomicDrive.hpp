@@ -9,7 +9,6 @@
 namespace lemlib {
 
     class HolonomicDrive : public AbstractChassis{
-        template<class> friend class ChassisBuilder;
     public:
 
         typedef struct {

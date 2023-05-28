@@ -7,7 +7,6 @@
 namespace lemlib {
 
     class DifferentialDrive : public AbstractChassis{
-        template<class> friend class ChassisBuilder;
     public:
 
         typedef struct {

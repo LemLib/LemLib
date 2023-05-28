@@ -11,7 +11,6 @@
 namespace lemlib {
 
     class AbstractChassis {
-        template<class> friend class ChassisBuilder;
     public:
     /**
      * @brief Struct containing all the sensors used for odometry
