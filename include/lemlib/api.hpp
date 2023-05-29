@@ -18,3 +18,4 @@
 #include "lemlib/chassis/chassisBuilder.hpp"
 #include "lemlib/chassis/differentialDrive.hpp"
 #include "lemlib/chassis/holonomicDrive.hpp"
+#include "lemlib/chassis/swerveDrive.hpp"
