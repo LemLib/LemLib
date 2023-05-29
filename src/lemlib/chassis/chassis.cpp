@@ -122,8 +122,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 
         // calculate speed
         float motorPower = pid.update(0, delta.theta);
-        drivetrain.leftMotors->move(-motorPower);
-        drivetrain.rightMotors->move(motorPower);
+        drivetrain.leftMotors->move(motorPower);
+        drivetrain.rightMotors->move(-motorPower);
 
         pros::delay(10);
     }
