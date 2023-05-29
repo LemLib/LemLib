@@ -15,6 +15,7 @@
 #include <string>
 #include <memory>
 #include <stdexcept>
+#include <cmath>
 
 namespace lemlib {
 namespace util {
@@ -66,24 +67,29 @@ float sgn(float x);
 /**
  * @brief Return the average of a vector of numbers
  *
- * @param values
- * @return float
+ * @tparam T the type of the vector
+ * @param values the vector of numbers
+ * @return T the average
  */
-float avg(std::vector<float> values);
-
-/**
- * @brief Return the average of a vector of numbers
- *
- * @param values
- * @return double
- */
-double avg(std::vector<double> values);
+template <typename T>
+T avg(std::vector<T> values) {
+    T sum = 0;
+    int size = 0;
+    for (T value : values) {
+        if (!std::isnan(value) && !std::isinf(value)) {
+            sum += value;
+            size++;
+        }
+    }
+    if (size == 0) return 0;
+    return sum / size;
+}
 
 /**
  * @brief Format a string with arguments
  *
  * @param format the format string
- * @return std::string tje formatted string
+ * @return std::string the formatted string
  */
 template <typename... Args>
 std::string format(const std::string& format, Args... args) {

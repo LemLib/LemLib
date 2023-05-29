@@ -76,36 +76,3 @@ float lemlib::util::sgn(float x) {
     if (x < 0) return -1;
     else return 1;
 }
-
-/**
- * @brief Return the average of a vector of numbers
- *
- * @param values
- * @return float
- */
-float lemlib::util::avg(std::vector<float> values) {
-    float sum = 0;
-    for (float value : values) { sum += value; }
-    return sum / values.size();
-}
-
-/**
- * @brief Return the average of a vector of numbers
- *
- * @param values
- * @return double
- */
-double lemlib::util::avg(std::vector<double> values) {
-    double sum = 0;
-    int size = 0;
-    for (double value : values) {
-        // Check if the value is a real number
-        if (!std::isnan(value) && !std::isinf(value)) {
-            sum += value;
-            size++;
-        }
-    }
-    // prevent division by 0
-    if (size == 0) return 0;
-    return sum / size;
-}
