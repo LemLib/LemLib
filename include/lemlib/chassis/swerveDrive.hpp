@@ -10,7 +10,7 @@
 namespace lemlib {
 
 enum class SwerveType_t{
-    Coaxial, Differential, Single, Bruh
+    Coaxial, Differential, Single
 };
 
 
@@ -68,12 +68,6 @@ template<> class SwerveDrive<SwerveType_t::Single> : public HolonomicDrive{ // t
                 float trackWidth;
                 float wheelDiameter;
                 float rpm;
-        } Drivetrain_t;
-};
-
-template<> class SwerveDrive<SwerveType_t::Bruh> : public HolonomicDrive{ // template specialization
-    public:
-        typedef struct {
         } Drivetrain_t;
 };
 
