@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+using namespace lemlib;
 
 
 // drive motors
@@ -9,7 +10,7 @@ pros::Motor lB(-12, pros::E_MOTOR_GEARSET_06); // left back motor. port 12, reve
 pros::Motor rF(19, pros::E_MOTOR_GEARSET_06); // right front motor. port 19
 pros::Motor rM(20, pros::E_MOTOR_GEARSET_06); // right middle motor. port 20
 pros::Motor rB(1, pros::E_MOTOR_GEARSET_06); // right back motor. port 1
-
+pros::Motor dirControl(1, pros::E_MOTOR_GEARSET_06);
 // motor groups
 pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
 pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
@@ -83,6 +84,13 @@ lemlib::XDrive::ChassisController_t strafeController{
     3
 };
 
+lemlib::SwerveDrive<lemlib::SwerveType_t::Coaxial>::Drivetrain_t swerveSetting{
+    &lF, &lB, &rF, &rB, &dirControl, &lF, &lB, &rF,
+    10,
+    3.25,
+    360
+};
+
 
 
 auto diffDrive = lemlib::ChassisBuilder<lemlib::DifferentialDrive>()
@@ -99,6 +107,16 @@ auto holoDrive = lemlib::ChassisBuilder<lemlib::XDrive>()//Holonomic = XDrive = 
         .withStrafeController(strafeController)
         .withSensor(sensors)
         .build();
+
+using namespace lemlib;
+
+auto bruhDrive = ChassisBuilder<SwerveDrive<SwerveType_t::Coaxial>>()
+                     .withSetting(swerveSetting)
+                     .withLateralController(lateralController)
+                     .withAngularController(angularController)
+                     .withStrafeController(strafeController)
+                     .withSensor(sensors).build();
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
