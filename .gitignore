@@ -16,5 +16,8 @@ temp.errors
 *.ini
 .d/
 
+# template files
+*.zip
+
 # Doxygen
 latex
