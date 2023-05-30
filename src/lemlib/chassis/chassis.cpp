@@ -40,6 +40,22 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
  */
 void lemlib::Chassis::calibrate(bool preservePose) {
     logger::debug("Calibrating chassis...");
+
+    // initialize tracking wheels
+    if (odomSensors.vertical1 == nullptr)
+        odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
+                                                          -(drivetrain.trackWidth / 2), drivetrain.rpm);
+    if (odomSensors.vertical2 == nullptr)
+        odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
+                                                          drivetrain.trackWidth / 2, drivetrain.rpm);
+    odomSensors.vertical1->reset();
+    odomSensors.vertical2->reset();
+    if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
+    if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
+
+    // get the competition state
+    // if it changes to anything other than disabled, abandon the calibration
+    uint8_t compState = pros::competition::get_status();
     if (!preservePose) pose = lemlib::Pose(0, 0, 0);
     odomMutex.take(TIMEOUT_MAX);
     // calibrate the imu if it exists
@@ -55,7 +71,21 @@ void lemlib::Chassis::calibrate(bool preservePose) {
                 continue;
             }
             // wait for the imu to calibrate
-            while (odomSensors.imu->is_calibrating()) { pros::delay(10); }
+            while (odomSensors.imu->is_calibrating()) {
+                // exit if the competition state changes to anything other than disabled
+                if (pros::competition::get_status() != compState && !pros::competition::is_disabled()) {
+                    logger::error("IMU calibration failed: competition state changed. Disabling IMU...");
+                    pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
+                    odomSensors.imu = nullptr; // disable the imu
+                    // start the odom task
+                    odomMutex.give();
+                    if (odomTask == nullptr) odomTask = new pros::Task {[=] { odom(); }};
+                    // exit the function
+                    return;
+                }
+                // wait and check again
+                pros::delay(10);
+            }
             // check if the imu reset failed quietly
             double imuTestRotation = odomSensors.imu->get_rotation();
             if (std::isinf(imuTestRotation) || std::isnan(imuTestRotation)) {
@@ -68,23 +98,13 @@ void lemlib::Chassis::calibrate(bool preservePose) {
             imuCalibrated = true;
         } while (!imuCalibrated);
     }
-    // initialize tracking wheels
-    if (odomSensors.vertical1 == nullptr)
-        odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
-                                                          -(drivetrain.trackWidth / 2), drivetrain.rpm);
-    if (odomSensors.vertical2 == nullptr)
-        odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
-                                                          drivetrain.trackWidth / 2, drivetrain.rpm);
-    odomSensors.vertical1->reset();
-    odomSensors.vertical2->reset();
-    if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
-    if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
+
     // start the odom task
+    odomMutex.give();
     if (odomTask == nullptr) odomTask = new pros::Task {[=] { odom(); }};
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
     logger::debug("Chassis calibrated");
-    odomMutex.give();
 }
 
 /**
@@ -280,8 +300,10 @@ void lemlib::Chassis::odom() {
 
     // loop forever
     while (true) {
-        // take the odom mutex
+        // try to take the odom mutex
         if (!odomMutex.take(100)) {
+            // if we can't, this means the chassis is being calibrated
+            // reset previous values and wait
             prevVertical = 0;
             prevVertical1 = 0;
             prevVertical2 = 0;
@@ -298,14 +320,26 @@ void lemlib::Chassis::odom() {
         if (odomSensors.vertical2 != nullptr) vertical2Raw = odomSensors.vertical2->getDistanceTraveled();
         if (odomSensors.horizontal1 != nullptr) horizontal1Raw = odomSensors.horizontal1->getDistanceTraveled();
         if (odomSensors.horizontal2 != nullptr) horizontal2Raw = odomSensors.horizontal2->getDistanceTraveled();
-        if (odomSensors.imu != nullptr) imuRaw = util::degToRad(odomSensors.imu->get_rotation());
+        // use the IMU, if it returns a valid heading
+        if (odomSensors.imu != nullptr && !isinf(odomSensors.imu->get_rotation())) {
+            imuRaw = util::degToRad(odomSensors.imu->get_rotation());
+        } else if (isinf(odomSensors.imu->get_rotation())) { // otherwise, take action
+            logger::error("IMU returned inf, taking action...");
+            if (pros::competition::is_disabled()) { // robot is disabled, we have time to reset
+                logger::warn("Resetting IMU");
+                this->calibrate(true);
+            } else { // robot is active, disable the IMU
+                logger::warn("Disabling IMU");
+                odomSensors.imu = nullptr;
+            }
+        }
 
+        // calculate deltas
         float deltaVertical1 = vertical1Raw - prevVertical1;
         float deltaVertical2 = vertical2Raw - prevVertical2;
         float deltaHorizontal1 = horizontal1Raw - prevHorizontal1;
         float deltaHorizontal2 = horizontal2Raw - prevHorizontal2;
         float deltaImu = imuRaw - prevImu;
-
         prevVertical1 = vertical1Raw;
         prevVertical2 = vertical2Raw;
         prevHorizontal1 = horizontal1Raw;
@@ -380,8 +414,9 @@ void lemlib::Chassis::odom() {
         pose.y += localX * sin(avgHeading);
         pose.theta = heading;
 
+        // check if the pose is valid
         if (!pose.isValid()) {
-            logger::error("Odometry error. Did a sensor or motor disconnect?");
+            logger::error("Odometry error. Did a tracking wheel disconnect?");
             return;
         }
 
