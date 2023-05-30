@@ -11,5 +11,5 @@ SwerveDrive<SwerveType>::SwerveDrive(SwerveDrive<SwerveType>::Drivetrain_t drive
                                      AbstractChassis::ChassisController_t angularSettings,
                                      AbstractChassis::ChassisController_t strafeSettings,
                                      AbstractChassis::OdomSensors_t odomSensors)
-    : HolonomicDrive(driveSetting, lateralSettings, angularSettings, strafeSettings, odomSensors){}
-} // lemlib
+    : HolonomicDrive(driveSetting, lateralSettings, angularSettings, strafeSettings, odomSensors) {}
+} // namespace lemlib

@@ -8,14 +8,14 @@
  * @copyright Copyright (c) 2023
  *
  */
-#include <math.h>
-#include "pros/motors.hpp"
-#include "pros/misc.hpp"
-#include "lemlib/util.hpp"
-#include "lemlib/pid.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
+#include "lemlib/pid.hpp"
+#include "lemlib/util.hpp"
+#include "pros/misc.hpp"
+#include "pros/motors.hpp"
 #include "trackingWheel.hpp"
+#include <math.h>
 
 /**
  * @brief Construct a new Chassis
@@ -81,14 +81,16 @@ void lemlib::Chassis::setPose(double x, double y, double theta, bool radians) {
  * @brief Set the pose of the chassis
  *
  * @param Pose the new pose
- * @param radians whether pose theta is in radians (true) or not (false). false by default
+ * @param radians whether pose theta is in radians (true) or not (false). false
+ * by default
  */
 void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
 
 /**
  * @brief Get the pose of the chassis
  *
- * @param radians whether theta should be in radians (true) or degrees (false). false by default
+ * @param radians whether theta should be in radians (true) or degrees (false).
+ * false by default
  * @return Pose
  */
 lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(radians); }
@@ -101,9 +103,11 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(rad
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
- * @param reversed whether the robot should turn in the opposite direction. false by default
+ * @param reversed whether the robot should turn in the opposite direction.
+ * false by default
  * @param maxSpeed the maximum speed the robot can turn at. Default is 200
- * @param log whether the chassis should log the turnTo function. false by default
+ * @param log whether the chassis should log the turnTo function. false by
+ * default
  */
 void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log) {
     Pose pose(0, 0);
@@ -157,8 +161,10 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param y y location
  * @param timeout longest time the robot can spend moving
  * @param maxSpeed the maximum speed the robot can move at
- * @param reversed whether the robot should turn in the opposite direction. false by default
- * @param log whether the chassis should log the turnTo function. false by default
+ * @param reversed whether the robot should turn in the opposite direction.
+ * false by default
+ * @param log whether the chassis should log the turnTo function. false by
+ * default
  */
 void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log) {
     Pose pose(0, 0);

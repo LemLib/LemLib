@@ -7,11 +7,9 @@
 
 namespace lemlib {
 
-    HolonomicDrive::HolonomicDrive(HolonomicDrive::Drivetrain_t driveSetting, ChassisController_t lateralController,
-               ChassisController_t angularController, ChassisController_t strafeController, OdomSensors_t sensors):
-               AbstractChassis(lateralController, angularController,
-                                strafeController, sensors),
-               driveSetting(driveSetting){};
+HolonomicDrive::HolonomicDrive(HolonomicDrive::Drivetrain_t driveSetting, ChassisController_t lateralController,
+                               ChassisController_t angularController, ChassisController_t strafeController,
+                               OdomSensors_t sensors)
+    : AbstractChassis(lateralController, angularController, strafeController, sensors), driveSetting(driveSetting) {};
 
-
-} // lemlib
+} // namespace lemlib

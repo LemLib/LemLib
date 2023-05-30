@@ -6,30 +6,24 @@
 
 namespace lemlib {
 
-    class DifferentialDrive : public AbstractChassis{
+class DifferentialDrive : public AbstractChassis {
     public:
-
         typedef struct {
-            pros::Motor_Group* leftMotors;
-            pros::Motor_Group* rightMotors;
-            float trackWidth;
-            float wheelDiameter;
-            float rpm;
+                pros::Motor_Group* leftMotors;
+                pros::Motor_Group* rightMotors;
+                float trackWidth;
+                float wheelDiameter;
+                float rpm;
         } Drivetrain_t;
     protected:
-
         DifferentialDrive() = default;
         DifferentialDrive(DifferentialDrive::Drivetrain_t driveSetting, ChassisController_t lateralController,
                           ChassisController_t angularController,
-                          OdomSensors_t sensors = {nullptr, nullptr, nullptr,nullptr, nullptr});
-
+                          OdomSensors_t sensors = {nullptr, nullptr, nullptr, nullptr, nullptr});
     public:
         ~DifferentialDrive() = default;
-
-
     private:
         DifferentialDrive::Drivetrain_t drivetrain;
-    };
+};
 
-} // lemlib
-
+} // namespace lemlib

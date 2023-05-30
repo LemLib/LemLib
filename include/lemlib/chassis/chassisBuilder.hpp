@@ -7,9 +7,8 @@
 
 namespace lemlib {
 
-    template<class ChassisType> class ChassisBuilder {
+template <class ChassisType> class ChassisBuilder {
     public:
-
         ChassisBuilder();
 
         ~ChassisBuilder() = default;
@@ -25,15 +24,10 @@ namespace lemlib {
         ChassisBuilder& withSensor(AbstractChassis::OdomSensors_t sensors);
 
         ChassisType build();
-
-
-
     private:
-        template <typename... Args>
-        ChassisType buildSFINAE(std::true_type, Args... args);
+        template <typename... Args> ChassisType buildSFINAE(std::true_type, Args... args);
 
-        template <typename... Args>
-        ChassisType buildSFINAE(std::false_type, Args... args);
+        template <typename... Args> ChassisType buildSFINAE(std::false_type, Args... args);
 
         typename ChassisType::Drivetrain_t driveSetting;
         AbstractChassis::ChassisController_t lateralController;
@@ -43,10 +37,8 @@ namespace lemlib {
         bool hasDriveSetting = false;
         bool hasLateralController = false, hasAngularController = false, hasStrafeController = false;
         bool hasSensors = false;
-    };
+};
 
-
-
-} // lemlib
+} // namespace lemlib
 
 #include "../src/lemlib/chassis/chassisBuilder_impl.hpp"

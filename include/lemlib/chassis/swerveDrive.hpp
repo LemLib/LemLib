@@ -9,23 +9,20 @@
 
 namespace lemlib {
 
-enum class SwerveType_t{
-    Coaxial, Differential, Single
-};
+enum class SwerveType_t { Coaxial, Differential, Single };
 
-
-template<SwerveType_t SwerveType> class SwerveDrive : public HolonomicDrive{
+template <SwerveType_t SwerveType> class SwerveDrive : public HolonomicDrive {
     public:
         SwerveDrive() = delete;
     protected:
-        SwerveDrive(SwerveDrive<SwerveType>::Drivetrain_t driveSetting, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                    ChassisController_t strafeSettings, OdomSensors_t odomSensors);
+        SwerveDrive(SwerveDrive<SwerveType>::Drivetrain_t driveSetting, ChassisController_t lateralSettings,
+                    ChassisController_t angularSettings, ChassisController_t strafeSettings, OdomSensors_t odomSensors);
 
-//        void calibrate() override;
+        //        void calibrate() override;
     private:
 };
 
-template<> class SwerveDrive<SwerveType_t::Coaxial> : public HolonomicDrive{ // template specialization
+template <> class SwerveDrive<SwerveType_t::Coaxial> : public HolonomicDrive { // template specialization
     public:
         typedef struct {
                 pros::Motor* rf_move;
@@ -42,10 +39,10 @@ template<> class SwerveDrive<SwerveType_t::Coaxial> : public HolonomicDrive{ // 
         } Drivetrain_t;
 };
 
-
-template<> class SwerveDrive<SwerveType_t::Differential> : public HolonomicDrive{ // template specialization
+template <> class SwerveDrive<SwerveType_t::Differential> : public HolonomicDrive { // template specialization
     public:
         using MotorPairs = std::pair<pros::Motor_Group*, pros::Motor_Group*>;
+
         typedef struct {
                 MotorPairs rf;
                 MotorPairs rb;
@@ -57,7 +54,7 @@ template<> class SwerveDrive<SwerveType_t::Differential> : public HolonomicDrive
         } Drivetrain_t;
 };
 
-template<> class SwerveDrive<SwerveType_t::Single> : public HolonomicDrive{ // template specialization
+template <> class SwerveDrive<SwerveType_t::Single> : public HolonomicDrive { // template specialization
     public:
         typedef struct {
                 pros::Motor* rf;
@@ -71,8 +68,6 @@ template<> class SwerveDrive<SwerveType_t::Single> : public HolonomicDrive{ // t
         } Drivetrain_t;
 };
 
-
-
-} // lemlib
+} // namespace lemlib
 
 #include "../src/lemlib/chassis/swerveDrive_impl.hpp"
