@@ -17,6 +17,7 @@
 #include "lemlib/chassis/holonomicDrive.hpp"
 #include "lemlib/chassis/swerveDrive.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/vision.hpp"
 #include "lemlib/pid.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/util.hpp"
