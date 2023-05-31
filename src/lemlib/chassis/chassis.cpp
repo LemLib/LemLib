@@ -41,21 +41,31 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
 void lemlib::Chassis::calibrate(bool preservePose) {
     logger::debug("Calibrating chassis...");
 
-    // if the vertical 1 tracking wheel is null or not working properly, use motor encoders
-    if (odomSensors.vertical1 == nullptr || odomSensors.vertical1->getStatus()) {
-        // if the vertical 1 tracking wheel is not working properly, warn the user
-        if (odomSensors.vertical1->getStatus())
-            logger::warn("Vertical tracking wheel 1 failed to initialize. Defaulting to motor encoders");
+    // if the vertical 1 tracking wheel is null, use motor encoders
+    if (odomSensors.vertical1 == nullptr) {
         odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
                                                           -(drivetrain.trackWidth / 2), drivetrain.rpm);
+        odomSensors.vertical1->reset();
+    } else {
+        // if the vertical 1 tracking wheel fails to reset, use motor encoders
+        if (odomSensors.vertical1->reset()) {
+            odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
+                                                              -(drivetrain.trackWidth / 2), drivetrain.rpm);
+            odomSensors.vertical1->reset();
+        }
     }
-    // if the vertical 2 tracking wheel is null or not working properly, use motor encoders
-    if (odomSensors.vertical2 == nullptr || odomSensors.vertical2->getStatus()) {
-        // if the vertical 2 tracking wheel is not working properly, warn the user
-        if (odomSensors.vertical2->getStatus())
-            logger::warn("Vertical tracking wheel 2 failed to initialize. Defaulting to motor encoders");
+    // if the vertical 2 tracking wheel is null, use motor encoders
+    if (odomSensors.vertical2 == nullptr) {
         odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
-                                                          drivetrain.trackWidth / 2, drivetrain.rpm);
+                                                          -(drivetrain.trackWidth / 2), drivetrain.rpm);
+        odomSensors.vertical2->reset();
+    } else {
+        // if the vertical 1 tracking wheel fails to reset, use motor encoders
+        if (odomSensors.vertical2->reset()) {
+            odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
+                                                              -(drivetrain.trackWidth / 2), drivetrain.rpm);
+            odomSensors.vertical2->reset();
+        }
     }
 
     // if the horizontal 1 tracking wheel is not null, reset it
