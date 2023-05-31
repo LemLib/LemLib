@@ -41,17 +41,37 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
 void lemlib::Chassis::calibrate(bool preservePose) {
     logger::debug("Calibrating chassis...");
 
-    // initialize tracking wheels
-    if (odomSensors.vertical1 == nullptr)
+    // if the vertical 1 tracking wheel is null or not working properly, use motor encoders
+    if (odomSensors.vertical1 == nullptr || odomSensors.vertical1->getStatus()) {
+        // if the vertical 1 tracking wheel is not working properly, warn the user
+        if (odomSensors.vertical1->getStatus())
+            logger::warn("Vertical tracking wheel 1 failed to initialize. Defaulting to motor encoders");
         odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
                                                           -(drivetrain.trackWidth / 2), drivetrain.rpm);
-    if (odomSensors.vertical2 == nullptr)
+    }
+    // if the vertical 2 tracking wheel is null or not working properly, use motor encoders
+    if (odomSensors.vertical2 == nullptr || odomSensors.vertical2->getStatus()) {
+        // if the vertical 2 tracking wheel is not working properly, warn the user
+        if (odomSensors.vertical2->getStatus())
+            logger::warn("Vertical tracking wheel 2 failed to initialize. Defaulting to motor encoders");
         odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
                                                           drivetrain.trackWidth / 2, drivetrain.rpm);
-    odomSensors.vertical1->reset();
-    odomSensors.vertical2->reset();
-    if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
-    if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
+    }
+
+    // if the horizontal 1 tracking wheel is not null, reset it
+    if (odomSensors.horizontal1 != nullptr) {
+        if (odomSensors.horizontal1->reset()) { // if reset failed, warn the user and disable
+            logger::warn("Horizontal tracking wheel 1 failed to initialize. Disabling");
+            odomSensors.horizontal1 = nullptr;
+        }
+    }
+    // if the horizontal 2 tracking wheel is not null, reset it
+    if (odomSensors.horizontal2 != nullptr) {
+        if (odomSensors.horizontal2->reset()) { // if reset failed, warn the user and disable
+            logger::warn("Horizontal tracking wheel 2 failed to initialize. Disabling");
+            odomSensors.horizontal2 = nullptr;
+        }
+    }
 
     // get the competition state
     // if it changes to anything other than disabled, abandon the calibration

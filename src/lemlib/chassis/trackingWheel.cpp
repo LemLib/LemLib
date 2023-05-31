@@ -70,7 +70,6 @@ bool lemlib::TrackingWheel::reset() {
     if (this->rotation != nullptr) this->rotation->reset_position();
     if (this->motors != nullptr) this->motors->tare_position();
     bool status = this->getStatus();
-    if (status) logger::error("Tracking wheel reset failed. Is it plugged in the correct port?");
     return status;
 }
 
