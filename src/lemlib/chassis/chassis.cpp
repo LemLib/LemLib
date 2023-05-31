@@ -219,3 +219,62 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, float maxSpeed,
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
 }
+
+/**
+ * @brief Move the chassis to a target point
+ *
+ * The PID logging ids are "angularPID" and "lateralPID"
+ *
+ * @param x x location
+ * @param y y location
+ * @param heading the heading, in degrees
+ * @param d the lead distance gain. 0 < d < 1. 0.6 recommended
+ * @param timeout longest time the robot can spend moving
+ * @param maxSpeed the maximum speed the robot can move at
+ */
+void lemlib::Chassis::moveToPose(float x, float y, float heading, float d, int timeout, float maxSpeed) {
+    // initialize misc variables
+    Pose target(x, y, M_PI_2 - degToRad(heading));
+    std::uint8_t compState = pros::competition::get_status();
+    bool close = false;
+    // initialize PIDs
+    FAPID linearPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
+    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
+                      lateralSettings.smallErrorTimeout, timeout);
+
+    // main loop
+    while (pros::competition::get_status() == compState && !linearPID.settled()) {
+        // get the current position
+        Pose pose = getPose();
+        pose.theta = M_PI_2 - pose.theta; // convert to standard form
+
+        // calculate error
+        Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * d * pose.distance(target);
+        carrot.theta = pose.angle(carrot); // the theta of the carrot is the angle between the robot and the carrot
+        // if the robot is close to the target, use the target as the carrot
+        Pose delta = pose.distance(target) < lateralSettings.largeError ? target - pose : carrot - pose;
+        float lateralError = delta.distance(Pose(0, 0)) * cos(delta.theta);
+
+        // calculate speed
+        float lateralPower = linearPID.update(lateralError, 0);
+        float angularPower = angularPID.update(delta.theta, 0);
+        lateralPower = std::clamp(lateralPower, -maxSpeed, maxSpeed); // cap the speed
+
+        // calculate left and right motor power
+        float leftPower = lateralPower + angularPower;
+        float rightPower = lateralPower - angularPower;
+        // balance the speeds to prevent motor saturation
+        float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+        if (ratio > 1) {
+            leftPower /= ratio;
+            rightPower /= ratio;
+        }
+
+        // move the motors
+        drivetrain.leftMotors->move(leftPower);
+        drivetrain.rightMotors->move(rightPower);
+
+        pros::delay(10);
+    }
+}

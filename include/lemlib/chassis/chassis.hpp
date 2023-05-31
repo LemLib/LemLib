@@ -149,14 +149,27 @@ class Chassis {
          * @param maxSpeed the maximum speed the robot can move at
          * @param log whether the chassis should log the turnTo function. false by default
          */
-        void moveToPoint(float x, float y, int timeout, float maxSpeed = 200, bool log = false);
+        void moveToPoint(float x, float y, int timeout, float maxSpeed = 127, bool log = false);
+        /**
+         * @brief Move the chassis to a target point
+         *
+         * The PID logging ids are "angularPID" and "lateralPID"
+         *
+         * @param x x location
+         * @param y y location
+         * @param heading the heading, in degrees
+         * @param d the lead distance gain. 0 < d < 1. 0.6 recommended
+         * @param timeout longest time the robot can spend moving
+         * @param maxSpeed the maximum speed the robot can move at
+         */
+        void moveToPose(float x, float y, float heading, float d, int timeout, float maxSpeed = 127);
         /**
          * @brief Move the chassis along a path
          *
          * @param filePath file path to the path. No need to preface it with /usd/
          * @param timeout the maximum time the robot can spend moving
-         * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
-         * will follow the path less accurately
+         * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster
+         * but will follow the path less accurately
          * @param reverse whether the robot should follow the path in reverse. false by default
          * @param maxSpeed the maximum speed the robot can move at
          * @param log whether the chassis should log the path on a log file. false by default.
