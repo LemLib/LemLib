@@ -134,105 +134,16 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 }
 
 /**
- * @brief Move the chassis to a target point
- *
- * The PID logging ids are "angularPID" and "lateralPID"
- *
- * @param x x location
- * @param y y location
- * @param timeout longest time the robot can spend moving
- * @param maxSpeed the maximum speed the robot can move at
- * @param reversed whether the robot should turn in the opposite direction. false by default
- * @param log whether the chassis should log the turnTo function. false by default
- */
-void lemlib::Chassis::moveToPoint(float x, float y, int timeout, float maxSpeed, bool log) {
-    Pose pose(0, 0);
-    float prevLateralPower = 0;
-    float prevAngularPower = 0;
-    bool close = false;
-    int start = pros::millis();
-    std::uint8_t compState = pros::competition::get_status();
-
-    // create a new PID controller
-    FAPID lateralPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "lateralPID");
-    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
-                       lateralSettings.smallErrorTimeout, timeout);
-
-    // main loop
-    while (pros::competition::get_status() == compState && (!lateralPID.settled() || pros::millis() - start < 300)) {
-        // get the current position
-        Pose pose = getPose();
-        pose.theta = std::fmod(pose.theta, 360);
-
-        // update error
-        float deltaX = x - pose.x;
-        float deltaY = y - pose.y;
-        float targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
-        float hypot = std::hypot(deltaX, deltaY);
-        float diffTheta1 = angleError(pose.theta, targetTheta);
-        float diffTheta2 = angleError(pose.theta, targetTheta + 180);
-        float angularError = (std::fabs(diffTheta1) < std::fabs(diffTheta2)) ? diffTheta1 : diffTheta2;
-        float lateralError = hypot * cos(degToRad(std::fabs(diffTheta1)));
-
-        // calculate speed
-        float lateralPower = lateralPID.update(lateralError, 0, log);
-        float angularPower = -angularPID.update(angularError, 0, log);
-
-        // if the robot is close to the target
-        if (pose.distance(lemlib::Pose(x, y)) < 7.5) {
-            close = true;
-            maxSpeed = (std::fabs(prevLateralPower) < 30) ? 30 : std::fabs(prevLateralPower);
-        }
-
-        // limit acceleration
-        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
-        if (std::fabs(angularError) > 25)
-            angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
-
-        // cap the speed
-        if (lateralPower > maxSpeed) lateralPower = maxSpeed;
-        else if (lateralPower < -maxSpeed) lateralPower = -maxSpeed;
-        if (close) angularPower = 0;
-
-        prevLateralPower = lateralPower;
-        prevAngularPower = angularPower;
-
-        float leftPower = lateralPower + angularPower;
-        float rightPower = lateralPower - angularPower;
-
-        // ratio the speeds to respect the max speed
-        float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
-        if (ratio > 1) {
-            leftPower /= ratio;
-            rightPower /= ratio;
-        }
-
-        // move the motors
-        drivetrain.leftMotors->move(leftPower);
-        drivetrain.rightMotors->move(rightPower);
-
-        pros::delay(10);
-    }
-
-    // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
-}
-
-/**
- * @brief Move the chassis to a target point
- *
- * The PID logging ids are "angularPID" and "lateralPID"
+ * @brief Move the chassis to a target pose
  *
  * @param x x location
  * @param y y location
  * @param heading the heading, in degrees
- * @param d the lead distance gain. 0 < d < 1. 0.6 recommended
  * @param timeout longest time the robot can spend moving
- * @param maxSpeed the maximum speed the robot can move at
+ * @param d the lead distance gain. 0 < d < 1. Default is 0.6
+ * @param maxSpeed the maximum speed the robot can move at. Default is 127
  */
-void lemlib::Chassis::moveToPose(float x, float y, float heading, float d, int timeout, float maxSpeed) {
+void lemlib::Chassis::moveTo(float x, float y, float heading, int timeout, float d, float maxSpeed) {
     // initialize misc variables
     Pose target(x, y, M_PI_2 - degToRad(heading));
     std::uint8_t compState = pros::competition::get_status();
@@ -259,8 +170,9 @@ void lemlib::Chassis::moveToPose(float x, float y, float heading, float d, int t
         // calculate speed
         float lateralPower = linearPID.update(lateralError, 0);
         float angularPower = angularPID.update(delta.theta, 0);
-        lateralPower = std::clamp(lateralPower, -maxSpeed, maxSpeed); // cap the speed
-
+        // cap the speeds. This prevents one output dominating the other
+        lateralPower = std::clamp(lateralPower, -maxSpeed, maxSpeed);
+        angularPower = std::clamp(angularPower, -maxSpeed, maxSpeed);
         // calculate left and right motor power
         float leftPower = lateralPower + angularPower;
         float rightPower = lateralPower - angularPower;
@@ -277,4 +189,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float heading, float d, int t
 
         pros::delay(10);
     }
+
+    // stop the motors
+    drivetrain.leftMotors->move(0);
+    drivetrain.rightMotors->move(0);
 }
