@@ -50,10 +50,10 @@ void lemlib::Chassis::calibrate() {
     }
     // initialize odom
     if (odomSensors.vertical1 == nullptr)
-        odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
+        odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelType,
                                                           -(drivetrain.trackWidth / 2), drivetrain.rpm);
     if (odomSensors.vertical2 == nullptr)
-        odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
+        odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelType,
                                                           drivetrain.trackWidth / 2, drivetrain.rpm);
     odomSensors.vertical1->reset();
     odomSensors.vertical2->reset();

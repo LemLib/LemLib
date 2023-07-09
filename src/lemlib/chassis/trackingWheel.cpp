@@ -18,13 +18,13 @@
  * @brief Create a new tracking wheel
  *
  * @param encoder the optical shaft encoder to use
- * @param diameter diameter of the tracking wheel in inches
+ * @param wheel the omni-wheel to use
  * @param distance distance between the tracking wheel and the center of rotation in inches
  * @param gearRatio gear ratio of the tracking wheel, defaults to 1
  */
-lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, float diameter, float distance, float gearRatio) {
+lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, Omniwheel wheel, float distance, float gearRatio) {
     this->encoder = encoder;
-    this->diameter = diameter;
+    this->diameter = (double) wheel / 1000.0;
     this->distance = distance;
     this->gearRatio = gearRatio;
 }
@@ -33,13 +33,13 @@ lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, float diameter, 
  * @brief Create a new tracking wheel
  *
  * @param encoder the v5 rotation sensor to use
- * @param diameter diameter of the tracking wheel in inches
+ * @param wheel the omni-wheel to use
  * @param distance distance between the tracking wheel and the center of rotation in inches
  * @param gearRatio gear ratio of the tracking wheel, defaults to 1
  */
-lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, float diameter, float distance, float gearRatio) {
+lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, Omniwheel wheel, float distance, float gearRatio) {
     this->rotation = encoder;
-    this->diameter = diameter;
+    this->diameter = (double) wheel / 1000.0;
     this->distance = distance;
     this->gearRatio = gearRatio;
 }
@@ -48,14 +48,14 @@ lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, float diameter, fl
  * @brief Create a new tracking wheel
  *
  * @param motors the motor group to use
- * @param diameter diameter of the drivetrain wheels in inches
+ * @param wheel the omni-wheel to use
  * @param distance half the track width of the drivetrain in inches
  * @param rpm theoretical maximum rpm of the drivetrain wheels
  */
-lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group* motors, float diameter, float distance, float rpm) {
+lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group* motors, Omniwheel wheel, float distance, float rpm) {
     this->motors = motors;
     this->motors->set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
-    this->diameter = diameter;
+    this->diameter = (double) wheel / 1000.0;
     this->distance = distance;
     this->rpm = rpm;
 }

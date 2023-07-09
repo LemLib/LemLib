@@ -20,7 +20,7 @@ pros::Imu imu(6);
 // tracking wheels
 pros::ADIEncoder verticalEnc('A', 'B', false);
 // vertical tracking wheel. 2.75" diameter, 2.2" offset
-lemlib::TrackingWheel vertical(&verticalEnc, 2.75, 0);
+lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, 2.2);
 
 
 // drivetrain
@@ -28,7 +28,7 @@ lemlib::Drivetrain_t drivetrain {
 	&leftMotors,
 	&rightMotors,
 	10,
-	3.25,
+	lemlib::Omniwheel::NEW_325,
 	360,
 };
 
