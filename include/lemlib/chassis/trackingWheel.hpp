@@ -20,10 +20,24 @@ namespace lemlib {
 /**
  * @brief An omni-wheel enumeration.
  *
- * @note These enumerations are equal to the virtual diameter of a wheel which would have a circumference equal to the real loop length of the given wheel in thous.
- * 
+ * @note These enumerations are equal to the virtual diameter of a wheel which would have a circumference equal to the
+ * real loop length of the given wheel in thous.
+ *
  */
-enum class Omniwheel { NEW_275 = 2750, OLD_275 = 2750, NEW_275_HALF = 2744, OLD_275_HALF = 2740, NEW_325 = 3250, OLD_325 = 3250, NEW_325_HALF = 3246, OLD_325_HALF = 3246, NEW_4 = 4000, OLD_4 = 4180, NEW_4_HALF = 3995, OLD_4_HALF = 4175 };
+enum class Omniwheel {
+    NEW_275 = 2750,
+    OLD_275 = 2750,
+    NEW_275_HALF = 2744,
+    OLD_275_HALF = 2740,
+    NEW_325 = 3250,
+    OLD_325 = 3250,
+    NEW_325_HALF = 3246,
+    OLD_325_HALF = 3246,
+    NEW_4 = 4000,
+    OLD_4 = 4180,
+    NEW_4_HALF = 3995,
+    OLD_4_HALF = 4175
+};
 
 class TrackingWheel {
     public:

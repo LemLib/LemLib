@@ -24,7 +24,7 @@
  */
 lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, Omniwheel wheel, float distance, float gearRatio) {
     this->encoder = encoder;
-    this->diameter = (double) wheel / 1000.0;
+    this->diameter = (double)wheel / 1000.0;
     this->distance = distance;
     this->gearRatio = gearRatio;
 }
@@ -39,7 +39,7 @@ lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, Omniwheel wheel,
  */
 lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, Omniwheel wheel, float distance, float gearRatio) {
     this->rotation = encoder;
-    this->diameter = (double) wheel / 1000.0;
+    this->diameter = (double)wheel / 1000.0;
     this->distance = distance;
     this->gearRatio = gearRatio;
 }
@@ -55,7 +55,7 @@ lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, Omniwheel wheel, f
 lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group* motors, Omniwheel wheel, float distance, float rpm) {
     this->motors = motors;
     this->motors->set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
-    this->diameter = (double) wheel / 1000.0;
+    this->diameter = (double)wheel / 1000.0;
     this->distance = distance;
     this->rpm = rpm;
 }
