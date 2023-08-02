@@ -57,15 +57,15 @@ void autonomous() {
 
 As you can see, using this function is very easy. The first 2 parameters are the X and Y location the robot should be facing. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is whether the back of the robot should face the point (true) or the front of the robot should face the point (false). It defaults to false if not specified. The fifth parameter is the maximum speed the robot can turn at. If you don't specify a value for this parameter, the robot will turn at full speed.
 
-The second function is `lemlib::Chassis::moveTo`. This function moves the robot to the specified (x, y) point. It takes 3 or 4 arguments. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
+The second function is `lemlib::Chassis::moveTo`. This function moves the robot to the specified (x, y) point with a target heading in degrees using an algorithm called the [Boomerang Controller](https://www.desmos.com/calculator/sptjw5szex). It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
-    chassis.moveTo(53, 53, 1000); // move to the point (53, 53) with a timeout of 1000 ms
-    chassis.moveTo(10, 0, 1000, 50); // move to the point (10, 0) with a timeout of 1000 ms, and a maximum speed of 50
+    chassis.moveTo(53, 53, 90, 1000); // move to the point (53, 53) at heading 90 with a timeout of 1000 ms
+    chassis.moveTo(10, 0, 270, 1000, 50); // move to the point (10, 0) at heading 270 with a timeout of 1000 ms, and a maximum speed of 50
 }
 ```
 
-This function is very similar to the `chassis.turnTo()` function. The first 2 parameters are the X and Y location the robot should move towards. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is the maximum speed the robot can move at. If you don't specify a value for this parameter, the robot will move at full speed.
+This function is very similar to the `chassis.turnTo()` function. The first 3 parameters are the x, y, and heading the robot should move to. The fourth parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fifth parameter is the maximum speed the robot can move at. If you don't specify a value for this parameter, the robot won't limit its speed.
 
 
 ## Tuning the PIDs
