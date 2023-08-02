@@ -47,6 +47,7 @@ void initialize() {
     pros::lcd::initialize();
     // calibrate sensors
     chassis.calibrate();
+    // print odom values to the brain
     while (true) {
         pros::lcd::print(0, "X: %f", chassis.getPose().x);
         pros::lcd::print(1, "Y: %f", chassis.getPose().y);
@@ -84,7 +85,10 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() { chassis.moveTo(20, 0, 4000); }
+void autonomous() {
+    // move the chassis to x: 20, y: 0, facing heading: 90
+    chassis.moveTo(20, 0, 90, 4000);
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task

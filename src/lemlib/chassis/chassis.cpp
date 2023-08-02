@@ -149,18 +149,23 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 }
 
 /**
- * @brief Move the chassis towards the target point
+ * @brief Move the chassis towards the target pose
  *
- * The PID logging ids are "angularPID" and "lateralPID"
+ * Uses the boomerang controller
  *
  * @param x x location
  * @param y y location
+ * @param theta theta (in degrees). Target angle
  * @param timeout longest time the robot can spend moving
- * @param maxSpeed the maximum speed the robot can move at
- * @param reversed whether the robot should turn in the opposite direction. false by default
+ * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
+ * @param maxSpeed the maximum speed the robot can move at. 127 at default
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool log) {
+void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float lead, float maxSpeed, bool log) {
+    // store target pose as a Pose object
+    Pose target(x, y, theta);
+    target.theta = fmod(degToRad(target.theta), 2 * M_PI);
+    // initialize variables
     Pose pose(0, 0);
     float prevLateralPower = 0;
     float prevAngularPower = 0;
@@ -177,22 +182,25 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
     // main loop
     while (pros::competition::get_status() == compState && (!lateralPID.settled() || pros::millis() - start < 300)) {
         // get the current position
-        Pose pose = getPose();
-        pose.theta = std::fmod(pose.theta, 360);
+        Pose pose = getPose(true);
+        pose.theta = std::fmod(pose.theta, 2 * M_PI);
 
-        // update error
-        float deltaX = x - pose.x;
-        float deltaY = y - pose.y;
-        float targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
-        float hypot = std::hypot(deltaX, deltaY);
-        float diffTheta1 = angleError(pose.theta, targetTheta);
-        float diffTheta2 = angleError(pose.theta, targetTheta + 180);
-        float angularError = (std::fabs(diffTheta1) < std::fabs(diffTheta2)) ? diffTheta1 : diffTheta2;
-        float lateralError = hypot * cos(degToRad(std::fabs(diffTheta1)));
+        // calculate carrot point
+        float targetDist = target.distance(pose);
+        Pose carrot = target - Pose(sin(target.theta), cos(target.theta)) * lead * targetDist;
+        carrot.theta = pose.angle(carrot);
+
+        // calculate error
+        float diffTheta1 = angleError(pose.theta, carrot.theta, true);
+        float diffTheta2 = angleError(pose.theta, carrot.theta + M_PI, true);
+        // calculate the fastest way to turn to the carrot point (left or right)
+        float angularError = fabs(diffTheta1) < fabs(diffTheta2) ? diffTheta1 : diffTheta2;
+        float lateralError = pose.distance(carrot) * cos(std::fabs(diffTheta1));
 
         // calculate speed
         float lateralPower = lateralPID.update(lateralError, 0, log);
-        float angularPower = -angularPID.update(angularError, 0, log);
+        // convert angular error to degrees to make tuning easier
+        float angularPower = -angularPID.update(radToDeg(angularError), 0, log);
 
         // if the robot is close to the target
         if (pose.distance(lemlib::Pose(x, y)) < 7.5) {
@@ -202,7 +210,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, float maxSpeed, bool
 
         // limit acceleration
         if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
-        if (std::fabs(angularError) > 25)
+        if (std::fabs(angularError) > degToRad(25))
             angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
 
         // cap the speed

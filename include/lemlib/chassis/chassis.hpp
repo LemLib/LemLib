@@ -140,17 +140,20 @@ class Chassis {
          */
         void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 127, bool log = false);
         /**
-         * @brief Move the chassis towards the target point
+         * @brief Move the chassis towards the target pose
          *
-         * The PID logging ids are "angularPID" and "lateralPID"
+         * Uses the boomerang controller
          *
          * @param x x location
          * @param y y location
+         * @param theta theta (in degrees). Target angle
          * @param timeout longest time the robot can spend moving
-         * @param maxSpeed the maximum speed the robot can move at
+         * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
+         * @param maxSpeed the maximum speed the robot can move at. 127 at default
          * @param log whether the chassis should log the turnTo function. false by default
          */
-        void moveTo(float x, float y, int timeout, float maxSpeed = 200, bool log = false);
+        void moveTo(float x, float y, float theta, int timeout, float lead = 0.6, float maxSpeed = 127,
+                    bool log = false);
         /**
          * @brief Move the chassis along a path
          *
