@@ -188,14 +188,11 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float l
         // calculate carrot point
         float targetDist = target.distance(pose);
         Pose carrot = target - Pose(sin(target.theta), cos(target.theta)) * lead * targetDist;
-        carrot.theta = pose.angle(carrot);
+        carrot.theta = M_PI_2 - pose.angle(carrot);
 
-        // calculate error
-        float diffTheta1 = angleError(pose.theta, carrot.theta, true);
-        float diffTheta2 = angleError(pose.theta, carrot.theta + M_PI, true);
         // calculate the fastest way to turn to the carrot point (left or right)
-        float angularError = fabs(diffTheta1) < fabs(diffTheta2) ? diffTheta1 : diffTheta2;
-        float lateralError = pose.distance(carrot) * cos(std::fabs(diffTheta1));
+        float angularError = angleError(carrot.theta, pose.theta, true);
+        float lateralError = pose.distance(carrot) * cos(std::fabs(angularError));
 
         // calculate speed
         float lateralPower = lateralPID.update(lateralError, 0, log);
