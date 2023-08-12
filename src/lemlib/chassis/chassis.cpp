@@ -9,6 +9,7 @@
  *
  */
 #include <math.h>
+#include <iostream>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "lemlib/util.hpp"
@@ -168,7 +169,6 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float l
     // initialize variables
     Pose pose(0, 0);
     float prevLateralPower = 0;
-    float prevAngularPower = 0;
     bool close = false;
     int start = pros::millis();
     std::uint8_t compState = pros::competition::get_status();
@@ -189,35 +189,47 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float l
         float targetDist = target.distance(pose);
         Pose carrot = target - Pose(sin(target.theta), cos(target.theta)) * lead * targetDist;
         carrot.theta = M_PI_2 - pose.angle(carrot);
+        // if the robot is close to the target, move to the target instead of the carrot point
+        if (close) carrot = target;
+        // if the robot is close to the target, turn to face the target heading instead of the target
+        if (close) carrot.theta = target.theta;
 
-        // calculate the fastest way to turn to the carrot point (left or right)
-        float angularError = angleError(carrot.theta, pose.theta, true);
-        float lateralError = pose.distance(carrot) * cos(std::fabs(angularError));
-
-        // calculate speed
-        float lateralPower = lateralPID.update(lateralError, 0, log);
-        // convert angular error to degrees to make tuning easier
-        float angularPower = -angularPID.update(radToDeg(angularError), 0, log);
-
-        // if the robot is close to the target
-        if (pose.distance(lemlib::Pose(x, y)) < 7.5) {
-            close = true;
-            maxSpeed = (std::fabs(prevLateralPower) < 30) ? 30 : std::fabs(prevLateralPower);
+        // calculate the fastest way to move to the carrot point (left or right?) (forwards or backwards?)
+        float angularError1 = angleError(carrot.theta, pose.theta, true);
+        float angularError2 = angleError(carrot.theta + M_PI, pose.theta, true);
+        float angularError = (std::fabs(angularError1) < fabs(angularError2)) ? angularError1 : angularError2;
+        float lateralError = pose.distance(carrot) * cos(angularError1);
+        // if the robot is close to the target, lateralError should still use the difference in angle between the robot
+        // and the target
+        if (close) {
+            float trueAngularError = angleError(M_PI_2 - pose.angle(target), pose.theta, true);
+            lateralError = pose.distance(target) * cos(trueAngularError);
         }
 
-        // limit acceleration
-        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
-        if (std::fabs(angularError) > degToRad(25))
-            angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
-
+        // calculate lateral power
+        float lateralPower = lateralPID.update(lateralError, 0, log);
         // cap the speed
-        if (lateralPower > maxSpeed) lateralPower = maxSpeed;
-        else if (lateralPower < -maxSpeed) lateralPower = -maxSpeed;
-        if (close) angularPower = 0;
+        lateralPower = std::clamp(lateralPower, -maxSpeed, maxSpeed);
+        // limit the acceleration except when the robot is close to the target
+        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
+        // slow down when the robot is tangential to the target or carrot point
+        lateralPower *= fabs(cos(angularError));
 
-        prevLateralPower = lateralPower;
-        prevAngularPower = angularPower;
+        // calculate angular power
+        // convert angular error to degrees to make tuning easier
+        float angularPower = angularPID.update(radToDeg(angularError), 0, log);
 
+        // make the robot overturn. Its better to undershoot the distance than to overshoot
+        float overturn = fabs(angularPower) + fabs(lateralPower) - maxSpeed;
+        if (overturn > 0) lateralPower -= sgn(lateralPower) * overturn;
+
+        // if the robot is close to the target, change some behavior
+        if (pose.distance(target) < 7.5) {
+            close = true;
+            maxSpeed = (fabs(prevLateralPower) < 30) ? 30 : fabs(prevLateralPower);
+        }
+
+        // calculate left and right motor power
         float leftPower = lateralPower + angularPower;
         float rightPower = lateralPower - angularPower;
 
@@ -231,6 +243,9 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float l
         // move the motors
         drivetrain.leftMotors->move(leftPower);
         drivetrain.rightMotors->move(rightPower);
+
+        // update previous values for the next cycle
+        prevLateralPower = lateralPower;
 
         pros::delay(10);
     }
