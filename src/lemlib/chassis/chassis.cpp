@@ -103,6 +103,14 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(rad
 lemlib::Pose lemlib::Chassis::getSpeed(bool radians) { return lemlib::getSpeed(radians); }
 
 /**
+ * @brief Get the local speed of the robot
+ *
+ * @param radians true for theta in radians, false for degrees. False by default
+ * @return lemlib::Pose
+ */
+lemlib::Pose lemlib::Chassis::getLocalSpeed(bool radians) { return lemlib::getLocalSpeed(radians); }
+
+/**
  * @brief Turn the chassis so it is facing the target point
  *
  * The PID logging id is "angularPID"
@@ -207,8 +215,8 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float l
         float angularError2 = angleError(carrot.theta + M_PI, pose.theta, true);
         float angularError = (std::fabs(angularError1) < fabs(angularError2)) ? angularError1 : angularError2;
         float lateralError = pose.distance(carrot) * cos(angularError1);
-        // if the robot is close to the target, lateralError should still use the difference in angle between the robot
-        // and the target
+        // if the robot is close to the target, lateralError should still use the difference in angle between the
+        // robot and the target
         if (close) {
             float trueAngularError = angleError(M_PI_2 - pose.angle(target), pose.theta, true);
             lateralError = pose.distance(target) * cos(trueAngularError);

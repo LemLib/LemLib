@@ -29,6 +29,7 @@ lemlib::OdomSensors_t odomSensors; // the sensors to be used for odometry
 lemlib::Drivetrain_t drive; // the drivetrain to be used for odometry
 lemlib::Pose odomPose(0, 0, 0); // the pose of the robot
 lemlib::Pose odomSpeed(0, 0, 0); // the speed of the robot
+lemlib::Pose odomLocalSpeed(0, 0, 0); // the local speed of the robot
 
 float prevVertical = 0;
 float prevVertical1 = 0;
@@ -80,6 +81,17 @@ void lemlib::setPose(lemlib::Pose pose, bool radians) {
 lemlib::Pose lemlib::getSpeed(bool radians) {
     if (radians) return odomSpeed;
     else return lemlib::Pose(odomSpeed.x, odomSpeed.y, radToDeg(odomSpeed.theta));
+}
+
+/**
+ * @brief Get the local speed of the robot
+ *
+ * @param radians true for theta in radians, false for degrees. False by default
+ * @return lemlib::Pose
+ */
+lemlib::Pose lemlib::getLocalSpeed(bool radians) {
+    if (radians) return odomLocalSpeed;
+    else return lemlib::Pose(odomLocalSpeed.x, odomLocalSpeed.y, radToDeg(odomLocalSpeed.theta));
 }
 
 /**
@@ -189,6 +201,11 @@ void lemlib::update() {
     odomSpeed.x = ema((odomPose.x - prevPose.x) / 0.01, odomSpeed.x, 0.95);
     odomSpeed.y = ema((odomPose.y - prevPose.y) / 0.01, odomSpeed.y, 0.95);
     odomSpeed.theta = ema((odomPose.theta - prevPose.theta) / 0.01, odomSpeed.theta, 0.95);
+
+    // calculate local speed
+    odomLocalSpeed.x = ema(localX / 0.01, odomLocalSpeed.x, 0.95);
+    odomLocalSpeed.y = ema(localY / 0.01, odomLocalSpeed.y, 0.95);
+    odomLocalSpeed.theta = ema(deltaHeading / 0.01, odomLocalSpeed.theta, 0.95);
 }
 
 /**
