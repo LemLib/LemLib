@@ -95,6 +95,14 @@ void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, r
 lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(radians); }
 
 /**
+ * @brief Get the speed of the robot
+ *
+ * @param radians true for theta in radians, false for degrees. False by default
+ * @return lemlib::Pose
+ */
+lemlib::Pose lemlib::Chassis::getSpeed(bool radians) { return lemlib::getSpeed(radians); }
+
+/**
  * @brief Turn the chassis so it is facing the target point
  *
  * The PID logging id is "angularPID"

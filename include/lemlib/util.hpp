@@ -74,4 +74,14 @@ float avg(std::vector<float> values);
  * @return double
  */
 double avg(std::vector<double> values);
+
+/**
+ * @brief Exponential moving average
+ *
+ * @param current current measurement
+ * @param previous previous output
+ * @param smooth smoothing factor (0-1). 1 means no smoothing, 0 means no change
+ * @return float - the smoothed output
+ */
+float ema(float current, float previous, float smooth);
 } // namespace lemlib

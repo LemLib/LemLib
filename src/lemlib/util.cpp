@@ -12,7 +12,7 @@
 #include <vector>
 #include "lemlib/util.hpp"
 
-/*omit
+/**
  * @brief Slew rate limiter
  *
  * @param target target value
@@ -28,7 +28,7 @@ float lemlib::slew(float target, float current, float maxChange) {
     return current + change;
 }
 
-/*omit
+/**
  * @brief Convert radians to degrees
  *
  * @param rad radians
@@ -36,7 +36,7 @@ float lemlib::slew(float target, float current, float maxChange) {
  */
 float lemlib::radToDeg(float rad) { return rad * 180 / M_PI; }
 
-/*omit
+/**
  * @brief Convert degrees to radians
  *
  * @param deg degrees
@@ -44,7 +44,7 @@ float lemlib::radToDeg(float rad) { return rad * 180 / M_PI; }
  */
 float lemlib::degToRad(float deg) { return deg * M_PI / 180; }
 
-/*omit
+/**
  * @brief Calculate the error between 2 angles. Useful when calculating the error between 2 headings
  *
  * @param angle1
@@ -63,7 +63,7 @@ float lemlib::angleError(float angle1, float angle2, bool radians) {
     return error;
 }
 
-/*omit
+/**
  * @brief Return the sign of a number
  *
  * @param x the number to get the sign of
@@ -74,7 +74,7 @@ float lemlib::sgn(float x) {
     else return 1;
 }
 
-/*omit
+/**
  * @brief Return the average of a vector of numbers
  *
  * @param values
@@ -86,7 +86,7 @@ float lemlib::avg(std::vector<float> values) {
     return sum / values.size();
 }
 
-/*omit
+/**
  * @brief Return the average of a vector of numbers
  *
  * @param values
@@ -96,4 +96,16 @@ double lemlib::avg(std::vector<double> values) {
     double sum = 0;
     for (double value : values) { sum += value; }
     return sum / values.size();
+}
+
+/**
+ * @brief Exponential moving average
+ *
+ * @param current current measurement
+ * @param previous previous output
+ * @param smooth smoothing factor (0-1). 1 means no smoothing, 0 means no change
+ * @return float - the smoothed output
+ */
+float lemlib::ema(float current, float previous, float smooth) {
+    return (current * smooth) + (previous * (1 - smooth));
 }

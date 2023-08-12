@@ -28,6 +28,7 @@ pros::Task* trackingTask = nullptr;
 lemlib::OdomSensors_t odomSensors; // the sensors to be used for odometry
 lemlib::Drivetrain_t drive; // the drivetrain to be used for odometry
 lemlib::Pose odomPose(0, 0, 0); // the pose of the robot
+lemlib::Pose odomSpeed(0, 0, 0); // the speed of the robot
 
 float prevVertical = 0;
 float prevVertical1 = 0;
@@ -68,6 +69,17 @@ lemlib::Pose lemlib::getPose(bool radians) {
 void lemlib::setPose(lemlib::Pose pose, bool radians) {
     if (radians) odomPose = pose;
     else odomPose = lemlib::Pose(pose.x, pose.y, degToRad(pose.theta));
+}
+
+/**
+ * @brief Get the speed of the robot
+ *
+ * @param radians true for theta in radians, false for degrees. False by default
+ * @return lemlib::Pose
+ */
+lemlib::Pose lemlib::getSpeed(bool radians) {
+    if (radians) return odomSpeed;
+    else return lemlib::Pose(odomSpeed.x, odomSpeed.y, radToDeg(odomSpeed.theta));
 }
 
 /**
@@ -163,12 +175,20 @@ void lemlib::update() {
         localY = 2 * sin(deltaHeading / 2) * (deltaY / deltaHeading + verticalOffset);
     }
 
+    // save previous pose
+    lemlib::Pose prevPose = odomPose;
+
     // calculate global x and y
     odomPose.x += localY * sin(avgHeading);
     odomPose.y += localY * cos(avgHeading);
     odomPose.x += localX * -cos(avgHeading);
     odomPose.y += localX * sin(avgHeading);
     odomPose.theta = heading;
+
+    // calculate speed
+    odomSpeed.x = ema((odomPose.x - prevPose.x) / 0.01, odomSpeed.x, 0.95);
+    odomSpeed.y = ema((odomPose.y - prevPose.y) / 0.01, odomSpeed.y, 0.95);
+    odomSpeed.theta = ema((odomPose.theta - prevPose.theta) / 0.01, odomSpeed.theta, 0.95);
 }
 
 /**
