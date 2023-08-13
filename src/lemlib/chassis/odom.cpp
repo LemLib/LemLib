@@ -95,6 +95,32 @@ lemlib::Pose lemlib::getLocalSpeed(bool radians) {
 }
 
 /**
+ * @brief Estimate the pose of the robot after a certain amount of time
+ *
+ * @param time time in seconds
+ * @param radians False for degrees, true for radians. False by default
+ * @return lemlib::Pose
+ */
+lemlib::Pose lemlib::estimatePose(float time, bool radians) {
+    // get current position and speed
+    Pose curPose = getPose(true);
+    Pose localSpeed = getLocalSpeed(true);
+    // calculate the change in local position
+    Pose deltaLocalPose = localSpeed * time;
+
+    // calculate the future pose
+    float avgHeading = curPose.theta + deltaLocalPose.theta / 2;
+    Pose futurePose = curPose;
+    futurePose.x += deltaLocalPose.y * sin(avgHeading);
+    futurePose.y += deltaLocalPose.y * cos(avgHeading);
+    futurePose.x += deltaLocalPose.x * -cos(avgHeading);
+    futurePose.y += deltaLocalPose.x * sin(avgHeading);
+    if (!radians) futurePose.theta = radToDeg(futurePose.theta);
+
+    return futurePose;
+}
+
+/**
  * @brief Update the pose of the robot
  *
  */

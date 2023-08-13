@@ -111,6 +111,15 @@ lemlib::Pose lemlib::Chassis::getSpeed(bool radians) { return lemlib::getSpeed(r
 lemlib::Pose lemlib::Chassis::getLocalSpeed(bool radians) { return lemlib::getLocalSpeed(radians); }
 
 /**
+ * @brief Estimate the pose of the robot after a certain amount of time
+ *
+ * @param time time in seconds
+ * @param radians False for degrees, true for radians. False by default
+ * @return lemlib::Pose
+ */
+lemlib::Pose lemlib::Chassis::estimatePose(float time, bool radians) { return lemlib::estimatePose(time, radians); }
+
+/**
  * @brief Turn the chassis so it is facing the target point
  *
  * The PID logging id is "angularPID"
