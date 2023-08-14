@@ -188,76 +188,44 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param log whether the chassis should log the turnTo function. false by default
  */
 void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float lead, float maxSpeed, bool log) {
-    // store target pose as a Pose object
-    Pose target(x, y, theta);
-    target.theta = fmod(degToRad(target.theta), 2 * M_PI);
-    // initialize variables
-    Pose pose(0, 0);
-    float prevLateralPower = 0;
-    bool close = false;
-    int start = pros::millis();
-    std::uint8_t compState = pros::competition::get_status();
-
-    // create a new PID controller
-    FAPID lateralPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "lateralPID");
-    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
-                       lateralSettings.smallErrorTimeout, timeout);
+    Pose target(x, y, M_PI_2 - degToRad(theta)); // target pose in standard form
+    FAPID linearPID = FAPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID"); // linear PID controller
+    FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID"); // angular PID controller
 
     // main loop
-    while (pros::competition::get_status() == compState && (!lateralPID.settled() || pros::millis() - start < 300)) {
-        // get the current position
+    while (true) {
+        // get current pose
         Pose pose = getPose(true);
-        pose.theta = std::fmod(pose.theta, 2 * M_PI);
+        pose.theta = M_PI_2 - pose.theta; // convert to standard form
 
-        // calculate carrot point
-        float targetDist = target.distance(pose);
-        Pose carrot = target - Pose(sin(target.theta), cos(target.theta)) * lead * targetDist;
-        carrot.theta = M_PI_2 - pose.angle(carrot);
-        // if the robot is close to the target, move to the target instead of the carrot point
-        if (close) carrot = target;
-        // if the robot is close to the target, turn to face the target heading instead of the target
-        if (close) carrot.theta = target.theta;
+        // calculate the carrot point
+        Pose carrot = target - (Pose(cos(target.theta), sin(target.theta)) * lead * pose.distance(target));
 
-        // calculate the fastest way to move to the carrot point (left or right?) (forwards or backwards?)
-        float angularError1 = angleError(carrot.theta, pose.theta, true);
-        float angularError2 = angleError(carrot.theta + M_PI, pose.theta, true);
-        float angularError = (std::fabs(angularError1) < fabs(angularError2)) ? angularError1 : angularError2;
-        float lateralError = pose.distance(carrot) * cos(angularError1);
-        // if the robot is close to the target, lateralError should still use the difference in angle between the
-        // robot and the target
-        if (close) {
-            float trueAngularError = angleError(M_PI_2 - pose.angle(target), pose.theta, true);
-            lateralError = pose.distance(target) * cos(trueAngularError);
-        }
+        // calculate error
+        float angularError = angleError(pose.angle(carrot), pose.theta); // angular error
+        float linearError = pose.distance(carrot) * cos(angularError); // linear error
 
-        // calculate lateral power
-        float lateralPower = lateralPID.update(lateralError, 0, log);
-        // cap the speed
-        lateralPower = std::clamp(lateralPower, -maxSpeed, maxSpeed);
-        // limit the acceleration except when the robot is close to the target
-        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
-        // slow down when the robot is tangential to the target or carrot point
-        lateralPower *= fabs(cos(angularError));
+        // get PID outputs
+        float angularPower = -angularPID.update(radToDeg(angularError), 0, log);
+        float linearPower = linearPID.update(linearError, 0, log);
 
-        // calculate angular power
-        // convert angular error to degrees to make tuning easier
-        float angularPower = angularPID.update(radToDeg(angularError), 0, log);
+        // calculate radius of turn
+        float curvature = fabs(getCurvature(pose, carrot));
+        if (curvature == 0) curvature = 0.0001;
+        float radius = 1 / curvature;
 
-        // make the robot overturn. Its better to undershoot the distance than to overshoot
-        float overturn = fabs(angularPower) + fabs(lateralPower) - maxSpeed;
-        if (overturn > 0) lateralPower -= sgn(lateralPower) * overturn;
+        // calculate the maximum speed at which the robot can turn
+        // using the formula v = sqrt( u * r * g )
+        float maxTurnSpeed = sqrt(drivetrain.horizontalFriction * radius * 9.8);
+        // the new linear power is the minimum of the linear power and the max turn speed
+        if (linearPower > maxTurnSpeed) linearPower = maxTurnSpeed;
+        else if (linearPower < -maxTurnSpeed) linearPower = -maxTurnSpeed;
 
-        // if the robot is close to the target, change some behavior
-        if (pose.distance(target) < 7.5) {
-            close = true;
-            maxSpeed = (fabs(prevLateralPower) < 30) ? 30 : fabs(prevLateralPower);
-        }
+        // calculate motor powers
+        float leftPower = linearPower + angularPower;
+        float rightPower = linearPower - angularPower;
 
-        // calculate left and right motor power
-        float leftPower = lateralPower + angularPower;
-        float rightPower = lateralPower - angularPower;
-
+        // balance left and right powers to prevent saturation
         // ratio the speeds to respect the max speed
         float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
         if (ratio > 1) {
@@ -269,10 +237,7 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float l
         drivetrain.leftMotors->move(leftPower);
         drivetrain.rightMotors->move(rightPower);
 
-        // update previous values for the next cycle
-        prevLateralPower = lateralPower;
-
-        pros::delay(10);
+        pros::delay(10); // delay to save resources
     }
 
     // stop the drivetrain

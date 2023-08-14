@@ -21,7 +21,7 @@ lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.
 
 // drivetrain
 lemlib::Drivetrain_t drivetrain {
-    &leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 360,
+    &leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 360, 6
 };
 
 // lateral motion controller
@@ -100,4 +100,4 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() { chassis.moveTo(15, 20, 90, 4000, .6, 80); }
+void opcontrol() { chassis.moveTo(15, 20, 90, 4000); }

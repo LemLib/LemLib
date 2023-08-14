@@ -73,6 +73,7 @@ typedef struct {
  * @param trackWidth the track width of the robot
  * @param wheelType the type of omni-wheel used for the drivetrain
  * @param rpm the rpm of the wheels
+ * @param horizontalFriction the coefficient of friction of the wheels in the horizontal direction
  */
 typedef struct {
         pros::Motor_Group* leftMotors;
@@ -80,6 +81,7 @@ typedef struct {
         float trackWidth;
         Omniwheel wheelType;
         float rpm;
+        float horizontalFriction;
 } Drivetrain_t;
 
 /**
