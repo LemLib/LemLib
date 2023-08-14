@@ -179,24 +179,24 @@ class Chassis {
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
          * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
          * controls  the robot's turning
-         * @param forward speed to move forward. Takes an input from -127 to 127.
+         * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 1 disables the curve entirely.
          */
-        void arcade(int forward, int turn, float cureveGain = 1.0);
+        void arcade(int throttle, int turn, float cureveGain = 1.0);
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
          * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
          * drivetrain makes, rather than the speed. This means that the driver can accelerate in a turn without changing
          * the radius of that turn. This control scheme defaults to arcade when forward is zero.
-         * @param forward speed to move forward. Takes an input from -127 to 127.
+         * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 1 disables the curve entirely.
          */
 
-        void curvature(int forward, int curvature, float cureGain = 1.0);
+        void curvature(int throttle, int curvature, float cureGain = 1.0);
     private:
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;

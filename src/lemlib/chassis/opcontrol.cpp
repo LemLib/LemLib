@@ -17,22 +17,22 @@ void Chassis::tank(int left, int right, float curveGain) {
     drivetrain.rightMotors->move(calcDriveCurve(right, curveGain));
 };
 
-void Chassis::arcade(int forward, int turn, float curveGain) {
-    int leftPower = calcDriveCurve(forward + turn, curveGain);
-    int rightPower = calcDriveCurve(forward - turn, curveGain);
+void Chassis::arcade(int throttle, int turn, float curveGain) {
+    int leftPower = calcDriveCurve(throttle + turn, curveGain);
+    int rightPower = calcDriveCurve(throttle - turn, curveGain);
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
 };
 
-void Chassis::curvature(int forward, int curvature, float cureveGain) {
+void Chassis::curvature(int throttle, int curvature, float cureveGain) {
     // If we're not moving forwards change to arcade drive
-    if (forward == 0) {
-        arcade(forward, curvature, cureveGain);
+    if (throttle == 0) {
+        arcade(throttle, curvature, cureveGain);
         return;
     }
 
-    double leftPower = forward + (std::abs(forward) * curvature) / 127.0;
-    double rightPower = forward - (std::abs(forward) * curvature) / 127.0;
+    double leftPower = throttle + (std::abs(throttle) * curvature) / 127.0;
+    double rightPower = throttle - (std::abs(throttle) * curvature) / 127.0;
 
     leftPower = calcDriveCurve(leftPower, cureveGain);
     rightPower = calcDriveCurve(rightPower, cureveGain);
