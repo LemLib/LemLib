@@ -165,9 +165,9 @@ class Chassis {
         void follow(const char* filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127,
                     bool log = false);
 
-        void tank(int left, int right, float gain);
-        void arcade(int forward, int turn, float gain);
-        void curvature(int forward, int turn, float gain);
+        void tank(int left, int right, float curveGain = 1.0);
+        void arcade(int forward, int turn, float cureveGain = 1.0);
+        void curvature(int forward, int curvature, float cureGain = 1.0);
     private:
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
