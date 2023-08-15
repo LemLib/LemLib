@@ -59,15 +59,15 @@ void Chassis::arcade(int throttle, int turn, float curveGain) {
  * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
  * of 1 disables the curve entirely.
  */
-void Chassis::curvature(int throttle, int curvature, float cureveGain) {
+void Chassis::curvature(int throttle, int turn, float cureveGain) {
     // If we're not moving forwards change to arcade drive
     if (throttle == 0) {
-        arcade(throttle, curvature, cureveGain);
+        arcade(throttle, turn, cureveGain);
         return;
     }
 
-    double leftPower = throttle + (std::abs(throttle) * curvature) / 127.0;
-    double rightPower = throttle - (std::abs(throttle) * curvature) / 127.0;
+    double leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
+    double rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
 
     leftPower = calcDriveCurve(leftPower, cureveGain);
     rightPower = calcDriveCurve(rightPower, cureveGain);
