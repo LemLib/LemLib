@@ -193,7 +193,7 @@ class Chassis {
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 1 disables the curve entirely.
          */
-        void curvature(int throttle, int curvature, float cureGain = 1.0);
+        void curvature(int throttle, int turn, float cureGain = 1.0);
     private:
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
