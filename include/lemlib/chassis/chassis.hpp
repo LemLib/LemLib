@@ -172,9 +172,7 @@ class Chassis {
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 1 disables the curve entirely.
          */
-
         void tank(int left, int right, float curveGain = 1.0);
-
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
          * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
@@ -195,7 +193,6 @@ class Chassis {
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 1 disables the curve entirely.
          */
-
         void curvature(int throttle, int curvature, float cureGain = 1.0);
     private:
         ChassisController_t lateralSettings;
