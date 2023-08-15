@@ -182,7 +182,7 @@ class Chassis {
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 1 disables the curve entirely.
          */
-        void arcade(int throttle, int turn, float cureveGain = 1.0);
+        void arcade(int throttle, int turn, float curveGain = 1.0);
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
          * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
