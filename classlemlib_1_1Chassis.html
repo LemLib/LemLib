@@ -198,6 +198,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a7b4fbf2a7a402e046c7c2781ba42af7a">follow</a> (const char *filePath, int timeout, float lookahead, bool reverse=false, float maxSpeed=127, bool log=false)</td></tr>
 <tr class="memdesc:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the chassis along a path.  <a href="classlemlib_1_1Chassis.html#a7b4fbf2a7a402e046c7c2781ba42af7a">More...</a><br /></td></tr>
 <tr class="separator:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02ec10e8b106a9e9efb8e2d531595cf7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a02ec10e8b106a9e9efb8e2d531595cf7">tank</a> (int left, int right, float curveGain=1.0)</td></tr>
+<tr class="memdesc:a02ec10e8b106a9e9efb8e2d531595cf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Control the robot during the driver control period using the tank drive control scheme. In this control scheme one joystick axis controls one half of the robot, and another joystick axis controls another.  <a href="classlemlib_1_1Chassis.html#a02ec10e8b106a9e9efb8e2d531595cf7">More...</a><br /></td></tr>
+<tr class="separator:a02ec10e8b106a9e9efb8e2d531595cf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77d28cdd5f2e0dc6e3a4014ad0668e73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a77d28cdd5f2e0dc6e3a4014ad0668e73">arcade</a> (int throttle, int turn, float curveGain=0.0)</td></tr>
+<tr class="memdesc:a77d28cdd5f2e0dc6e3a4014ad0668e73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Control the robot during the driver using the arcade drive control scheme. In this control scheme one joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis controls the robot's turning.  <a href="classlemlib_1_1Chassis.html#a77d28cdd5f2e0dc6e3a4014ad0668e73">More...</a><br /></td></tr>
+<tr class="separator:a77d28cdd5f2e0dc6e3a4014ad0668e73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70bd49e558b1b8d6d91fc22ac249a749"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a70bd49e558b1b8d6d91fc22ac249a749">curvature</a> (int throttle, int turn, float cureGain=0.0)</td></tr>
+<tr class="memdesc:a70bd49e558b1b8d6d91fc22ac249a749"><td class="mdescLeft">&#160;</td><td class="mdescRight">Control the robot during the driver using the curvature drive control scheme. This control scheme is very similar to arcade drive, except the second joystick axis controls the radius of the curve that the drivetrain makes, rather than the speed. This means that the driver can accelerate in a turn without changing the radius of that turn. This control scheme defaults to arcade when forward is zero.  <a href="classlemlib_1_1Chassis.html#a70bd49e558b1b8d6d91fc22ac249a749">More...</a><br /></td></tr>
+<tr class="separator:a70bd49e558b1b8d6d91fc22ac249a749"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p ><a class="el" href="classlemlib_1_1Chassis.html" title="Chassis class.">Chassis</a> class. </p>
@@ -254,6 +263,50 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a77d28cdd5f2e0dc6e3a4014ad0668e73" name="a77d28cdd5f2e0dc6e3a4014ad0668e73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77d28cdd5f2e0dc6e3a4014ad0668e73">&#9670;&#160;</a></span>arcade()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lemlib::Chassis::arcade </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>throttle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>turn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>curveGain</em> = <code>0.0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Control the robot during the driver using the arcade drive control scheme. In this control scheme one joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis controls the robot's turning. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">throttle</td><td>speed to move forward or backward. Takes an input from -127 to 127. </td></tr>
+    <tr><td class="paramname">turn</td><td>speed to turn. Takes an input from -127 to 127. </td></tr>
+    <tr><td class="paramname">curveGain</td><td>control how steep the drive curve is. The larger the number, the steeper the curve. A value of 0 disables the curve entirely. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a8b23b13453c7fceae8c5b001855f410f" name="a8b23b13453c7fceae8c5b001855f410f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8b23b13453c7fceae8c5b001855f410f">&#9670;&#160;</a></span>calibrate()</h2>
 
@@ -270,6 +323,50 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Calibrate the chassis sensors. </p>
+
+</div>
+</div>
+<a id="a70bd49e558b1b8d6d91fc22ac249a749" name="a70bd49e558b1b8d6d91fc22ac249a749"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70bd49e558b1b8d6d91fc22ac249a749">&#9670;&#160;</a></span>curvature()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lemlib::Chassis::curvature </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>throttle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>turn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>cureGain</em> = <code>0.0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Control the robot during the driver using the curvature drive control scheme. This control scheme is very similar to arcade drive, except the second joystick axis controls the radius of the curve that the drivetrain makes, rather than the speed. This means that the driver can accelerate in a turn without changing the radius of that turn. This control scheme defaults to arcade when forward is zero. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">throttle</td><td>speed to move forward or backward. Takes an input from -127 to 127. </td></tr>
+    <tr><td class="paramname">turn</td><td>speed to turn. Takes an input from -127 to 127. </td></tr>
+    <tr><td class="paramname">curveGain</td><td>control how steep the drive curve is. The larger the number, the steeper the curve. A value of 0 disables the curve entirely. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -506,6 +603,50 @@ Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">pose</td><td>the new pose </td></tr>
     <tr><td class="paramname">radians</td><td>whether pose theta is in radians (true) or not (false). false by default </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a02ec10e8b106a9e9efb8e2d531595cf7" name="a02ec10e8b106a9e9efb8e2d531595cf7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02ec10e8b106a9e9efb8e2d531595cf7">&#9670;&#160;</a></span>tank()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lemlib::Chassis::tank </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>left</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>right</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>curveGain</em> = <code>1.0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Control the robot during the driver control period using the tank drive control scheme. In this control scheme one joystick axis controls one half of the robot, and another joystick axis controls another. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">left</td><td>speed of the left side of the drivetrain. Takes an input from -127 to 127. </td></tr>
+    <tr><td class="paramname">right</td><td>speed of the right side of the drivetrain. Takes an input from -127 to 127. </td></tr>
+    <tr><td class="paramname">curveGain</td><td>control how steep the drive curve is. The larger the number, the steeper the curve. A value of 1 disables the curve entirely. </td></tr>
   </table>
   </dd>
 </dl>
