@@ -40,7 +40,7 @@ void Chassis::tank(int left, int right, float curveGain) {
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
  * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
- * of 1 disables the curve entirely.
+ * of 0 disables the curve entirely.
  */
 void Chassis::arcade(int throttle, int turn, float curveGain) {
     int leftPower = calcDriveCurve(throttle + turn, curveGain);
@@ -57,7 +57,7 @@ void Chassis::arcade(int throttle, int turn, float curveGain) {
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
  * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
- * of 1 disables the curve entirely.
+ * of 0 disables the curve entirely.
  */
 void Chassis::curvature(int throttle, int turn, float curveGain) {
     // If we're not moving forwards change to arcade drive
