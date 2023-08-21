@@ -10,6 +10,7 @@ namespace lemlib {
  * Pilons. A Desmos graph of this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
  * @param input value from -127 to 127
  * @param scale how steep the curve should be.
+ * @return The new value to be used.
  */
 double defaultDriveCurve(double input, double scale) {
     if (scale != 0) {
@@ -31,7 +32,7 @@ double defaultDriveCurve(double input, double scale) {
 void Chassis::tank(int left, int right, float curveGain) {
     drivetrain.leftMotors->move(driveCurve(left, curveGain));
     drivetrain.rightMotors->move(driveCurve(right, curveGain));
-};
+}
 
 /**
  * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
@@ -47,7 +48,7 @@ void Chassis::arcade(int throttle, int turn, float curveGain) {
     int rightPower = driveCurve(throttle - turn, curveGain);
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
-};
+}
 
 /**
  * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
@@ -74,5 +75,5 @@ void Chassis::curvature(int throttle, int turn, float curveGain) {
 
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
-};
+}
 } // namespace lemlib

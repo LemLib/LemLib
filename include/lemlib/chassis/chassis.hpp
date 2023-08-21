@@ -84,13 +84,11 @@ typedef struct {
 } Drivetrain_t;
 
 /**
- * @brief Lambda expression type for the drive curve function.
-
- * The first argument should be the input, and the second argument
- * should be the scale. (The user can choose to ignore the scale if
- * they want to). The function should return a new value for the
- * opcontrol to use.
- */
+ * @brief Function pointer type for drive curve functions.
+ * @param input The control input in the range [-127, 127].
+ * @param scale The scaling factor, which can be optionally ignored.
+ * @return The new value to be used.
+*/
 typedef std::function<double(double, double)> DriveCurveFunction_t;
 
 /**
@@ -99,6 +97,7 @@ typedef std::function<double(double, double)> DriveCurveFunction_t;
  * Pilons. A Desmos graph of this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
  * @param input value from -127 to 127
  * @param scale how steep the curve should be.
+ * @return The new value to be used.
  */
 double defaultDriveCurve(double input, double scale);
 
@@ -118,7 +117,7 @@ class Chassis {
          * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = defaultDriveCurve);
+                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
          * @brief Calibrate the chassis sensors
          *
