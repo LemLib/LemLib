@@ -13,6 +13,7 @@
 
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
+#include <functional>
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
 
@@ -83,6 +84,25 @@ typedef struct {
 } Drivetrain_t;
 
 /**
+ * @brief Lambda expression type for the drive curve function.
+
+ * The first argument should be the input, and the second argument
+ * should be the scale. (The user can choose to ignore the scale if
+ * they want to). The function should return a new value for the
+ * opcontrol to use.
+ */
+typedef std::function<double(double, double)> DriveCurveFunction_t;
+
+/**
+ * @brief  Default drive curve. If the input is 127, the function will always output 127, no
+ * matter the value of scale, likewise for -127. This curve was inspired by team 5225, the Pilons. A Desmos graph of
+ * this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
+ * @param input value from -127 to 127
+ * @param scale how steep the curve should be.
+ */
+double defaultDriveCurve(double input, double scale);
+
+/**
  * @brief Chassis class
  *
  */
@@ -95,9 +115,10 @@ class Chassis {
          * @param lateralSettings settings for the lateral controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
+         * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                OdomSensors_t sensors);
+                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = defaultDriveCurve);
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -199,5 +220,6 @@ class Chassis {
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;
         OdomSensors_t odomSensors;
+        DriveCurveFunction_t driveCurve;
 };
 } // namespace lemlib

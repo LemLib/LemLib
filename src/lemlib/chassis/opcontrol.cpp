@@ -5,13 +5,13 @@
 namespace lemlib {
 
 /**
- * @brief  Modify the input with an exponential curve. If the input is 127, the function will always output 127, no
+ * @brief  Default drive curve. If the input is 127, the function will always output 127, no
  * matter the value of scale, likewise for -127. This curve was inspired by team 5225, the Pilons. A Desmos graph of
  * this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
  * @param input value from -127 to 127
  * @param scale how steep the curve should be.
  */
-double calcDriveCurve(double input, double scale) {
+double defaultDriveCurve(double input, double scale) {
     if (scale != 0) {
         return (powf(2.718, -(scale / 10)) + powf(2.718, (fabs(input) - 127) / 10) * (1 - powf(2.718, -(scale / 10)))) *
                input;
@@ -29,8 +29,8 @@ double calcDriveCurve(double input, double scale) {
  * of 1 disables the curve entirely.
  */
 void Chassis::tank(int left, int right, float curveGain) {
-    drivetrain.leftMotors->move(calcDriveCurve(left, curveGain));
-    drivetrain.rightMotors->move(calcDriveCurve(right, curveGain));
+    drivetrain.leftMotors->move(driveCurve(left, curveGain));
+    drivetrain.rightMotors->move(driveCurve(right, curveGain));
 };
 
 /**
@@ -43,8 +43,8 @@ void Chassis::tank(int left, int right, float curveGain) {
  * of 0 disables the curve entirely.
  */
 void Chassis::arcade(int throttle, int turn, float curveGain) {
-    int leftPower = calcDriveCurve(throttle + turn, curveGain);
-    int rightPower = calcDriveCurve(throttle - turn, curveGain);
+    int leftPower = driveCurve(throttle + turn, curveGain);
+    int rightPower = driveCurve(throttle - turn, curveGain);
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
 };
@@ -69,8 +69,8 @@ void Chassis::curvature(int throttle, int turn, float curveGain) {
     double leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
     double rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
 
-    leftPower = calcDriveCurve(leftPower, curveGain);
-    rightPower = calcDriveCurve(rightPower, curveGain);
+    leftPower = driveCurve(leftPower, curveGain);
+    rightPower = driveCurve(rightPower, curveGain);
 
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
