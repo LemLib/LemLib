@@ -94,9 +94,9 @@ typedef struct {
 typedef std::function<double(double, double)> DriveCurveFunction_t;
 
 /**
- * @brief  Default drive curve. If the input is 127, the function will always output 127, no
- * matter the value of scale, likewise for -127. This curve was inspired by team 5225, the Pilons. A Desmos graph of
- * this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
+ * @brief  Default drive curve. Modifies  the input with an exponential curve. If the input is 127, the function
+ * will always output 127, no matter the value of scale, likewise for -127. This curve was inspired by team 5225, the Pilons.
+ * A Desmos graph of this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
  * @param input value from -127 to 127
  * @param scale how steep the curve should be.
  */
