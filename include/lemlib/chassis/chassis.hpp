@@ -199,8 +199,8 @@ class Chassis {
          * controls  the robot's turning
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
-         * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
-         * of 0 disables the curve entirely.
+         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+         * curve, refer to the `defaultDriveCurve` documentation.
          */
         void arcade(int throttle, int turn, float curveGain = 0.0);
         /**
@@ -210,8 +210,8 @@ class Chassis {
          * the radius of that turn. This control scheme defaults to arcade when forward is zero.
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
-         * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
-         * of 0 disables the curve entirely.
+         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+         * curve, refer to the `defaultDriveCurve` documentation.
          */
         void curvature(int throttle, int turn, float cureGain = 0.0);
     private:
