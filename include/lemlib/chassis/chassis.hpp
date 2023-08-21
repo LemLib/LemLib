@@ -88,7 +88,7 @@ typedef struct {
  * @param input The control input in the range [-127, 127].
  * @param scale The scaling factor, which can be optionally ignored.
  * @return The new value to be used.
-*/
+ */
 typedef std::function<double(double, double)> DriveCurveFunction_t;
 
 /**
