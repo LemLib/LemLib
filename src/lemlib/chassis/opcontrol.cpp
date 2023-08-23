@@ -7,7 +7,7 @@ namespace lemlib {
 /**
  * @brief  Default drive curve. Modifies the input with an exponential curve. If the input is 127, the function
  * will always output 127, no matter the value of scale, likewise for -127. A scale of zero disable the curve
- * entirely. This curve was inspired by team 5225, the Pilons. A Desmos graph of this curve can be found 
+ * entirely. This curve was inspired by team 5225, the Pilons. A Desmos graph of this curve can be found
  * here: https://www.desmos.com/calculator/rcfjjg83zx
  * @param input value from -127 to 127
  * @param scale how steep the curve should be.
