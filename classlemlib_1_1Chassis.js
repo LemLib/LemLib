@@ -9,6 +9,6 @@ var classlemlib_1_1Chassis =
     [ "moveTo", "classlemlib_1_1Chassis.html#a00edce017c843ba5080f6d7494dc52bd", null ],
     [ "setPose", "classlemlib_1_1Chassis.html#a9d272c748bcd8e42076f7bca68b4552c", null ],
     [ "setPose", "classlemlib_1_1Chassis.html#a9bbe7977ba4bafaf6cd10afc979264e7", null ],
-    [ "tank", "classlemlib_1_1Chassis.html#a02ec10e8b106a9e9efb8e2d531595cf7", null ],
+    [ "tank", "classlemlib_1_1Chassis.html#a2e3dc18227fdb138f419a7611e541384", null ],
     [ "turnTo", "classlemlib_1_1Chassis.html#ab6bafad2ac9224ef669eb3a8caec7085", null ]
 ];

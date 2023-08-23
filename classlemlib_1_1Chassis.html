@@ -198,9 +198,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a7b4fbf2a7a402e046c7c2781ba42af7a">follow</a> (const char *filePath, int timeout, float lookahead, bool reverse=false, float maxSpeed=127, bool log=false)</td></tr>
 <tr class="memdesc:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the chassis along a path.  <a href="classlemlib_1_1Chassis.html#a7b4fbf2a7a402e046c7c2781ba42af7a">More...</a><br /></td></tr>
 <tr class="separator:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02ec10e8b106a9e9efb8e2d531595cf7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a02ec10e8b106a9e9efb8e2d531595cf7">tank</a> (int left, int right, float curveGain=1.0)</td></tr>
-<tr class="memdesc:a02ec10e8b106a9e9efb8e2d531595cf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Control the robot during the driver control period using the tank drive control scheme. In this control scheme one joystick axis controls one half of the robot, and another joystick axis controls another.  <a href="classlemlib_1_1Chassis.html#a02ec10e8b106a9e9efb8e2d531595cf7">More...</a><br /></td></tr>
-<tr class="separator:a02ec10e8b106a9e9efb8e2d531595cf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e3dc18227fdb138f419a7611e541384"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a2e3dc18227fdb138f419a7611e541384">tank</a> (int left, int right, float curveGain=0.0)</td></tr>
+<tr class="memdesc:a2e3dc18227fdb138f419a7611e541384"><td class="mdescLeft">&#160;</td><td class="mdescRight">Control the robot during the driver control period using the tank drive control scheme. In this control scheme one joystick axis controls one half of the robot, and another joystick axis controls another.  <a href="classlemlib_1_1Chassis.html#a2e3dc18227fdb138f419a7611e541384">More...</a><br /></td></tr>
+<tr class="separator:a2e3dc18227fdb138f419a7611e541384"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77d28cdd5f2e0dc6e3a4014ad0668e73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a77d28cdd5f2e0dc6e3a4014ad0668e73">arcade</a> (int throttle, int turn, float curveGain=0.0)</td></tr>
 <tr class="memdesc:a77d28cdd5f2e0dc6e3a4014ad0668e73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Control the robot during the driver using the arcade drive control scheme. In this control scheme one joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis controls the robot's turning.  <a href="classlemlib_1_1Chassis.html#a77d28cdd5f2e0dc6e3a4014ad0668e73">More...</a><br /></td></tr>
 <tr class="separator:a77d28cdd5f2e0dc6e3a4014ad0668e73"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -609,8 +609,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a02ec10e8b106a9e9efb8e2d531595cf7" name="a02ec10e8b106a9e9efb8e2d531595cf7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02ec10e8b106a9e9efb8e2d531595cf7">&#9670;&#160;</a></span>tank()</h2>
+<a id="a2e3dc18227fdb138f419a7611e541384" name="a2e3dc18227fdb138f419a7611e541384"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e3dc18227fdb138f419a7611e541384">&#9670;&#160;</a></span>tank()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -631,7 +631,7 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>curveGain</em> = <code>1.0</code>&#160;</td>
+          <td class="paramname"><em>curveGain</em> = <code>0.0</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -646,7 +646,7 @@ Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">left</td><td>speed of the left side of the drivetrain. Takes an input from -127 to 127. </td></tr>
     <tr><td class="paramname">right</td><td>speed of the right side of the drivetrain. Takes an input from -127 to 127. </td></tr>
-    <tr><td class="paramname">curveGain</td><td>control how steep the drive curve is. The larger the number, the steeper the curve. A value of 1 disables the curve entirely. </td></tr>
+    <tr><td class="paramname">curveGain</td><td>control how steep the drive curve is. The larger the number, the steeper the curve. A value of 0 disables the curve entirely. </td></tr>
   </table>
   </dd>
 </dl>
