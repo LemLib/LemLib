@@ -26,7 +26,7 @@ double calcDriveCurve(double input, double scale) {
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
  * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
- * of 1 disables the curve entirely.
+ * of 0 disables the curve entirely.
  */
 void Chassis::tank(int left, int right, float curveGain) {
     drivetrain.leftMotors->move(calcDriveCurve(left, curveGain));
