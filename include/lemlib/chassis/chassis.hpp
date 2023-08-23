@@ -190,9 +190,9 @@ class Chassis {
          * @param left speed of the left side of the drivetrain. Takes an input from -127 to 127.
          * @param right speed of the right side of the drivetrain. Takes an input from -127 to 127.
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
-         * of 1 disables the curve entirely.
+         * of 0 disables the curve entirely.
          */
-        void tank(int left, int right, float curveGain = 1.0);
+        void tank(int left, int right, float curveGain = 0.0);
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
          * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis

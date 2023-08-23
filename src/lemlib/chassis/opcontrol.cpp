@@ -5,9 +5,10 @@
 namespace lemlib {
 
 /**
- * @brief  Default drive curve. Modifies  the input with an exponential curve. If the input is 127, the function
- * will always output 127, no matter the value of scale, likewise for -127. This curve was inspired by team 5225, the
- * Pilons. A Desmos graph of this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
+ * @brief  Default drive curve. Modifies the input with an exponential curve. If the input is 127, the function
+ * will always output 127, no matter the value of scale, likewise for -127. A scale of zero disable the curve
+ * entirely. This curve was inspired by team 5225, the Pilons. A Desmos graph of this curve can be found 
+ * here: https://www.desmos.com/calculator/rcfjjg83zx
  * @param input value from -127 to 127
  * @param scale how steep the curve should be.
  * @return The new value to be used.
@@ -40,8 +41,8 @@ void Chassis::tank(int left, int right, float curveGain) {
  * controls  the robot's turning
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
- * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
- * of 0 disables the curve entirely.
+ * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+ * curve, refer to the `defaultDriveCurve` documentation.
  */
 void Chassis::arcade(int throttle, int turn, float curveGain) {
     int leftPower = driveCurve(throttle + turn, curveGain);
