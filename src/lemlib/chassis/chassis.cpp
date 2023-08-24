@@ -184,12 +184,13 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param theta theta (in degrees). Target angle
  * @param timeout longest time the robot can spend moving
  * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
- * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it default to global value
+ * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it default to
+ * global value
  * @param maxSpeed the maximum speed the robot can move at. 127 at default
  * @param log whether the chassis should log the turnTo function. false by default
  */
 void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float chasePower, float lead, float maxSpeed,
-                    bool log) {
+                             bool log) {
     Pose target(x, y, M_PI_2 - degToRad(theta)); // target pose in standard form
     FAPID linearPID = FAPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID"); // linear PID controller
     FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID"); // angular PID controller
@@ -233,7 +234,7 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float c
 
         // prioritize turning over moving
         float overturn = fabs(angularPower) + fabs(linearPower) - maxSpeed;
-	    if (overturn > 0) linearPower -= linearPower > 0 ? overturn : -overturn;
+        if (overturn > 0) linearPower -= linearPower > 0 ? overturn : -overturn;
 
         // calculate motor powers
         float leftPower = linearPower + angularPower;

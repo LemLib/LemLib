@@ -90,7 +90,8 @@ float ema(float current, float previous, float smooth);
  * @brief Get the signed curvature of a circle that intersects the first pose and the second pose
  *
  * @note The circle will be tangent to the theta value of the first pose
- * @note The curvature is signed. Positive curvature means the circle is going clockwise, negative means counter-clockwise
+ * @note The curvature is signed. Positive curvature means the circle is going clockwise, negative means
+ * counter-clockwise
  * @note Theta has to be in radians and in standard form. That means 0 is right and increases counter-clockwise
  *
  * @param pose the first pose

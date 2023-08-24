@@ -173,12 +173,13 @@ class Chassis {
          * @param theta theta (in degrees). Target angle
          * @param timeout longest time the robot can spend moving
          * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
-         * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it default to global value
+         * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
+         * default to global value
          * @param maxSpeed the maximum speed the robot can move at. 127 at default
          * @param log whether the chassis should log the turnTo function. false by default
          */
-        void moveTo(float x, float y, float theta, int timeout, float chasePower = 0, float lead = 0.6, float maxSpeed = 127,
-                    bool log = false);
+        void moveTo(float x, float y, float theta, int timeout, float chasePower = 0, float lead = 0.6,
+                    float maxSpeed = 127, bool log = false);
         /**
          * @brief Move the chassis along a path
          *

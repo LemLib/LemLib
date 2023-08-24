@@ -115,7 +115,8 @@ float lemlib::ema(float current, float previous, float smooth) {
  * @brief Get the signed curvature of a circle that intersects the first pose and the second pose
  *
  * @note The circle will be tangent to the theta value of the first pose
- * @note The curvature is signed. Positive curvature means the circle is going clockwise, negative means counter-clockwise
+ * @note The curvature is signed. Positive curvature means the circle is going clockwise, negative means
+ * counter-clockwise
  * @note Theta has to be in radians and in standard form. That means 0 is right and increases counter-clockwise
  *
  * @param pose the first pose
@@ -124,8 +125,7 @@ float lemlib::ema(float current, float previous, float smooth) {
  */
 float lemlib::getCurvature(Pose pose, Pose other) {
     // calculate whether the pose is on the left or right side of the circle
-    float side =
-        lemlib::sgn(std::sin(pose.theta) * (other.x - pose.x) - std::cos(pose.theta) * (other.y - pose.y));
+    float side = lemlib::sgn(std::sin(pose.theta) * (other.x - pose.x) - std::cos(pose.theta) * (other.y - pose.y));
     // calculate center point and radius
     float a = -std::tan(pose.theta);
     float c = std::tan(pose.theta) * pose.x - pose.y;
