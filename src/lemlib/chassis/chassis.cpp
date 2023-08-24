@@ -9,7 +9,6 @@
  *
  */
 #include <math.h>
-#include <limits>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "lemlib/util.hpp"
@@ -222,14 +221,17 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float c
 
         // calculate radius of turn
         float curvature = fabs(getCurvature(pose, carrot));
-        float radius = (curvature == 0) ? std::numeric_limits<float>::max() : 1 / curvature; // prevent division by 0
+        if (curvature == 0) curvature = -1;
+        float radius = 1 / curvature;
 
         // calculate the maximum speed at which the robot can turn
         // using the formula v = sqrt( u * r * g )
-        float maxTurnSpeed = sqrt(chasePower * radius * 9.8);
-        // the new linear power is the minimum of the linear power and the max turn speed
-        if (linearPower > maxTurnSpeed && !close) linearPower = maxTurnSpeed;
-        else if (linearPower < -maxTurnSpeed && !close) linearPower = -maxTurnSpeed;
+        if (radius != -1) {
+            float maxTurnSpeed = sqrt(chasePower * radius * 9.8);
+            // the new linear power is the minimum of the linear power and the max turn speed
+            if (linearPower > maxTurnSpeed && !close) linearPower = maxTurnSpeed;
+            else if (linearPower < -maxTurnSpeed && !close) linearPower = -maxTurnSpeed;
+        }
 
         // prioritize turning over moving
         float overturn = fabs(angularPower) + fabs(linearPower) - maxSpeed;
