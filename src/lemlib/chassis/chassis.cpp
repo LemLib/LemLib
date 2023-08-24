@@ -184,13 +184,18 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param theta theta (in degrees). Target angle
  * @param timeout longest time the robot can spend moving
  * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
+ * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it default to global value
  * @param maxSpeed the maximum speed the robot can move at. 127 at default
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float lead, float maxSpeed, bool log) {
+void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float chasePower, float lead, float maxSpeed,
+                    bool log) {
     Pose target(x, y, M_PI_2 - degToRad(theta)); // target pose in standard form
     FAPID linearPID = FAPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID"); // linear PID controller
     FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID"); // angular PID controller
+
+    bool close = false; // used for settling
+    if (chasePower == 0) chasePower = drivetrain.chasePower; // use global chase power if chase power is 0
 
     // main loop
     while (true) {
@@ -198,12 +203,17 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float l
         Pose pose = getPose(true);
         pose.theta = M_PI_2 - pose.theta; // convert to standard form
 
+        // check if the robot is close enough to the target to start settling
+        if (pose.distance(target) < 3) close = true;
+
         // calculate the carrot point
         Pose carrot = target - (Pose(cos(target.theta), sin(target.theta)) * lead * pose.distance(target));
+        if (close) carrot = target; // settling behavior
 
         // calculate error
         float angularError = angleError(pose.angle(carrot), pose.theta); // angular error
         float linearError = pose.distance(carrot) * cos(angularError); // linear error
+        if (close) angularError = angleError(target.theta, pose.theta); // settling behavior
 
         // get PID outputs
         float angularPower = -angularPID.update(radToDeg(angularError), 0, log);
@@ -211,27 +221,23 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float l
 
         // calculate radius of turn
         float curvature = fabs(getCurvature(pose, carrot));
-        if (curvature == 0) curvature = 0.0001;
+        if (curvature == 0) curvature = 0.00000001;
         float radius = 1 / curvature;
 
         // calculate the maximum speed at which the robot can turn
         // using the formula v = sqrt( u * r * g )
-        float maxTurnSpeed = sqrt(drivetrain.horizontalFriction * radius * 9.8);
+        float maxTurnSpeed = sqrt(chasePower * radius * 9.8);
         // the new linear power is the minimum of the linear power and the max turn speed
-        if (linearPower > maxTurnSpeed) linearPower = maxTurnSpeed;
-        else if (linearPower < -maxTurnSpeed) linearPower = -maxTurnSpeed;
+        if (linearPower > maxTurnSpeed && !close) linearPower = maxTurnSpeed;
+        else if (linearPower < -maxTurnSpeed && !close) linearPower = -maxTurnSpeed;
+
+        // prioritize turning over moving
+        float overturn = fabs(angularPower) + fabs(linearPower) - maxSpeed;
+	    if (overturn > 0) linearPower -= linearPower > 0 ? overturn : -overturn;
 
         // calculate motor powers
         float leftPower = linearPower + angularPower;
         float rightPower = linearPower - angularPower;
-
-        // balance left and right powers to prevent saturation
-        // ratio the speeds to respect the max speed
-        float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
-        if (ratio > 1) {
-            leftPower /= ratio;
-            rightPower /= ratio;
-        }
 
         // move the motors
         drivetrain.leftMotors->move(leftPower);
