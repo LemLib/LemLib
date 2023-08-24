@@ -9,14 +9,14 @@
  *
  */
 #include <math.h>
-#include <iostream>
+#include <limits>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/pid.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
-#include "trackingWheel.hpp"
+#include "lemlib/chassis/trackingWheel.hpp"
 
 /**
  * @brief Construct a new Chassis
@@ -222,8 +222,7 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float c
 
         // calculate radius of turn
         float curvature = fabs(getCurvature(pose, carrot));
-        if (curvature == 0) curvature = 0.00000001;
-        float radius = 1 / curvature;
+        float radius = (curvature == 0) ? std::numeric_limits<float>::max() : 1 / curvature; // prevent division by 0
 
         // calculate the maximum speed at which the robot can turn
         // using the formula v = sqrt( u * r * g )
