@@ -195,9 +195,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a00edce017c843ba5080f6d7494dc52bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a00edce017c843ba5080f6d7494dc52bd">moveTo</a> (float x, float y, int timeout, float maxSpeed=200, bool log=false)</td></tr>
 <tr class="memdesc:a00edce017c843ba5080f6d7494dc52bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the chassis towards the target point.  <a href="classlemlib_1_1Chassis.html#a00edce017c843ba5080f6d7494dc52bd">More...</a><br /></td></tr>
 <tr class="separator:a00edce017c843ba5080f6d7494dc52bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a7b4fbf2a7a402e046c7c2781ba42af7a">follow</a> (const char *filePath, int timeout, float lookahead, bool reverse=false, float maxSpeed=127, bool log=false)</td></tr>
-<tr class="memdesc:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the chassis along a path.  <a href="classlemlib_1_1Chassis.html#a7b4fbf2a7a402e046c7c2781ba42af7a">More...</a><br /></td></tr>
-<tr class="separator:a7b4fbf2a7a402e046c7c2781ba42af7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeeda212a783c644700dd97ab80882df6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#aeeda212a783c644700dd97ab80882df6">follow</a> (asset path, int timeout, float lookahead, bool reverse=false, float maxSpeed=127, bool log=false)</td></tr>
+<tr class="memdesc:aeeda212a783c644700dd97ab80882df6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the chassis along a path.  <a href="classlemlib_1_1Chassis.html#aeeda212a783c644700dd97ab80882df6">More...</a><br /></td></tr>
+<tr class="separator:aeeda212a783c644700dd97ab80882df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e3dc18227fdb138f419a7611e541384"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a2e3dc18227fdb138f419a7611e541384">tank</a> (int left, int right, float curveGain=0.0)</td></tr>
 <tr class="memdesc:a2e3dc18227fdb138f419a7611e541384"><td class="mdescLeft">&#160;</td><td class="mdescRight">Control the robot during the driver control period using the tank drive control scheme. In this control scheme one joystick axis controls one half of the robot, and another joystick axis controls another.  <a href="classlemlib_1_1Chassis.html#a2e3dc18227fdb138f419a7611e541384">More...</a><br /></td></tr>
 <tr class="separator:a2e3dc18227fdb138f419a7611e541384"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -370,8 +370,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a7b4fbf2a7a402e046c7c2781ba42af7a" name="a7b4fbf2a7a402e046c7c2781ba42af7a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b4fbf2a7a402e046c7c2781ba42af7a">&#9670;&#160;</a></span>follow()</h2>
+<a id="aeeda212a783c644700dd97ab80882df6" name="aeeda212a783c644700dd97ab80882df6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeeda212a783c644700dd97ab80882df6">&#9670;&#160;</a></span>follow()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -379,8 +379,8 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void lemlib::Chassis::follow </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>filePath</em>, </td>
+          <td class="paramtype">asset&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -423,7 +423,7 @@ Public Member Functions</h2></td></tr>
 <p>Move the chassis along a path. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filePath</td><td>file path to the path. No need to preface it with /usd/ </td></tr>
+    <tr><td class="paramname">filePath</td><td>the filename of the path to follow </td></tr>
     <tr><td class="paramname">timeout</td><td>the maximum time the robot can spend moving </td></tr>
     <tr><td class="paramname">lookahead</td><td>the lookahead distance. Units in inches. Larger values will make the robot move faster but will follow the path less accurately </td></tr>
     <tr><td class="paramname">reverse</td><td>whether the robot should follow the path in reverse. false by default </td></tr>

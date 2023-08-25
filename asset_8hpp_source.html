@@ -19,7 +19,7 @@
     <meta name="twitter:title" content="LemLib" />
     <meta name="twitter:description" content="An easy to use and feature-rich PROS template for the Vex V5" />
     <!-- END twitter metadata -->
-    <title>LemLib: include/lemlib/chassis/chassis.hpp File Reference</title>
+    <title>LemLib: include/lemlib/asset.hpp Source File</title>
     <link href="tabs.css" rel="stylesheet" type="text/css" />
     <link rel="icon" type="image/png" href="icon.png" />
     <script type="text/javascript" src="jquery.js"></script>
@@ -134,7 +134,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('chassis_8hpp.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('asset_8hpp_source.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -160,50 +160,39 @@ $(document).ready(function(){initNavTree('chassis_8hpp.html',''); initResizable(
 </div>
 
 <div class="header">
-  <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
-  <div class="headertitle"><div class="title">chassis.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">asset.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>Chassis class declarations.  
-<a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;pros/motors.hpp&quot;</code><br />
-<code>#include &quot;pros/imu.hpp&quot;</code><br />
-<code>#include &quot;lemlib/asset.hpp&quot;</code><br />
-<code>#include &quot;<a class="el" href="trackingWheel_8hpp_source.html">lemlib/chassis/trackingWheel.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="pose_8hpp_source.html">lemlib/pose.hpp</a>&quot;</code><br />
-</div>
-<p><a href="chassis_8hpp_source.html">Go to the source code of this file.</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structlemlib_1_1OdomSensors__t.html">lemlib::OdomSensors_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct containing all the sensors used for odometry.  <a href="structlemlib_1_1OdomSensors__t.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structlemlib_1_1ChassisController__t.html">lemlib::ChassisController_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct containing constants for a chassis controller.  <a href="structlemlib_1_1ChassisController__t.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structlemlib_1_1Drivetrain__t.html">lemlib::Drivetrain_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct containing constants for a drivetrain.  <a href="structlemlib_1_1Drivetrain__t.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html">lemlib::Chassis</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classlemlib_1_1Chassis.html" title="Chassis class.">Chassis</a> class.  <a href="classlemlib_1_1Chassis.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >Chassis class declarations. </p>
-<dl class="section author"><dt>Author</dt><dd>LemLib Team </dd></dl>
-<dl class="section version"><dt>Version</dt><dd>0.4.5 </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>2023-01-23</dd></dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2023 </dd></dl>
-</div></div><!-- contents -->
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#ifndef _ASSET_H_</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#define _ASSET_H_</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;cstddef&gt;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">typedef</span> <span class="keyword">struct </span>__attribute__((__packed__)) _asset {</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>        uint8_t* buf;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>        <span class="keywordtype">size_t</span> size;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>} asset;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>}</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#define ASSET(x)                                                                                                       \</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">    extern &quot;C&quot;</span> {                                                                                                       \</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    extern uint8_t _binary_static_##x##_start[], _binary_static_##x##_size[];                                          \</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    static asset x = {_binary_static_##x##_start, (size_t)_binary_static_##x##_size};                                  \</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    }</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#endif </span><span class="comment">// _ASSET_H_</span></div>
+</div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.6-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_327a1a31f04fd5f64b3d2ab2cf9fd054.html">lemlib</a></li><li class="navelem"><a class="el" href="dir_b9bb47b4a225b0add9bad2ca5f979581.html">chassis</a></li><li class="navelem"><a class="el" href="chassis_8hpp.html">chassis.hpp</a></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_327a1a31f04fd5f64b3d2ab2cf9fd054.html">lemlib</a></li><li class="navelem"><b>asset.hpp</b></li>
     <li class="footer">Generated by Doxygen v1.9.5 </li>
   </ul>
 </div>
