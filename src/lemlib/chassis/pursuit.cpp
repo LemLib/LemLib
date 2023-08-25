@@ -16,7 +16,6 @@
 #include <cmath>
 #include <vector>
 #include <string>
-#include <fstream>
 #include "pros/misc.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/util.hpp"
@@ -28,7 +27,7 @@
  * @param delimeter string separating the elements in the line
  * @return std::vector<std::string> array of elements read from the file
  */
-std::vector<std::string> readElement(std::string input, std::string delimiter) {
+std::vector<std::string> readElement(const std::string& input, std::string delimiter) {
     std::string token;
     std::string s = input;
     std::vector<std::string> output;
@@ -53,15 +52,19 @@ std::vector<std::string> readElement(std::string input, std::string delimiter) {
  * @param filePath The file to read from
  * @return std::vector<lemlib::Pose> vector of points on the path
  */
-std::vector<lemlib::Pose> getData(std::string filePath) {
+std::vector<lemlib::Pose> getData(asset path) {
     std::vector<lemlib::Pose> robotPath;
     std::string line;
     std::vector<std::string> pointInput;
-    std::ifstream file(filePath, std::ios::in);
     lemlib::Pose pathPoint(0, 0, 0);
 
+    // format data from the asset
+    std::string data(reinterpret_cast<char*>(path.buf), path.size);
+    std::vector<std::string> dataLines = readElement(data, "\n");
+
     // read the points until 'endData' is read
-    while (getline(file, line) && line != "endData") {
+    for (std::string line : dataLines) {
+        if (line == "endData") break;
         pointInput = readElement(line, ", "); // parse line
         pathPoint.x = std::stof(pointInput.at(0)); // x position
         pathPoint.y = std::stof(pointInput.at(1)); // y position
@@ -69,7 +72,6 @@ std::vector<lemlib::Pose> getData(std::string filePath) {
         robotPath.push_back(pathPoint); // save data
     }
 
-    file.close();
     return robotPath;
 }
 
@@ -182,7 +184,7 @@ double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lo
 /**
  * @brief Move the chassis along a path
  *
- * @param filePath file path to the path. No need to preface it with /usd/
+ * @param path the filename of the path to follow
  * @param timeout the maximum time the robot can spend moving
  * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will
  * follow the path less accurately
@@ -190,12 +192,11 @@ double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lo
  * @param maxSpeed the maximum speed the robot can move at
  * @param log whether the chassis should log the path on a log file. false by default.
  */
-void lemlib::Chassis::follow(const char* filePath, int timeout, float lookahead, bool reverse, float maxSpeed,
-                             bool log) {
-    std::vector<lemlib::Pose> path = getData("/usd/" + std::string(filePath)); // get list of path points
+void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reverse, float maxSpeed, bool log) {
+    std::vector<lemlib::Pose> pathPoints = getData(path); // get list of path points
     Pose pose(0, 0, 0);
     Pose lookaheadPose(0, 0, 0);
-    Pose lastLookahead = path.at(0);
+    Pose lastLookahead = pathPoints.at(0);
     lastLookahead.theta = 0;
     double curvature;
     float targetVel;
@@ -213,12 +214,12 @@ void lemlib::Chassis::follow(const char* filePath, int timeout, float lookahead,
         if (reverse) pose.theta -= M_PI;
 
         // find the closest point on the path to the robot
-        closestPoint = findClosest(pose, path);
+        closestPoint = findClosest(pose, pathPoints);
         // if the robot is at the end of the path, then stop
-        if (path.at(closestPoint).theta == 0) break;
+        if (pathPoints.at(closestPoint).theta == 0) break;
 
         // find the lookahead point
-        lookaheadPose = lookaheadPoint(lastLookahead, pose, path, lookahead);
+        lookaheadPose = lookaheadPoint(lastLookahead, pose, pathPoints, lookahead);
         lastLookahead = lookaheadPose; // update last lookahead position
 
         // get the curvature of the arc between the robot and the lookahead point
@@ -226,7 +227,7 @@ void lemlib::Chassis::follow(const char* filePath, int timeout, float lookahead,
         curvature = findLookaheadCurvature(pose, curvatureHeading, lookaheadPose);
 
         // get the target velocity of the robot
-        targetVel = path.at(closestPoint).theta;
+        targetVel = pathPoints.at(closestPoint).theta;
 
         // calculate target left and right velocities
         float targetLeftVel = targetVel * (2 + curvature * drivetrain.trackWidth) / 2;
