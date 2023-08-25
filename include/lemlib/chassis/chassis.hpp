@@ -13,6 +13,7 @@
 
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
+#include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
 
