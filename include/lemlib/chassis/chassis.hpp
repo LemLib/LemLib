@@ -14,6 +14,7 @@
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
 #include <functional>
+#include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
 
@@ -174,7 +175,7 @@ class Chassis {
         /**
          * @brief Move the chassis along a path
          *
-         * @param filePath file path to the path. No need to preface it with /usd/
+         * @param filePath the filename of the path to follow
          * @param timeout the maximum time the robot can spend moving
          * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
          * will follow the path less accurately
@@ -182,7 +183,7 @@ class Chassis {
          * @param maxSpeed the maximum speed the robot can move at
          * @param log whether the chassis should log the path on a log file. false by default.
          */
-        void follow(const char* filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127,
+        void follow(asset path, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127,
                     bool log = false);
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this
