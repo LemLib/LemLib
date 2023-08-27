@@ -29,7 +29,7 @@ lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
 lemlib::ChassisController_t angularController {2, 10, 1, 100, 3, 500, 20};
 
 // sensors for odometry
-lemlib::OdomSensors_t sensors {nullptr, nullptr, &horizontal, nullptr, &imu};
+lemlib::OdomSensors sensors {nullptr, nullptr, &horizontal, nullptr, &imu};
 
 lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 
