@@ -1,6 +1,6 @@
 var classlemlib_1_1Chassis =
 [
-    [ "Chassis", "classlemlib_1_1Chassis.html#a414508346ba6325cd5d8b8ed49c0304b", null ],
+    [ "Chassis", "classlemlib_1_1Chassis.html#a640b091981b851fb0d0b144875252813", null ],
     [ "arcade", "classlemlib_1_1Chassis.html#a77d28cdd5f2e0dc6e3a4014ad0668e73", null ],
     [ "calibrate", "classlemlib_1_1Chassis.html#a8b23b13453c7fceae8c5b001855f410f", null ],
     [ "curvature", "classlemlib_1_1Chassis.html#a70bd49e558b1b8d6d91fc22ac249a749", null ],

@@ -174,9 +174,9 @@ $(document).ready(function(){initNavTree('classlemlib_1_1Chassis.html',''); init
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a414508346ba6325cd5d8b8ed49c0304b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a414508346ba6325cd5d8b8ed49c0304b">Chassis</a> (<a class="el" href="structlemlib_1_1Drivetrain__t.html">Drivetrain_t</a> drivetrain, <a class="el" href="structlemlib_1_1ChassisController__t.html">ChassisController_t</a> lateralSettings, <a class="el" href="structlemlib_1_1ChassisController__t.html">ChassisController_t</a> angularSettings, <a class="el" href="structlemlib_1_1OdomSensors__t.html">OdomSensors_t</a> sensors)</td></tr>
-<tr class="memdesc:a414508346ba6325cd5d8b8ed49c0304b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classlemlib_1_1Chassis.html" title="Chassis class.">Chassis</a>.  <a href="classlemlib_1_1Chassis.html#a414508346ba6325cd5d8b8ed49c0304b">More...</a><br /></td></tr>
-<tr class="separator:a414508346ba6325cd5d8b8ed49c0304b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a640b091981b851fb0d0b144875252813"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a640b091981b851fb0d0b144875252813">Chassis</a> (<a class="el" href="structlemlib_1_1Drivetrain__t.html">Drivetrain_t</a> drivetrain, <a class="el" href="structlemlib_1_1ChassisController__t.html">ChassisController_t</a> lateralSettings, <a class="el" href="structlemlib_1_1ChassisController__t.html">ChassisController_t</a> angularSettings, <a class="el" href="structlemlib_1_1OdomSensors__t.html">OdomSensors_t</a> sensors, <a class="el" href="chassis_8hpp.html#a5db64e41a81091551ded8cf3ffe8499e">DriveCurveFunction_t</a> driveCurve=&amp;<a class="el" href="chassis_8hpp.html#ac3318ca50d8d437bf8cc94783d47b648">defaultDriveCurve</a>)</td></tr>
+<tr class="memdesc:a640b091981b851fb0d0b144875252813"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classlemlib_1_1Chassis.html" title="Chassis class.">Chassis</a>.  <a href="classlemlib_1_1Chassis.html#a640b091981b851fb0d0b144875252813">More...</a><br /></td></tr>
+<tr class="separator:a640b091981b851fb0d0b144875252813"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b23b13453c7fceae8c5b001855f410f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html#a8b23b13453c7fceae8c5b001855f410f">calibrate</a> ()</td></tr>
 <tr class="memdesc:a8b23b13453c7fceae8c5b001855f410f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calibrate the chassis sensors.  <a href="classlemlib_1_1Chassis.html#a8b23b13453c7fceae8c5b001855f410f">More...</a><br /></td></tr>
 <tr class="separator:a8b23b13453c7fceae8c5b001855f410f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -211,8 +211,8 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p ><a class="el" href="classlemlib_1_1Chassis.html" title="Chassis class.">Chassis</a> class. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a414508346ba6325cd5d8b8ed49c0304b" name="a414508346ba6325cd5d8b8ed49c0304b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a414508346ba6325cd5d8b8ed49c0304b">&#9670;&#160;</a></span>Chassis()</h2>
+<a id="a640b091981b851fb0d0b144875252813" name="a640b091981b851fb0d0b144875252813"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a640b091981b851fb0d0b144875252813">&#9670;&#160;</a></span>Chassis()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -239,7 +239,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structlemlib_1_1OdomSensors__t.html">OdomSensors_t</a>&#160;</td>
-          <td class="paramname"><em>sensors</em>&#160;</td>
+          <td class="paramname"><em>sensors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="chassis_8hpp.html#a5db64e41a81091551ded8cf3ffe8499e">DriveCurveFunction_t</a>&#160;</td>
+          <td class="paramname"><em>driveCurve</em> = <code>&amp;<a class="el" href="chassis_8hpp.html#ac3318ca50d8d437bf8cc94783d47b648">defaultDriveCurve</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -256,6 +262,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">lateralSettings</td><td>settings for the lateral controller </td></tr>
     <tr><td class="paramname">angularSettings</td><td>settings for the angular controller </td></tr>
     <tr><td class="paramname">sensors</td><td>sensors to be used for odometry </td></tr>
+    <tr><td class="paramname">driveCurve</td><td>drive curve to be used. defaults to <code>defaultDriveCurve</code> </td></tr>
   </table>
   </dd>
 </dl>
@@ -300,7 +307,7 @@ Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">throttle</td><td>speed to move forward or backward. Takes an input from -127 to 127. </td></tr>
     <tr><td class="paramname">turn</td><td>speed to turn. Takes an input from -127 to 127. </td></tr>
-    <tr><td class="paramname">curveGain</td><td>control how steep the drive curve is. The larger the number, the steeper the curve. A value of 0 disables the curve entirely. </td></tr>
+    <tr><td class="paramname">curveGain</td><td>the scale inputted into the drive curve function. If you are using the default drive curve, refer to the <code>defaultDriveCurve</code> documentation. </td></tr>
   </table>
   </dd>
 </dl>
@@ -363,7 +370,7 @@ Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">throttle</td><td>speed to move forward or backward. Takes an input from -127 to 127. </td></tr>
     <tr><td class="paramname">turn</td><td>speed to turn. Takes an input from -127 to 127. </td></tr>
-    <tr><td class="paramname">curveGain</td><td>control how steep the drive curve is. The larger the number, the steeper the curve. A value of 0 disables the curve entirely. </td></tr>
+    <tr><td class="paramname">curveGain</td><td>the scale inputted into the drive curve function. If you are using the default drive curve, refer to the <code>defaultDriveCurve</code> documentation. </td></tr>
   </table>
   </dd>
 </dl>
