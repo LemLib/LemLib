@@ -13,6 +13,7 @@
 
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
+#include <functional>
 #include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
@@ -84,6 +85,24 @@ typedef struct {
 } Drivetrain_t;
 
 /**
+ * @brief Function pointer type for drive curve functions.
+ * @param input The control input in the range [-127, 127].
+ * @param scale The scaling factor, which can be optionally ignored.
+ * @return The new value to be used.
+ */
+typedef std::function<double(double, double)> DriveCurveFunction_t;
+
+/**
+ * @brief  Default drive curve. Modifies  the input with an exponential curve. If the input is 127, the function
+ * will always output 127, no matter the value of scale, likewise for -127. This curve was inspired by team 5225, the
+ * Pilons. A Desmos graph of this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
+ * @param input value from -127 to 127
+ * @param scale how steep the curve should be.
+ * @return The new value to be used.
+ */
+double defaultDriveCurve(double input, double scale);
+
+/**
  * @brief Chassis class
  *
  */
@@ -96,9 +115,10 @@ class Chassis {
          * @param lateralSettings settings for the lateral controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
+         * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                OdomSensors_t sensors);
+                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -180,8 +200,8 @@ class Chassis {
          * controls  the robot's turning
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
-         * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
-         * of 0 disables the curve entirely.
+         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+         * curve, refer to the `defaultDriveCurve` documentation.
          */
         void arcade(int throttle, int turn, float curveGain = 0.0);
         /**
@@ -191,8 +211,8 @@ class Chassis {
          * the radius of that turn. This control scheme defaults to arcade when forward is zero.
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
-         * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
-         * of 0 disables the curve entirely.
+         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+         * curve, refer to the `defaultDriveCurve` documentation.
          */
         void curvature(int throttle, int turn, float cureGain = 0.0);
     private:
@@ -200,5 +220,6 @@ class Chassis {
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;
         OdomSensors_t odomSensors;
+        DriveCurveFunction_t driveCurve;
 };
 } // namespace lemlib
