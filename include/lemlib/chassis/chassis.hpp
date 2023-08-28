@@ -237,7 +237,6 @@ class Chassis {
         OdomSensors odomSensors;
         DriveCurveFunction_t driveCurve;
 
-        void calibrateGPS();
         void calibrateWheels();
 };
 } // namespace lemlib

@@ -59,8 +59,6 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
     this->driveCurve = driveCurve;
 }
 
-void lemlib::Chassis::calibrateGPS() { odomSensors.gps->set_position(0, 0, 0); }
-
 void lemlib::Chassis::calibrateWheels() {
     // calibrate the imu if it exists
     if (odomSensors.imu != nullptr) {
@@ -94,8 +92,6 @@ void lemlib::Chassis::calibrateWheels() {
 void lemlib::Chassis::calibrate() {
     if (odomSensors.gps == nullptr) {
         calibrateWheels();
-    } else {
-        calibrateGPS();
     }
 
     lemlib::setSensors(odomSensors);

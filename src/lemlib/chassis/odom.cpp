@@ -39,9 +39,9 @@ float prevHorizontal1 = 0;
 float prevHorizontal2 = 0;
 float prevImu = 0;
 
-float prevGpsX = 0;
-float prevGpsY = 0;
-float prevGpsRotation = 0;
+float metersToInches(float meterVal) { return meterVal * 39.37; }
+
+float inchesToMeters(float inchVal) { return inchVal / 39.37; }
 
 /**
  * @brief Set the sensors to be used for odometry
@@ -67,30 +67,19 @@ lemlib::Pose lemlib::getPose(bool radians) {
  * @param radians true if theta is in radians, false if in degrees. False by default
  */
 void lemlib::setPose(lemlib::Pose pose, bool radians) {
+    if (odomSensors.gps != nullptr) {
+        odomSensors.gps->set_position(inchesToMeters(pose.x), inchesToMeters(pose.y),
+                                      radians ? radToDeg(pose.theta) : pose.theta);
+    }
     odomPose = lemlib::Pose(pose.x, pose.y, radians ? pose.theta : degToRad(pose.theta));
 }
 
 static void updateGPS() {
     pros::c::gps_status_s_t status = odomSensors.gps->get_status();
 
-    float gpsRawX = status.x;
-    float gpsRawY = status.y;
-    float gpsRawRotation = lemlib::degToRad(odomSensors.gps->get_rotation());
-
-    // calculate the change in sensor values
-    float deltaGpsX = gpsRawX - prevGpsX;
-    float deltaGpsY = gpsRawY - prevGpsY;
-    float deltaGpsRotation = gpsRawRotation - prevGpsRotation;
-
-    // update the previous sensor values
-    prevGpsX = gpsRawX;
-    prevGpsY = gpsRawY;
-    prevGpsRotation = gpsRawRotation;
-
-    // update the pose
-    odomPose.x += deltaGpsX;
-    odomPose.y += deltaGpsY;
-    odomPose.theta += deltaGpsRotation;
+    odomPose.x = metersToInches(status.x);
+    odomPose.y = metersToInches(status.y);
+    odomPose.theta = lemlib::degToRad(status.yaw);
 }
 
 static void updateWheels() {
@@ -193,10 +182,10 @@ static void updateWheels() {
  *
  */
 void lemlib::update() {
-    if (odomSensors.gps == nullptr) {
-        updateWheels();
-    } else {
+    if (odomSensors.gps != nullptr) {
         updateGPS();
+    } else {
+        updateWheels();
     }
 }
 
