@@ -90,9 +90,7 @@ void lemlib::Chassis::calibrateWheels() {
  *
  */
 void lemlib::Chassis::calibrate() {
-    if (odomSensors.gps == nullptr) {
-        calibrateWheels();
-    }
+    if (odomSensors.gps == nullptr) { calibrateWheels(); }
 
     lemlib::setSensors(odomSensors);
     lemlib::init();
