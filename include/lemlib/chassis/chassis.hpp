@@ -13,6 +13,7 @@
 
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
+#include "pros/gps.hpp"
 #include <functional>
 #include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
@@ -25,20 +26,34 @@ namespace lemlib {
  * The sensors are stored in a struct so that they can be easily passed to the chassis class
  * The variables are pointers so that they can be set to nullptr if they are not used
  * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
- *
- * @param vertical1 pointer to the first vertical tracking wheel
- * @param vertical2 pointer to the second vertical tracking wheel
- * @param horizontal1 pointer to the first horizontal tracking wheel
- * @param horizontal2 pointer to the second horizontal tracking wheel
- * @param imu pointer to the IMU
  */
-typedef struct {
-        TrackingWheel* vertical1;
-        TrackingWheel* vertical2;
-        TrackingWheel* horizontal1;
-        TrackingWheel* horizontal2;
-        pros::Imu* imu;
-} OdomSensors_t;
+struct OdomSensors {
+        pros::Gps* gps = nullptr;
+        TrackingWheel* vertical1 = nullptr;
+        TrackingWheel* vertical2 = nullptr;
+        TrackingWheel* horizontal1 = nullptr;
+        TrackingWheel* horizontal2 = nullptr;
+        pros::Imu* imu = nullptr;
+
+        OdomSensors() = default;
+
+        /**
+         * Constructor for odometry with wheels.
+         * @param vertical1 pointer to the first vertical tracking wheel
+         * @param vertical2 pointer to the second vertical tracking wheel
+         * @param horizontal1 pointer to the first horizontal tracking wheel
+         * @param horizontal2 pointer to the second horizontal tracking wheel
+         * @param imu pointer to the IMU
+         */
+        OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
+                    TrackingWheel* horizontal2, pros::Imu* imu);
+
+        /**
+         * Constructor for odometry with a gps.
+         * @param gps pointer to the GPS
+         */
+        OdomSensors(pros::Gps* gps);
+};
 
 /**
  * @brief Struct containing constants for a chassis controller
@@ -118,7 +133,7 @@ class Chassis {
          * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
+                OdomSensors sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -219,7 +234,9 @@ class Chassis {
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;
-        OdomSensors_t odomSensors;
+        OdomSensors odomSensors;
         DriveCurveFunction_t driveCurve;
+
+        void calibrateWheels();
 };
 } // namespace lemlib

@@ -71,7 +71,7 @@ Hold on, how far away from the tracking center is the tracking wheel? Turns out,
 
 Remember, vertical tracking wheels should have a negative offset if on the left of the tracking center, and horizontal tracking wheels should have a negative offset if in front of the tracking center.
 
-Now, we can put all the tracking wheels together into a struct with `lemlib::OdomSensors_t`. This struct will be passed to the LemLib chassis. Below is an example of how to do this:
+Now, we can put all the tracking wheels together into a struct with `lemlib::OdomSensors`. This struct will be passed to the LemLib chassis. Below is an example of how to do this:
 ```cpp
 // left tracking wheel encoder
 pros::ADIEncoder left_enc('A', 'B', true); // ports A and B, reversed
@@ -90,7 +90,7 @@ lemlib::TrackingWheel back_tracking_wheel(&back_enc, 2.75, 4.5); // 2.75" wheel 
 pros::Imu inertial_sensor(2); // port 2
 
 // odometry struct
-lemlib::OdomSensors_t sensors {
+lemlib::OdomSensors sensors {
 	&left_tracking_wheel, // vertical tracking wheel 1
 	&right_tracking_wheel, // vertical tracking wheel 2
 	&back_tracking_wheel, // horizontal tracking wheel 1
@@ -167,7 +167,7 @@ lemlib::TrackingWheel back_tracking_wheel(&back_enc, 2.75, 4.5); // 2.75" wheel 
 pros::Imu inertial_sensor(2); // port 2
 
 // odometry struct
-lemlib::OdomSensors_t sensors {
+lemlib::OdomSensors sensors {
 	&left_tracking_wheel, // vertical tracking wheel 1
 	&right_tracking_wheel, // vertical tracking wheel 2
 	&back_tracking_wheel, // horizontal tracking wheel 1

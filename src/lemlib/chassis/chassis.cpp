@@ -18,6 +18,30 @@
 #include "trackingWheel.hpp"
 
 /**
+ * Constructor for odometry with wheels.
+ * @param vertical1 pointer to the first vertical tracking wheel
+ * @param vertical2 pointer to the second vertical tracking wheel
+ * @param horizontal1 pointer to the first horizontal tracking wheel
+ * @param horizontal2 pointer to the second horizontal tracking wheel
+ * @param imu pointer to the IMU
+ */
+lemlib::OdomSensors::OdomSensors(lemlib::TrackingWheel* vertical1, lemlib::TrackingWheel* vertical2,
+                                 lemlib::TrackingWheel* horizontal1, lemlib::TrackingWheel* horizontal2,
+                                 pros::Imu* imu) {
+    this->vertical1 = vertical1;
+    this->vertical2 = vertical2;
+    this->horizontal1 = horizontal1;
+    this->horizontal1 = horizontal1;
+    this->imu = imu;
+}
+
+/**
+ * Constructor for odometry with a gps.
+ * @param gps pointer to the GPS
+ */
+lemlib::OdomSensors::OdomSensors(pros::Gps* gps) { this->gps = gps; }
+
+/**
  * @brief Construct a new Chassis
  *
  * @param drivetrain drivetrain to be used for the chassis
@@ -27,7 +51,7 @@
  * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
  */
 lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings,
-                         ChassisController_t angularSettings, OdomSensors_t sensors, DriveCurveFunction_t driveCurve) {
+                         ChassisController_t angularSettings, OdomSensors sensors, DriveCurveFunction_t driveCurve) {
     this->drivetrain = drivetrain;
     this->lateralSettings = lateralSettings;
     this->angularSettings = angularSettings;
@@ -35,11 +59,7 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
     this->driveCurve = driveCurve;
 }
 
-/**
- * @brief Calibrate the chassis sensors
- *
- */
-void lemlib::Chassis::calibrate() {
+void lemlib::Chassis::calibrateWheels() {
     // calibrate the imu if it exists
     if (odomSensors.imu != nullptr) {
         odomSensors.imu->reset(true);
@@ -61,8 +81,20 @@ void lemlib::Chassis::calibrate() {
     odomSensors.vertical2->reset();
     if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
     if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
-    lemlib::setSensors(odomSensors, drivetrain);
+    lemlib::setSensors(odomSensors);
     lemlib::init();
+}
+
+/**
+ * @brief Calibrate the chassis sensors
+ *
+ */
+void lemlib::Chassis::calibrate() {
+    if (odomSensors.gps == nullptr) { calibrateWheels(); }
+
+    lemlib::setSensors(odomSensors);
+    lemlib::init();
+
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
 }

@@ -15,6 +15,8 @@
 // http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
 
 #include <math.h>
+#include "lemlib/logger.hpp"
+#include "lemlib/pose.hpp"
 #include "pros/rtos.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/odom.hpp"
@@ -25,8 +27,8 @@
 pros::Task* trackingTask = nullptr;
 
 // global variables
-lemlib::OdomSensors_t odomSensors; // the sensors to be used for odometry
-lemlib::Drivetrain_t drive; // the drivetrain to be used for odometry
+lemlib::OdomSensors odomSensors; // the sensors to be used for odometry
+// lemlib::Drivetrain_t drive; // the drivetrain to be used for odometry
 lemlib::Pose odomPose(0, 0, 0); // the pose of the robot
 
 float prevVertical = 0;
@@ -37,16 +39,16 @@ float prevHorizontal1 = 0;
 float prevHorizontal2 = 0;
 float prevImu = 0;
 
+float metersToInches(float meterVal) { return meterVal * 39.37; }
+
+float inchesToMeters(float inchVal) { return inchVal / 39.37; }
+
 /**
  * @brief Set the sensors to be used for odometry
  *
  * @param sensors the sensors to be used
- * @param drivetrain drivetrain to be used
  */
-void lemlib::setSensors(lemlib::OdomSensors_t sensors, lemlib::Drivetrain_t drivetrain) {
-    odomSensors = sensors;
-    drive = drivetrain;
-}
+void lemlib::setSensors(lemlib::OdomSensors sensors) { odomSensors = sensors; }
 
 /**
  * @brief Get the pose of the robot
@@ -55,8 +57,7 @@ void lemlib::setSensors(lemlib::OdomSensors_t sensors, lemlib::Drivetrain_t driv
  * @return Pose
  */
 lemlib::Pose lemlib::getPose(bool radians) {
-    if (radians) return odomPose;
-    else return lemlib::Pose(odomPose.x, odomPose.y, radToDeg(odomPose.theta));
+    return lemlib::Pose(odomPose.x, odomPose.y, radians ? odomPose.theta : degToRad(odomPose.theta));
 }
 
 /**
@@ -66,17 +67,22 @@ lemlib::Pose lemlib::getPose(bool radians) {
  * @param radians true if theta is in radians, false if in degrees. False by default
  */
 void lemlib::setPose(lemlib::Pose pose, bool radians) {
-    if (radians) odomPose = pose;
-    else odomPose = lemlib::Pose(pose.x, pose.y, degToRad(pose.theta));
+    if (odomSensors.gps != nullptr) {
+        odomSensors.gps->set_position(inchesToMeters(pose.x), inchesToMeters(pose.y),
+                                      radians ? radToDeg(pose.theta) : pose.theta);
+    }
+    odomPose = lemlib::Pose(pose.x, pose.y, radians ? pose.theta : degToRad(pose.theta));
 }
 
-/**
- * @brief Update the pose of the robot
- *
- */
-void lemlib::update() {
-    // TODO: add particle filter
-    // get the current sensor values
+static void updateGPS() {
+    pros::c::gps_status_s_t status = odomSensors.gps->get_status();
+
+    odomPose.x = metersToInches(status.x);
+    odomPose.y = metersToInches(status.y);
+    odomPose.theta = lemlib::degToRad(status.yaw);
+}
+
+static void updateWheels() {
     float vertical1Raw = 0;
     float vertical2Raw = 0;
     float horizontal1Raw = 0;
@@ -86,7 +92,7 @@ void lemlib::update() {
     if (odomSensors.vertical2 != nullptr) vertical2Raw = odomSensors.vertical2->getDistanceTraveled();
     if (odomSensors.horizontal1 != nullptr) horizontal1Raw = odomSensors.horizontal1->getDistanceTraveled();
     if (odomSensors.horizontal2 != nullptr) horizontal2Raw = odomSensors.horizontal2->getDistanceTraveled();
-    if (odomSensors.imu != nullptr) imuRaw = degToRad(odomSensors.imu->get_rotation());
+    if (odomSensors.imu != nullptr) imuRaw = lemlib::degToRad(odomSensors.imu->get_rotation());
 
     // calculate the change in sensor values
     float deltaVertical1 = vertical1Raw - prevVertical1;
@@ -169,6 +175,18 @@ void lemlib::update() {
     odomPose.x += localX * -cos(avgHeading);
     odomPose.y += localX * sin(avgHeading);
     odomPose.theta = heading;
+}
+
+/**
+ * @brief Update the pose of the robot
+ *
+ */
+void lemlib::update() {
+    if (odomSensors.gps != nullptr) {
+        updateGPS();
+    } else {
+        updateWheels();
+    }
 }
 
 /**
