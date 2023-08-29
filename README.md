@@ -18,6 +18,7 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 - Angular and Lateral motion PIDs
 - Pure Pursuit
 - [Path Generator](https://github.com/LemLib/Path-Gen) support
+- [Path.Jerryio](https://path.jerryio.com) support
 
 ## Tutorials
 The tutorials provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to pure pursuit.
