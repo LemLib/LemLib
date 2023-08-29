@@ -135,28 +135,38 @@ float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, float
 /**
  * @brief returns the lookahead point
  *
- * @param lastLookaheadIndex - the index of the last lookahead point
  * @param lastLookahead - the last lookahead point
- * @param pos - the current position of the robot
+ * @param pose - the current position of the robot
  * @param path - the path to follow
- * @param forward - whether to go forward (true) or backwards (false)
+ * @param lookaheadDist - the lookahead distance of the algorithm
  */
 lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::vector<lemlib::Pose> path,
                             float lookaheadDist) {
-    // initialize variables
-    lemlib::Pose lookahead = lastLookahead;
-    double t;
-
     // find the furthest lookahead point on the path
-    for (int i = 0; i < path.size() - 1; i++) {
-        t = circleIntersect(path.at(i), path.at(i + 1), pose, lookaheadDist);
-        if (t != -1 && i >= lastLookahead.theta) { // new lookahead point found
-            lookahead = path.at(i).lerp(path.at(i + 1), t);
+
+    // optimizations applied:
+    // - made the starting index the one after lastLookahead's index,
+    // as anything before would be discarded
+    // - searched the path in reverse, as the first hit would be
+    // the garunteed farthest lookahead point
+    for (int i = path.size() - 1; i > lastLookahead.theta; i--) {
+        // since we are searching in reverse, instead of getting
+        // the current pose and the next one, we should get the
+        // current pose and the *last* one
+        lemlib::Pose lastPathPose = path.at(i - 1);
+        lemlib::Pose currentPathPose = path.at(i);
+
+        double t = circleIntersect(lastPathPose, currentPathPose, pose, lookaheadDist);
+
+        if (t != -1) {
+            lemlib::Pose lookahead = lastPathPose.lerp(currentPathPose, t);
             lookahead.theta = i;
+            return lookahead;
         }
     }
 
-    return lookahead;
+    // robot deviated from path, use last lookahead point
+    return lastLookahead;
 }
 
 /**
