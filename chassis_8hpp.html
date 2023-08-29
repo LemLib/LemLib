@@ -161,9 +161,7 @@ $(document).ready(function(){initNavTree('chassis_8hpp.html',''); initResizable(
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#nested-classes">Classes</a>  </div>
   <div class="headertitle"><div class="title">chassis.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -172,8 +170,6 @@ $(document).ready(function(){initNavTree('chassis_8hpp.html',''); initResizable(
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;pros/motors.hpp&quot;</code><br />
 <code>#include &quot;pros/imu.hpp&quot;</code><br />
-<code>#include &lt;functional&gt;</code><br />
-<code>#include &quot;lemlib/asset.hpp&quot;</code><br />
 <code>#include &quot;<a class="el" href="trackingWheel_8hpp_source.html">lemlib/chassis/trackingWheel.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="pose_8hpp_source.html">lemlib/pose.hpp</a>&quot;</code><br />
 </div>
@@ -193,18 +189,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlemlib_1_1Chassis.html">lemlib::Chassis</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classlemlib_1_1Chassis.html" title="Chassis class.">Chassis</a> class.  <a href="classlemlib_1_1Chassis.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:a5db64e41a81091551ded8cf3ffe8499e"><td class="memItemLeft" align="right" valign="top">typedef std::function&lt; double(double, double)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="chassis_8hpp.html#a5db64e41a81091551ded8cf3ffe8499e">lemlib::DriveCurveFunction_t</a></td></tr>
-<tr class="memdesc:a5db64e41a81091551ded8cf3ffe8499e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function pointer type for drive curve functions.  <a href="chassis_8hpp.html#a5db64e41a81091551ded8cf3ffe8499e">More...</a><br /></td></tr>
-<tr class="separator:a5db64e41a81091551ded8cf3ffe8499e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ac3318ca50d8d437bf8cc94783d47b648"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="chassis_8hpp.html#ac3318ca50d8d437bf8cc94783d47b648">lemlib::defaultDriveCurve</a> (double input, double scale)</td></tr>
-<tr class="memdesc:ac3318ca50d8d437bf8cc94783d47b648"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default drive curve. Modifies the input with an exponential curve. If the input is 127, the function will always output 127, no matter the value of scale, likewise for -127. This curve was inspired by team 5225, the Pilons. A Desmos graph of this curve can be found here: <a href="https://www.desmos.com/calculator/rcfjjg83zx">https://www.desmos.com/calculator/rcfjjg83zx</a>.  <a href="chassis_8hpp.html#ac3318ca50d8d437bf8cc94783d47b648">More...</a><br /></td></tr>
-<tr class="separator:ac3318ca50d8d437bf8cc94783d47b648"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Chassis class declarations. </p>
@@ -212,71 +196,7 @@ Functions</h2></td></tr>
 <dl class="section version"><dt>Version</dt><dd>0.4.5 </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2023-01-23</dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2023 </dd></dl>
-</div><h2 class="groupheader">Typedef Documentation</h2>
-<a id="a5db64e41a81091551ded8cf3ffe8499e" name="a5db64e41a81091551ded8cf3ffe8499e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5db64e41a81091551ded8cf3ffe8499e">&#9670;&#160;</a></span>DriveCurveFunction_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef std::function&lt;double(double, double)&gt; <a class="el" href="chassis_8hpp.html#a5db64e41a81091551ded8cf3ffe8499e">lemlib::DriveCurveFunction_t</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Function pointer type for drive curve functions. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">input</td><td>The control input in the range [-127, 127]. </td></tr>
-    <tr><td class="paramname">scale</td><td>The scaling factor, which can be optionally ignored. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The new value to be used. </dd></dl>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="ac3318ca50d8d437bf8cc94783d47b648" name="ac3318ca50d8d437bf8cc94783d47b648"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3318ca50d8d437bf8cc94783d47b648">&#9670;&#160;</a></span>defaultDriveCurve()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double lemlib::defaultDriveCurve </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>input</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>scale</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Default drive curve. Modifies the input with an exponential curve. If the input is 127, the function will always output 127, no matter the value of scale, likewise for -127. This curve was inspired by team 5225, the Pilons. A Desmos graph of this curve can be found here: <a href="https://www.desmos.com/calculator/rcfjjg83zx">https://www.desmos.com/calculator/rcfjjg83zx</a>. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">input</td><td>value from -127 to 127 </td></tr>
-    <tr><td class="paramname">scale</td><td>how steep the curve should be. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The new value to be used. </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.6-->
 <!-- start footer part -->

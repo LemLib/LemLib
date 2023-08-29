@@ -187,7 +187,7 @@ The Drivetrain</h1>
 <div class="line">    3.25, <span class="comment">// wheel diameter</span></div>
 <div class="line">    360 <span class="comment">// wheel rpm</span></div>
 <div class="line">};</div>
-<div class="ttc" id="astructlemlib_1_1Drivetrain__t_html"><div class="ttname"><a href="structlemlib_1_1Drivetrain__t.html">lemlib::Drivetrain_t</a></div><div class="ttdoc">Struct containing constants for a drivetrain.</div><div class="ttdef"><b>Definition:</b> chassis.hpp:79</div></div>
+<div class="ttc" id="astructlemlib_1_1Drivetrain__t_html"><div class="ttname"><a href="structlemlib_1_1Drivetrain__t.html">lemlib::Drivetrain_t</a></div><div class="ttdoc">Struct containing constants for a drivetrain.</div><div class="ttdef"><b>Definition:</b> chassis.hpp:77</div></div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md14"></a>
 Odometry</h1>
 <p >A crucial component of a consistent autonomous is position tracking, commonly known as odometry. Odometry allows the robot to know where it is on the field. LemLib has built in odometry, and is compatible with most tracking wheel / inertial sensor combinations. To set up odometry, we need to tell LemLib what sensors we are using. Lets start with the tracking wheels.</p>
@@ -199,7 +199,7 @@ Odometry</h1>
 <div class="line">pros::Rotation rot(1, <span class="keyword">false</span>); <span class="comment">// port 1, not reversed</span></div>
 </div><!-- fragment --><p >Next, we have to create a <code><a class="el" href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a></code> object. This contains information about the tracking wheel, such as the diameter and its offset from the tracking center. Below is an example of how to do this: </p><div class="fragment"><div class="line"><span class="comment">// uses &quot;enc&quot; as the encoder. 2.75&quot; wheel diameter, 4.3&quot; offset from tracking center, 2:1 gear ratio</span></div>
 <div class="line"><a class="code hl_class" href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a> left_tracking_wheel(&amp;enc, 2.75, 4.3, 2);</div>
-<div class="ttc" id="aclasslemlib_1_1TrackingWheel_html"><div class="ttname"><a href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a></div><div class="ttdef"><b>Definition:</b> trackingWheel.hpp:42</div></div>
+<div class="ttc" id="aclasslemlib_1_1TrackingWheel_html"><div class="ttname"><a href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a></div><div class="ttdef"><b>Definition:</b> trackingWheel.hpp:19</div></div>
 </div><!-- fragment --><p >Hold on, how far away from the tracking center is the tracking wheel? Turns out, its not the straight distance to the center of the robot, but only one component of it. Below is a diagram which shows the relationship between the tracking center and the tracking wheel: <img src="./assets/2_setting_up_the_chassis/tracking_wheel_distance.png" alt="" height="800" style="display: block;margin-left: auto;margin-right: auto;" class="inline"/></p>
 <p >Remember, vertical tracking wheels should have a negative offset if on the left of the tracking center, and horizontal tracking wheels should have a negative offset if in front of the tracking center.</p>
 <p >Now, we can put all the tracking wheels together into a struct with <code><a class="el" href="structlemlib_1_1OdomSensors__t.html" title="Struct containing all the sensors used for odometry.">lemlib::OdomSensors_t</a></code>. This struct will be passed to the LemLib chassis. Below is an example of how to do this: </p><div class="fragment"><div class="line"><span class="comment">// left tracking wheel encoder</span></div>
@@ -226,7 +226,7 @@ Odometry</h1>
 <div class="line">    <span class="keyword">nullptr</span>, <span class="comment">// we don&#39;t have a second tracking wheel, so we set it to nullptr</span></div>
 <div class="line">    &amp;inertial_sensor <span class="comment">// inertial sensor</span></div>
 <div class="line">};</div>
-<div class="ttc" id="astructlemlib_1_1OdomSensors__t_html"><div class="ttname"><a href="structlemlib_1_1OdomSensors__t.html">lemlib::OdomSensors_t</a></div><div class="ttdoc">Struct containing all the sensors used for odometry.</div><div class="ttdef"><b>Definition:</b> chassis.hpp:35</div></div>
+<div class="ttc" id="astructlemlib_1_1OdomSensors__t_html"><div class="ttname"><a href="structlemlib_1_1OdomSensors__t.html">lemlib::OdomSensors_t</a></div><div class="ttdoc">Struct containing all the sensors used for odometry.</div><div class="ttdef"><b>Definition:</b> chassis.hpp:33</div></div>
 </div><!-- fragment --><p >You don't need all these sensors though. Even if you don't have any, you can still use LemLib. If you don't have a sensor, just set it to <code>nullptr</code>. Just remember that the more sensors you use, the more accurate the odometry will be.</p>
 <h1><a class="anchor" id="autotoc_md15"></a>
 PIDs</h1>
@@ -251,7 +251,7 @@ PIDs</h1>
 <div class="line">    500, <span class="comment">// largeErrorTimeout</span></div>
 <div class="line">    0 <span class="comment">// slew rate</span></div>
 <div class="line">};</div>
-<div class="ttc" id="astructlemlib_1_1ChassisController__t_html"><div class="ttname"><a href="structlemlib_1_1ChassisController__t.html">lemlib::ChassisController_t</a></div><div class="ttdoc">Struct containing constants for a chassis controller.</div><div class="ttdef"><b>Definition:</b> chassis.hpp:57</div></div>
+<div class="ttc" id="astructlemlib_1_1ChassisController__t_html"><div class="ttname"><a href="structlemlib_1_1ChassisController__t.html">lemlib::ChassisController_t</a></div><div class="ttdoc">Struct containing constants for a chassis controller.</div><div class="ttdef"><b>Definition:</b> chassis.hpp:55</div></div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md16"></a>
 Putting it all together</h1>
 <p >Below is everything we have done so far, all passed to the <code><a class="el" href="classlemlib_1_1Chassis.html" title="Chassis class.">lemlib::Chassis</a></code> constructor: </p><div class="fragment"><div class="line"><span class="comment">// drivetrain motors</span></div>
@@ -322,7 +322,7 @@ Putting it all together</h1>
 <div class="line"> </div>
 <div class="line"><span class="comment">// create the chassis</span></div>
 <div class="line"><a class="code hl_class" href="classlemlib_1_1Chassis.html">lemlib::Chassis</a> chassis(drivetrain, lateralController, angularController, sensors);</div>
-<div class="ttc" id="aclasslemlib_1_1Chassis_html"><div class="ttname"><a href="classlemlib_1_1Chassis.html">lemlib::Chassis</a></div><div class="ttdoc">Chassis class.</div><div class="ttdef"><b>Definition:</b> chassis.hpp:109</div></div>
+<div class="ttc" id="aclasslemlib_1_1Chassis_html"><div class="ttname"><a href="classlemlib_1_1Chassis.html">lemlib::Chassis</a></div><div class="ttdoc">Chassis class.</div><div class="ttdef"><b>Definition:</b> chassis.hpp:89</div></div>
 </div><!-- fragment --><p >Thats it! You have now set up the chassis. In the next tutorial, we will learn how to use the chassis to move the robot and how to tune the PIDs.</p>
 <p ><a class="el" href="md_docs_tutorials_1_getting_started.html">Previous Tutorial</a> <br  />
  <a class="el" href="md_docs_tutorials_3_tuning_and_moving.html">Next Tutorial</a> </p>
