@@ -13,6 +13,8 @@
 
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
+#include <functional>
+#include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
 
@@ -85,6 +87,24 @@ typedef struct {
 } Drivetrain_t;
 
 /**
+ * @brief Function pointer type for drive curve functions.
+ * @param input The control input in the range [-127, 127].
+ * @param scale The scaling factor, which can be optionally ignored.
+ * @return The new value to be used.
+ */
+typedef std::function<double(double, double)> DriveCurveFunction_t;
+
+/**
+ * @brief  Default drive curve. Modifies  the input with an exponential curve. If the input is 127, the function
+ * will always output 127, no matter the value of scale, likewise for -127. This curve was inspired by team 5225, the
+ * Pilons. A Desmos graph of this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
+ * @param input value from -127 to 127
+ * @param scale how steep the curve should be.
+ * @return The new value to be used.
+ */
+double defaultDriveCurve(double input, double scale);
+
+/**
  * @brief Chassis class
  *
  */
@@ -97,9 +117,10 @@ class Chassis {
          * @param lateralSettings settings for the lateral controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
+         * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                OdomSensors_t sensors);
+                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -184,7 +205,7 @@ class Chassis {
         /**
          * @brief Move the chassis along a path
          *
-         * @param filePath file path to the path. No need to preface it with /usd/
+         * @param filePath the filename of the path to follow
          * @param timeout the maximum time the robot can spend moving
          * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
          * will follow the path less accurately
@@ -192,12 +213,43 @@ class Chassis {
          * @param maxSpeed the maximum speed the robot can move at
          * @param log whether the chassis should log the path on a log file. false by default.
          */
-        void follow(const char* filePath, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127,
+        void follow(asset path, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127,
                     bool log = false);
+        /**
+         * @brief Control the robot during the driver control period using the tank drive control scheme. In this
+         * control scheme one joystick axis controls one half of the robot, and another joystick axis controls another.
+         * @param left speed of the left side of the drivetrain. Takes an input from -127 to 127.
+         * @param right speed of the right side of the drivetrain. Takes an input from -127 to 127.
+         * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
+         * of 0 disables the curve entirely.
+         */
+        void tank(int left, int right, float curveGain = 0.0);
+        /**
+         * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
+         * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
+         * controls  the robot's turning
+         * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
+         * @param turn speed to turn. Takes an input from -127 to 127.
+         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+         * curve, refer to the `defaultDriveCurve` documentation.
+         */
+        void arcade(int throttle, int turn, float curveGain = 0.0);
+        /**
+         * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
+         * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
+         * drivetrain makes, rather than the speed. This means that the driver can accelerate in a turn without changing
+         * the radius of that turn. This control scheme defaults to arcade when forward is zero.
+         * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
+         * @param turn speed to turn. Takes an input from -127 to 127.
+         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+         * curve, refer to the `defaultDriveCurve` documentation.
+         */
+        void curvature(int throttle, int turn, float cureGain = 0.0);
     private:
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;
         OdomSensors_t odomSensors;
+        DriveCurveFunction_t driveCurve;
 };
 } // namespace lemlib

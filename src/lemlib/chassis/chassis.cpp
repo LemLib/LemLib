@@ -23,15 +23,17 @@
  *
  * @param drivetrain drivetrain to be used for the chassis
  * @param lateralSettings settings for the lateral controller
- * @param angularSetting settings for the angular controller
+ * @param angularSettings settings for the angular controller
  * @param sensors sensors to be used for odometry
+ * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
  */
 lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings,
-                         ChassisController_t angularSettings, OdomSensors_t sensors) {
+                         ChassisController_t angularSettings, OdomSensors_t sensors, DriveCurveFunction_t driveCurve) {
     this->drivetrain = drivetrain;
     this->lateralSettings = lateralSettings;
     this->angularSettings = angularSettings;
     this->odomSensors = sensors;
+    this->driveCurve = driveCurve;
 }
 
 /**
