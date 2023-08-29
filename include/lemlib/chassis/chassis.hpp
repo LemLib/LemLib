@@ -73,14 +73,14 @@ typedef struct {
  * @param leftMotors pointer to the left motors
  * @param rightMotors pointer to the right motors
  * @param trackWidth the track width of the robot
- * @param wheelType the type of omni-wheel used for the drivetrain
+ * @param wheelDiameter the diameter of the wheel used on the drivetrain
  * @param rpm the rpm of the wheels
  */
 typedef struct {
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
         float trackWidth;
-        Omniwheel wheelType;
+        double wheelDiameter;
         float rpm;
 } Drivetrain_t;
 
