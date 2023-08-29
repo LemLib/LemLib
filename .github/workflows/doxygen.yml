@@ -2,7 +2,7 @@ name: Doxygen Action
 
 on:
   push:
-    branches: [ master ]
+    branches: [ stable ]
 
 
 
@@ -19,6 +19,8 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        ref: stable
     - name: Build
       uses: mattnotmitt/doxygen-action@v1.9.5
       with:
