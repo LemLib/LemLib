@@ -20,9 +20,7 @@ pros::Rotation horizontalEnc(7);
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain
-lemlib::Drivetrain_t drivetrain {
-    &leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 360, 2
-};
+lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 360, 2};
 
 // lateral motion controller
 lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
@@ -45,6 +43,7 @@ void initialize() {
     pros::lcd::initialize();
     // calibrate sensors
     chassis.calibrate();
+    chassis.setPose(lemlib::Pose(0, 0, 180));
     // print odom values to the brain
     pros::Task screenTask([=]() {
         while (true) {
@@ -100,4 +99,4 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() { chassis.moveTo(20, 15, 90, 4000); }
+void opcontrol() { chassis.moveTo(-20, 15, 90, false, 4000); }

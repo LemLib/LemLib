@@ -9,6 +9,7 @@
  *
  */
 #include <math.h>
+#include "main.h"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "lemlib/util.hpp"
@@ -181,18 +182,21 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param x x location
  * @param y y location
  * @param theta theta (in degrees). Target angle
+ * @param forwards whether the robot should move forwards or backwards. true for forwards, false for backwards
  * @param timeout longest time the robot can spend moving
  * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
- * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it default to
- * global value
+ * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
+ * default to global value
  * @param maxSpeed the maximum speed the robot can move at. 127 at default
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float chasePower, float lead, float maxSpeed,
-                             bool log) {
+void lemlib::Chassis::moveTo(float x, float y, float theta, bool forwards, int timeout, float chasePower, float lead,
+                             float maxSpeed, bool log) {
     Pose target(x, y, M_PI_2 - degToRad(theta)); // target pose in standard form
     FAPID linearPID = FAPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID"); // linear PID controller
     FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID"); // angular PID controller
+
+    if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
     bool close = false; // used for settling
     if (chasePower == 0) chasePower = drivetrain.chasePower; // use global chase power if chase power is 0
@@ -201,19 +205,21 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, float c
     while (true) {
         // get current pose
         Pose pose = getPose(true);
+        if (!forwards) pose.theta += M_PI;
         pose.theta = M_PI_2 - pose.theta; // convert to standard form
 
         // check if the robot is close enough to the target to start settling
-        if (pose.distance(target) < 3) close = true;
+        if (pose.distance(target) < 7.5) close = true;
 
         // calculate the carrot point
         Pose carrot = target - (Pose(cos(target.theta), sin(target.theta)) * lead * pose.distance(target));
         if (close) carrot = target; // settling behavior
 
         // calculate error
-        float angularError = angleError(pose.angle(carrot), pose.theta); // angular error
+        float angularError = angleError(pose.angle(carrot), pose.theta, true); // angular error
         float linearError = pose.distance(carrot) * cos(angularError); // linear error
-        if (close) angularError = angleError(target.theta, pose.theta); // settling behavior
+        if (close) angularError = angleError(target.theta, pose.theta, true); // settling behavior
+        if (!forwards) linearError = -linearError;
 
         // get PID outputs
         float angularPower = -angularPID.update(radToDeg(angularError), 0, log);
