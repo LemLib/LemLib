@@ -13,7 +13,7 @@ namespace lemlib {
  * @param scale how steep the curve should be.
  * @return The new value to be used.
  */
-double defaultDriveCurve(double input, double scale) {
+float defaultDriveCurve(float input, float scale) {
     if (scale != 0) {
         return (powf(2.718, -(scale / 10)) + powf(2.718, (fabs(input) - 127) / 10) * (1 - powf(2.718, -(scale / 10)))) *
                input;
@@ -68,8 +68,8 @@ void Chassis::curvature(int throttle, int turn, float curveGain) {
         return;
     }
 
-    double leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
-    double rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
+    float leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
+    float rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
 
     leftPower = driveCurve(leftPower, curveGain);
     rightPower = driveCurve(rightPower, curveGain);

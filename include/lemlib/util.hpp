@@ -66,12 +66,4 @@ float sgn(float x);
  * @return float
  */
 float avg(std::vector<float> values);
-
-/**
- * @brief Return the average of a vector of numbers
- *
- * @param values
- * @return double
- */
-double avg(std::vector<double> values);
 } // namespace lemlib

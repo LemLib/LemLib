@@ -85,15 +85,3 @@ float lemlib::avg(std::vector<float> values) {
     for (float value : values) { sum += value; }
     return sum / values.size();
 }
-
-/*omit
- * @brief Return the average of a vector of numbers
- *
- * @param values
- * @return double
- */
-double lemlib::avg(std::vector<double> values) {
-    double sum = 0;
-    for (double value : values) { sum += value; }
-    return sum / values.size();
-}
