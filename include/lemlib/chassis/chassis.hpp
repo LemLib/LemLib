@@ -80,7 +80,7 @@ typedef struct {
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
         float trackWidth;
-        double wheelDiameter;
+        float wheelDiameter;
         float rpm;
 } Drivetrain_t;
 
