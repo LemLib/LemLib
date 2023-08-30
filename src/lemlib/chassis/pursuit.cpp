@@ -156,7 +156,7 @@ lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::
         lemlib::Pose lastPathPose = path.at(i - 1);
         lemlib::Pose currentPathPose = path.at(i);
 
-        double t = circleIntersect(lastPathPose, currentPathPose, pose, lookaheadDist);
+        float t = circleIntersect(lastPathPose, currentPathPose, pose, lookaheadDist);
 
         if (t != -1) {
             lemlib::Pose lookahead = lastPathPose.lerp(currentPathPose, t);
