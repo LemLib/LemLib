@@ -195,8 +195,12 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 void lemlib::Chassis::moveTo(float x, float y, float theta, bool forwards, int timeout, float chasePower, float lead,
                              float maxSpeed, bool log) {
     Pose target(x, y, M_PI_2 - degToRad(theta)); // target pose in standard form
-    FAPID linearPID = FAPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID"); // linear PID controller
-    FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID"); // angular PID controller
+    FAPID linearPID = FAPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
+    linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.smallErrorTimeout,
+                      lateralSettings.smallErrorTimeout, timeout); // exit conditions
+    FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    int compState = pros::competition::get_status();
+    int start = pros::millis();
 
     if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
@@ -204,7 +208,7 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, bool forwards, int t
     if (chasePower == 0) chasePower = drivetrain.chasePower; // use global chase power if chase power is 0
 
     // main loop
-    while (true) {
+    while (pros::competition::get_status() == compState && (!linearPID.settled() || pros::millis() - start < 300)) {
         // get current pose
         Pose pose = getPose(true);
         if (!forwards) pose.theta += M_PI;
