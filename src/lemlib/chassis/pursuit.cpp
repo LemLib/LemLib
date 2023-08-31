@@ -63,7 +63,7 @@ std::vector<lemlib::Pose> getData(asset path) {
 
     // read the points until 'endData' is read
     for (std::string line : dataLines) {
-        if (line == "endData") break;
+        if (line == "endData" || line == "endData\r") break;
         pointInput = readElement(line, ", "); // parse line
         pathPoint.x = std::stof(pointInput.at(0)); // x position
         pathPoint.y = std::stof(pointInput.at(1)); // y position
