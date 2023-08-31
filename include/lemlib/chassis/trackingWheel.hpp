@@ -18,26 +18,22 @@
 namespace lemlib {
 
 /**
- * @brief An omni-wheel enumeration.
- *
- * @note These enumerations are equal to the virtual diameter of a wheel which would have a circumference equal to the
- * real loop length of the given wheel in thous.
- *
+ * @brief A namespace representing the size of omniwheels.
  */
-enum class Omniwheel {
-    NEW_275 = 2750,
-    OLD_275 = 2750,
-    NEW_275_HALF = 2744,
-    OLD_275_HALF = 2740,
-    NEW_325 = 3250,
-    OLD_325 = 3250,
-    NEW_325_HALF = 3246,
-    OLD_325_HALF = 3246,
-    NEW_4 = 4000,
-    OLD_4 = 4180,
-    NEW_4_HALF = 3995,
-    OLD_4_HALF = 4175
-};
+namespace Omniwheel {
+constexpr float NEW_275 = 2.75;
+constexpr float OLD_275 = 2.75;
+constexpr float NEW_275_HALF = 2.744;
+constexpr float OLD_275_HALF = 2.74;
+constexpr float NEW_325 = 3.25;
+constexpr float OLD_325 = 3.25;
+constexpr float NEW_325_HALF = 3.246;
+constexpr float OLD_325_HALF = 3.246;
+constexpr float NEW_4 = 4;
+constexpr float OLD_4 = 4.18;
+constexpr float NEW_4_HALF = 3.995;
+constexpr float OLD_4_HALF = 4.175;
+} // namespace Omniwheel
 
 class TrackingWheel {
     public:
@@ -45,29 +41,29 @@ class TrackingWheel {
          * @brief Create a new tracking wheel
          *
          * @param encoder the optical shaft encoder to use
-         * @param wheel the omni-wheel to use
+         * @param wheelDiameter the diameter of the wheel
          * @param distance distance between the tracking wheel and the center of rotation in inches
          * @param gearRatio gear ratio of the tracking wheel, defaults to 1
          */
-        TrackingWheel(pros::ADIEncoder* encoder, Omniwheel wheel, float distance, float gearRatio = 1);
+        TrackingWheel(pros::ADIEncoder* encoder, float wheelDiameter, float distance, float gearRatio = 1);
         /**
          * @brief Create a new tracking wheel
          *
          * @param encoder the v5 rotation sensor to use
-         * @param wheel the omni-wheel to use
+         * @param wheelDiameter the diameter of the wheel
          * @param distance distance between the tracking wheel and the center of rotation in inches
          * @param gearRatio gear ratio of the tracking wheel, defaults to 1
          */
-        TrackingWheel(pros::Rotation* encoder, Omniwheel wheel, float distance, float gearRatio = 1);
+        TrackingWheel(pros::Rotation* encoder, float wheelDiameter, float distance, float gearRatio = 1);
         /**
          * @brief Create a new tracking wheel
          *
          * @param motors the motor group to use
-         * @param wheel the omni-wheel to use
+         * @param wheelDiameter the diameter of the wheel
          * @param distance half the track width of the drivetrain in inches
          * @param rpm theoretical maximum rpm of the drivetrain wheels
          */
-        TrackingWheel(pros::Motor_Group* motors, Omniwheel wheel, float distance, float rpm);
+        TrackingWheel(pros::Motor_Group* motors, float wheelDiameter, float distance, float rpm);
         /**
          * @brief Reset the tracking wheel position to 0
          *
