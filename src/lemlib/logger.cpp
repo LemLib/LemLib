@@ -1,7 +1,7 @@
 /**
- * @file src/lemlib/logger.cpp
+ * @file src/lemlib/Logger.cpp
  * @author LemLib Team
- * @brief File containing definitions for the logger system
+ * @brief File containing definitions for the Logger class
  * @version 0.4.5
  * @date 2023-03-15
  *
@@ -9,180 +9,146 @@
  *
  */
 
+#include <cmath>
+#include <cstdio>
 #include <iostream>
+#include <iterator>
+#include <map>
 #include <string>
 
 #include "lemlib/logger.hpp"
+#include "pros/rtos.hpp"
 
-/**
- * @brief Whether or not to log debug messages.
- *
- * @return true if debug is enabled
- */
-bool lemlib::logger::isDebug() { return lemlib::debug; }
+namespace lemlib {
 
-/**
- * @brief Sets lemlib::debug
- *
- * @param debug the new value
- */
-void lemlib::logger::setDebug(bool debug) { lemlib::debug = debug; }
+bool Logger::isEnabled() { return enabled; }
 
-/**
- * @brief Whether or not to log info messages.
- *
- * If false, only log messages with a level of lemlib::logger::Level::WARN
- * or higher will be logged
- */
-bool lemlib::logger::isVerbose() { return lemlib::verbose; }
+void Logger::setEnabled(bool debug) { debug = debug; }
 
-/**
- * @brief Sets lemlib::verbose
- *
- * @param verbose the new value
- */
-void lemlib::logger::setVerbose(bool verbose) { lemlib::verbose = verbose; }
+bool Logger::isVerbose() { return verbose; }
 
-/**
- * @brief The current lowest log level.
- *
- * @return the lowest loggable level
- */
-lemlib::logger::Level lemlib::logger::getLowestLevel() { return lemlib::logger::lowestLevel; }
+void Logger::setVerbose(bool verbose) { verbose = verbose; }
 
-/**
- * @brief Sets the lowest loggable level
- *
- * @param level the new lowest loggable level
- */
-void lemlib::logger::setLowestLevel(Level level) { lemlib::logger::lowestLevel = level; }
+Logger::Level Logger::getLowestLevel() { return lowestLevel; }
 
-/*
-Util functions for logger.
-Not meant to be used outside of this file.
-*/
+void lemlib::Logger::setLowestLevel(Level level) { lowestLevel = level; }
 
-int ordinal(lemlib::logger::Level level) { return static_cast<int>(level); }
+int ordinal(lemlib::Logger::Level level) { return static_cast<int>(level); }
 
 const std::string RESET_ANSI = "\033[0m";
 
-std::string getColor(lemlib::logger::Level level) {
+std::string getColor(Logger::Level level) {
     switch (level) {
-        case lemlib::logger::Level::DEBUG: return "\033[0;36m"; // cyan
-        case lemlib::logger::Level::INFO: return "\033[0;32m"; // green
-        case lemlib::logger::Level::WARN: return "\033[0;33m"; // yellow
-        case lemlib::logger::Level::ERROR: return "\033[0;31m"; // red
-        case lemlib::logger::Level::FATAL: return "\033[0;31;2m";
+        case Logger::Level::DEBUG: return "\033[0;36m"; // cyan
+        case Logger::Level::INFO: return "\033[0;32m"; // green
+        case Logger::Level::WARN: return "\033[0;33m"; // yellow
+        case Logger::Level::ERROR: return "\033[0;31m"; // red
+        case Logger::Level::FATAL: return "\033[0;31;2m";
         default: return RESET_ANSI; // reset (white)
     }
 }
 
-std::string getFormattedLevel(lemlib::logger::Level level) {
+std::string getFormattedLevel(Logger::Level level) {
     const char* name = "";
 
     switch (level) {
-        case lemlib::logger::Level::DEBUG: name = "DEBUG"; break;
-        case lemlib::logger::Level::INFO: name = "INFO"; break;
-        case lemlib::logger::Level::WARN: name = "WARN"; break;
-        case lemlib::logger::Level::ERROR: name = "ERROR"; break;
-        case lemlib::logger::Level::FATAL: name = "FATAL"; break;
+        case Logger::Level::DEBUG: name = "DEBUG"; break;
+        case Logger::Level::INFO: name = "INFO"; break;
+        case Logger::Level::WARN: name = "WARN"; break;
+        case Logger::Level::ERROR: name = "ERROR"; break;
+        case Logger::Level::FATAL: name = "FATAL"; break;
         default: name = "UNKNOWN"; break;
     }
 
-    return getColor(level) + name;
+    return getColor(level) + name + RESET_ANSI;
 }
 
-bool checkLowestLevel(lemlib::logger::Level level) { return ordinal(level) >= ordinal(lemlib::logger::lowestLevel); }
+bool Logger::checkLowestLevel(Logger::Level level) { return ordinal(level) >= ordinal(lowestLevel); }
 
-/*
-End of util functions
-*/
+std::string Logger::formatLog(std::map<std::string, std::string> values, std::string format) {
+    std::string buffer = format;
+    size_t startPos = 0;
+    while ((startPos = buffer.find("$", startPos)) != std::string::npos) {
+        std::string placeholder = buffer.substr(startPos, 2);
+        if (values.find(placeholder) != values.end()) {
+            buffer.replace(startPos, placeholder.length(), values[placeholder]);
+            startPos += values[placeholder].length();
+        } else {
+            startPos += 1;
+        }
+    }
 
-/**
- * @brief Logs a message with an exception
- *
- * @param level the level of the message
- * @param message the message
- * @param exception the exception
- */
-void lemlib::logger::log(Level level, const char* message, const char* exception) {
+    return buffer;
+}
+
+void Logger::log(Level level, const char* message) {
     if (!checkLowestLevel(level)) return;
-    if (level == Level::DEBUG && !lemlib::debug) return;
-    if (level == Level::INFO && !lemlib::verbose) return;
+    if (level == Level::DEBUG && !enabled) return;
+    if (level == Level::INFO && !verbose) return;
 
+    if (message == nullptr) message = "";
+
+    std::map<std::string, std::string> placeHolderMap;
+    placeHolderMap["$m"] = message;
+    placeHolderMap["$l"] = getFormattedLevel(level);
+    placeHolderMap["$t"] = pros::millis();
+
+    std::string messageString = formatLog(placeHolderMap, logFormat);
+
+    buffer.push_back(messageString);
+}
+
+void Logger::log(Level level, const char* message, const char* exception) {
+    log(level, message);
     if (message == nullptr) message = "";
     if (exception == nullptr) throw std::invalid_argument("exception cannot be null");
-
-    std::string messageString = "[LemLib] " + getFormattedLevel(level) + ": " + message + ": " + exception + RESET_ANSI;
-
-    std::cout << messageString << std::endl;
 }
 
-/**
- * @brief Logs a message
- *
- * @param level the level of the message
- * @param message the message
- */
-void lemlib::logger::log(Level level, const char* message) {
-    if (!checkLowestLevel(level)) return;
-    if (level == Level::DEBUG && !lemlib::debug) return;
-    if (level == Level::INFO && !lemlib::verbose) return;
+void Logger::debug(const char* message) { log(Level::DEBUG, message); }
 
-    if (message == nullptr) message = "";
+void Logger::info(const char* message) { log(Level::INFO, message); }
 
-    std::string messageString = "[LemLib] " + getFormattedLevel(level) + ": " + message + RESET_ANSI;
+void Logger::warn(const char* message) { log(Level::WARN, message); }
 
-    std::cout << messageString << std::endl;
+void Logger::error(const char* message, const char* exception) { log(Level::ERROR, message, exception); }
+
+void Logger::error(const char* message) { log(Level::ERROR, message); }
+
+void Logger::fatal(const char* message, const char* exception) { log(Level::FATAL, message, exception); }
+
+void Logger::fatal(const char* message) { log(Level::FATAL, message); }
+
+void Logger::setFormat(const char* format) { logFormat = format; }
+
+void Logger::setPidFormat(const char* format) { pidFormat = format; }
+
+void Logger::setOdomFormat(const char* format) { odomFormat = format; }
+
+void Logger::logPid(std::string name, float output, float p, float i, float d) {
+    std::map<std::string, std::string> placeHolderMap;
+    placeHolderMap["$n"] = name;
+    placeHolderMap["$p"] = p;
+    placeHolderMap["$i"] = i;
+    placeHolderMap["$d"] = d;
+    placeHolderMap["$t"] = pros::millis();
+    buffer.push_back(formatLog(placeHolderMap, pidFormat));
 }
 
-/**
- * @brief Logs a debug message
- *
- * @param message
- */
-void lemlib::logger::debug(const char* message) { log(Level::DEBUG, message); }
+void Logger::logOdom(Pose currentPose) {
+    std::map<std::string, std::string> placeHolderMap;
+    placeHolderMap["$x"] = currentPose.x;
+    placeHolderMap["$y"] = currentPose.y;
+    placeHolderMap["$a"] = currentPose.theta;
+    placeHolderMap["$t"] = pros::millis();
+    buffer.push_back(formatLog(placeHolderMap, pidFormat));
+}
 
-/**
- * @brief Logs an info message
- *
- * @param message
- */
-void lemlib::logger::info(const char* message) { log(Level::INFO, message); }
+void Logger::loop() {
+    while (true) {
+        for (auto& message : buffer) { std::cout << message << std::endl; }
+        buffer = {};
+        pros::delay(20);
+    }
+}
 
-/**
- * @brief Logs a warning message
- *
- * @param message
- */
-void lemlib::logger::warn(const char* message) { log(Level::WARN, message); }
-
-/**
- * @brief Logs an error message
- *
- * @param message
- * @param exception
- */
-void lemlib::logger::error(const char* message, const char* exception) { log(Level::ERROR, message, exception); }
-
-/**
- * @brief Logs an error message
- *
- * @param message
- */
-void lemlib::logger::error(const char* message) { log(Level::ERROR, message); }
-
-/**
- * @brief Logs a fatal message
- *
- * @param message
- * @param exception
- */
-void lemlib::logger::fatal(const char* message, const char* exception) { log(Level::FATAL, message, exception); }
-
-/**
- * @brief Logs a fatal message
- *
- * @param message
- */
-void lemlib::logger::fatal(const char* message) { log(Level::FATAL, message); }
+} // namespace lemlib

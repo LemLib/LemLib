@@ -11,129 +11,62 @@
 
 #pragma once
 
+#include "pose.hpp"
+#include "taskwrapper.hpp"
+
+#include <map>
+#include <vector>
+#include <string>
+
 namespace lemlib {
 
-static bool debug = false;
-static bool verbose = false;
+class Logger : public TaskWrapper {
+    public:
+        enum class Level { DEBUG, INFO, WARN, ERROR, FATAL };
 
-namespace logger {
+        bool isEnabled();
+        void setEnabled(bool debug);
 
-/**
- * @brief A level enumeration.
- *
- * Debug: Only enabled if lemlib::logger::debug is true
- * Info: General information
- * Warn: Warnings, usually not critical/doesn't affect the robot
- * Error: Errors, usually critical and affects the robot
- * Fatal: Fatal errors, crashes the program
- *
- * @note The log level is inclusive. For example, if the log level is set to
- */
-enum class Level { DEBUG, INFO, WARN, ERROR, FATAL };
+        bool isVerbose();
+        void setVerbose(bool verbose);
 
-static Level lowestLevel = Level::INFO;
+        Level getLowestLevel();
+        void setLowestLevel(Level level);
 
-/**
- * @brief Whether or not to log debug messages.
- *
- * @return true if debug is enabled
- */
-bool isDebug();
-/**
- * @brief Sets lemlib::debug
- *
- * @param debug the new value
- */
-void setDebug(bool debug);
+        void log(Level level, const char* message, const char* exception);
+        void log(Level level, const char* message);
+        void debug(const char* message);
+        void info(const char* message);
+        void warn(const char* message);
+        void error(const char* message, const char* exception);
+        void error(const char* message);
+        void fatal(const char* message, const char* exception);
+        void fatal(const char* message);
 
-/**
- * @brief Whether or not to log info messages.
- *
- * If false, only log messages with a level of lemlib::logger::Level::WARN
- * or higher will be logged
- */
-bool isVerbose();
-/**
- * @brief Sets lemlib::verbose
- *
- * @param verbose the new value
- */
-void setVerbose(bool verbose);
+        // TODO: logging for pure pursuit
+        void logPid(std::string name, float output, float p, float i, float d);
+        void logOdom(Pose currentPose);
 
-/**
- * @brief The current lowest log level.
- *
- * @return the lowest loggable level
- */
-Level getLowestLevel();
+        void setFormat(const char* format);
+        void setPidFormat(const char* format);
+        void setOdomFormat(const char* format);
+    private:
+        bool enabled = false;
+        bool verbose = false;
 
-/**
- * @brief Sets the lowest loggable level
- *
- * @param level the new lowest loggable level
- */
-void setLowestLevel(Level level);
+        Level lowestLevel = Level::INFO;
+        bool checkLowestLevel(Logger::Level level);
 
-/**
- * @brief Logs a message with an exception
- *
- * @param level the level of the message
- * @param message the message
- * @param exception the exception
- */
-void log(Level level, const char* message, const char* exception);
-/**
- * @brief Logs a message
- *
- * @param level the level of the message
- * @param message the message
- */
-void log(Level level, const char* message);
+        void loop() override;
 
-/**
- * @brief Logs a debug message
- *
- * @param message
- */
-void debug(const char* message);
-/**
- * @brief Logs an info message
- *
- * @param message
- */
-void info(const char* message);
-/**
- * @brief Logs a warning message
- *
- * @param message
- */
-void warn(const char* message);
-/**
- * @brief Logs an error message
- *
- * @param message
- * @param exception
- */
-void error(const char* message, const char* exception);
-/**
- * @brief Logs an error message
- *
- * @param message
- */
-void error(const char* message);
-/**
- * @brief Logs a fatal message
- *
- * @param message
- * @param exception
- */
-void fatal(const char* message, const char* exception);
-/**
- * @brief Logs a fatal message
- *
- * @param message
- */
-void fatal(const char* message);
+        std::string logFormat = "[LemLib] $t -- $l: $m";
+        std::string pidFormat = "[LemLib::PID] $n P: $p, I: $i, D: $d";
+        std::string odomFormat = "[LemLib::Odometry] X: $x, Y: $y, Theta: $a";
 
-} // namespace logger
+        std::string formatLog(std::map<std::string, std::string> values, std::string format);
+
+        std::vector<std::string> buffer;
+};
+
+inline lemlib::Logger logger; // FIXME: there has got to be a better way to have a global logger class
 } // namespace lemlib
