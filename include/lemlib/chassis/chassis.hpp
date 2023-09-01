@@ -90,7 +90,7 @@ typedef struct {
  * @param scale The scaling factor, which can be optionally ignored.
  * @return The new value to be used.
  */
-typedef std::function<double(double, double)> DriveCurveFunction_t;
+typedef std::function<float(float, float)> DriveCurveFunction_t;
 
 /**
  * @brief  Default drive curve. Modifies  the input with an exponential curve. If the input is 127, the function
@@ -100,7 +100,7 @@ typedef std::function<double(double, double)> DriveCurveFunction_t;
  * @param scale how steep the curve should be.
  * @return The new value to be used.
  */
-double defaultDriveCurve(double input, double scale);
+float defaultDriveCurve(float input, float scale);
 
 /**
  * @brief Chassis class
@@ -132,7 +132,7 @@ class Chassis {
          * @param theta new theta value
          * @param radians true if theta is in radians, false if not. False by default
          */
-        void setPose(double x, double y, double theta, bool radians = false);
+        void setPose(float x, float y, float theta, bool radians = false);
         /**
          * @brief Set the pose of the chassis
          *
