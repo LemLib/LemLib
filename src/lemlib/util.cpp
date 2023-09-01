@@ -10,9 +10,10 @@
  */
 #include <math.h>
 #include <vector>
+#include "lemlib/pose.hpp"
 #include "lemlib/util.hpp"
 
-/*omit
+/**
  * @brief Slew rate limiter
  *
  * @param target target value
@@ -28,7 +29,7 @@ float lemlib::slew(float target, float current, float maxChange) {
     return current + change;
 }
 
-/*omit
+/**
  * @brief Convert radians to degrees
  *
  * @param rad radians
@@ -36,7 +37,7 @@ float lemlib::slew(float target, float current, float maxChange) {
  */
 float lemlib::radToDeg(float rad) { return rad * 180 / M_PI; }
 
-/*omit
+/**
  * @brief Convert degrees to radians
  *
  * @param deg degrees
@@ -44,7 +45,7 @@ float lemlib::radToDeg(float rad) { return rad * 180 / M_PI; }
  */
 float lemlib::degToRad(float deg) { return deg * M_PI / 180; }
 
-/*omit
+/**
  * @brief Calculate the error between 2 angles. Useful when calculating the error between 2 headings
  *
  * @param angle1
@@ -63,18 +64,18 @@ float lemlib::angleError(float angle1, float angle2, bool radians) {
     return error;
 }
 
-/*omit
+/**
  * @brief Return the sign of a number
  *
  * @param x the number to get the sign of
- * @return float - -1 if negative, 1 if positive
+ * @return int - -1 if negative, 1 if positive
  */
-float lemlib::sgn(float x) {
+int lemlib::sgn(float x) {
     if (x < 0) return -1;
     else return 1;
 }
 
-/*omit
+/**
  * @brief Return the average of a vector of numbers
  *
  * @param values
@@ -84,4 +85,41 @@ float lemlib::avg(std::vector<float> values) {
     float sum = 0;
     for (float value : values) { sum += value; }
     return sum / values.size();
+}
+
+/**
+ * @brief Exponential moving average
+ *
+ * @param current current measurement
+ * @param previous previous output
+ * @param smooth smoothing factor (0-1). 1 means no smoothing, 0 means no change
+ * @return float - the smoothed output
+ */
+float lemlib::ema(float current, float previous, float smooth) {
+    return (current * smooth) + (previous * (1 - smooth));
+}
+
+/**
+ * @brief Get the signed curvature of a circle that intersects the first pose and the second pose
+ *
+ * @note The circle will be tangent to the theta value of the first pose
+ * @note The curvature is signed. Positive curvature means the circle is going clockwise, negative means
+ * counter-clockwise
+ * @note Theta has to be in radians and in standard form. That means 0 is right and increases counter-clockwise
+ *
+ * @param pose the first pose
+ * @param other the second pose
+ * @return float curvature
+ */
+float lemlib::getCurvature(Pose pose, Pose other) {
+    // calculate whether the pose is on the left or right side of the circle
+    float side = lemlib::sgn(std::sin(pose.theta) * (other.x - pose.x) - std::cos(pose.theta) * (other.y - pose.y));
+    // calculate center point and radius
+    float a = -std::tan(pose.theta);
+    float c = std::tan(pose.theta) * pose.x - pose.y;
+    float x = std::fabs(a * other.x + other.y + c) / std::sqrt((a * a) + 1);
+    float d = std::hypot(other.x - pose.x, other.y - pose.y);
+
+    // return curvature
+    return side * ((2 * x) / (d * d));
 }

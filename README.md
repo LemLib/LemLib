@@ -15,7 +15,8 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 ## Features
 - Generic PID class
 - Odometry
-- Angular and Lateral motion PIDs
+- Odom turn to face point
+- [Boomerang controller](https://www.desmos.com/calculator/sptjw5szex)
 - Pure Pursuit
 - [Path Generator](https://github.com/LemLib/Path-Gen) support
 
