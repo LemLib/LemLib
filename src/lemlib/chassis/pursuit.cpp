@@ -63,7 +63,7 @@ std::vector<lemlib::Pose> getData(asset path) {
 
     // read the points until 'endData' is read
     for (std::string line : dataLines) {
-        if (line == "endData") break;
+        if (line == "endData" || line == "endData\r") break;
         pointInput = readElement(line, ", "); // parse line
         pathPoint.x = std::stof(pointInput.at(0)); // x position
         pathPoint.y = std::stof(pointInput.at(1)); // y position
@@ -135,28 +135,38 @@ float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, float
 /**
  * @brief returns the lookahead point
  *
- * @param lastLookaheadIndex - the index of the last lookahead point
  * @param lastLookahead - the last lookahead point
- * @param pos - the current position of the robot
+ * @param pose - the current position of the robot
  * @param path - the path to follow
- * @param forward - whether to go forward (true) or backwards (false)
+ * @param lookaheadDist - the lookahead distance of the algorithm
  */
 lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::vector<lemlib::Pose> path,
                             float lookaheadDist) {
-    // initialize variables
-    lemlib::Pose lookahead = lastLookahead;
-    double t;
-
     // find the furthest lookahead point on the path
-    for (int i = 0; i < path.size() - 1; i++) {
-        t = circleIntersect(path.at(i), path.at(i + 1), pose, lookaheadDist);
-        if (t != -1 && i >= lastLookahead.theta) { // new lookahead point found
-            lookahead = path.at(i).lerp(path.at(i + 1), t);
+
+    // optimizations applied:
+    // - made the starting index the one after lastLookahead's index,
+    // as anything before would be discarded
+    // - searched the path in reverse, as the first hit would be
+    // the garunteed farthest lookahead point
+    for (int i = path.size() - 1; i > lastLookahead.theta; i--) {
+        // since we are searching in reverse, instead of getting
+        // the current pose and the next one, we should get the
+        // current pose and the *last* one
+        lemlib::Pose lastPathPose = path.at(i - 1);
+        lemlib::Pose currentPathPose = path.at(i);
+
+        float t = circleIntersect(lastPathPose, currentPathPose, pose, lookaheadDist);
+
+        if (t != -1) {
+            lemlib::Pose lookahead = lastPathPose.lerp(currentPathPose, t);
             lookahead.theta = i;
+            return lookahead;
         }
     }
 
-    return lookahead;
+    // robot deviated from path, use last lookahead point
+    return lastLookahead;
 }
 
 /**
@@ -165,16 +175,16 @@ lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::
  * @param pos the position of the robot
  * @param heading the heading of the robot
  * @param lookahead the lookahead point
- * @return double curvature
+ * @return float curvature
  */
-double findLookaheadCurvature(lemlib::Pose pose, double heading, lemlib::Pose lookahead) {
+float findLookaheadCurvature(lemlib::Pose pose, float heading, lemlib::Pose lookahead) {
     // calculate whether the robot is on the left or right side of the circle
-    double side = lemlib::sgn(std::sin(heading) * (lookahead.x - pose.x) - std::cos(heading) * (lookahead.y - pose.y));
+    float side = lemlib::sgn(std::sin(heading) * (lookahead.x - pose.x) - std::cos(heading) * (lookahead.y - pose.y));
     // calculate center point and radius
-    double a = -std::tan(heading);
-    double c = std::tan(heading) * pose.x - pose.y;
-    double x = std::fabs(a * lookahead.x + lookahead.y + c) / std::sqrt((a * a) + 1);
-    double d = std::hypot(lookahead.x - pose.x, lookahead.y - pose.y);
+    float a = -std::tan(heading);
+    float c = std::tan(heading) * pose.x - pose.y;
+    float x = std::fabs(a * lookahead.x + lookahead.y + c) / std::sqrt((a * a) + 1);
+    float d = std::hypot(lookahead.x - pose.x, lookahead.y - pose.y);
 
     // return curvature
     return side * ((2 * x) / (d * d));
@@ -197,7 +207,7 @@ void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reve
     Pose lookaheadPose(0, 0, 0);
     Pose lastLookahead = pathPoints.at(0);
     lastLookahead.theta = 0;
-    double curvature;
+    float curvature;
     float targetVel;
     float prevLeftVel = 0;
     float prevRightVel = 0;
@@ -222,7 +232,7 @@ void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reve
         lastLookahead = lookaheadPose; // update last lookahead position
 
         // get the curvature of the arc between the robot and the lookahead point
-        double curvatureHeading = M_PI / 2 - pose.theta;
+        float curvatureHeading = M_PI / 2 - pose.theta;
         curvature = findLookaheadCurvature(pose, curvatureHeading, lookaheadPose);
 
         // get the target velocity of the robot

@@ -53,10 +53,10 @@ void lemlib::Chassis::calibrate() {
     }
     // initialize odom
     if (odomSensors.vertical1 == nullptr)
-        odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelType,
+        odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
                                                           -(drivetrain.trackWidth / 2), drivetrain.rpm);
     if (odomSensors.vertical2 == nullptr)
-        odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelType,
+        odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
                                                           drivetrain.trackWidth / 2, drivetrain.rpm);
     odomSensors.vertical1->reset();
     odomSensors.vertical2->reset();
@@ -76,7 +76,7 @@ void lemlib::Chassis::calibrate() {
  * @param theta new theta value
  * @param radians true if theta is in radians, false if not. False by default
  */
-void lemlib::Chassis::setPose(double x, double y, double theta, bool radians) {
+void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
     lemlib::setPose(lemlib::Pose(x, y, theta), radians);
 }
 
