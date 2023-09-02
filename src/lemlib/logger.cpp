@@ -146,6 +146,11 @@ void Logger::logOdom(Pose currentPose) {
     lock.give();
 }
 
+void Logger::setPrintRate(int rate) {
+    if (rate <= 0) { return; }
+    printRate = rate;
+}
+
 void Logger::loop() {
     printf("starting task\n");
     while (true) {
@@ -155,7 +160,7 @@ void Logger::loop() {
             buffer.pop_front();
         }
         lock.give();
-        pros::delay(5);
+        pros::delay(printRate);
     }
 }
 

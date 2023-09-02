@@ -157,11 +157,18 @@ class Logger : public TaskWrapper {
          * @param currentPose The current position of the robot.
          */
         void logOdom(Pose currentPose);
+        /*
+         * @brief Sets the speed at which the logger logs messages. The default rate is once every 5ms.
+         * @param rate The new print rate in milliseconds.
+         */
+        void setPrintRate(int rate);
     private:
         pros::Mutex lock;
 
         Level lowestLevel = Level::INFO;
         bool checkLowestLevel(Logger::Level level);
+
+        int printRate = 5;
 
         void loop() override;
 
