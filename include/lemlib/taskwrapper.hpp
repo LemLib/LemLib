@@ -9,9 +9,6 @@
  *
  */
 
-// TODO: add file header and documentation
-
-
 #pragma once
 #include <cstdio>
 #include <memory>
