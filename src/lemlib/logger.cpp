@@ -11,6 +11,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <iterator>
 #include <map>
@@ -22,14 +23,6 @@
 #include "pros/rtos.hpp"
 
 namespace lemlib {
-
-bool Logger::getDebug() { return isDebug; }
-
-void Logger::setDebug(bool newDebug) { isDebug = newDebug; }
-
-bool Logger::getVerbose() { return isVerbose; }
-
-void Logger::setVerbose(bool newVerbose) { isVerbose = newVerbose; }
 
 Logger::Level Logger::getLowestLevel() { return lowestLevel; }
 
@@ -83,11 +76,10 @@ std::string Logger::formatLog(std::map<std::string, std::string> values, std::st
     return buffer;
 }
 
+void Logger::setFormat(const char* format) { logFormat = format; }
+
 void Logger::log(Level level, const char* message) {
-    lock.take();
     if (!checkLowestLevel(level)) return;
-    if (level == Level::DEBUG && !isDebug) return;
-    if (level == Level::INFO && !isVerbose) return;
 
     if (message == nullptr) message = "";
 
@@ -98,20 +90,16 @@ void Logger::log(Level level, const char* message) {
 
     std::string messageString = formatLog(placeHolderMap, logFormat);
 
+    lock.take();
     // std::cout << messageString << "\n";
-
     buffer.push_back(messageString);
     lock.give();
 }
 
 void Logger::log(Level level, const char* message, const char* exception) {
-    if (!checkLowestLevel(level)) return;
-    if (level == Level::DEBUG && !isDebug) return;
-    if (level == Level::INFO && !isVerbose) return;
-
     log(level, message);
-    if (message == nullptr) message = "";
     if (exception == nullptr) throw std::invalid_argument("exception cannot be null");
+    // TODO: actually throw an exception here
 }
 
 void Logger::debug(const char* message) { log(Level::DEBUG, message); }
@@ -128,36 +116,33 @@ void Logger::fatal(const char* message, const char* exception) { log(Level::FATA
 
 void Logger::fatal(const char* message) { log(Level::FATAL, message); }
 
-void Logger::setFormat(const char* format) { logFormat = format; }
-
 void Logger::setPidFormat(const char* format) { pidFormat = format; }
 
-void Logger::setOdomFormat(const char* format) { odomFormat = format; }
-
 void Logger::logPid(std::string name, float output, float p, float i, float d) {
-    lock.take();
     std::map<std::string, std::string> placeHolderMap;
     placeHolderMap["$n"] = name;
+    placeHolderMap["$o"] = std::to_string(output);
     placeHolderMap["$p"] = std::to_string(p);
     placeHolderMap["$i"] = std::to_string(i);
     placeHolderMap["$d"] = std::to_string(d);
     placeHolderMap["$t"] = std::to_string(pros::millis());
 
+    lock.take();
     buffer.push_back(formatLog(placeHolderMap, pidFormat));
-    // std::cout << formatLog(placeHolderMap, pidFormat) << "\n";
     lock.give();
 }
 
+void Logger::setOdomFormat(const char* format) { odomFormat = format; }
+
 void Logger::logOdom(Pose currentPose) {
-    lock.take();
     std::map<std::string, std::string> placeHolderMap;
     placeHolderMap["$x"] = std::to_string(currentPose.x);
     placeHolderMap["$y"] = std::to_string(currentPose.y);
     placeHolderMap["$a"] = std::to_string(currentPose.theta);
     placeHolderMap["$t"] = std::to_string(pros::millis());
 
+    lock.take();
     buffer.push_back(formatLog(placeHolderMap, odomFormat));
-    // std::cout << formatLog(placeHolderMap, odomFormat) << "\n";
     lock.give();
 }
 
