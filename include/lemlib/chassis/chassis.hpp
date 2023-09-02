@@ -76,6 +76,7 @@ typedef struct {
  * @param trackWidth the track width of the robot
  * @param wheelDiameter the diameter of the wheel used on the drivetrain
  * @param rpm the rpm of the wheels
+ * @param chasePower higher values make the robot move faster but causes more overshoot on turns
  */
 typedef struct {
         pros::Motor_Group* leftMotors;
@@ -83,6 +84,7 @@ typedef struct {
         float trackWidth;
         float wheelDiameter;
         float rpm;
+        float chasePower;
 } Drivetrain_t;
 
 /**
@@ -91,7 +93,7 @@ typedef struct {
  * @param scale The scaling factor, which can be optionally ignored.
  * @return The new value to be used.
  */
-typedef std::function<double(double, double)> DriveCurveFunction_t;
+typedef std::function<float(float, float)> DriveCurveFunction_t;
 
 /**
  * @brief  Default drive curve. Modifies  the input with an exponential curve. If the input is 127, the function
@@ -101,7 +103,7 @@ typedef std::function<double(double, double)> DriveCurveFunction_t;
  * @param scale how steep the curve should be.
  * @return The new value to be used.
  */
-double defaultDriveCurve(double input, double scale);
+float defaultDriveCurve(float input, float scale);
 
 /**
  * @brief Chassis class
@@ -133,7 +135,7 @@ class Chassis {
          * @param theta new theta value
          * @param radians true if theta is in radians, false if not. False by default
          */
-        void setPose(double x, double y, double theta, bool radians = false);
+        void setPose(float x, float y, float theta, bool radians = false);
         /**
          * @brief Set the pose of the chassis
          *
@@ -149,6 +151,28 @@ class Chassis {
          */
         Pose getPose(bool radians = false);
         /**
+         * @brief Get the speed of the robot
+         *
+         * @param radians true for theta in radians, false for degrees. False by default
+         * @return lemlib::Pose
+         */
+        Pose getSpeed(bool radians = false);
+        /**
+         * @brief Get the local speed of the robot
+         *
+         * @param radians true for theta in radians, false for degrees. False by default
+         * @return lemlib::Pose
+         */
+        Pose getLocalSpeed(bool radians = false);
+        /**
+         * @brief Estimate the pose of the robot after a certain amount of time
+         *
+         * @param time time in seconds
+         * @param radians False for degrees, true for radians. False by default
+         * @return lemlib::Pose
+         */
+        Pose estimatePose(float time, bool radians = false);
+        /**
          * @brief Turn the chassis so it is facing the target point
          *
          * The PID logging id is "angularPID"
@@ -162,17 +186,23 @@ class Chassis {
          */
         void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 127, bool log = false);
         /**
-         * @brief Move the chassis towards the target point
+         * @brief Move the chassis towards the target pose
          *
-         * The PID logging ids are "angularPID" and "lateralPID"
+         * Uses the boomerang controller
          *
          * @param x x location
          * @param y y location
+         * @param theta theta (in degrees). Target angle
+         * @param forwards whether the robot should move forwards or backwards. true for forwards, false for backwards
          * @param timeout longest time the robot can spend moving
-         * @param maxSpeed the maximum speed the robot can move at
+         * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
+         * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
+         * default to global value
+         * @param maxSpeed the maximum speed the robot can move at. 127 at default
          * @param log whether the chassis should log the turnTo function. false by default
          */
-        void moveTo(float x, float y, int timeout, float maxSpeed = 200, bool log = false);
+        void moveTo(float x, float y, float theta, bool forwards, int timeout, float chasePower = 0, float lead = 0.6,
+                    float maxSpeed = 127, bool log = false);
         /**
          * @brief Move the chassis along a path
          *
