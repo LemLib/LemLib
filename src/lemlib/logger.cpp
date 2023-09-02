@@ -14,20 +14,22 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <ostream>
 #include <string>
 
 #include "lemlib/logger.hpp"
+#include "pros/llemu.hpp"
 #include "pros/rtos.hpp"
 
 namespace lemlib {
 
-bool Logger::isEnabled() { return enabled; }
+bool Logger::getDebug() { return isDebug; }
 
-void Logger::setEnabled(bool debug) { debug = debug; }
+void Logger::setDebug(bool newDebug) { isDebug = newDebug; }
 
-bool Logger::isVerbose() { return verbose; }
+bool Logger::getVerbose() { return isVerbose; }
 
-void Logger::setVerbose(bool verbose) { verbose = verbose; }
+void Logger::setVerbose(bool newVerbose) { isVerbose = newVerbose; }
 
 Logger::Level Logger::getLowestLevel() { return lowestLevel; }
 
@@ -82,23 +84,31 @@ std::string Logger::formatLog(std::map<std::string, std::string> values, std::st
 }
 
 void Logger::log(Level level, const char* message) {
+    lock.take();
     if (!checkLowestLevel(level)) return;
-    if (level == Level::DEBUG && !enabled) return;
-    if (level == Level::INFO && !verbose) return;
+    if (level == Level::DEBUG && !isDebug) return;
+    if (level == Level::INFO && !isVerbose) return;
 
     if (message == nullptr) message = "";
 
     std::map<std::string, std::string> placeHolderMap;
     placeHolderMap["$m"] = message;
     placeHolderMap["$l"] = getFormattedLevel(level);
-    placeHolderMap["$t"] = pros::millis();
+    placeHolderMap["$t"] = std::to_string(pros::millis());
 
     std::string messageString = formatLog(placeHolderMap, logFormat);
 
+    // std::cout << messageString << "\n";
+
     buffer.push_back(messageString);
+    lock.give();
 }
 
 void Logger::log(Level level, const char* message, const char* exception) {
+    if (!checkLowestLevel(level)) return;
+    if (level == Level::DEBUG && !isDebug) return;
+    if (level == Level::INFO && !isVerbose) return;
+
     log(level, message);
     if (message == nullptr) message = "";
     if (exception == nullptr) throw std::invalid_argument("exception cannot be null");
@@ -125,29 +135,42 @@ void Logger::setPidFormat(const char* format) { pidFormat = format; }
 void Logger::setOdomFormat(const char* format) { odomFormat = format; }
 
 void Logger::logPid(std::string name, float output, float p, float i, float d) {
+    lock.take();
     std::map<std::string, std::string> placeHolderMap;
     placeHolderMap["$n"] = name;
-    placeHolderMap["$p"] = p;
-    placeHolderMap["$i"] = i;
-    placeHolderMap["$d"] = d;
-    placeHolderMap["$t"] = pros::millis();
+    placeHolderMap["$p"] = std::to_string(p);
+    placeHolderMap["$i"] = std::to_string(i);
+    placeHolderMap["$d"] = std::to_string(d);
+    placeHolderMap["$t"] = std::to_string(pros::millis());
+
     buffer.push_back(formatLog(placeHolderMap, pidFormat));
+    // std::cout << formatLog(placeHolderMap, pidFormat) << "\n";
+    lock.give();
 }
 
 void Logger::logOdom(Pose currentPose) {
+    lock.take();
     std::map<std::string, std::string> placeHolderMap;
-    placeHolderMap["$x"] = currentPose.x;
-    placeHolderMap["$y"] = currentPose.y;
-    placeHolderMap["$a"] = currentPose.theta;
-    placeHolderMap["$t"] = pros::millis();
-    buffer.push_back(formatLog(placeHolderMap, pidFormat));
+    placeHolderMap["$x"] = std::to_string(currentPose.x);
+    placeHolderMap["$y"] = std::to_string(currentPose.y);
+    placeHolderMap["$a"] = std::to_string(currentPose.theta);
+    placeHolderMap["$t"] = std::to_string(pros::millis());
+
+    buffer.push_back(formatLog(placeHolderMap, odomFormat));
+    // std::cout << formatLog(placeHolderMap, odomFormat) << "\n";
+    lock.give();
 }
 
 void Logger::loop() {
+    printf("starting task\n");
     while (true) {
-        for (auto& message : buffer) { std::cout << message << std::endl; }
-        buffer = {};
-        pros::delay(20);
+        lock.take();
+        if (buffer.size() > 0) {
+            std::cout << buffer.at(0) << std::endl;
+            buffer.pop_front();
+        }
+        lock.give();
+        pros::delay(5);
     }
 }
 

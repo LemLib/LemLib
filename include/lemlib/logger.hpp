@@ -12,10 +12,11 @@
 #pragma once
 
 #include "pose.hpp"
+#include "pros/rtos.hpp"
 #include "taskwrapper.hpp"
 
 #include <map>
-#include <vector>
+#include <deque>
 #include <string>
 
 namespace lemlib {
@@ -24,10 +25,10 @@ class Logger : public TaskWrapper {
     public:
         enum class Level { DEBUG, INFO, WARN, ERROR, FATAL };
 
-        bool isEnabled();
-        void setEnabled(bool debug);
+        bool getDebug();
+        void setDebug(bool debug);
 
-        bool isVerbose();
+        bool getVerbose();
         void setVerbose(bool verbose);
 
         Level getLowestLevel();
@@ -51,21 +52,22 @@ class Logger : public TaskWrapper {
         void setPidFormat(const char* format);
         void setOdomFormat(const char* format);
     private:
-        bool enabled = false;
-        bool verbose = false;
+        pros::Mutex lock;
+        bool isDebug = false;
+        bool isVerbose = false;
 
         Level lowestLevel = Level::INFO;
         bool checkLowestLevel(Logger::Level level);
 
         void loop() override;
 
-        std::string logFormat = "[LemLib] $t -- $l: $m";
+        std::string logFormat = "[LemLib] $t $l: $m";
         std::string pidFormat = "[LemLib::PID] $n P: $p, I: $i, D: $d";
         std::string odomFormat = "[LemLib::Odometry] X: $x, Y: $y, Theta: $a";
 
         std::string formatLog(std::map<std::string, std::string> values, std::string format);
 
-        std::vector<std::string> buffer;
+        std::deque<std::string> buffer;
 };
 
 inline lemlib::Logger logger; // FIXME: there has got to be a better way to have a global logger class
