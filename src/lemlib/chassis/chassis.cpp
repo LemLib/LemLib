@@ -184,6 +184,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    // give the mutex back
+    mutex.give();
 }
 
 /**
@@ -284,4 +286,6 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    // give the mutex back
+    mutex.give();
 }

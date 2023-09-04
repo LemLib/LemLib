@@ -279,4 +279,6 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
     // stop the robot
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    // give the mutex back
+    mutex.give();
 }
