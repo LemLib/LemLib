@@ -164,4 +164,10 @@ void Logger::loop() {
     }
 }
 
+void Logger::startTask() {
+    if (task == nullptr) {
+        task = new pros::Task([=] { loop(); });
+    }
+}
+
 } // namespace lemlib

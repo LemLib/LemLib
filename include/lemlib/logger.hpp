@@ -13,7 +13,6 @@
 
 #include "pose.hpp"
 #include "pros/rtos.hpp"
-#include "taskwrapper.hpp"
 
 #include <map>
 #include <deque>
@@ -23,7 +22,7 @@ namespace lemlib {
 /*
  * @brief The logging class
  */
-class Logger : public TaskWrapper {
+class Logger {
     public:
         /*
          * @brief A level enumeration.
@@ -43,13 +42,13 @@ class Logger : public TaskWrapper {
          *
          * @return the lowest loggable level
          */
-        Level getLowestLevel();
+        static Level getLowestLevel();
         /*
          * @brief Sets the lowest loggable level
          *
          * @param level the new lowest loggable level
          */
-        void setLowestLevel(Level level);
+        static void setLowestLevel(Level level);
         /*
          * @brief Sets the format for the output of the log function, as well as its variants for each of the logging
          * levels. All instances of $ and then are placeholders and will be replaced with a value. The default format is
@@ -59,7 +58,7 @@ class Logger : public TaskWrapper {
          * - $m: The message being logged
          * @param format The new format you want to set.
          */
-        void setFormat(const char* format);
+        static void setFormat(const char* format);
         /*
          * @brief Logs a message with an exception
          *
@@ -67,58 +66,58 @@ class Logger : public TaskWrapper {
          * @param message the message
          * @param exception the exception
          */
-        void log(Level level, const char* message, const char* exception);
+        static void log(Level level, const char* message, const char* exception);
         /*
          * @brief Logs a message
          *
          * @param level the level of the message
          * @param message the message
          */
-        void log(Level level, const char* message);
+        static void log(Level level, const char* message);
         /*
          * @brief Logs a debug message
          *
          * @param message
          */
-        void debug(const char* message);
+        static void debug(const char* message);
         /*
          * @brief Logs an info message
          *
          * @param message
          */
-        void info(const char* message);
+        static void info(const char* message);
         /*
          * @brief Logs a warn message
          *
          * @param message
          */
-        void warn(const char* message);
+        static void warn(const char* message);
         /*
          * @brief Logs an error message
          *
          * @param message
          * @param exception
          */
-        void error(const char* message, const char* exception);
+        static void error(const char* message, const char* exception);
         /*
          * @brief Logs an error message
          *
          * @param message
          */
-        void error(const char* message);
+        static void error(const char* message);
         /*
          * @brief Logs a fatal message
          *
          * @param message
          * @param exception
          */
-        void fatal(const char* message, const char* exception);
+        static void fatal(const char* message, const char* exception);
         /*
          * @brief Logs a fatal message
          *
          * @param message
          */
-        void fatal(const char* message);
+        static void fatal(const char* message);
         /*
          * @brief Sets the format for the output of the PID logging function, as well as its variants for each of the
          * logging levels. All instances of $ and then are placeholders and will be replaced with a value. The default
@@ -130,7 +129,7 @@ class Logger : public TaskWrapper {
          * - $d: Derivative term
          * @param format The new format you want to set.
          */
-        void setPidFormat(const char* format);
+        static void setPidFormat(const char* format);
         /*
          * @brief Logs the output of a PID controller.
          *
@@ -140,7 +139,7 @@ class Logger : public TaskWrapper {
          * @param i The integral term of the controller
          * @param d The derivative term of the controller
          */
-        void logPid(std::string name, float output, float p, float i, float d);
+        static void logPid(std::string name, float output, float p, float i, float d);
         /*
          * @brief Sets the format for the output of the Odometry logging function, as well as its variants for each of
          * the logging levels. All instances of $ and then are placeholders and will be replaced with a value. The
@@ -151,35 +150,41 @@ class Logger : public TaskWrapper {
          * - $a: angle
          * @param format The new format you want to set.
          */
-        void setOdomFormat(const char* format);
+        static void setOdomFormat(const char* format);
         /*
          * @brief Logs the coordinates of a Pose.          *
          * @param currentPose The current position of the robot.
          */
-        void logOdom(Pose currentPose);
+        static void logOdom(Pose currentPose);
         /*
          * @brief Sets the speed at which the logger logs messages. The default rate is once every 5ms.
          * @param rate The new print rate in milliseconds.
          */
-        void setPrintRate(int rate);
+        static void setPrintRate(int rate);
+
+        /*
+         * @brief Begins the long running task for the logger.
+         * @note This method must be run in order for the logger to function.
+         */
+        static void startTask();
     private:
-        pros::Mutex lock;
+        inline static pros::Mutex lock;
+        inline static pros::Task* task {nullptr};
 
-        Level lowestLevel = Level::INFO;
-        bool checkLowestLevel(Logger::Level level);
+        inline static Level lowestLevel = Level::INFO;
+        static bool checkLowestLevel(Logger::Level level);
 
-        int printRate = 5;
+        inline static int printRate = 5;
 
-        void loop() override;
+        static void loop();
 
-        std::string logFormat = "[LemLib] $l: $m";
-        std::string pidFormat = "[LemLib::PID] $n P: $p, I: $i, D: $d";
-        std::string odomFormat = "[LemLib::Odometry] X: $x, Y: $y, Theta: $a";
+        inline static std::string logFormat = "[LemLib] $l: $m";
+        inline static std::string pidFormat = "[LemLib::PID] $n P: $p, I: $i, D: $d";
+        inline static std::string odomFormat = "[LemLib::Odometry] X: $x, Y: $y, Theta: $a";
 
-        std::string formatLog(std::map<std::string, std::string> values, std::string format);
+        static std::string formatLog(std::map<std::string, std::string> values, std::string format);
 
-        std::deque<std::string> buffer;
+        inline static std::deque<std::string> buffer = {};
 };
 
-inline lemlib::Logger logger; // FIXME: there has got to be a better way to have a global logger class
 } // namespace lemlib
