@@ -209,7 +209,7 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
     if (!mutex.take(10)) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([=]() { follow(path, timeout, lookahead, false, forwards, maxSpeed, log); });
+        pros::Task task([&]() { follow(path, timeout, lookahead, false, forwards, maxSpeed, log); });
         mutex.give();
         return;
     }

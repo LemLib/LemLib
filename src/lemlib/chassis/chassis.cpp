@@ -135,6 +135,15 @@ lemlib::Pose lemlib::Chassis::estimatePose(float time, bool radians) { return le
  * @param log whether the chassis should log the turnTo function. false by default
  */
 void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool reversed, float maxSpeed, bool log) {
+    // try to take the mutex
+    // if its unsuccessful after 10ms, return
+    if (!mutex.take(10)) return;
+    // if the function is async, run it in a new task
+    if (async) {
+        pros::Task task([&]() { turnTo(x, y, timeout, false, reversed, maxSpeed, log); });
+        mutex.give();
+        return;
+    }
     Pose pose(0, 0);
     float targetTheta;
     float deltaX, deltaY, deltaTheta;
@@ -148,15 +157,6 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
 
     // main loop
     while (pros::competition::get_status() == compState && !pid.settled()) {
-        // try to take the mutex
-        // if its unsuccessful after 10ms, return
-        if (!mutex.take(10)) return;
-        // if the function is async, run it in a new task
-        if (async) {
-            pros::Task task([=]() { turnTo(x, y, timeout, false, reversed, maxSpeed, log); });
-            mutex.give();
-            return;
-        }
         // update variables
         pose = getPose();
         pose.theta = (reversed) ? fmod(pose.theta - 180, 360) : fmod(pose.theta, 360);
@@ -213,7 +213,7 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
     if (!mutex.take(10)) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([=]() { moveTo(x, y, theta, timeout, false, forwards, chasePower, lead, maxSpeed, log); });
+        pros::Task task([&]() { moveTo(x, y, theta, timeout, false, forwards, chasePower, lead, maxSpeed, log); });
         mutex.give();
         return;
     }
