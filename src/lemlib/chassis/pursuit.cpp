@@ -51,7 +51,7 @@ std::vector<std::string> readElement(const std::string& input, std::string delim
  * @param filePath The file to read from
  * @return std::vector<lemlib::Pose> vector of points on the path
  */
-std::vector<lemlib::Pose> getData(asset path) {
+std::vector<lemlib::Pose> getData(const asset& path) {
     std::vector<lemlib::Pose> robotPath;
     std::string line;
     std::vector<std::string> pointInput;
@@ -193,15 +193,26 @@ float findLookaheadCurvature(lemlib::Pose pose, float heading, lemlib::Pose look
 /**
  * @brief Move the chassis along a path
  *
- * @param path the filename of the path to follow
+ * @param filePath the filename of the path to follow
  * @param timeout the maximum time the robot can spend moving
- * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will
- * follow the path less accurately
- * @param reverse whether the robot should follow the path in reverse. false by default
+ * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
+ * will follow the path less accurately
+ * @param async whether the function should be run asynchronously. false by default
+ * @param forwards whether the robot should follow the path going forwards. true by default
  * @param maxSpeed the maximum speed the robot can move at
  * @param log whether the chassis should log the path on a log file. false by default.
  */
-void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reverse, float maxSpeed, bool log) {
+void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bool async, bool forwards, float maxSpeed,
+                             bool log) {
+    // try to take the mutex
+    // if its unsuccessful after 10ms, return
+    if (!mutex.take(10)) return;
+    // if the function is async, run it in a new task
+    if (async) {
+        pros::Task task([=]() { follow(path, timeout, lookahead, false, forwards, maxSpeed, log); });
+        mutex.give();
+        return;
+    }
     std::vector<lemlib::Pose> pathPoints = getData(path); // get list of path points
     Pose pose(0, 0, 0);
     Pose lookaheadPose(0, 0, 0);
@@ -220,7 +231,7 @@ void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reve
     for (int i = 0; i < timeout / 10 && pros::competition::get_status() == compState; i++) {
         // get the current position of the robot
         pose = this->getPose(true);
-        if (reverse) pose.theta -= M_PI;
+        if (!forwards) pose.theta -= M_PI;
 
         // find the closest point on the path to the robot
         closestPoint = findClosest(pose, pathPoints);
@@ -254,12 +265,12 @@ void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reve
         prevRightVel = targetRightVel;
 
         // move the drivetrain
-        if (reverse) {
-            drivetrain.leftMotors->move(-targetRightVel);
-            drivetrain.rightMotors->move(-targetLeftVel);
-        } else {
+        if (forwards) {
             drivetrain.leftMotors->move(targetLeftVel);
             drivetrain.rightMotors->move(targetRightVel);
+        } else {
+            drivetrain.leftMotors->move(-targetRightVel);
+            drivetrain.rightMotors->move(-targetLeftVel);
         }
 
         pros::delay(10);

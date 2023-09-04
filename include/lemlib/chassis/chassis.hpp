@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
 #include <functional>
@@ -179,11 +180,13 @@ class Chassis {
          * @param x x location
          * @param y y location
          * @param timeout longest time the robot can spend moving
-         * @param reversed whether the robot should turn in the opposite direction. false by default
+         * @param async whether the function should be run asynchronously. false by default
+         * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
          * @param maxSpeed the maximum speed the robot can turn at. Default is 200
          * @param log whether the chassis should log the turnTo function. false by default
          */
-        void turnTo(float x, float y, int timeout, bool reversed = false, float maxSpeed = 127, bool log = false);
+        void turnTo(float x, float y, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127,
+                    bool log = false);
         /**
          * @brief Move the chassis towards the target pose
          *
@@ -192,16 +195,18 @@ class Chassis {
          * @param x x location
          * @param y y location
          * @param theta theta (in degrees). Target angle
-         * @param forwards whether the robot should move forwards or backwards. true for forwards, false for backwards
          * @param timeout longest time the robot can spend moving
+         * @param async whether the function should be run asynchronously. false by default
+         * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
+         * backwards
          * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
          * default to global value
          * @param maxSpeed the maximum speed the robot can move at. 127 at default
          * @param log whether the chassis should log the turnTo function. false by default
          */
-        void moveTo(float x, float y, float theta, bool forwards, int timeout, float chasePower = 0, float lead = 0.6,
-                    float maxSpeed = 127, bool log = false);
+        void moveTo(float x, float y, float theta, int timeout, bool async = false, bool forwards = true,
+                    float chasePower = 0, float lead = 0.6, float maxSpeed = 127, bool log = false);
         /**
          * @brief Move the chassis along a path
          *
@@ -209,12 +214,13 @@ class Chassis {
          * @param timeout the maximum time the robot can spend moving
          * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
          * will follow the path less accurately
-         * @param reverse whether the robot should follow the path in reverse. false by default
+         * @param async whether the function should be run asynchronously. false by default
+         * @param forwards whether the robot should follow the path going forwards. true by default
          * @param maxSpeed the maximum speed the robot can move at
          * @param log whether the chassis should log the path on a log file. false by default.
          */
-        void follow(asset path, int timeout, float lookahead, bool reverse = false, float maxSpeed = 127,
-                    bool log = false);
+        void follow(const asset& path, int timeout, float lookahead, bool async = false, bool forwards = true,
+                    float maxSpeed = 127, bool log = false);
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this
          * control scheme one joystick axis controls one half of the robot, and another joystick axis controls another.
@@ -246,6 +252,7 @@ class Chassis {
          */
         void curvature(int throttle, int turn, float cureGain = 0.0);
     private:
+        pros::Mutex mutex;
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;
