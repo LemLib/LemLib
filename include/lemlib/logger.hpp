@@ -166,7 +166,7 @@ class Logger {
          * @brief Begins the long running task for the logger.
          * @note This method must be run in order for the logger to function.
          */
-        static void startTask();
+        static void initialize();
     private:
         inline static pros::Mutex lock;
         inline static pros::Task* task {nullptr};
