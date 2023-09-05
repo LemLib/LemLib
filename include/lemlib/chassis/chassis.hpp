@@ -253,6 +253,9 @@ class Chassis {
         void curvature(int throttle, int turn, float cureGain = 0.0);
     private:
         pros::Mutex mutex;
+        float distTraveled = 0;
+        float pctComplete = 0;
+
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;

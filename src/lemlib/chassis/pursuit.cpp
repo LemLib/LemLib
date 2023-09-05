@@ -213,8 +213,15 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
         mutex.give();
         return;
     }
+
     std::vector<lemlib::Pose> pathPoints = getData(path); // get list of path points
-    Pose pose(0, 0, 0);
+    // calculate length of path. Used for completion variable
+    float pathLength = 0;
+    for (int i = 0; i < pathPoints.size() - 1; i++) pathLength += pathPoints.at(i).distance(pathPoints.at(i + 1));
+    distTraveled = 0;
+    pctComplete = 0;
+    Pose pose = this->getPose(true);
+    Pose lastPose = pose;
     Pose lookaheadPose(0, 0, 0);
     Pose lastLookahead = pathPoints.at(0);
     lastLookahead.theta = 0;
@@ -232,6 +239,11 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
         // get the current position of the robot
         pose = this->getPose(true);
         if (!forwards) pose.theta -= M_PI;
+
+        // update completion vars
+        distTraveled += pose.distance(lastPose);
+        lastPose = pose;
+        pctComplete = distTraveled / pathLength;
 
         // find the closest point on the path to the robot
         closestPoint = findClosest(pose, pathPoints);
