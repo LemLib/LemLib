@@ -94,7 +94,7 @@ float lemlib::FAPID::update(float target, float position, bool log) {
     prevError = error;
     totalError += error;
 
-    if (log) { Logger::logPid(name, output, kI * error, kD * totalError, kD * deltaError); }
+    if (log) { Logger::logPid(name, output, error, kP * error, kD * totalError, kD * deltaError); }
     return output;
 }
 

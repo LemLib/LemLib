@@ -1,6 +1,5 @@
 #include "main.h"
 #include "lemlib/api.hpp"
-#include "lemlib/logger.hpp"
 
 // drive motors
 pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
@@ -43,7 +42,7 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
 void initialize() {
     pros::lcd::initialize();
 
-    lemlib::Logger::startTask();
+    lemlib::Logger::initialize();
 
     // calibrate sensors
     chassis.calibrate();

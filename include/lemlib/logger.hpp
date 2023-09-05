@@ -123,7 +123,8 @@ class Logger {
          * logging levels. All instances of $ and then are placeholders and will be replaced with a value. The default
          * format is "[LemLib::PID] $n P: $p, I: $i, D: $d". The following placeholders exist:
          * - $t: Time (in milliseconds)
-         * - $o: Total ouput
+         * - $e: Total distance of the system to the targer
+         * - $o: The output of the controller. This consists of all of the terms added together.
          * - $p: Proportional term
          * - $i: Integral term
          * - $d: Derivative term
@@ -135,11 +136,12 @@ class Logger {
          *
          * @param name The name of the controller
          * @param output The total output of the controller which consists of all of the other terms added together.
+         * @param error the distance of the system to the target
          * @param p The proportional term of the controller
          * @param i The integral term of the controller
          * @param d The derivative term of the controller
          */
-        static void logPid(std::string name, float output, float p, float i, float d);
+        static void logPid(std::string name, float output, float error, float p, float i, float d);
         /*
          * @brief Sets the format for the output of the Odometry logging function, as well as its variants for each of
          * the logging levels. All instances of $ and then are placeholders and will be replaced with a value. The

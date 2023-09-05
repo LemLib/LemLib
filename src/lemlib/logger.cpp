@@ -91,7 +91,6 @@ void Logger::log(Level level, const char* message) {
     std::string messageString = formatLog(placeHolderMap, logFormat);
 
     lock.take();
-    // std::cout << messageString << "\n";
     buffer.push_back(messageString);
     lock.give();
 }
@@ -118,10 +117,11 @@ void Logger::fatal(const char* message) { log(Level::FATAL, message); }
 
 void Logger::setPidFormat(const char* format) { pidFormat = format; }
 
-void Logger::logPid(std::string name, float output, float p, float i, float d) {
+void Logger::logPid(std::string name, float output, float error, float p, float i, float d) {
     std::map<std::string, std::string> placeHolderMap;
     placeHolderMap["$n"] = name;
     placeHolderMap["$o"] = std::to_string(output);
+    placeHolderMap["$e"] = std::to_string(error);
     placeHolderMap["$p"] = std::to_string(p);
     placeHolderMap["$i"] = std::to_string(i);
     placeHolderMap["$d"] = std::to_string(d);
@@ -164,7 +164,7 @@ void Logger::loop() {
     }
 }
 
-void Logger::startTask() {
+void Logger::initialize() {
     if (task == nullptr) {
         task = new pros::Task([=] { loop(); });
     }
