@@ -151,13 +151,20 @@ void Logger::setPrintRate(int rate) {
     printRate = rate;
 }
 
+/*
+ * The logger uses a buffer to print the messages rather than allowing the user print them directly.
+ * This allows the speed at which the logger prints to be controlled in a single place. This is important because the
+ * bandwidth of the connection can be different based on its type, whether it be a direct wired connection, a wireless
+ * connection with the controller, or a Bluetooth connection.
+ */
 void Logger::loop() {
     printf("starting task\n");
     while (true) {
         lock.take();
         if (buffer.size() > 0) {
             std::cout << buffer.at(0) << std::endl;
-            buffer.pop_front();
+            buffer.pop_front(); // The buffer uses deque instead of vector due to a higher performance when performing
+                                // operations on the front of the list.
         }
         lock.give();
         pros::delay(printRate);
@@ -165,6 +172,9 @@ void Logger::loop() {
 }
 
 void Logger::initialize() {
+    // The PROS Task class requires a callback to a function whose address is known at compile time. In order to
+    // circumvent this, we use a lambda function. More information on this can be found here:
+    // https://theol0403.github.io/7842B-Journal/2019-10-18/task-wrapper/
     if (task == nullptr) {
         task = new pros::Task([=] { loop(); });
     }
