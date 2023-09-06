@@ -172,20 +172,29 @@ class Logger {
     private:
         inline static pros::Mutex lock;
         inline static pros::Task* task {nullptr};
-
         inline static Level lowestLevel = Level::INFO;
+        /*
+         * @brief This function returns true if the lowest logging level is equal to or lower then the set lowest level.
+         */
         static bool checkLowestLevel(Logger::Level level);
-
         inline static int printRate = 5;
-
+        /*
+         * @brief This function will get run repeatedly inside of the task
+         */
         static void loop();
-
         inline static std::string logFormat = "[LemLib] $l: $m";
         inline static std::string pidFormat = "[LemLib::PID] $n P: $p, I: $i, D: $d";
         inline static std::string odomFormat = "[LemLib::Odometry] X: $x, Y: $y, Theta: $a";
-
+        /*
+         * @brief Replaces placeholders in a given format with values.
+         * @param values These are the values that get substituted into the format, along with their identifying
+         * placeholders. These placeholders should be two characters long, and should consist of a $ and an identifying
+         * character. For example if the key "$b" has the value "1.0", then all instances of "$b" in the format will be
+         * replaced by "1.0".
+         * @param format This is the format which the function will return in. Any placeholders found in the first
+         * parameter will be replaced by their corresponding values.
+         */
         static std::string formatLog(std::map<std::string, std::string> values, std::string format);
-
         inline static std::deque<std::string> buffer = {};
 };
 
