@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "lemlib/logger.hpp"
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
 #include <functional>
