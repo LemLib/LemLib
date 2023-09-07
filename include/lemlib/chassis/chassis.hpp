@@ -173,6 +173,14 @@ class Chassis {
          */
         Pose estimatePose(float time, bool radians = false);
         /**
+         * @brief Wait until the robot has traveled a certain distance along the path
+         *
+         * @note Units are in inches if curret motion is moveTo or follow, degrees if using turnTo
+         *
+         * @param dist the distance the robot needs to travel before returning
+         */
+        void waitUntilDist(float dist);
+        /**
          * @brief Turn the chassis so it is facing the target point
          *
          * The PID logging id is "angularPID"
@@ -253,8 +261,7 @@ class Chassis {
         void curvature(int throttle, int turn, float cureGain = 0.0);
     private:
         pros::Mutex mutex;
-        float distTraveled = 0;
-        float pctComplete = 0;
+        float distTravelled = 0;
 
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;

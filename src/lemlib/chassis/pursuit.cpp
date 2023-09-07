@@ -215,11 +215,6 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
     }
 
     std::vector<lemlib::Pose> pathPoints = getData(path); // get list of path points
-    // calculate length of path. Used for completion variable
-    float pathLength = 0;
-    for (int i = 0; i < pathPoints.size() - 1; i++) pathLength += pathPoints.at(i).distance(pathPoints.at(i + 1));
-    distTraveled = 0;
-    pctComplete = 0;
     Pose pose = this->getPose(true);
     Pose lastPose = pose;
     Pose lookaheadPose(0, 0, 0);
@@ -233,6 +228,7 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
     float leftInput = 0;
     float rightInput = 0;
     int compState = pros::competition::get_status();
+    distTravelled = 0;
 
     // loop until the robot is within the end tolerance
     for (int i = 0; i < timeout / 10 && pros::competition::get_status() == compState; i++) {
@@ -241,9 +237,8 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
         if (!forwards) pose.theta -= M_PI;
 
         // update completion vars
-        distTraveled += pose.distance(lastPose);
+        distTravelled += pose.distance(lastPose);
         lastPose = pose;
-        pctComplete = distTraveled / pathLength;
 
         // find the closest point on the path to the robot
         closestPoint = findClosest(pose, pathPoints);
@@ -291,6 +286,8 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
     // stop the robot
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    // set distTravelled to -1 to indicate that the function has finished
+    distTravelled = -1;
     // give the mutex back
     mutex.give();
 }

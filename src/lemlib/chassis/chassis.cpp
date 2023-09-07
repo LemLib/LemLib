@@ -122,6 +122,19 @@ lemlib::Pose lemlib::Chassis::getLocalSpeed(bool radians) { return lemlib::getLo
 lemlib::Pose lemlib::Chassis::estimatePose(float time, bool radians) { return lemlib::estimatePose(time, radians); }
 
 /**
+ * @brief Wait until the robot has traveled a certain distance along the path
+ *
+ * @note Units are in inches if curret motion is moveTo or follow, degrees if using turnTo
+ *
+ * @param dist the distance the robot needs to travel before returning
+ */
+void lemlib::Chassis::waitUntilDist(float dist) {
+    // do while to give the thread time to start
+    do pros::delay(10);
+    while (distTravelled <= dist || distTravelled == -1);
+}
+
+/**
  * @brief Turn the chassis so it is facing the target point
  *
  * The PID logging id is "angularPID"
@@ -144,15 +157,12 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
         mutex.give();
         return;
     }
-    Pose lastPose = getPose();
     float targetTheta;
     float deltaX, deltaY, deltaTheta;
     float motorPower;
+    float startTheta = getPose().theta;
     std::uint8_t compState = pros::competition::get_status();
-    // estimate how far the robot will move in the motion
-    float estimate = angleError(fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360), getPose().theta);
-    distTraveled = 0;
-    pctComplete = 0;
+    distTravelled = 0;
 
     // create a new PID controller
     FAPID pid = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
@@ -166,9 +176,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
         pose.theta = (reversed) ? fmod(pose.theta - 180, 360) : fmod(pose.theta, 360);
 
         // update completion vars
-        distTraveled += angleError(pose.theta, lastPose.theta);
-        lastPose = pose;
-        pctComplete = distTraveled / estimate;
+        distTravelled = fabs(angleError(pose.theta, startTheta));
 
         deltaX = x - pose.x;
         deltaY = y - pose.y;
@@ -194,6 +202,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    // set distTraveled to -1 to indicate that the function has finished
+    distTravelled = -1;
     // give the mutex back
     mutex.give();
 }
@@ -236,10 +246,7 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
                       lateralSettings.smallErrorTimeout, timeout); // exit conditions
     int compState = pros::competition::get_status();
     int start = pros::millis();
-    // estimate how far the robot will move in the motion
-    float estimate = getPose().distance(Pose(x, y)) * (1 + lead);
-    distTraveled = 0;
-    pctComplete = 0;
+    distTravelled = 0;
 
     if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
@@ -254,9 +261,8 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
         pose.theta = M_PI_2 - pose.theta; // convert to standard form
 
         // update completion vars
-        distTraveled += pose.distance(lastPose);
+        distTravelled += pose.distance(lastPose);
         lastPose = pose;
-        pctComplete = distTraveled / estimate;
 
         // check if the robot is close enough to the target to start settling
         if (pose.distance(target) < 7.5) close = true;
@@ -307,6 +313,8 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    // set distTraveled to -1 to indicate that the function has finished
+    distTravelled = -1;
     // give the mutex back
     mutex.give();
 }
