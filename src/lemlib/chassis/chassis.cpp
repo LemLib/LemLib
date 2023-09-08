@@ -122,6 +122,19 @@ lemlib::Pose lemlib::Chassis::getLocalSpeed(bool radians) { return lemlib::getLo
 lemlib::Pose lemlib::Chassis::estimatePose(float time, bool radians) { return lemlib::estimatePose(time, radians); }
 
 /**
+ * @brief Wait until the robot has traveled a certain distance along the path
+ *
+ * @note Units are in inches if curret motion is moveTo or follow, degrees if using turnTo
+ *
+ * @param dist the distance the robot needs to travel before returning
+ */
+void lemlib::Chassis::waitUntilDist(float dist) {
+    // do while to give the thread time to start
+    do pros::delay(10);
+    while (distTravelled <= dist && distTravelled != -1);
+}
+
+/**
  * @brief Turn the chassis so it is facing the target point
  *
  * The PID logging id is "angularPID"
@@ -129,16 +142,28 @@ lemlib::Pose lemlib::Chassis::estimatePose(float time, bool radians) { return le
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
- * @param reversed whether the robot should turn in the opposite direction. false by default
+ * @param async whether the function should be run asynchronously. false by default
+ * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
  * @param maxSpeed the maximum speed the robot can turn at. Default is 200
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log) {
-    Pose pose(0, 0);
+void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool reversed, float maxSpeed, bool log) {
+    // try to take the mutex
+    // if its unsuccessful after 10ms, return
+    if (!mutex.take(10)) return;
+    // if the function is async, run it in a new task
+    if (async) {
+        pros::Task task([&]() { turnTo(x, y, timeout, false, reversed, maxSpeed, log); });
+        mutex.give();
+        pros::delay(10); // delay to give the task time to start
+        return;
+    }
     float targetTheta;
     float deltaX, deltaY, deltaTheta;
     float motorPower;
+    float startTheta = getPose().theta;
     std::uint8_t compState = pros::competition::get_status();
+    distTravelled = 0;
 
     // create a new PID controller
     FAPID pid = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
@@ -148,8 +173,12 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
     // main loop
     while (pros::competition::get_status() == compState && !pid.settled()) {
         // update variables
-        pose = getPose();
+        Pose pose = getPose();
         pose.theta = (reversed) ? fmod(pose.theta - 180, 360) : fmod(pose.theta, 360);
+
+        // update completion vars
+        distTravelled = fabs(angleError(pose.theta, startTheta));
+
         deltaX = x - pose.x;
         deltaY = y - pose.y;
         targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
@@ -174,6 +203,10 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    // set distTraveled to -1 to indicate that the function has finished
+    distTravelled = -1;
+    // give the mutex back
+    mutex.give();
 }
 
 /**
@@ -184,23 +217,38 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
  * @param x x location
  * @param y y location
  * @param theta theta (in degrees). Target angle
- * @param forwards whether the robot should move forwards or backwards. true for forwards, false for backwards
  * @param timeout longest time the robot can spend moving
+ * @param async whether the function should be run asynchronously. false by default
+ * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
+ * backwards
  * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
  * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
  * default to global value
  * @param maxSpeed the maximum speed the robot can move at. 127 at default
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, float theta, bool forwards, int timeout, float chasePower, float lead,
-                             float maxSpeed, bool log) {
+void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool async, bool forwards, float chasePower,
+                             float lead, float maxSpeed, bool log) {
+    // try to take the mutex
+    // if its unsuccessful after 10ms, return
+    if (!mutex.take(10)) return;
+    // if the function is async, run it in a new task
+    if (async) {
+        pros::Task task([&]() { moveTo(x, y, theta, timeout, false, forwards, chasePower, lead, maxSpeed, log); });
+        mutex.give();
+        pros::delay(10); // delay to give the task time to start
+        return;
+    }
+
     Pose target(x, y, M_PI_2 - degToRad(theta)); // target pose in standard form
+    Pose lastPose = getPose(); // last pose
     FAPID linearPID = FAPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
+    FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.smallErrorTimeout,
                       lateralSettings.smallErrorTimeout, timeout); // exit conditions
-    FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     int compState = pros::competition::get_status();
     int start = pros::millis();
+    distTravelled = 0;
 
     if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
@@ -213,6 +261,10 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, bool forwards, int t
         Pose pose = getPose(true);
         if (!forwards) pose.theta += M_PI;
         pose.theta = M_PI_2 - pose.theta; // convert to standard form
+
+        // update completion vars
+        distTravelled += pose.distance(lastPose);
+        lastPose = pose;
 
         // check if the robot is close enough to the target to start settling
         if (pose.distance(target) < 7.5) close = true;
@@ -263,4 +315,8 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, bool forwards, int t
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    // set distTraveled to -1 to indicate that the function has finished
+    distTravelled = -1;
+    // give the mutex back
+    mutex.give();
 }
