@@ -131,7 +131,7 @@ lemlib::Pose lemlib::Chassis::estimatePose(float time, bool radians) { return le
 void lemlib::Chassis::waitUntilDist(float dist) {
     // do while to give the thread time to start
     do pros::delay(10);
-    while (distTravelled <= dist || distTravelled == -1);
+    while (distTravelled <= dist && distTravelled != -1);
 }
 
 /**
