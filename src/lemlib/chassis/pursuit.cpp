@@ -191,15 +191,35 @@ float findLookaheadCurvature(lemlib::Pose pose, float heading, lemlib::Pose look
 }
 
 /**
- * @brief Move the chassis along a path
+ * Pure Pursuit algorithm
  *
- * @param path the filename of the path to follow
- * @param timeout the maximum time the robot can spend moving
- * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but will
- * follow the path less accurately
- * @param reverse whether the robot should follow the path in reverse. false by default
- * @param maxSpeed the maximum speed the robot can move at
- * @param log whether the chassis should log the path on a log file. false by default.
+ * Pure Pursuit is a path following algorithm. While it overshoots
+ * the path often, it is very reliable and easy to tune. It is also
+ * very fast, as the motion profile is calculated in an external program and stored
+ * to be read at runtime, instead of generating it during runtime.
+ *
+ * There are several steps to this algorithm:
+ * 1. Read the path from the program binary. This is then converted from
+ *    an array of bytes to an array of strings, which is then converted to
+ *    an array of points, each containing an additional velocity value.
+ * 2. Find the closest point on the path to the robot. This is done by iterating
+ *    through all the points and finding the one with the smallest distance to the robot.
+ *.   The velocity value of this point is then used later on to calculate motor speeds.
+ * 3. Find the lookahead point. This is done by drawing an imaginary circle around the robot
+ *    with a radius equal to the lookahead distance. We then treat the path as an array
+ *    of line segments, and find the intersection point between the circle and each line segment.
+ *    The lookahead point is the furthest intersection along the path
+ * 4. Calculate the curvature of the arc between the robot and the lookahead point.
+ *    This arc is also tangent to the robot's heading. Based on the curvature of the arc,
+ *    we can calculate what the ratio between the left and right motor speeds should be.
+ * 5. Calculate the velocity of the motors. This is done by multiplying the ratio of the left
+ *    and right motor speeds by the velocity of the closest point on the path to the robot.
+ * 6. Desaturate the motor speeds. This is done by checking if the motor speeds are greater than
+ *    the max speed. If they are, then we divide both motor speeds by the same ratio to bring them
+ *    down to the max speed.
+ * 7. Move the motors. This is done by setting the motor speeds to the calculated values.
+ *
+ * The algorithm is then looped until the robot is within the end tolerance of the path.
  */
 void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reverse, float maxSpeed, bool log) {
     std::vector<lemlib::Pose> pathPoints = getData(path); // get list of path points
