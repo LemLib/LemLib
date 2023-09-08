@@ -155,6 +155,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
     if (async) {
         pros::Task task([&]() { turnTo(x, y, timeout, false, reversed, maxSpeed, log); });
         mutex.give();
+        pros::delay(10); // delay to give the task time to start
         return;
     }
     float targetTheta;
@@ -235,6 +236,7 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
     if (async) {
         pros::Task task([&]() { moveTo(x, y, theta, timeout, false, forwards, chasePower, lead, maxSpeed, log); });
         mutex.give();
+        pros::delay(10); // delay to give the task time to start
         return;
     }
 

@@ -211,6 +211,7 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
     if (async) {
         pros::Task task([&]() { follow(path, timeout, lookahead, false, forwards, maxSpeed, log); });
         mutex.give();
+        pros::delay(10); // delay to give the task time to start
         return;
     }
 
