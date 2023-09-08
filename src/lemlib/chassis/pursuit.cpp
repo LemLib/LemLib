@@ -51,7 +51,7 @@ std::vector<std::string> readElement(const std::string& input, std::string delim
  * @param filePath The file to read from
  * @return std::vector<lemlib::Pose> vector of points on the path
  */
-std::vector<lemlib::Pose> getData(asset path) {
+std::vector<lemlib::Pose> getData(const asset& path) {
     std::vector<lemlib::Pose> robotPath;
     std::string line;
     std::vector<std::string> pointInput;
@@ -221,9 +221,22 @@ float findLookaheadCurvature(lemlib::Pose pose, float heading, lemlib::Pose look
  *
  * The algorithm is then looped until the robot is within the end tolerance of the path.
  */
-void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reverse, float maxSpeed, bool log) {
+void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bool async, bool forwards, float maxSpeed,
+                             bool log) {
+    // try to take the mutex
+    // if its unsuccessful after 10ms, return
+    if (!mutex.take(10)) return;
+    // if the function is async, run it in a new task
+    if (async) {
+        pros::Task task([&]() { follow(path, timeout, lookahead, false, forwards, maxSpeed, log); });
+        mutex.give();
+        pros::delay(10); // delay to give the task time to start
+        return;
+    }
+
     std::vector<lemlib::Pose> pathPoints = getData(path); // get list of path points
-    Pose pose(0, 0, 0);
+    Pose pose = this->getPose(true);
+    Pose lastPose = pose;
     Pose lookaheadPose(0, 0, 0);
     Pose lastLookahead = pathPoints.at(0);
     lastLookahead.theta = 0;
@@ -235,12 +248,17 @@ void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reve
     float leftInput = 0;
     float rightInput = 0;
     int compState = pros::competition::get_status();
+    distTravelled = 0;
 
     // loop until the robot is within the end tolerance
     for (int i = 0; i < timeout / 10 && pros::competition::get_status() == compState; i++) {
         // get the current position of the robot
         pose = this->getPose(true);
-        if (reverse) pose.theta -= M_PI;
+        if (!forwards) pose.theta -= M_PI;
+
+        // update completion vars
+        distTravelled += pose.distance(lastPose);
+        lastPose = pose;
 
         // find the closest point on the path to the robot
         closestPoint = findClosest(pose, pathPoints);
@@ -274,12 +292,12 @@ void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reve
         prevRightVel = targetRightVel;
 
         // move the drivetrain
-        if (reverse) {
-            drivetrain.leftMotors->move(-targetRightVel);
-            drivetrain.rightMotors->move(-targetLeftVel);
-        } else {
+        if (forwards) {
             drivetrain.leftMotors->move(targetLeftVel);
             drivetrain.rightMotors->move(targetRightVel);
+        } else {
+            drivetrain.leftMotors->move(-targetRightVel);
+            drivetrain.rightMotors->move(-targetLeftVel);
         }
 
         pros::delay(10);
@@ -288,4 +306,8 @@ void lemlib::Chassis::follow(asset path, int timeout, float lookahead, bool reve
     // stop the robot
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+    // set distTravelled to -1 to indicate that the function has finished
+    distTravelled = -1;
+    // give the mutex back
+    mutex.give();
 }
