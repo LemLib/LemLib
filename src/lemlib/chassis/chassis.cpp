@@ -19,13 +19,10 @@
 #include "lemlib/chassis/trackingWheel.hpp"
 
 /**
- * @brief Construct a new Chassis
+ * Chassis constructor
  *
- * @param drivetrain drivetrain to be used for the chassis
- * @param lateralSettings settings for the lateral controller
- * @param angularSettings settings for the angular controller
- * @param sensors sensors to be used for odometry
- * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
+ * The chassis constructor simply takes in structs for chassis configuration and stores them
+ * in private members of the Chassis class. The structs are defined in chassis.hpp
  */
 lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings,
                          ChassisController_t angularSettings, OdomSensors_t sensors, DriveCurveFunction_t driveCurve) {
@@ -37,8 +34,20 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
 }
 
 /**
- * @brief Calibrate the chassis sensors
+ * Chassis calibration
  *
+ * The chassis calibration function calibrates sensors and initializes the odom.
+ *
+ * The function checks the odomSensors struct to see what sensors are available.
+ * It knows what sensors are not available by checking if the pointers are null.
+ *
+ * If a left or right vertical tracking wheel is not available, it simply substitutes
+ * one side of the drivetrain for that tracking wheel.
+ *
+ * It has logic to continuously calibrate the imu until it calibrates successfully
+ * and vibrates the controller on every failure to alert the user.
+ *
+ * If the chassis has been calibrated successfully, it vibrates the controller once
  */
 void lemlib::Chassis::calibrate() {
     // calibrate the imu if it exists
@@ -69,44 +78,45 @@ void lemlib::Chassis::calibrate() {
 }
 
 /**
- * @brief Set the Pose object
+ * Set the chassis's position and heading
  *
- * @param x new x value
- * @param y new y value
- * @param theta new theta value
- * @param radians true if theta is in radians, false if not. False by default
+ * This function is a wrapper for the setPose function in odom.hpp
  */
 void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
     lemlib::setPose(lemlib::Pose(x, y, theta), radians);
 }
 
 /**
- * @brief Set the pose of the chassis
+ * Sets the chassis's position and heading
  *
- * @param Pose the new pose
- * @param radians whether pose theta is in radians (true) or not (false). false by default
+ * This function is a wrapper for the setPose function in odom.hpp
  */
 void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
 
 /**
- * @brief Get the pose of the chassis
+ * Gets the chassis's position and heading and returns it as a Pose
  *
- * @param radians whether theta should be in radians (true) or degrees (false). false by default
- * @return Pose
+ * This function is a wrapper for the getPose function in odom.hpp
  */
 lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(radians); }
 
 /**
- * @brief Turn the chassis so it is facing the target point
+ * Turns the robot to face a point
  *
- * The PID logging id is "angularPID"
+ * Instead of using a defined heading, this function uses a point to determine which angle
+ * the robot should turn to. Using a heading assumes the robot's starting position is constant
+ * which of course its not
  *
- * @param x x location
- * @param y y location
- * @param timeout longest time the robot can spend moving
- * @param reversed whether the robot should turn in the opposite direction. false by default
- * @param maxSpeed the maximum speed the robot can turn at. Default is 200
- * @param log whether the chassis should log the turnTo function. false by default
+ * It uses the generic LemLib PID class to calculate the power needed to the point.
+ * It also uses it for exit conditions.
+ *
+ * If the competition state changes, the function will stop. This prevents the code from
+ * controlling the robot when its not supposed to, but still allows for the function
+ * to be called in driver control for testing.
+ *
+ * Thanks to the angleError function, the robot will always turn the fastest way.
+ *
+ * Its logging id is "angularPID" if you want to see its logs.
  */
 void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float maxSpeed, bool log) {
     Pose pose(0, 0);
@@ -152,20 +162,25 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool reversed, float
 }
 
 /**
- * @brief Move the chassis towards the target pose
+ * Moves the robot to a target position and heading
  *
- * Uses the boomerang controller
+ * This function uses the boomerang controller to move the robot. It generates a "carrot point"
+ * which the robot will follow. The carrot point is a point that is certain distance away from
+ * the target point, specifically the lead constant times the distance from the robot to the target.
+ * The carrot point is also a specific angle from the target point, determined by the target heading.
  *
- * @param x x location
- * @param y y location
- * @param theta theta (in degrees). Target angle
- * @param forwards whether the robot should move forwards or backwards. true for forwards, false for backwards
- * @param timeout longest time the robot can spend moving
- * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
- * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
- * default to global value
- * @param maxSpeed the maximum speed the robot can move at. 127 at default
- * @param log whether the chassis should log the turnTo function. false by default
+ * The algorithm uses 2 generic LemLib PID controllers, one for linear movement and one for angular movement.
+ * The linear controller is also used for exit conditions.
+ *
+ * Since the robot is moving while turning, a few optimizations are made to improve performance.
+ * The robot always prioritizes turning over moving, decreasing the chances the robot will overshoot
+ * turns. In addition, a calculation is performed to determine the maximum speed the robot can travel
+ * at while performing a turn of a specific radius. This is done using the formula v = sqrt( u * r * g )
+ * where u is a constant, tuned by the user. The robot will then cap its speed to v.
+ *
+ * The reason this is done is to prevent overshooting turns, which wastes time and causes unpredictable
+ * movement. Robots without traction wheels are especially prone to overshooting turns, but this algorithm
+ * prevents that if tuned correctly.
  */
 void lemlib::Chassis::moveTo(float x, float y, float theta, bool forwards, int timeout, float chasePower, float lead,
                              float maxSpeed, bool log) {
