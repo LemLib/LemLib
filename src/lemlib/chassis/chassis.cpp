@@ -43,13 +43,15 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
 void lemlib::Chassis::calibrate() {
     // calibrate the imu if it exists
     if (odomSensors.imu != nullptr) {
-        odomSensors.imu->reset(true);
-        // keep on calibrating until it calibrates successfully
-        while (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) {
+        int attempt = 1;
+        // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
+        while (odomSensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
+               attempt < 5) {
             pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
-            odomSensors.imu->reset(true);
             pros::delay(10);
+            attempt++;
         }
+        if (attempt == 5) odomSensors.imu = nullptr;
     }
     // initialize odom
     if (odomSensors.vertical1 == nullptr)
