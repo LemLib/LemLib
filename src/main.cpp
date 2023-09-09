@@ -104,4 +104,4 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() { chassis.moveTo(-20, 15, 90, false, 4000); }
+void opcontrol() { chassis.moveTo(-20, 15, 90, 4000); }
