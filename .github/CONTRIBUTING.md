@@ -10,6 +10,8 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 > - Refer this project in your project's readme
 > - Mention the project at local meetups with your fellow competitors
 > - Mention the use of this project in judging presentations
+> - Open a bug report or feature request [here](https://github.com/LemLib/LemLib/issues/new/choose)
+> - Discuss and give feedback in our [Discord](https://discord.gg/pCHr7XZUTj)
 
 
 
@@ -34,7 +36,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 
 > If you want to ask a question, we assume that you have read the available [Documentation](https://lemlib.github.io/LemLib/).
 
-Before you ask a question, it is best to search for existing [Issues](https://github.com/LemLib/LemLib/issues) that might help you. In case you have found a suitable issue and still need clarification, you can write your question in this issue. It is also advisable to search the internet for answers first.
+Before you ask a question, it is best to search for existing [Issues](https://github.com/LemLib/LemLib/issues) that might help you. In case you have found a suitable issue and still need clarification, you can write your question in this issue. In addition, you can also search for existing questions in the [Vex Discord](https://discord.gg/VUStG8p), the [VEX Forum](https://www.vexforum.com/), or the our [Discord](https://discord.gg/pCHr7XZUTj).
 
 If you then still feel the need to ask a question and need clarification, we recommend the following:
 
@@ -124,17 +126,26 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/LemLib
 
 We recommend using [Visual Studio Code](https://code.visualstudio.com/) as your IDE. It is free, open-source, and cross-platform.
 Here is a list of recommended extensions:
-- [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
-- [clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd)
-- [clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format)
-- [Doxygen Documentation Generator](https://marketplace.visualstudio.com/items?itemName=cschlosser.doxdocgen)
-- [file-icons](https://marketplace.visualstudio.com/items?itemName=file-icons.file-icons)
-- [PROS](https://marketplace.visualstudio.com/items?itemName=sigbots.pros)
-- [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
+- [clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd), a very fast linter
+- [clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) to format your code. Recommended to format on save.
+- [Doxygen Documentation Generator](https://marketplace.visualstudio.com/items?itemName=cschlosser.doxdocgen) automatically generates Doxygen comments
+- [file-icons](https://marketplace.visualstudio.com/items?itemName=file-icons.file-icons) to display file icons
+- [PROS](https://marketplace.visualstudio.com/items?itemName=sigbots.pros) to build and upload your code
+- [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) to check for spelling mistakes
 
 > If asked to disable the IntelliSense in favor of clangd, do so.
 
-In order to contribute to LemLib, you will need to [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the repository and clone it to your local machine. You can then [commit](#commit-messages) your changes to your fork. Once you are done, you can [create a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](.github/PULL_REQUEST_TEMPLATE.md) to structure your pull request.
+In order to build the project, you need to use PROS
+- Generate compile commands: `pros build-compile-commands`
+- Build the project: `pros build`
+- Create the template zip: `pros build template`
+
+You can apply the kernel to your project with the following commands
+- Fetch the kernel: `pros c fetch LemLib@a.b.c-d.zip`
+- Apply the kernel: `pros c apply LemLib@a.b.c-d`
+- Remove the template: `pros c remove LemLib@a.b.c-d`
+
+In order to contribute to LemLib, you will need to [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the repository and clone it to your local machine. You can then [commit](#commit-messages) your changes to your fork. Once you are done, you can [create a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the master branch. You can use the [Pull Request Template](.github/PULL_REQUEST_TEMPLATE.md) to structure your pull request.
 
 
 ### Improving The Documentation
