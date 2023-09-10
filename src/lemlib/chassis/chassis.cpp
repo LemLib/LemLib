@@ -248,6 +248,7 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
     FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.smallErrorTimeout,
                       lateralSettings.smallErrorTimeout, timeout); // exit conditions
+    float prevLinearPower = 0; // previous linear power
     int compState = pros::competition::get_status();
     int start = pros::millis();
     distTravelled = 0;
@@ -269,7 +270,10 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
         lastPose = pose;
 
         // check if the robot is close enough to the target to start settling
-        if (pose.distance(target) < 7.5) close = true;
+        if (pose.distance(target) < 7.5 && close == false) {
+            close = true;
+            maxSpeed = fmax(fabs(prevLinearPower), 30);
+        }
 
         // calculate the carrot point
         Pose carrot = target - (Pose(cos(target.theta), sin(target.theta)) * lead * pose.distance(target));
@@ -302,6 +306,7 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
         // prioritize turning over moving
         float overturn = fabs(angularPower) + fabs(linearPower) - maxSpeed;
         if (overturn > 0) linearPower -= linearPower > 0 ? overturn : -overturn;
+        prevLinearPower = linearPower;
 
         // calculate motor powers
         float leftPower = linearPower + angularPower;

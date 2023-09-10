@@ -41,12 +41,8 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
  */
 void initialize() {
     pros::lcd::initialize();
-
     lemlib::Logger::initialize();
-
-    // calibrate sensors
-    chassis.calibrate();
-    chassis.setPose(lemlib::Pose(0, 0, 180));
+    chassis.calibrate(); // calibrate sensors
 
     // print odom values to the brain
     pros::Task screenTask([=]() {
@@ -104,4 +100,4 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() { chassis.moveTo(-20, 15, 90, 4000); }
+void opcontrol() { chassis.moveTo(20, 15, 90, 4000); }
