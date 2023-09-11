@@ -26,8 +26,9 @@ void AbstractLogger::log(AbstractLogger::Level level, fmt::format_string<T...> f
     std::string message = fmt::format(format, args...);
 
     // then we put that into the final message
-    std::string formattedString = fmt::format(logFormat, fmt::arg("time", pros::millis()), fmt::arg("severity", level),
-                                              fmt::arg("message", message), fmt::arg("color", getColorFromLevel(level)));
+    std::string formattedString =
+        fmt::format(logFormat, fmt::arg("time", pros::millis()), fmt::arg("severity", level),
+                    fmt::arg("message", message), fmt::arg("color", getColorFromLevel(level)));
 
     logString(AbstractLogger::LoggableMessage {formattedString, level});
 }
