@@ -54,10 +54,10 @@ class StdoutLogger : public AbstractLogger {
         void loggingTask();
 };
 
-#define LEMLIB_DEBUG(format, ...) ::lemlib::StdoutLogger::get()->debug(format, __VA_ARGS__)
-#define LEMLIB_INFO(format, ...) ::lemlib::StdoutLogger::get()->info(format, __VA_ARGS__)
-#define LEMLIB_WARN(format, ...) ::lemlib::StdoutLogger::get()->warn(format, __VA_ARGS__)
-#define LEMLIB_ERROR(format, ...) ::lemlib::StdoutLogger::get()->error(format, __VA_ARGS__)
-#define LEMLIB_FATAL(format, ...) ::lemlib::StdoutLogger::get()->fatal(format, __VA_ARGS__)
+#define LEMLIB_STDOUT_DEBUG(format, ...) ::lemlib::StdoutLogger::get()->debug(format, __VA_ARGS__)
+#define LEMLIB_STDOUT_INFO(format, ...) ::lemlib::StdoutLogger::get()->info(format, __VA_ARGS__)
+#define LEMLIB_STDOUT_WARN(format, ...) ::lemlib::StdoutLogger::get()->warn(format, __VA_ARGS__)
+#define LEMLIB_STDOUT_ERROR(format, ...) ::lemlib::StdoutLogger::get()->error(format, __VA_ARGS__)
+#define LEMLIB_STDOUT_FATAL(format, ...) ::lemlib::StdoutLogger::get()->fatal(format, __VA_ARGS__)
 
 } // namespace lemlib
