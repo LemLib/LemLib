@@ -4,7 +4,9 @@
 
 lemlib::StdoutLogger* lemlib::StdoutLogger::logger = nullptr;
 
-lemlib::StdoutLogger::StdoutLogger() : task([&]() { loggingTask(); }) {}
+lemlib::StdoutLogger::StdoutLogger() : task([&]() { loggingTask(); }) {
+    setFormat("{color} [LemLib] {severity}: {message}");
+}
 
 void lemlib::StdoutLogger::setPrintRate(uint8_t printRate) { this->printRate = printRate; }
 
@@ -20,24 +22,12 @@ void lemlib::StdoutLogger::logString(const lemlib::AbstractLogger::LoggableMessa
     mutex.give();
 }
 
-static fmt::color getColorFromLevel(lemlib::AbstractLogger::Level level) {
-    switch (level) {
-        case lemlib::AbstractLogger::Level::DEBUG: return fmt::color::cyan;
-        case lemlib::AbstractLogger::Level::INFO: return fmt::color::green;
-        case lemlib::AbstractLogger::Level::WARN: return fmt::color::yellow;
-        case lemlib::AbstractLogger::Level::ERROR: return fmt::color::red;
-        case lemlib::AbstractLogger::Level::FATAL: return fmt::color::indian_red;
-    }
-    __builtin_unreachable();
-}
-
 void lemlib::StdoutLogger::loggingTask() {
     while (true) {
         mutex.take();
         if (buffer.size() > 0) {
             lemlib::AbstractLogger::LoggableMessage message = buffer.at(0);
-            fmt::color color = getColorFromLevel(message.level);
-            fmt::print(fmt::bg(color), "{}", message.message);
+            fmt::print("{}", message.message);
             buffer.pop_front();
         }
         mutex.give();

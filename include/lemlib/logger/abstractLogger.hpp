@@ -45,7 +45,7 @@ class AbstractLogger {
          * @brief Set the format of the logger.
          *
          */
-        void setFormat(const std::string& loggerFormat);
+        void setFormat(const std::string& logFormat);
 
         /**
          * @brief Log a message at the given level
@@ -110,6 +110,6 @@ class AbstractLogger {
         virtual void logString(const LoggableMessage& message) = 0;
     private:
         Level lowestLevel = Level::DEBUG;
-        std::string logFormat = "[LemLib] {severity}: {message}\n";
+        std::string logFormat;
 };
 } // namespace lemlib
