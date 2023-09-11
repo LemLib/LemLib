@@ -49,14 +49,14 @@ void initialize() {
     chassis.calibrate();
     chassis.setPose(lemlib::Pose(0, 0, 180));
 
-    LEMLIB_INFO("Hello, {}", "LemLib!");
-    LEMLIB_DEBUG("The time: {}", pros::millis());
+    LEMLIB_STDOUT_DEBUG("Hello, {}", "LemLib!");
+    LEMLIB_STDOUT_INFO("The time: {}", pros::millis());
 
     // print odom values to the brain
     pros::Task screenTask([=]() {
         while (true) {
             lemlib::Pose pose = chassis.getPose();
-            LEMLIB_INFO("Pose: {}", pose);
+            LEMLIB_STDOUT_INFO("Pose: {}", pose);
             pros::delay(50);
         }
     });
