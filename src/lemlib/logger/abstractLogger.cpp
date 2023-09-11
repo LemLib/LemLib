@@ -1,6 +1,8 @@
 #include "abstractLogger.hpp"
 
-void lemlib::AbstractLogger::setLowestLevel(lemlib::AbstractLogger::Level lowestLevel) { this->lowestLevel = lowestLevel; }
+void lemlib::AbstractLogger::setLowestLevel(lemlib::AbstractLogger::Level lowestLevel) {
+    this->lowestLevel = lowestLevel;
+}
 
 std::string format_as(lemlib::AbstractLogger::Level level) {
     switch (level) {
