@@ -6,6 +6,8 @@
 
 #include "pros/rtos.hpp"
 
+#include <memory>
+
 namespace lemlib {
 class StdoutLogger : public AbstractLogger {
     public:
@@ -29,7 +31,7 @@ class StdoutLogger : public AbstractLogger {
          *
          * @return StdoutLogger*
          */
-        static StdoutLogger* get();
+        static std::shared_ptr<StdoutLogger> get();
     private:
         /**
          * @brief Log the given string
@@ -38,7 +40,7 @@ class StdoutLogger : public AbstractLogger {
          */
         void logString(const AbstractLogger::LoggableMessage& message) override;
 
-        static StdoutLogger* logger;
+        static std::shared_ptr<StdoutLogger> logger;
 
         std::deque<AbstractLogger::LoggableMessage> buffer = {};
 

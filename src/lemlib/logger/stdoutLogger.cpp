@@ -2,7 +2,7 @@
 
 #include "lemlib/fmt/api.hpp"
 
-lemlib::StdoutLogger* lemlib::StdoutLogger::logger = nullptr;
+std::shared_ptr<lemlib::StdoutLogger> lemlib::StdoutLogger::logger = nullptr;
 
 lemlib::StdoutLogger::StdoutLogger() : task([&]() { loggingTask(); }) {
     setFormat("{color} [LemLib] {severity}: {message}");
@@ -10,8 +10,8 @@ lemlib::StdoutLogger::StdoutLogger() : task([&]() { loggingTask(); }) {
 
 void lemlib::StdoutLogger::setPrintRate(uint8_t printRate) { this->printRate = printRate; }
 
-lemlib::StdoutLogger* lemlib::StdoutLogger::get() {
-    if (logger == nullptr) { logger = new lemlib::StdoutLogger(); }
+std::shared_ptr<lemlib::StdoutLogger> lemlib::StdoutLogger::get() {
+    if (logger == nullptr) { logger = std::make_shared<StdoutLogger>(); }
 
     return logger;
 }
