@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lemlib/logger/abstractLogger.hpp"
+#include "lemlib/logger/abstractSink.hpp"
 
 #include "lemlib/pose.hpp"
 
@@ -8,12 +8,12 @@
 
 namespace lemlib {
 /**
- * @brief Format implementation for lemlib::AbstractLogger::level
+ * @brief Format implementation for lemlib::AbstractSink::level
  *
  * @param level The level
  * @return std::string
  */
-std::string format_as(AbstractLogger::Level level);
+std::string format_as(AbstractSink::Level level);
 
 /**
  * @brief Formatting implementation for lemlib::Pose

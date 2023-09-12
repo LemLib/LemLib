@@ -6,10 +6,10 @@
 
 namespace lemlib {
 /**
- * @brief Base for any logger in LemLib to implement.
+ * @brief Base for any sink in LemLib to implement.
  *
  */
-class AbstractLogger {
+class AbstractSink {
     public:
         /*
          * @brief A level enumeration.
@@ -35,14 +35,14 @@ class AbstractLogger {
         };
 
         /**
-         * @brief Set the lowest level the logger can log at
+         * @brief Set the lowest level the sink can log at
          *
          * @param lowestLevel The lowest level
          */
         void setLowestLevel(Level lowestLevel);
 
         /**
-         * @brief Set the format of the logger.
+         * @brief Set the format of the sink.
          *
          */
         void setFormat(const std::string& logFormat);

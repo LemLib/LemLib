@@ -2,13 +2,13 @@
 
 #include "lemlib/fmt/core.h"
 
-std::string lemlib::format_as(lemlib::AbstractLogger::Level level) {
+std::string lemlib::format_as(lemlib::AbstractSink::Level level) {
     switch (level) {
-        case lemlib::AbstractLogger::Level::DEBUG: return "DEBUG";
-        case lemlib::AbstractLogger::Level::INFO: return "INFO";
-        case lemlib::AbstractLogger::Level::WARN: return "WARN";
-        case lemlib::AbstractLogger::Level::ERROR: return "ERROR";
-        case lemlib::AbstractLogger::Level::FATAL: return "FATAL";
+        case lemlib::AbstractSink::Level::DEBUG: return "DEBUG";
+        case lemlib::AbstractSink::Level::INFO: return "INFO";
+        case lemlib::AbstractSink::Level::WARN: return "WARN";
+        case lemlib::AbstractSink::Level::ERROR: return "ERROR";
+        case lemlib::AbstractSink::Level::FATAL: return "FATAL";
     }
     __builtin_unreachable();
 }
