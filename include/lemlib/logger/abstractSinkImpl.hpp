@@ -34,22 +34,22 @@ void AbstractSink::log(AbstractSink::Level level, fmt::format_string<T...> forma
 }
 
 template <typename... T> void AbstractSink::debug(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::DEBUG, format, args...);
+    log(AbstractSink::Level::DEBUG, format, std::forward<T>(args)...);
 }
 
 template <typename... T> void AbstractSink::info(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::INFO, format, args...);
+    log(AbstractSink::Level::INFO, format, std::forward<T>(args)...);
 }
 
 template <typename... T> void AbstractSink::warn(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::WARN, format, args...);
+    log(AbstractSink::Level::WARN, format, std::forward<T>(args)...);
 }
 
 template <typename... T> void AbstractSink::error(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::ERROR, format, args...);
+    log(AbstractSink::Level::ERROR, format, std::forward<T>(args)...);
 }
 
 template <typename... T> void AbstractSink::fatal(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::FATAL, format, args...);
+    log(AbstractSink::Level::FATAL, format, std::forward<T>(args)...);
 }
 } // namespace lemlib

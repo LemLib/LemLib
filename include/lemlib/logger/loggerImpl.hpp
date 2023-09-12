@@ -10,22 +10,22 @@ template <typename... T> void Logger::log(AbstractSink::Level level, fmt::format
 }
 
 template <typename... T> void Logger::debug(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::DEBUG, format, args...);
+    log(AbstractSink::Level::DEBUG, format, std::forward<T>(args)...);
 }
 
 template <typename... T> void Logger::info(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::INFO, format, args...);
+    log(AbstractSink::Level::INFO, format, std::forward<T>(args)...);
 }
 
 template <typename... T> void Logger::warn(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::WARN, format, args...);
+    log(AbstractSink::Level::WARN, format, std::forward<T>(args)...);
 }
 
 template <typename... T> void Logger::error(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::ERROR, format, args...);
+    log(AbstractSink::Level::ERROR, format, std::forward<T>(args)...);
 }
 
 template <typename... T> void Logger::fatal(fmt::format_string<T...> format, T&&... args) {
-    log(AbstractSink::Level::FATAL, format, args...);
+    log(AbstractSink::Level::FATAL, format, std::forward<T>(args)...);
 }
 } // namespace lemlib
