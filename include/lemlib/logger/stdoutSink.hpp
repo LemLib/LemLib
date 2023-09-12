@@ -6,8 +6,6 @@
 
 #include "pros/rtos.hpp"
 
-#include <memory>
-
 namespace lemlib {
 /**
  * @brief A Sink for stdout.
@@ -15,13 +13,8 @@ namespace lemlib {
  */
 class StdoutSink : public AbstractSink {
     public:
-        /**
-         * @brief Construct a new Stdout Sink object
-         *
-         */
-        StdoutSink();
-
         StdoutSink(const StdoutSink&) = delete;
+        StdoutSink& operator=(const StdoutSink&) = delete;
 
         /**
          * @brief Set the print rate of the sink
@@ -33,10 +26,16 @@ class StdoutSink : public AbstractSink {
         /**
          * @brief Get the stdout sink.
          *
-         * @return std::shared_ptr<StdoutSink>
+         * @return StdoutSink*
          */
-        static std::shared_ptr<StdoutSink> get();
+        static StdoutSink* get();
     private:
+        /**
+         * @brief Construct a new Stdout Sink object
+         *
+         */
+        StdoutSink();
+
         /**
          * @brief Log the given string
          *
@@ -44,7 +43,7 @@ class StdoutSink : public AbstractSink {
          */
         void logString(const AbstractSink::LoggableMessage& message) override;
 
-        static std::shared_ptr<StdoutSink> sink;
+        static StdoutSink* sink;
 
         std::deque<AbstractSink::LoggableMessage> buffer = {};
 

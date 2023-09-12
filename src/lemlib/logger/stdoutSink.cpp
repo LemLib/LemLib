@@ -2,7 +2,7 @@
 
 #include "lemlib/fmt/api.hpp"
 
-std::shared_ptr<lemlib::StdoutSink> lemlib::StdoutSink::sink = nullptr;
+lemlib::StdoutSink* lemlib::StdoutSink::sink = nullptr;
 
 lemlib::StdoutSink::StdoutSink() : task([&]() { loggingTask(); }) {
     setFormat("{color} [LemLib] {severity}: {message}");
@@ -10,8 +10,8 @@ lemlib::StdoutSink::StdoutSink() : task([&]() { loggingTask(); }) {
 
 void lemlib::StdoutSink::setPrintRate(uint8_t printRate) { this->printRate = printRate; }
 
-std::shared_ptr<lemlib::StdoutSink> lemlib::StdoutSink::get() {
-    if (sink == nullptr) { sink = std::make_shared<StdoutSink>(); }
+lemlib::StdoutSink* lemlib::StdoutSink::get() {
+    if (sink == nullptr) { sink = new StdoutSink; }
 
     return sink;
 }

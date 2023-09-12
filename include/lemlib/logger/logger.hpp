@@ -8,7 +8,7 @@
 
 namespace lemlib {
 /**
- * @brief Wrapper around std::vector<std::shared_ptr<AbstractSink>>
+ * @brief Wrapper around std::vector<AbstractSink*>
  *
  */
 class Logger {
@@ -18,7 +18,7 @@ class Logger {
          *
          * @param sinks The sinks to use.
          */
-        Logger(std::initializer_list<std::shared_ptr<AbstractSink>> sinks);
+        Logger(std::initializer_list<AbstractSink*> sinks);
 
         /**
          * @brief Log a message at the given level
@@ -75,6 +75,6 @@ class Logger {
          */
         template <typename... T> void fatal(fmt::format_string<T...> format, T&&... args);
     private:
-        std::vector<std::shared_ptr<AbstractSink>> sinks;
+        std::vector<AbstractSink*> sinks;
 };
 } // namespace lemlib

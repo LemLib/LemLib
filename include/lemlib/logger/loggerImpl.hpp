@@ -6,7 +6,7 @@
 
 namespace lemlib {
 template <typename... T> void Logger::log(AbstractSink::Level level, fmt::format_string<T...> format, T&&... args) {
-    for (std::shared_ptr<AbstractSink> sink : sinks) { sink->log(level, format, args...); }
+    for (AbstractSink* sink : sinks) { sink->log(level, format, args...); }
 }
 
 template <typename... T> void Logger::debug(fmt::format_string<T...> format, T&&... args) {
