@@ -111,6 +111,7 @@ float defaultDriveCurve(float input, float scale);
  *
  */
 class Chassis {
+        friend class Odometry;
     public:
         /**
          * @brief Construct a new Chassis

@@ -16,57 +16,48 @@
 #include "lemlib/pose.hpp"
 
 namespace lemlib {
-/**
- * @brief Set the sensors to be used for odometry
- *
- * @param sensors the sensors to be used
- * @param drivetrain drivetrain to be used
- */
-void setSensors(lemlib::OdomSensors_t sensors, lemlib::Drivetrain_t drivetrain);
-/**
- * @brief Get the pose of the robot
- *
- * @param radians true for theta in radians, false for degrees. False by default
- * @return Pose
- */
-Pose getPose(bool radians = false);
-/**
- * @brief Set the Pose of the robot
- *
- * @param pose the new pose
- * @param radians true if theta is in radians, false if in degrees. False by default
- */
-void setPose(Pose pose, bool radians = false);
-/**
- * @brief Get the speed of the robot
- *
- * @param radians true for theta in radians, false for degrees. False by default
- * @return lemlib::Pose
- */
-Pose getSpeed(bool radians = false);
-/**
- * @brief Get the local speed of the robot
- *
- * @param radians true for theta in radians, false for degrees. False by default
- * @return lemlib::Pose
- */
-Pose getLocalSpeed(bool radians = false);
-/**
- * @brief Estimate the pose of the robot after a certain amount of time
- *
- * @param time time in seconds
- * @param radians False for degrees, true for radians. False by default
- * @return lemlib::Pose
- */
-Pose estimatePose(float time, bool radians = false);
-/**
- * @brief Update the pose of the robot
- *
- */
-void update();
-/**
- * @brief Initialize the odometry system
- *
- */
-void init();
+class Odometry {
+    public:
+        /**
+         * @brief Construct a new Odometry object
+         *
+         * @param chassis pointer to the chassis object
+         */
+        Odometry(Chassis* chassis);
+
+        /**
+         * @brief Get the Pose
+         *
+         * @note Units are in radians. Locked from 0 to 2pi. Right is 0, increasing counter-clockwise
+         *
+         * @return Pose
+         */
+        Pose getPose();
+
+        /**
+         * @brief Set the Pose
+         *
+         * @note Units are in radians. Right is 0, increasing counter-clockwise
+         *
+         * @param pose
+         */
+        void setPose();
+
+        /**
+         * @brief Update the pose of the robot
+         *
+         * @note this should be called in a loop, ideally every 10ms (the sensor polling rate)
+         */
+        void update();
+    private:
+        float prevVertical = 0;
+        float prevVertical1 = 0;
+        float prevVertical2 = 0;
+        float prevHorizontal = 0;
+        float prevHorizontal1 = 0;
+        float prevHorizontal2 = 0;
+        float prevImu = 0;
+        Pose pose = Pose(0, 0, 0); // the pose of the robot
+        Chassis* chassis;
+};
 } // namespace lemlib
