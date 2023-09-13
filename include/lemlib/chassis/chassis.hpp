@@ -18,7 +18,6 @@
 #include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
-#include "lemlib/logger.hpp"
 
 namespace lemlib {
 /**
@@ -106,6 +105,8 @@ typedef std::function<float(float, float)> DriveCurveFunction_t;
  */
 float defaultDriveCurve(float input, float scale);
 
+class Odometry;
+
 /**
  * @brief Chassis class
  *
@@ -177,7 +178,7 @@ class Chassis {
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *
-         * @note Units are in inches if curret motion is moveTo or follow, degrees if using turnTo
+         * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
          *
          * @param dist the distance the robot needs to travel before returning
          */
@@ -265,10 +266,12 @@ class Chassis {
         pros::Mutex mutex;
         float distTravelled = 0;
 
+        Odometry odom;
+
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;
-        OdomSensors_t odomSensors;
+        OdomSensors_t sensors;
         DriveCurveFunction_t driveCurve;
 };
 } // namespace lemlib

@@ -17,10 +17,11 @@
 #include <math.h>
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/odom.hpp"
-#include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 
 using namespace lemlib;
+
+Odometry::Odometry(OdomSensors_t& sensors, Drivetrain_t& drive) {}
 
 /**
  * Odometry update function
@@ -34,13 +35,11 @@ void Odometry::update() {
     float horizontal1Raw = 0;
     float horizontal2Raw = 0;
     float imuRaw = 0;
-    if (chassis->odomSensors.vertical1 != nullptr) vertical1Raw = chassis->odomSensors.vertical1->getDistanceTraveled();
-    if (chassis->odomSensors.vertical2 != nullptr) vertical2Raw = chassis->odomSensors.vertical2->getDistanceTraveled();
-    if (chassis->odomSensors.horizontal1 != nullptr)
-        horizontal1Raw = chassis->odomSensors.horizontal1->getDistanceTraveled();
-    if (chassis->odomSensors.horizontal2 != nullptr)
-        horizontal2Raw = chassis->odomSensors.horizontal2->getDistanceTraveled();
-    if (chassis->odomSensors.imu != nullptr) imuRaw = degToRad(chassis->odomSensors.imu->get_rotation());
+    if (chs->sensors.vertical1 != nullptr) vertical1Raw = chs->sensors.vertical1->getDistanceTraveled();
+    if (chs->sensors.vertical2 != nullptr) vertical2Raw = chs->sensors.vertical2->getDistanceTraveled();
+    if (chs->sensors.horizontal1 != nullptr) horizontal1Raw = chs->sensors.horizontal1->getDistanceTraveled();
+    if (chs->sensors.horizontal2 != nullptr) horizontal2Raw = chs->sensors.horizontal2->getDistanceTraveled();
+    if (chs->sensors.imu != nullptr) imuRaw = degToRad(chs->sensors.imu->get_rotation());
 
     // calculate the change in sensor values
     float deltaVertical1 = vertical1Raw - prevVertical1;
@@ -71,19 +70,19 @@ void Odometry::update() {
     // 4. Drivetrain
     float heading = pose.theta;
     // calculate the heading using the horizontal tracking wheels
-    if (chassis->odomSensors.horizontal1 != nullptr && chassis->odomSensors.horizontal2 != nullptr)
+    if (chs->sensors.horizontal1 != nullptr && chs->sensors.horizontal2 != nullptr)
         heading += (deltaHorizontal1 - deltaHorizontal2) /
-                   (chassis->odomSensors.horizontal1->getOffset() - chassis->odomSensors.horizontal2->getOffset());
+                   (chs->sensors.horizontal1->getOffset() - chs->sensors.horizontal2->getOffset());
     // else, if both vertical tracking wheels aren't substituted by the drivetrain, use the vertical tracking wheels
-    else if (!chassis->odomSensors.vertical1->getType() && !chassis->odomSensors.vertical2->getType())
+    else if (!chs->sensors.vertical1->getType() && !chs->sensors.vertical2->getType())
         heading += (deltaVertical1 - deltaVertical2) /
-                   (chassis->odomSensors.vertical1->getOffset() - chassis->odomSensors.vertical2->getOffset());
+                   (chs->sensors.vertical1->getOffset() - chs->sensors.vertical2->getOffset());
     // else, if the inertial sensor exists, use it
-    else if (chassis->odomSensors.imu != nullptr) heading += deltaImu;
+    else if (chs->sensors.imu != nullptr) heading += deltaImu;
     // else, use the the substituted tracking wheels
     else
         heading += (deltaVertical1 - deltaVertical2) /
-                   (chassis->odomSensors.vertical1->getOffset() - chassis->odomSensors.vertical2->getOffset());
+                   (chs->sensors.vertical1->getOffset() - chs->sensors.vertical2->getOffset());
     float deltaHeading = heading - pose.theta;
     float avgHeading = pose.theta + deltaHeading / 2;
 
@@ -91,11 +90,11 @@ void Odometry::update() {
     // Prioritize non-powered tracking wheels
     lemlib::TrackingWheel* verticalWheel = nullptr;
     lemlib::TrackingWheel* horizontalWheel = nullptr;
-    if (!chassis->odomSensors.vertical1->getType()) verticalWheel = chassis->odomSensors.vertical1;
-    else if (!chassis->odomSensors.vertical2->getType()) verticalWheel = chassis->odomSensors.vertical2;
-    else verticalWheel = chassis->odomSensors.vertical1;
-    if (chassis->odomSensors.horizontal1 != nullptr) horizontalWheel = chassis->odomSensors.horizontal1;
-    else if (chassis->odomSensors.horizontal2 != nullptr) horizontalWheel = chassis->odomSensors.horizontal2;
+    if (!chs->sensors.vertical1->getType()) verticalWheel = chs->sensors.vertical1;
+    else if (!chs->sensors.vertical2->getType()) verticalWheel = chs->sensors.vertical2;
+    else verticalWheel = chs->sensors.vertical1;
+    if (chs->sensors.horizontal1 != nullptr) horizontalWheel = chs->sensors.horizontal1;
+    else if (chs->sensors.horizontal2 != nullptr) horizontalWheel = chs->sensors.horizontal2;
     float rawVertical = 0;
     float rawHorizontal = 0;
     if (verticalWheel != nullptr) rawVertical = verticalWheel->getDistanceTraveled();

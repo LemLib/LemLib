@@ -12,8 +12,9 @@
 
 #pragma once
 
-#include "lemlib/chassis/chassis.hpp"
 #include "lemlib/pose.hpp"
+#include "lemlib/chassis/odom.hpp"
+#include "lemlib/chassis/chassis.hpp"
 
 namespace lemlib {
 class Odometry {
@@ -23,7 +24,7 @@ class Odometry {
          *
          * @param chassis pointer to the chassis object
          */
-        Odometry(Chassis* chassis);
+        Odometry(OdomSensors_t& sensors, Drivetrain_t& drive);
 
         /**
          * @brief Get the Pose
@@ -58,6 +59,5 @@ class Odometry {
         float prevHorizontal2 = 0;
         float prevImu = 0;
         Pose pose = Pose(0, 0, 0); // the pose of the robot
-        Chassis* chassis;
 };
 } // namespace lemlib

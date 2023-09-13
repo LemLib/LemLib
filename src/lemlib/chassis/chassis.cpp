@@ -32,8 +32,9 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
     this->drivetrain = drivetrain;
     this->lateralSettings = lateralSettings;
     this->angularSettings = angularSettings;
-    this->odomSensors = sensors;
+    this->sensors = sensors;
     this->driveCurve = driveCurve;
+    this->odom = Odometry(sensors, drivetrain);
 }
 
 /**
@@ -42,30 +43,28 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
  */
 void lemlib::Chassis::calibrate() {
     // calibrate the imu if it exists
-    if (odomSensors.imu != nullptr) {
+    if (sensors.imu != nullptr) {
         int attempt = 1;
         // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
-        while (odomSensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
+        while (sensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
                attempt < 5) {
             pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
             pros::delay(10);
             attempt++;
         }
-        if (attempt == 5) odomSensors.imu = nullptr;
+        if (attempt == 5) sensors.imu = nullptr;
     }
     // initialize odom
-    if (odomSensors.vertical1 == nullptr)
-        odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
-                                                          -(drivetrain.trackWidth / 2), drivetrain.rpm);
-    if (odomSensors.vertical2 == nullptr)
-        odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
-                                                          drivetrain.trackWidth / 2, drivetrain.rpm);
-    odomSensors.vertical1->reset();
-    odomSensors.vertical2->reset();
-    if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
-    if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
-    lemlib::setSensors(odomSensors, drivetrain);
-    lemlib::init();
+    if (sensors.vertical1 == nullptr)
+        sensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
+                                                      -(drivetrain.trackWidth / 2), drivetrain.rpm);
+    if (sensors.vertical2 == nullptr)
+        sensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
+                                                      drivetrain.trackWidth / 2, drivetrain.rpm);
+    sensors.vertical1->reset();
+    sensors.vertical2->reset();
+    if (sensors.horizontal1 != nullptr) sensors.horizontal1->reset();
+    if (sensors.horizontal2 != nullptr) sensors.horizontal2->reset();
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
 }
@@ -78,9 +77,7 @@ void lemlib::Chassis::calibrate() {
  * @param theta new theta value
  * @param radians true if theta is in radians, false if not. False by default
  */
-void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
-    lemlib::setPose(lemlib::Pose(x, y, theta), radians);
-}
+void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {}
 
 /**
  * @brief Set the pose of the chassis
