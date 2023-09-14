@@ -12,81 +12,18 @@
 #pragma once
 
 #include <functional>
+
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
+
 #include "lemlib/asset.hpp"
-#include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
+#include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/chassis/structs.hpp"
+#include "lemlib/chassis/odom.hpp"
 
 namespace lemlib {
-/**
- * @brief Struct containing all the sensors used for odometry
- *
- * The sensors are stored in a struct so that they can be easily passed to the chassis class
- * The variables are pointers so that they can be set to nullptr if they are not used
- * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
- *
- * @param vertical1 pointer to the first vertical tracking wheel
- * @param vertical2 pointer to the second vertical tracking wheel
- * @param horizontal1 pointer to the first horizontal tracking wheel
- * @param horizontal2 pointer to the second horizontal tracking wheel
- * @param imu pointer to the IMU
- */
-typedef struct {
-        TrackingWheel* vertical1;
-        TrackingWheel* vertical2;
-        TrackingWheel* horizontal1;
-        TrackingWheel* horizontal2;
-        pros::Imu* imu;
-} OdomSensors_t;
-
-/**
- * @brief Struct containing constants for a chassis controller
- *
- * The constants are stored in a struct so that they can be easily passed to the chassis class
- * Set a constant to 0 and it will be ignored
- *
- * @param kP proportional constant for the chassis controller
- * @param kD derivative constant for the chassis controller
- * @param smallError the error at which the chassis controller will switch to a slower control loop
- * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
- * @param largeError the error at which the chassis controller will switch to a faster control loop
- * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
- * @param slew the maximum acceleration of the chassis controller
- */
-typedef struct {
-        float kP;
-        float kD;
-        float smallError;
-        float smallErrorTimeout;
-        float largeError;
-        float largeErrorTimeout;
-        float slew;
-} ChassisController_t;
-
-/**
- * @brief Struct containing constants for a drivetrain
- *
- * The constants are stored in a struct so that they can be easily passed to the chassis class
- * Set a constant to 0 and it will be ignored
- *
- * @param leftMotors pointer to the left motors
- * @param rightMotors pointer to the right motors
- * @param trackWidth the track width of the robot
- * @param wheelDiameter the diameter of the wheel used on the drivetrain
- * @param rpm the rpm of the wheels
- * @param chasePower higher values make the robot move faster but causes more overshoot on turns
- */
-typedef struct {
-        pros::Motor_Group* leftMotors;
-        pros::Motor_Group* rightMotors;
-        float trackWidth;
-        float wheelDiameter;
-        float rpm;
-        float chasePower;
-} Drivetrain_t;
-
 /**
  * @brief Function pointer type for drive curve functions.
  * @param input The control input in the range [-127, 127].
@@ -105,8 +42,6 @@ typedef std::function<float(float, float)> DriveCurveFunction_t;
  */
 float defaultDriveCurve(float input, float scale);
 
-class Odometry;
-
 /**
  * @brief Chassis class
  *
@@ -124,7 +59,10 @@ class Chassis {
          * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
+                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve)
+            : drivetrain(drivetrain), lateralSettings(lateralSettings), angularSettings(angularSettings),
+              sensors(sensors), driveCurve(driveCurve), odom(sensors, drivetrain) {}
+
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -153,28 +91,6 @@ class Chassis {
          * @return Pose
          */
         Pose getPose(bool radians = false);
-        /**
-         * @brief Get the speed of the robot
-         *
-         * @param radians true for theta in radians, false for degrees. False by default
-         * @return lemlib::Pose
-         */
-        Pose getSpeed(bool radians = false);
-        /**
-         * @brief Get the local speed of the robot
-         *
-         * @param radians true for theta in radians, false for degrees. False by default
-         * @return lemlib::Pose
-         */
-        Pose getLocalSpeed(bool radians = false);
-        /**
-         * @brief Estimate the pose of the robot after a certain amount of time
-         *
-         * @param time time in seconds
-         * @param radians False for degrees, true for radians. False by default
-         * @return lemlib::Pose
-         */
-        Pose estimatePose(float time, bool radians = false);
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *

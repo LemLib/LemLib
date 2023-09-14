@@ -19,25 +19,6 @@
 #include "lemlib/chassis/trackingWheel.hpp"
 
 /**
- * @brief Construct a new Chassis
- *
- * @param drivetrain drivetrain to be used for the chassis
- * @param lateralSettings settings for the lateral controller
- * @param angularSettings settings for the angular controller
- * @param sensors sensors to be used for odometry
- * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
- */
-lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings,
-                         ChassisController_t angularSettings, OdomSensors_t sensors, DriveCurveFunction_t driveCurve) {
-    this->drivetrain = drivetrain;
-    this->lateralSettings = lateralSettings;
-    this->angularSettings = angularSettings;
-    this->sensors = sensors;
-    this->driveCurve = driveCurve;
-    this->odom = Odometry(sensors, drivetrain);
-}
-
-/**
  * @brief Calibrate the chassis sensors
  *
  */
@@ -85,7 +66,11 @@ void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {}
  * @param Pose the new pose
  * @param radians whether pose theta is in radians (true) or not (false). false by default
  */
-void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
+void lemlib::Chassis::setPose(Pose pose, bool radians) {
+    if (!radians) pose.theta = degToRad(pose.theta);
+    pose.theta = M_PI_2 - pose.theta;
+    odom.setPose(pose);
+}
 
 /**
  * @brief Get the pose of the chassis
@@ -93,32 +78,12 @@ void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, r
  * @param radians whether theta should be in radians (true) or degrees (false). false by default
  * @return Pose
  */
-lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(radians); }
-
-/**
- * @brief Get the speed of the robot
- *
- * @param radians true for theta in radians, false for degrees. False by default
- * @return lemlib::Pose
- */
-lemlib::Pose lemlib::Chassis::getSpeed(bool radians) { return lemlib::getSpeed(radians); }
-
-/**
- * @brief Get the local speed of the robot
- *
- * @param radians true for theta in radians, false for degrees. False by default
- * @return lemlib::Pose
- */
-lemlib::Pose lemlib::Chassis::getLocalSpeed(bool radians) { return lemlib::getLocalSpeed(radians); }
-
-/**
- * @brief Estimate the pose of the robot after a certain amount of time
- *
- * @param time time in seconds
- * @param radians False for degrees, true for radians. False by default
- * @return lemlib::Pose
- */
-lemlib::Pose lemlib::Chassis::estimatePose(float time, bool radians) { return lemlib::estimatePose(time, radians); }
+lemlib::Pose lemlib::Chassis::getPose(bool radians) {
+    Pose pose = odom.getPose();
+    pose.theta = M_PI_2 - pose.theta;
+    if (!radians) pose.theta = radToDeg(pose.theta);
+    return pose;
+}
 
 /**
  * @brief Wait until the robot has traveled a certain distance along the path

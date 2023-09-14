@@ -21,25 +21,42 @@
 
 using namespace lemlib;
 
-Odometry::Odometry(OdomSensors_t& sensors, Drivetrain_t& drive) {}
+/**
+ * Gets the pose
+ */
+Pose Odometry::getPose() { return pose; }
+
+/**
+ * Sets the pose
+ */
+void Odometry::setPose(Pose pose) { this->pose = pose; }
 
 /**
  * Odometry update function
  *
+ * Odometry is what we call position tracking. We use odometry so we can
+ * use the position of the robot to correct for errors during autonomous.
+ *
+ * This function checks which sensors are configured and uses them to calculate
+ * the position of the robot. This ability means that almost any odometry configuration
+ * will work with this library, all the user has to do is pass the sensors.
+ * It will also use the best combination of sensors available, so if the user can
+ * just pass everything and know the best sensors will be used.
+ *
+ * In future, an extended Kalman filter will be used so all the sensors can be used.
  */
 void Odometry::update() {
-    // TODO: add particle filter
     // get the current sensor values
     float vertical1Raw = 0;
     float vertical2Raw = 0;
     float horizontal1Raw = 0;
     float horizontal2Raw = 0;
     float imuRaw = 0;
-    if (chs->sensors.vertical1 != nullptr) vertical1Raw = chs->sensors.vertical1->getDistanceTraveled();
-    if (chs->sensors.vertical2 != nullptr) vertical2Raw = chs->sensors.vertical2->getDistanceTraveled();
-    if (chs->sensors.horizontal1 != nullptr) horizontal1Raw = chs->sensors.horizontal1->getDistanceTraveled();
-    if (chs->sensors.horizontal2 != nullptr) horizontal2Raw = chs->sensors.horizontal2->getDistanceTraveled();
-    if (chs->sensors.imu != nullptr) imuRaw = degToRad(chs->sensors.imu->get_rotation());
+    if (sensors.vertical1 != nullptr) vertical1Raw = sensors.vertical1->getDistanceTraveled();
+    if (sensors.vertical2 != nullptr) vertical2Raw = sensors.vertical2->getDistanceTraveled();
+    if (sensors.horizontal1 != nullptr) horizontal1Raw = sensors.horizontal1->getDistanceTraveled();
+    if (sensors.horizontal2 != nullptr) horizontal2Raw = sensors.horizontal2->getDistanceTraveled();
+    if (sensors.imu != nullptr) imuRaw = degToRad(sensors.imu->get_rotation());
 
     // calculate the change in sensor values
     float deltaVertical1 = vertical1Raw - prevVertical1;
@@ -70,19 +87,19 @@ void Odometry::update() {
     // 4. Drivetrain
     float heading = pose.theta;
     // calculate the heading using the horizontal tracking wheels
-    if (chs->sensors.horizontal1 != nullptr && chs->sensors.horizontal2 != nullptr)
+    if (sensors.horizontal1 != nullptr && sensors.horizontal2 != nullptr)
         heading += (deltaHorizontal1 - deltaHorizontal2) /
-                   (chs->sensors.horizontal1->getOffset() - chs->sensors.horizontal2->getOffset());
+                   (sensors.horizontal1->getOffset() - sensors.horizontal2->getOffset());
     // else, if both vertical tracking wheels aren't substituted by the drivetrain, use the vertical tracking wheels
-    else if (!chs->sensors.vertical1->getType() && !chs->sensors.vertical2->getType())
-        heading += (deltaVertical1 - deltaVertical2) /
-                   (chs->sensors.vertical1->getOffset() - chs->sensors.vertical2->getOffset());
+    else if (!sensors.vertical1->getType() && !sensors.vertical2->getType())
+        heading +=
+            (deltaVertical1 - deltaVertical2) / (sensors.vertical1->getOffset() - sensors.vertical2->getOffset());
     // else, if the inertial sensor exists, use it
-    else if (chs->sensors.imu != nullptr) heading += deltaImu;
+    else if (sensors.imu != nullptr) heading += deltaImu;
     // else, use the the substituted tracking wheels
     else
-        heading += (deltaVertical1 - deltaVertical2) /
-                   (chs->sensors.vertical1->getOffset() - chs->sensors.vertical2->getOffset());
+        heading +=
+            (deltaVertical1 - deltaVertical2) / (sensors.vertical1->getOffset() - sensors.vertical2->getOffset());
     float deltaHeading = heading - pose.theta;
     float avgHeading = pose.theta + deltaHeading / 2;
 
@@ -90,11 +107,11 @@ void Odometry::update() {
     // Prioritize non-powered tracking wheels
     lemlib::TrackingWheel* verticalWheel = nullptr;
     lemlib::TrackingWheel* horizontalWheel = nullptr;
-    if (!chs->sensors.vertical1->getType()) verticalWheel = chs->sensors.vertical1;
-    else if (!chs->sensors.vertical2->getType()) verticalWheel = chs->sensors.vertical2;
-    else verticalWheel = chs->sensors.vertical1;
-    if (chs->sensors.horizontal1 != nullptr) horizontalWheel = chs->sensors.horizontal1;
-    else if (chs->sensors.horizontal2 != nullptr) horizontalWheel = chs->sensors.horizontal2;
+    if (!sensors.vertical1->getType()) verticalWheel = sensors.vertical1;
+    else if (!sensors.vertical2->getType()) verticalWheel = sensors.vertical2;
+    else verticalWheel = sensors.vertical1;
+    if (sensors.horizontal1 != nullptr) horizontalWheel = sensors.horizontal1;
+    else if (sensors.horizontal2 != nullptr) horizontalWheel = sensors.horizontal2;
     float rawVertical = 0;
     float rawHorizontal = 0;
     if (verticalWheel != nullptr) rawVertical = verticalWheel->getDistanceTraveled();
