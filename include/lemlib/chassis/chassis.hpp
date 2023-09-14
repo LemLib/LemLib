@@ -1,14 +1,19 @@
 #pragma once
 
 #include <functional>
+
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
+
 #include "lemlib/asset.hpp"
+#include "lemlib/pose.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/pid.hpp"
 #include "lemlib/exitcondition.hpp"
+#include "lemlib/chassis/structs.hpp"
+#include "lemlib/chassis/odom.hpp"
 
 namespace lemlib {
 /**
@@ -220,6 +225,11 @@ class Chassis {
          */
         Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
                 OdomSensors sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
+        Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
+                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve)
+            : drivetrain(drivetrain), lateralSettings(lateralSettings), angularSettings(angularSettings),
+              sensors(sensors), driveCurve(driveCurve), odom(sensors, drivetrain) {}
+
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -249,6 +259,7 @@ class Chassis {
          * @return Pose
          */
         Pose getPose(bool radians = false, bool standardPos = false);
+        Pose getPose(bool radians = false);
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *

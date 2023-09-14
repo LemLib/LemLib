@@ -11,111 +11,6 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
-#include "lemlib/timer.hpp"
-#include "pros/rtos.hpp"
-
-/**
- * @brief The variables are pointers so that they can be set to nullptr if they are not used
- * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
- *
- * @param vertical1 pointer to the first vertical tracking wheel
- * @param vertical2 pointer to the second vertical tracking wheel
- * @param horizontal1 pointer to the first horizontal tracking wheel
- * @param horizontal2 pointer to the second horizontal tracking wheel
- * @param imu pointer to the IMU
- */
-lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
-                                 TrackingWheel* horizontal2, pros::Imu* imu)
-    : vertical1(vertical1),
-      vertical2(vertical2),
-      horizontal1(horizontal1),
-      horizontal2(horizontal2),
-      imu(imu) {}
-
-/**
- * @brief The constants are stored in a struct so that they can be easily passed to the chassis class
- * Set a constant to 0 and it will be ignored
- *
- * @param leftMotors pointer to the left motors
- * @param rightMotors pointer to the right motors
- * @param trackWidth the track width of the robot
- * @param wheelDiameter the diameter of the wheel used on the drivetrain
- * @param rpm the rpm of the wheels
- * @param chasePower higher values make the robot move faster but causes more overshoot on turns
- */
-lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth,
-                               float wheelDiameter, float rpm, float chasePower)
-    : leftMotors(leftMotors),
-      rightMotors(rightMotors),
-      trackWidth(trackWidth),
-      wheelDiameter(wheelDiameter),
-      rpm(rpm),
-      chasePower(chasePower) {}
-
-/**
- * @brief Construct a new Chassis
- *
- * @param drivetrain drivetrain to be used for the chassis
- * @param lateralSettings settings for the lateral controller
- * @param angularSettings settings for the angular controller
- * @param sensors sensors to be used for odometry
- * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
- */
-lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings lateralSettings, ControllerSettings angularSettings,
-                         OdomSensors sensors, DriveCurveFunction_t driveCurve)
-    : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
-      angularSettings(angularSettings),
-      sensors(sensors),
-      driveCurve(driveCurve),
-      lateralPID(lateralSettings.kP, lateralSettings.kI, lateralSettings.kD, lateralSettings.windupRange, true),
-      angularPID(angularSettings.kP, angularSettings.kI, angularSettings.kD, angularSettings.windupRange, true),
-      lateralLargeExit(lateralSettings.largeError, lateralSettings.largeErrorTimeout),
-      lateralSmallExit(lateralSettings.smallError, lateralSettings.smallErrorTimeout),
-      angularLargeExit(angularSettings.largeError, angularSettings.largeErrorTimeout),
-      angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout) {}
-
-bool isDriverControl() {
-    return pros::competition::is_connected() && !pros::competition::is_autonomous() &&
-           !pros::competition::is_disabled();
-}
-
-/**
- * @brief calibrate the IMU given a sensors struct
- *
- * @param sensors reference to the sensors struct
- */
-void calibrateIMU(lemlib::OdomSensors& sensors) {
-    int attempt = 1;
-    bool calibrated = false;
-    // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
-    while (attempt <= 5 && !isDriverControl()) {
-        sensors.imu->reset();
-        // wait until IMU is calibrated
-        do pros::delay(10);
-        while (sensors.imu->get_status() != 0xFF && sensors.imu->is_calibrating() && !isDriverControl());
-        // exit if imu has been calibrated
-        if (!isnanf(sensors.imu->get_heading()) && !isinf(sensors.imu->get_heading())) {
-            calibrated = true;
-            break;
-        }
-        // indicate error
-        pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
-        lemlib::infoSink()->warn("IMU failed to calibrate! Attempt #{}", attempt);
-        attempt++;
-    }
-    // check if its driver control through the comp switch
-    if (isDriverControl() && !calibrated) {
-        sensors.imu = nullptr;
-        lemlib::infoSink()->error(
-            "Driver control started, abandoning IMU calibration, defaulting to tracking wheels / motor encoders");
-    }
-    // check if calibration attempts were successful
-    if (attempt > 5) {
-        sensors.imu = nullptr;
-        lemlib::infoSink()->error("IMU calibration failed, defaulting to tracking wheels / motor encoders");
-    }
-}
 
 /**
  * @brief Calibrate the chassis sensors
@@ -160,7 +55,11 @@ void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
  * @param Pose the new pose
  * @param radians whether pose theta is in radians (true) or not (false). false by default
  */
-void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
+void lemlib::Chassis::setPose(Pose pose, bool radians) {
+    if (!radians) pose.theta = degToRad(pose.theta);
+    pose.theta = M_PI_2 - pose.theta;
+    odom.setPose(pose);
+}
 
 /**
  * @brief Get the pose of the chassis
@@ -168,9 +67,9 @@ void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, r
  * @param radians whether theta should be in radians (true) or degrees (false). false by default
  * @return Pose
  */
-lemlib::Pose lemlib::Chassis::getPose(bool radians, bool standardPos) {
-    Pose pose = lemlib::getPose(true);
-    if (standardPos) pose.theta = M_PI_2 - pose.theta;
+lemlib::Pose lemlib::Chassis::getPose(bool radians) {
+    Pose pose = odom.getPose();
+    pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
     return pose;
 }
