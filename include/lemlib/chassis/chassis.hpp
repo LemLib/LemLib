@@ -60,14 +60,19 @@ class Chassis {
          */
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
                 OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve)
-            : drivetrain(drivetrain), lateralSettings(lateralSettings), angularSettings(angularSettings),
-              sensors(sensors), driveCurve(driveCurve), odom(sensors, drivetrain) {}
+            : drivetrain(drivetrain),
+              lateralSettings(lateralSettings),
+              angularSettings(angularSettings),
+              sensors(sensors),
+              driveCurve(driveCurve),
+              odom(sensors, drivetrain) {}
 
         /**
-         * @brief Calibrate the chassis sensors
+         * @brief Initialize the chassis
          *
          */
-        void calibrate();
+        void initialize();
+
         /**
          * @brief Set the pose of the chassis
          *
@@ -77,6 +82,7 @@ class Chassis {
          * @param radians true if theta is in radians, false if not. False by default
          */
         void setPose(float x, float y, float theta, bool radians = false);
+
         /**
          * @brief Set the pose of the chassis
          *
@@ -84,6 +90,7 @@ class Chassis {
          * @param radians whether pose theta is in radians (true) or not (false). false by default
          */
         void setPose(Pose pose, bool radians = false);
+
         /**
          * @brief Get the pose of the chassis
          *
@@ -91,6 +98,7 @@ class Chassis {
          * @return Pose
          */
         Pose getPose(bool radians = false);
+
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *
@@ -99,6 +107,7 @@ class Chassis {
          * @param dist the distance the robot needs to travel before returning
          */
         void waitUntilDist(float dist);
+
         /**
          * @brief Turn the chassis so it is facing the target point
          *
@@ -114,6 +123,7 @@ class Chassis {
          */
         void turnTo(float x, float y, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127,
                     bool log = false);
+
         /**
          * @brief Move the chassis towards the target pose
          *
@@ -134,6 +144,7 @@ class Chassis {
          */
         void moveTo(float x, float y, float theta, int timeout, bool async = false, bool forwards = true,
                     float chasePower = 0, float lead = 0.6, float maxSpeed = 127, bool log = false);
+
         /**
          * @brief Move the chassis along a path
          *
@@ -148,6 +159,7 @@ class Chassis {
          */
         void follow(const asset& path, int timeout, float lookahead, bool async = false, bool forwards = true,
                     float maxSpeed = 127, bool log = false);
+
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this
          * control scheme one joystick axis controls one half of the robot, and another joystick axis controls another.
@@ -157,6 +169,7 @@ class Chassis {
          * of 0 disables the curve entirely.
          */
         void tank(int left, int right, float curveGain = 0.0);
+
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
          * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
@@ -167,6 +180,7 @@ class Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void arcade(int throttle, int turn, float curveGain = 0.0);
+
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
          * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
@@ -179,10 +193,17 @@ class Chassis {
          */
         void curvature(int throttle, int turn, float cureGain = 0.0);
     private:
+        /**
+         * @brief Chassis update function. Updates chassis motion and odometry
+         *
+         */
+        void update();
+
         pros::Mutex mutex;
         float distTravelled = 0;
 
         Odometry odom;
+        pros::Task* task;
 
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;

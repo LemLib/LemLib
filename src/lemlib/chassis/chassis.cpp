@@ -18,67 +18,55 @@
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 
+using namespace lemlib;
+
 /**
- * @brief Calibrate the chassis sensors
+ * Initialize the chassis
  *
+ * Calibrates sensors and starts the chassis task
  */
-void lemlib::Chassis::calibrate() {
-    // calibrate the imu if it exists
-    if (sensors.imu != nullptr) {
-        int attempt = 1;
-        // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
-        while (sensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
-               attempt < 5) {
-            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
-            pros::delay(10);
-            attempt++;
-        }
-        if (attempt == 5) sensors.imu = nullptr;
-    }
-    // initialize odom
-    if (sensors.vertical1 == nullptr)
-        sensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
-                                                      -(drivetrain.trackWidth / 2), drivetrain.rpm);
-    if (sensors.vertical2 == nullptr)
-        sensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
-                                                      drivetrain.trackWidth / 2, drivetrain.rpm);
-    sensors.vertical1->reset();
-    sensors.vertical2->reset();
-    if (sensors.horizontal1 != nullptr) sensors.horizontal1->reset();
-    if (sensors.horizontal2 != nullptr) sensors.horizontal2->reset();
-    // rumble to controller to indicate success
-    pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
+void Chassis::initialize() {
+    // calibrate odom
+    odom.calibrate();
+    // start the chassis task if it doesn't exist
+    if (task == nullptr)
+        task = new pros::Task([&]() {
+            while (true) {
+                update();
+                pros::delay(10);
+            }
+        });
 }
 
 /**
- * @brief Set the Pose object
+ * Set the pose of the chassis
  *
- * @param x new x value
- * @param y new y value
- * @param theta new theta value
- * @param radians true if theta is in radians, false if not. False by default
+ * This function is a wrapper for the Odometry::setPose() function
  */
-void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {}
+void Chassis::setPose(float x, float y, float theta, bool radians) {
+    Pose pose(x, y, theta);
+    setPose(pose, radians);
+}
 
 /**
- * @brief Set the pose of the chassis
+ * Set the pose of the chassis
  *
- * @param Pose the new pose
- * @param radians whether pose theta is in radians (true) or not (false). false by default
+ * This function is a wrapper for the Odometry::setPose() function
+ * but it also transforms the pose to the format needed by the user
  */
-void lemlib::Chassis::setPose(Pose pose, bool radians) {
+void Chassis::setPose(Pose pose, bool radians) {
     if (!radians) pose.theta = degToRad(pose.theta);
     pose.theta = M_PI_2 - pose.theta;
     odom.setPose(pose);
 }
 
 /**
- * @brief Get the pose of the chassis
+ * Get the pose of the chassis
  *
- * @param radians whether theta should be in radians (true) or degrees (false). false by default
- * @return Pose
+ * This function is a wrapper for the Odometry::getPose() function
+ * but it also transforms the pose to the format needed by the user
  */
-lemlib::Pose lemlib::Chassis::getPose(bool radians) {
+Pose Chassis::getPose(bool radians) {
     Pose pose = odom.getPose();
     pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
@@ -86,13 +74,14 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians) {
 }
 
 /**
- * @brief Wait until the robot has traveled a certain distance along the path
+ * Wait until the robot has traveled a certain distance during a movement
  *
- * @note Units are in inches if curret motion is moveTo or follow, degrees if using turnTo
+ * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
  *
- * @param dist the distance the robot needs to travel before returning
+ * Just uses a while loop and exits when the distance traveled is greater than the specified distance
+ * or if the motion has finished
  */
-void lemlib::Chassis::waitUntilDist(float dist) {
+void Chassis::waitUntilDist(float dist) {
     // do while to give the thread time to start
     do pros::delay(10);
     while (distTravelled <= dist && distTravelled != -1);
@@ -111,7 +100,7 @@ void lemlib::Chassis::waitUntilDist(float dist) {
  * @param maxSpeed the maximum speed the robot can turn at. Default is 200
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool reversed, float maxSpeed, bool log) {
+void Chassis::turnTo(float x, float y, int timeout, bool async, bool reversed, float maxSpeed, bool log) {
     // try to take the mutex
     // if its unsuccessful after 10ms, return
     if (!mutex.take(10)) return;
@@ -191,8 +180,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
  * @param maxSpeed the maximum speed the robot can move at. 127 at default
  * @param log whether the chassis should log the turnTo function. false by default
  */
-void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool async, bool forwards, float chasePower,
-                             float lead, float maxSpeed, bool log) {
+void Chassis::moveTo(float x, float y, float theta, int timeout, bool async, bool forwards, float chasePower,
+                     float lead, float maxSpeed, bool log) {
     // try to take the mutex
     // if its unsuccessful after 10ms, return
     if (!mutex.take(10)) return;
@@ -289,3 +278,13 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
     // give the mutex back
     mutex.give();
 }
+
+/**
+ * Chassis update function
+ *
+ * This function is called in a loop by the chassis task
+ * It updates any motion alg that may be running
+ * And it updates the odometry
+ * Once implemented, it will also update the drivetrain velocity controllers
+ */
+void Chassis::update() { odom.update(); }

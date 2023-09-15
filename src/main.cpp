@@ -42,7 +42,7 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
 void initialize() {
     pros::lcd::initialize();
     lemlib::Logger::initialize();
-    chassis.calibrate(); // calibrate sensors
+    chassis.initialize(); // calibrate sensors
 
     // print odom values to the brain
     pros::Task screenTask([=]() {

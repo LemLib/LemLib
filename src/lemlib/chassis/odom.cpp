@@ -15,11 +15,56 @@
 // http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
 
 #include <math.h>
+#include "pros/misc.h"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 
 using namespace lemlib;
+
+/**
+ * Calibrate odometry sensors
+ *
+ * This function should be called before Odometry::update() runs for the first time.
+ *
+ * First, we attempt to calibrate the imu. IMU calibration failure is common, so we
+ * attempt to calibrate it up to 5 times if it fails. If it still fails after this, we
+ * rumble the controller to let the user know that the imu failed to calibrate. If it
+ * does fail to calibrate, we will use other sensors to calculate the heading of the robot.
+ *
+ * Calibrating the tracking wheels is simpler. If we detect there are less than 2 vertical
+ * tracking wheels, we will simply substitute one side of the drivetrain, and then we
+ * calibrate them. For horizontal wheels, we just calibrate them if they exist.
+ */
+void Odometry::calibrate() {
+    // calibrate the imu if it exists
+    if (sensors.imu != nullptr) {
+        int attempt = 1;
+        // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
+        while (sensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
+               attempt < 5) {
+            attempt++;
+            pros::delay(50);
+        }
+        if (attempt == 5) {
+            // disable IMU
+            sensors.imu = nullptr;
+            // rumble controller if imu calibration fails
+            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
+        }
+    }
+    // substitute tracking wheels with a side of the drivetrain if needed
+    if (sensors.vertical1 == nullptr)
+        sensors.vertical1 =
+            new TrackingWheel(drive.leftMotors, drive.wheelDiameter, -(drive.trackWidth / 2), drive.rpm);
+    if (sensors.vertical2 == nullptr)
+        sensors.vertical2 = new TrackingWheel(drive.rightMotors, drive.wheelDiameter, drive.trackWidth / 2, drive.rpm);
+    // calibrate the tracking wheels
+    sensors.vertical1->reset();
+    sensors.vertical2->reset();
+    if (sensors.horizontal1 != nullptr) sensors.horizontal1->reset();
+    if (sensors.horizontal2 != nullptr) sensors.horizontal2->reset();
+}
 
 /**
  * Gets the pose
@@ -74,29 +119,16 @@ void Odometry::update() {
 
     // calculate the heading of the robot
     // Priority:
-    // 1. Inertial Sensor
-    // 2. Dual vertical tracking wheels
-    // 3. Dual horizontal tracking wheels
-    // 4. Single vertical tracking wheel w/ drivetrain
-    // 5. Single horizontal tracking wheel w/ drivetrain
-    // 6. Drivetrain
-
-    // 1. Horizontal tracking wheels
-    // 2. Vertical tracking wheels
-    // 3. Inertial Sensor
-    // 4. Drivetrain
+    // 1. IMU
+    // 2. Horizontal tracking wheels
+    // 3. Vertical tracking wheels
     float heading = pose.theta;
-    // calculate the heading using the horizontal tracking wheels
-    if (sensors.horizontal1 != nullptr && sensors.horizontal2 != nullptr)
+    // calculate heading with inertial sensor if it exists
+    if (sensors.imu != nullptr) heading += deltaImu;
+    // else, use horizontal tracking wheels if they both exist
+    else if (sensors.horizontal1 != nullptr && sensors.horizontal2 != nullptr)
         heading += (deltaHorizontal1 - deltaHorizontal2) /
                    (sensors.horizontal1->getOffset() - sensors.horizontal2->getOffset());
-    // else, if both vertical tracking wheels aren't substituted by the drivetrain, use the vertical tracking wheels
-    else if (!sensors.vertical1->getType() && !sensors.vertical2->getType())
-        heading +=
-            (deltaVertical1 - deltaVertical2) / (sensors.vertical1->getOffset() - sensors.vertical2->getOffset());
-    // else, if the inertial sensor exists, use it
-    else if (sensors.imu != nullptr) heading += deltaImu;
-    // else, use the the substituted tracking wheels
     else
         heading +=
             (deltaVertical1 - deltaVertical2) / (sensors.vertical1->getOffset() - sensors.vertical2->getOffset());
@@ -105,20 +137,23 @@ void Odometry::update() {
 
     // choose tracking wheels to use
     // Prioritize non-powered tracking wheels
-    lemlib::TrackingWheel* verticalWheel = nullptr;
-    lemlib::TrackingWheel* horizontalWheel = nullptr;
-    if (!sensors.vertical1->getType()) verticalWheel = sensors.vertical1;
-    else if (!sensors.vertical2->getType()) verticalWheel = sensors.vertical2;
-    else verticalWheel = sensors.vertical1;
+    TrackingWheel* verticalWheel = nullptr;
+    TrackingWheel* horizontalWheel = nullptr;
+    // vertical tracking wheels
+    verticalWheel = sensors.vertical1;
+    if (!sensors.vertical2->getType()) verticalWheel = sensors.vertical2;
+    // horizontal tracking wheels
     if (sensors.horizontal1 != nullptr) horizontalWheel = sensors.horizontal1;
-    else if (sensors.horizontal2 != nullptr) horizontalWheel = sensors.horizontal2;
+    if (sensors.horizontal2 != nullptr) horizontalWheel = sensors.horizontal2;
+    // get raw values
     float rawVertical = 0;
     float rawHorizontal = 0;
     if (verticalWheel != nullptr) rawVertical = verticalWheel->getDistanceTraveled();
     if (horizontalWheel != nullptr) rawHorizontal = horizontalWheel->getDistanceTraveled();
+    // get offsets
     float horizontalOffset = 0;
     float verticalOffset = 0;
-    if (verticalWheel != nullptr) verticalOffset = verticalWheel->getOffset();
+    verticalOffset = verticalWheel->getOffset();
     if (horizontalWheel != nullptr) horizontalOffset = horizontalWheel->getOffset();
 
     // calculate change in x and y
