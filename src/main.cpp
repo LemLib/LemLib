@@ -41,7 +41,6 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
  */
 void initialize() {
     pros::lcd::initialize();
-    lemlib::Logger::initialize();
     chassis.calibrate(); // calibrate sensors
 
     // print odom values to the brain
@@ -50,7 +49,6 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x);
             pros::lcd::print(1, "Y: %f", chassis.getPose().y);
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
-            lemlib::Logger::logOdom(chassis.getPose());
             pros::delay(50);
         }
     });
