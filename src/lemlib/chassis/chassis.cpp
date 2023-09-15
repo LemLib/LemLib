@@ -12,6 +12,8 @@
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 
+using namespace lemlib;
+
 /**
  * @brief Calibrate the chassis sensors
  *
@@ -50,24 +52,24 @@ void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
 }
 
 /**
- * @brief Set the pose of the chassis
+ * Set the pose of the chassis
  *
- * @param Pose the new pose
- * @param radians whether pose theta is in radians (true) or not (false). false by default
+ * This function is a wrapper for the Odometry::setPose() function
+ * but it also transforms the pose to the format needed by the user
  */
-void lemlib::Chassis::setPose(Pose pose, bool radians) {
+void Chassis::setPose(Pose pose, bool radians) {
     if (!radians) pose.theta = degToRad(pose.theta);
     pose.theta = M_PI_2 - pose.theta;
     odom.setPose(pose);
 }
 
 /**
- * @brief Get the pose of the chassis
+ * Get the pose of the chassis
  *
- * @param radians whether theta should be in radians (true) or degrees (false). false by default
- * @return Pose
+ * This function is a wrapper for the Odometry::getPose() function
+ * but it also transforms the pose to the format needed by the user
  */
-lemlib::Pose lemlib::Chassis::getPose(bool radians) {
+Pose Chassis::getPose(bool radians) {
     Pose pose = odom.getPose();
     pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
@@ -75,11 +77,12 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians) {
 }
 
 /**
- * @brief Wait until the robot has traveled a certain distance along the path
+ * Wait until the robot has traveled a certain distance during a movement
  *
  * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
  *
- * @param dist the distance the robot needs to travel before returning
+ * Just uses a while loop and exits when the distance traveled is greater than the specified distance
+ * or if the motion has finished
  */
 void lemlib::Chassis::waitUntil(float dist) {
     // do while to give the thread time to start

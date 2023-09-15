@@ -227,8 +227,12 @@ class Chassis {
                 OdomSensors sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
                 OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve)
-            : drivetrain(drivetrain), lateralSettings(lateralSettings), angularSettings(angularSettings),
-              sensors(sensors), driveCurve(driveCurve), odom(sensors, drivetrain) {}
+            : drivetrain(drivetrain),
+              lateralSettings(lateralSettings),
+              angularSettings(angularSettings),
+              sensors(sensors),
+              driveCurve(driveCurve),
+              odom(sensors, drivetrain) {}
 
         /**
          * @brief Calibrate the chassis sensors
@@ -245,6 +249,7 @@ class Chassis {
          * @param radians true if theta is in radians, false if not. False by default
          */
         void setPose(float x, float y, float theta, bool radians = false);
+
         /**
          * @brief Set the pose of the chassis
          *
@@ -252,6 +257,7 @@ class Chassis {
          * @param radians whether pose theta is in radians (true) or not (false). false by default
          */
         void setPose(Pose pose, bool radians = false);
+
         /**
          * @brief Get the pose of the chassis
          *
@@ -260,6 +266,7 @@ class Chassis {
          */
         Pose getPose(bool radians = false, bool standardPos = false);
         Pose getPose(bool radians = false);
+
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *
@@ -368,6 +375,7 @@ class Chassis {
          * A value of 0 disables the curve entirely.
          */
         void tank(int left, int right, float curveGain = 0.0);
+
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control
          * scheme one joystick axis controls the forwards and backwards movement of the robot, while the other
@@ -378,6 +386,7 @@ class Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void arcade(int throttle, int turn, float curveGain = 0.0);
+
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control
          * scheme is very similar to arcade drive, except the second joystick axis controls the radius of the

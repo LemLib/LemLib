@@ -11,7 +11,15 @@ class Odometry {
          *
          * @param chassis pointer to the chassis object
          */
-        Odometry(OdomSensors_t& sensors, Drivetrain_t& drive) : sensors(sensors), drive(drive) {}
+        Odometry(OdomSensors_t& sensors, Drivetrain_t& drive)
+            : sensors(sensors),
+              drive(drive) {}
+
+        /**
+         * @brief Calibrate sensors used for odometry
+         *
+         */
+        void calibrate();
 
         /**
          * @brief Get the Pose
@@ -40,7 +48,7 @@ class Odometry {
     private:
         OdomSensors_t& sensors;
         Drivetrain_t& drive;
-        Pose pose = Pose(0, 0, 0); // the pose of the robot
+        Pose pose = Pose(0, 0, 0);
 
         float prevVertical = 0;
         float prevVertical1 = 0;

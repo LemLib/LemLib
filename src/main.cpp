@@ -77,7 +77,8 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    pros::lcd::initialize(); // initialize brain screen
+    pros::lcd::initialize();
+    lemlib::Logger::initialize();
     chassis.calibrate(); // calibrate sensors
 
     // the default rate is 50. however, if you need to change the rate, you
