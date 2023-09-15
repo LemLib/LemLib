@@ -41,16 +41,15 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
  */
 void initialize() {
     pros::lcd::initialize();
-    lemlib::Logger::initialize();
     chassis.calibrate(); // calibrate sensors
+
+    // for more information on how the formatting for the loggers
+    // works, refer to the fmtlib docs
 
     // print odom values to the brain
     pros::Task screenTask([=]() {
         while (true) {
-            pros::lcd::print(0, "X: %f", chassis.getPose().x);
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y);
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
-            lemlib::Logger::logOdom(chassis.getPose());
+            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             pros::delay(50);
         }
     });
