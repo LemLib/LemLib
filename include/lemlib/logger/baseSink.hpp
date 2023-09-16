@@ -2,6 +2,7 @@
 
 #include "message.hpp"
 
+#define FMT_HEADER_ONLY
 #include "fmt/core.h"
 #include "fmt/args.h"
 
@@ -86,7 +87,7 @@ class BaseSink {
          *
          * @param message
          */
-        virtual void logMessage(const Message& message);
+        virtual void logMessage(const Message& message) = 0;
 
         /**
          * @brief Get the arguments for formatting

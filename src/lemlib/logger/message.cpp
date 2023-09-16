@@ -11,5 +11,4 @@ std::string format_as(Level level) {
     }
     __builtin_unreachable();
 }
-
 } // namespace lemlib
