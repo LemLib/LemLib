@@ -23,9 +23,9 @@ struct Message {
 
 /**
  * @brief Format a level
- * 
- * @param level 
- * @return std::string 
+ *
+ * @param level
+ * @return std::string
  */
 std::string format_as(Level level);
 } // namespace lemlib

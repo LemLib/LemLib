@@ -91,8 +91,8 @@ class BaseSink {
 
         /**
          * @brief Get the arguments for formatting
-         * 
-         * @return fmt::dynamic_format_arg_store<fmt::format_context> 
+         *
+         * @return fmt::dynamic_format_arg_store<fmt::format_context>
          */
         virtual fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs();
     private:

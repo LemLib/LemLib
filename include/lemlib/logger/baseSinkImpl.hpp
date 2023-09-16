@@ -11,8 +11,7 @@
 #include "pros/rtos.hpp"
 
 namespace lemlib {
-template <typename... T>
-void BaseSink::log(Level level, fmt::format_string<T...> format, T&&... args) {
+template <typename... T> void BaseSink::log(Level level, fmt::format_string<T...> format, T&&... args) {
     if (level < lowestLevel) { return; }
 
     // format the message first

@@ -10,7 +10,7 @@
 namespace lemlib {
 /**
  * @brief Implementation of the Stdout sink
- * 
+ *
  */
 class StdoutSink : public BaseSink {
     public:
@@ -59,4 +59,4 @@ class StdoutSink : public BaseSink {
          */
         void loggingTask();
 };
-}
+} // namespace lemlib
