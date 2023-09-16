@@ -1,7 +1,5 @@
 #include "baseSink.hpp"
 
-#include "lemlib/logger/message.hpp"
-
 namespace lemlib {
 void BaseSink::setLowestLevel(Level lowestLevel) { this->lowestLevel = lowestLevel; }
 

@@ -8,6 +8,10 @@
 #include "pros/rtos.hpp"
 
 namespace lemlib {
+/**
+ * @brief Implementation of the Stdout sink
+ * 
+ */
 class StdoutSink : public BaseSink {
     public:
         StdoutSink(const StdoutSink&) = delete;

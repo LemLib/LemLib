@@ -20,3 +20,5 @@
 #include "lemlib/logger/baseSink.hpp"
 #include "lemlib/logger/baseSinkImpl.hpp"
 #include "lemlib/logger/stdoutSink.hpp"
+#include "lemlib/logger/logger.hpp"
+#include "lemlib/logger/loggerImpl.hpp"
