@@ -25,6 +25,13 @@ class StdoutSink : public BaseSink {
         void setPrintRate(uint8_t printRate);
 
         /**
+         * @brief Set the color mode (true enables, false disables)
+         *
+         * @param mode
+         */
+        void flipColorMode(bool mode);
+
+        /**
          * @brief Get the stdout sink.
          *
          * @return StdoutSink*
@@ -38,11 +45,18 @@ class StdoutSink : public BaseSink {
         StdoutSink();
 
         /**
-         * @brief Log the given string
+         * @brief Log the given message
          *
-         * @param message The message to log
+         * @param message
          */
         void logMessage(const Message& message) override;
+
+        /**
+         * @brief Get the arguments for formatting
+         *
+         * @return fmt::dynamic_format_arg_store<fmt::format_context>
+         */
+        fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs(const Message& message) override;
 
         static StdoutSink* sink;
 
@@ -51,6 +65,7 @@ class StdoutSink : public BaseSink {
         pros::Mutex mutex;
         pros::Task task;
 
+        bool colorMode = true;
         uint8_t printRate = 5;
 
         /**

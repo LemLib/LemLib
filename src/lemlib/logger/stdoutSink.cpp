@@ -12,6 +12,13 @@ StdoutSink::StdoutSink() : task([&]() { loggingTask(); }) {}
 
 void StdoutSink::setPrintRate(uint8_t printRate) { this->printRate = printRate; }
 
+/**
+ * @brief Set the color mode (true enables, false disables)
+ *
+ * @param mode
+ */
+void StdoutSink::flipColorMode(bool mode) { this->colorMode = mode; }
+
 StdoutSink* StdoutSink::get() {
     if (sink == nullptr) { sink = new StdoutSink; }
 
@@ -41,7 +48,11 @@ void StdoutSink::loggingTask() {
         mutex.take();
         if (buffer.size() > 0) {
             Message message = buffer.at(0);
-            fmt::print(fmt::fg(convertToColor(message.level)), "{}\n", std::move(message.message));
+            if (colorMode) {
+                fmt::print(fmt::fg(convertToColor(message.level)), "{}\n", std::move(message.message));
+            } else {
+                fmt::print("{}\n", std::move(message.message));
+            }
             buffer.pop_front();
         }
         mutex.give();
