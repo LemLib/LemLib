@@ -76,7 +76,20 @@ class Logger {
          * @param args The arguments for formatting
          */
         template <typename... T> void fatal(fmt::format_string<T...> format, T&&... args);
+
+        /**
+         * @brief Get the default logger
+         * 
+         * @return Logger 
+         */
+        static Logger getDefaultLogger();
     private:
         std::vector<BaseSink*> sinks;
 };
 } // namespace lemlib
+
+#define LEMLIB_DEBUG(format, ...) ::lemlib::Logger::getDefaultLogger()->debug(format, __VA_ARGS__)
+#define LEMLIB_INFO(format, ...) ::lemlib::Logger::getDefaultLogger()->info(format, __VA_ARGS__)
+#define LEMLIB_WARN(format, ...) ::lemlib::Logger::getDefaultLogger()->warn(format, __VA_ARGS__)
+#define LEMLIB_ERROR(format, ...) ::lemlib::Logger::getDefaultLogger()->error(format, __VA_ARGS__)
+#define LEMLBI_FATAL(format, ...) ::lemlib::Logger::getDefaultLogger()->fatal(format, __VA_ARGS__)
