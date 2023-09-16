@@ -24,7 +24,7 @@ template <typename... T> void BaseSink::log(Level level, fmt::format_string<T...
     formattingArgs.push_back(fmt::arg("level", level));
     formattingArgs.push_back(fmt::arg("message", message));
 
-    std::string formattedString = fmt::format(logFormat, std::move(formattingArgs));
+    std::string formattedString = fmt::vformat(logFormat, std::move(formattingArgs));
 
     logMessage(Message {std::move(formattedString), level});
 }

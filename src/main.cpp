@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "lemlib/logger/logger.hpp"
 
 // drive motors
 pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
@@ -43,12 +44,15 @@ void initialize() {
     pros::lcd::initialize();
     chassis.calibrate(); // calibrate sensors
 
+    // for more information on how the formatting for the loggers
+    // works, refer to the fmtlib docs
+
+    LEMLIB_INFO("{1}, {0}!", "LemLib", "Hello");
+
     // print odom values to the brain
     pros::Task screenTask([=]() {
         while (true) {
-            pros::lcd::print(0, "X: %f", chassis.getPose().x);
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y);
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
+            LEMLIB_DEBUG("Chassis pose: {}", chassis.getPose());
             pros::delay(50);
         }
     });
