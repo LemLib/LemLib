@@ -92,4 +92,4 @@ class Logger {
 #define LEMLIB_INFO(format, ...) ::lemlib::Logger::getDefaultLogger().info(format, __VA_ARGS__)
 #define LEMLIB_WARN(format, ...) ::lemlib::Logger::getDefaultLogger().warn(format, __VA_ARGS__)
 #define LEMLIB_ERROR(format, ...) ::lemlib::Logger::getDefaultLogger().error(format, __VA_ARGS__)
-#define LEMLBI_FATAL(format, ...) ::lemlib::Logger::getDefaultLogger().fatal(format, __VA_ARGS__)
+#define LEMLIB_FATAL(format, ...) ::lemlib::Logger::getDefaultLogger().fatal(format, __VA_ARGS__)
