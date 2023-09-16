@@ -51,13 +51,6 @@ class StdoutSink : public BaseSink {
          */
         void logMessage(const Message& message) override;
 
-        /**
-         * @brief Get the arguments for formatting
-         *
-         * @return fmt::dynamic_format_arg_store<fmt::format_context>
-         */
-        fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs(const Message& message) override;
-
         static StdoutSink* sink;
 
         std::deque<Message> buffer = {};
