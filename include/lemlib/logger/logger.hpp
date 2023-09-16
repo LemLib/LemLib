@@ -79,8 +79,8 @@ class Logger {
 
         /**
          * @brief Get the default logger
-         * 
-         * @return Logger 
+         *
+         * @return Logger
          */
         static Logger getDefaultLogger();
     private:
