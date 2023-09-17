@@ -22,7 +22,7 @@ class StdoutSink : public BaseSink {
          *
          * @param printRate The print rate
          */
-        void setPrintRate(uint8_t printRate);
+        void setPrintRate(uint32_t printRate);
 
         /**
          * @brief Set the color mode (true enables, false disables)
@@ -59,7 +59,7 @@ class StdoutSink : public BaseSink {
         pros::Task task;
 
         bool colorMode = true;
-        uint8_t printRate = 5;
+        uint32_t printRate = 5;
 
         /**
          * @brief Start the logging task.

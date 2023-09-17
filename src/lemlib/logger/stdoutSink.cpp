@@ -10,7 +10,7 @@ StdoutSink* StdoutSink::sink = nullptr;
 
 StdoutSink::StdoutSink() : task([&]() { loggingTask(); }) {}
 
-void StdoutSink::setPrintRate(uint8_t printRate) { this->printRate = printRate; }
+void StdoutSink::setPrintRate(uint32_t printRate) { this->printRate = printRate; }
 
 /**
  * @brief Set the color mode (true enables, false disables)
