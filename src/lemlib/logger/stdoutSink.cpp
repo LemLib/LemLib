@@ -50,6 +50,7 @@ void StdoutSink::loggingTask() {
             Message message = buffer.at(0);
             if (colorMode) {
                 fmt::print(fmt::fg(convertToColor(message.level)), "{}\n", std::move(message.message));
+                fmt::print("\033[0m"); // reset ansi
             } else {
                 fmt::print("{}\n", std::move(message.message));
             }
