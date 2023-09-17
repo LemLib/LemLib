@@ -5,5 +5,5 @@
 namespace lemlib {
 Logger::Logger(std::initializer_list<BaseSink*> sinks) { this->sinks = sinks; }
 
-Logger Logger::getDefaultLogger() { return {StdoutSink::get()}; }
+Logger Logger::getDefault() { return {StdoutSink::get()}; }
 } // namespace lemlib

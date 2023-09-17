@@ -17,8 +17,10 @@ template <typename... T> void BaseSink::log(Level level, fmt::format_string<T...
     // format the message first
     std::string message = fmt::format(format, std::forward<T>(args)...);
 
+    uint32_t time = pros::millis();
+
     // get the arguments
-    fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs = getExtraFormattingArgs(Message {"", level});
+    fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs = getExtraFormattingArgs(Message {"", level, time});
 
     formattingArgs.push_back(fmt::arg("time", pros::millis()));
     formattingArgs.push_back(fmt::arg("level", level));
@@ -26,7 +28,7 @@ template <typename... T> void BaseSink::log(Level level, fmt::format_string<T...
 
     std::string formattedString = fmt::vformat(logFormat, std::move(formattingArgs));
 
-    logMessage(Message {std::move(formattedString), level});
+    logMessage(Message {std::move(formattedString), level, time});
 }
 
 template <typename... T> void BaseSink::debug(fmt::format_string<T...> format, T&&... args) {

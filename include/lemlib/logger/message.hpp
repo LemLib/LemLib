@@ -19,6 +19,9 @@ struct Message {
 
         /** The level of the message */
         Level level;
+
+        /**The time the message was logged*/
+        uint32_t time;
 };
 
 /**

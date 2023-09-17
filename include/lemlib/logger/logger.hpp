@@ -82,14 +82,14 @@ class Logger {
          *
          * @return Logger
          */
-        static Logger getDefaultLogger();
+        static Logger getDefault();
     private:
         std::vector<BaseSink*> sinks;
 };
 } // namespace lemlib
 
-#define LEMLIB_DEBUG(format, ...) ::lemlib::Logger::getDefaultLogger().debug(format, __VA_ARGS__)
-#define LEMLIB_INFO(format, ...) ::lemlib::Logger::getDefaultLogger().info(format, __VA_ARGS__)
-#define LEMLIB_WARN(format, ...) ::lemlib::Logger::getDefaultLogger().warn(format, __VA_ARGS__)
-#define LEMLIB_ERROR(format, ...) ::lemlib::Logger::getDefaultLogger().error(format, __VA_ARGS__)
-#define LEMLIB_FATAL(format, ...) ::lemlib::Logger::getDefaultLogger().fatal(format, __VA_ARGS__)
+#define LEMLIB_DEBUG(format, ...) ::lemlib::Logger::getDefault().debug(format, __VA_ARGS__)
+#define LEMLIB_INFO(format, ...) ::lemlib::Logger::getDefault().info(format, __VA_ARGS__)
+#define LEMLIB_WARN(format, ...) ::lemlib::Logger::getDefault().warn(format, __VA_ARGS__)
+#define LEMLIB_ERROR(format, ...) ::lemlib::Logger::getDefault().error(format, __VA_ARGS__)
+#define LEMLIB_FATAL(format, ...) ::lemlib::Logger::getDefault().fatal(format, __VA_ARGS__)
