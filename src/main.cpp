@@ -1,6 +1,5 @@
 #include "main.h"
 #include "lemlib/api.hpp"
-#include "lemlib/logger/logger.hpp"
 
 // drive motors
 pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed

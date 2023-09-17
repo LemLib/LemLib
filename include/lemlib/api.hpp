@@ -22,4 +22,3 @@
 #include "lemlib/logger/stdoutSink.hpp"
 #include "lemlib/logger/logger.hpp"
 #include "lemlib/logger/loggerImpl.hpp"
-#include "lemlib/logger/typeFormatting.hpp"

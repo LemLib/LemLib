@@ -11,6 +11,9 @@
 #include <math.h>
 #include "lemlib/pose.hpp"
 
+#define FMT_HEADER_ONLY
+#include "fmt/core.h"
+
 /**
  * @brief Create a new pose
  *
@@ -108,4 +111,9 @@ float lemlib::Pose::angle(lemlib::Pose other) { return std::atan2(other.y - this
 lemlib::Pose lemlib::Pose::rotate(float angle) {
     return lemlib::Pose(this->x * std::cos(angle) - this->y * std::sin(angle),
                         this->x * std::sin(angle) + this->y * std::cos(angle), this->theta);
+}
+
+std::string lemlib::format_as(const lemlib::Pose& pose) {
+    // the double brackets become single brackets
+    return fmt::format("lemlib::Pose {{ x: {}, y: {}, theta: {} }}", pose.x, pose.y, pose.theta);
 }
