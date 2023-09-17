@@ -88,13 +88,6 @@ class BaseSink {
          * @param message
          */
         virtual void logMessage(const Message& message) = 0;
-
-        /**
-         * @brief Get the arguments for formatting
-         *
-         * @return fmt::dynamic_format_arg_store<fmt::format_context>
-         */
-        virtual fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs(const Message& message);
     private:
         Level lowestLevel = Level::DEBUG;
         std::string logFormat = "[LemLib] {level}: {message}";

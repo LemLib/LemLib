@@ -2,11 +2,11 @@
 
 #include "baseSink.hpp"
 
+#include "fmt/format.h"
 #include "message.hpp"
 
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
-#include "fmt/args.h"
 
 #include "pros/rtos.hpp"
 
@@ -19,15 +19,8 @@ template <typename... T> void BaseSink::log(Level level, fmt::format_string<T...
 
     uint32_t time = pros::millis();
 
-    // get the arguments
-    fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs =
-        getExtraFormattingArgs(Message {message, level, time});
-
-    formattingArgs.push_back(fmt::arg("time", pros::millis()));
-    formattingArgs.push_back(fmt::arg("level", level));
-    formattingArgs.push_back(fmt::arg("message", std::move(message)));
-
-    std::string formattedString = fmt::vformat(logFormat, std::move(formattingArgs));
+    std::string formattedString = fmt::format(logFormat, fmt::arg("time", time), fmt::arg("level", level),
+                                              fmt::arg("message", std::move(message)));
 
     logMessage(Message {std::move(formattedString), level, time});
 }
