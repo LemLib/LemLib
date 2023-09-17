@@ -20,7 +20,8 @@ template <typename... T> void BaseSink::log(Level level, fmt::format_string<T...
     uint32_t time = pros::millis();
 
     // get the arguments
-    fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs = getExtraFormattingArgs(Message {"", level, time});
+    fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs =
+        getExtraFormattingArgs(Message {"", level, time});
 
     formattingArgs.push_back(fmt::arg("time", pros::millis()));
     formattingArgs.push_back(fmt::arg("level", level));
