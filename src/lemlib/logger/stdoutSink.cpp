@@ -31,13 +31,13 @@ void StdoutSink::logMessage(const Message& message) {
     mutex.give();
 }
 
-static fmt::color convertToColor(Level level) {
+static fmt::terminal_color convertToColor(Level level) {
     switch (level) {
-        case Level::INFO: return fmt::color::cyan;
-        case Level::DEBUG: return fmt::color::green;
-        case Level::WARN: return fmt::color::yellow;
-        case Level::ERROR: return fmt::color::red;
-        case Level::FATAL: return fmt::color::indian_red;
+        case Level::INFO: return fmt::terminal_color::cyan;
+        case Level::DEBUG: return fmt::terminal_color::green;
+        case Level::WARN: return fmt::terminal_color::yellow;
+        case Level::ERROR: return fmt::terminal_color::red;
+        case Level::FATAL: return fmt::terminal_color::bright_red;
     }
 
     __builtin_unreachable();
