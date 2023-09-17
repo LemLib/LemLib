@@ -59,7 +59,7 @@ class StdoutSink : public BaseSink {
         pros::Task task;
 
         bool colorMode = true;
-        uint32_t printRate = 5;
+        uint32_t printRate = 50;
 
         /**
          * @brief Start the logging task.
