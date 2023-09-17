@@ -21,11 +21,11 @@ template <typename... T> void BaseSink::log(Level level, fmt::format_string<T...
 
     // get the arguments
     fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs =
-        getExtraFormattingArgs(Message {"", level, time});
+        getExtraFormattingArgs(Message {message, level, time});
 
     formattingArgs.push_back(fmt::arg("time", pros::millis()));
     formattingArgs.push_back(fmt::arg("level", level));
-    formattingArgs.push_back(fmt::arg("message", message));
+    formattingArgs.push_back(fmt::arg("message", std::move(message)));
 
     std::string formattedString = fmt::vformat(logFormat, std::move(formattingArgs));
 

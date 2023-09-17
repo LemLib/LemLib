@@ -14,13 +14,13 @@ enum class Level { INFO, DEBUG, WARN, ERROR, FATAL };
  *
  */
 struct Message {
-        /* The (formatted) message */
+        /* The message */
         std::string message;
 
         /** The level of the message */
         Level level;
 
-        /**The time the message was logged*/
+        /** The time the message was logged */
         uint32_t time;
 };
 
