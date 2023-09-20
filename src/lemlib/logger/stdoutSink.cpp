@@ -1,5 +1,6 @@
 #include "stdoutSink.hpp"
 
+#include "bufferedSink.hpp"
 #include "fmt/core.h"
 #include "fmt/color.h"
 
@@ -8,9 +9,7 @@
 namespace lemlib {
 StdoutSink* StdoutSink::sink = nullptr;
 
-StdoutSink::StdoutSink() : task([&]() { loggingTask(); }) {}
-
-void StdoutSink::setPrintRate(uint32_t printRate) { this->printRate = printRate; }
+StdoutSink::StdoutSink() : BufferedSink() {}
 
 /**
  * @brief Set the color mode (true enables, false disables)
@@ -25,12 +24,6 @@ StdoutSink* StdoutSink::get() {
     return sink;
 }
 
-void StdoutSink::logMessage(const Message& message) {
-    mutex.take();
-    buffer.push_back(message);
-    mutex.give();
-}
-
 static fmt::terminal_color convertToColor(Level level) {
     switch (level) {
         case Level::INFO: return fmt::terminal_color::cyan;
@@ -43,20 +36,11 @@ static fmt::terminal_color convertToColor(Level level) {
     __builtin_unreachable();
 }
 
-void StdoutSink::loggingTask() {
-    while (true) {
-        mutex.take();
-        if (buffer.size() > 0) {
-            Message message = buffer.at(0);
-            if (colorMode) {
-                fmt::print(fmt::fg(convertToColor(message.level)), "{}\n\033[0m", std::move(message.message));
-            } else {
-                fmt::print("{}\n", std::move(message.message));
-            }
-            buffer.pop_front();
-        }
-        mutex.give();
-        pros::delay(printRate);
+void StdoutSink::handleMessage(const Message& message) {
+    if (colorMode) {
+        fmt::print(fmt::fg(convertToColor(message.level)), "{}\n\033[0m", std::move(message.message));
+    } else {
+        fmt::print("{}\n", std::move(message.message));
     }
 }
 } // namespace lemlib
