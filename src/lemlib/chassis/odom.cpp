@@ -4,6 +4,7 @@
 // http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
 
 #include <math.h>
+#include <cerrno>
 #include "pros/misc.h"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/odom.hpp"
