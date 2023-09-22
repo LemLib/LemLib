@@ -27,6 +27,38 @@ The tutorials provide a detailed walkthrough through all the features of LemLib.
  - 3: [Tuning and Moving](https://lemlib.github.io/LemLib/md_docs_tutorials_3_tuning_and_moving.html)
  - 4: [Pure Pursuit](https://lemlib.github.io/LemLib/md_docs_tutorials_4_pure_pursuit.html)
 
+## FAQ
+_**1. Help! why is my controller vibrating?**_
+Your inertial sensor calibration failed.
+Check if its connected to the right port and try again.
+
+_**2. What drivetrains are supported?**_
+Only tank/differential.
+This is not going to change, as other drivetrains simply aren't popular enough.
+
+_**3. Do I need tracking wheels?**_
+No, but it is recommended.
+You should absolutely have a horizontal tracking wheel if you don't have traction wheels, and you have to spend extra effort tuning your movements to prevent any wheel slip.
+
+_**4. Do I need an inertial sensor?**_
+No, but it is highly recommended.
+The one exception to this would be if you well 2 parallel tracking wheels which are tuned well and are perfectly square. LemLib will work without it, but the accuracy of the odometry will be compromised. 
+
+_**5. Do I need an SD card?**_
+Only if you use Pure Pursuit `chassis.follow()`.
+This will change in the next major release however. In fact you could try it right now in our latest beta
+
+_**6. What are the units?**_
+The units are inches and degrees.
+In a future release, Qunits will be used so you can use whatever units you like.
+
+_**7. Is LemLib VRC legal?**_
+Yes.
+Per the recf student-centred policy, in the context of third-party libraries
+> Students should be able to understand and explain the code used on their robots
+
+In other words, you need to know how LemLib works. You don't need to know the details like all the math, just more or less how the algorithm works. If you want to learn more about LemLib, you can look through the documentation and ask questions on our Discord server
+
 ## Documentation
 Check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/index.html)
 
