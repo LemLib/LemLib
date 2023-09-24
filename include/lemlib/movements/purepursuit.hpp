@@ -5,7 +5,7 @@
 #include "lemlib/pose.hpp"
 #include "lemlib/asset.hpp"
 #include "lemlib/chassis/structs.hpp"
-#include "lemlib/movement/movement.hpp"
+#include "lemlib/movements/movement.hpp"
 
 namespace lemlib {
 /**
@@ -31,7 +31,7 @@ class Waypoint : public Pose {
 /**
  * @brief Pure Pursuit class. Derived from Movement
  */
-class PurePursuit : protected Movement {
+class PurePursuit : public Movement {
     public:
         /**
          * @brief Construct a new Pure Pursuit movement
@@ -58,6 +58,13 @@ class PurePursuit : protected Movement {
          * @return std::pair<int, int> left and right motor power respectively. 128 means movement is done
          */
         std::pair<int, int> update(Pose pose) override;
+
+        /**
+         * @brief Get the distance travelled during the movement
+         *
+         * @return float
+         */
+        float getDist() override;
     private:
         Drivetrain_t drive;
         std::vector<Waypoint> path;
@@ -66,5 +73,9 @@ class PurePursuit : protected Movement {
         int timeout;
         bool forwards;
         int maxSpeed;
+
+        int compState;
+        int state = 0; // 0 = in progress, 1 = settling, 2 = done
+        float dist = 0;
 };
 }; // namespace lemlib

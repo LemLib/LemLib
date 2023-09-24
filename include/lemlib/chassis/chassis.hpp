@@ -8,6 +8,7 @@
 
 #include "lemlib/asset.hpp"
 #include "lemlib/pose.hpp"
+#include "lemlib/movements/movement.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/pid.hpp"
