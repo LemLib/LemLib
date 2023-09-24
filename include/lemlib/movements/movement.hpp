@@ -31,10 +31,6 @@ class Movement {
          *
          * @return float
          */
-        float getDist() { return dist; }
-    protected:
-        int compState;
-        int state = 0; // 0 = in progress, 1 = settling, 2 = done
-        float dist = 0;
+        virtual float getDist() = 0;
 };
 } // namespace lemlib

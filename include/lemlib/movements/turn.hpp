@@ -5,7 +5,7 @@
 #include "lemlib/pose.hpp"
 #include "lemlib/pid.hpp"
 #include "lemlib/chassis/structs.hpp"
-#include "lemlib/movement/movement.hpp"
+#include "lemlib/movements/movement.hpp"
 
 namespace lemlib {
 /**
@@ -45,7 +45,15 @@ class Turn : protected Movement {
          * @return std::pair<int, int> left and right motor power respectively. 128 means movement is done
          */
         std::pair<int, int> update(Pose pose) override;
+
+        /**
+         * @brief Get the distance travelled during the movement
+         *
+         * @return float
+         */
+        float getDist() override;
     private:
+        FAPID angularPID;
         ChassisController_t angularSettings;
         float targetHeading;
         std::optional<Pose> targetPose = std::nullopt;
@@ -53,6 +61,8 @@ class Turn : protected Movement {
         bool reversed;
         int maxSpeed;
 
-        FAPID angularPID;
+        int compState;
+        int state = 0; // 0 = in progress, 1 = settling, 2 = done
+        float dist = 0;
 };
 }; // namespace lemlib

@@ -19,6 +19,7 @@
 
 #include "lemlib/asset.hpp"
 #include "lemlib/pose.hpp"
+#include "lemlib/movements/movement.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/chassis/structs.hpp"
 #include "lemlib/chassis/odom.hpp"
@@ -133,17 +134,15 @@ class Chassis {
          * @param y y location
          * @param theta theta (in degrees). Target angle
          * @param timeout longest time the robot can spend moving
-         * @param async whether the function should be run asynchronously. false by default
          * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
          * backwards
          * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
          * default to global value
          * @param maxSpeed the maximum speed the robot can move at. 127 at default
-         * @param log whether the chassis should log the turnTo function. false by default
          */
-        void moveTo(float x, float y, float theta, int timeout, bool async = false, bool forwards = true,
-                    float chasePower = 0, float lead = 0.6, float maxSpeed = 127, bool log = false);
+        void moveTo(float x, float y, float theta, int timeout, bool forwards = true, float chasePower = 0,
+                    float lead = 0.6, float maxSpeed = 127);
 
         /**
          * @brief Move the chassis along a path
@@ -199,10 +198,8 @@ class Chassis {
          */
         void update();
 
-        pros::Mutex mutex;
-        float distTravelled = 0;
-
         Odometry odom;
+        Movement* movement;
         pros::Task* task;
 
         ChassisController_t lateralSettings;
