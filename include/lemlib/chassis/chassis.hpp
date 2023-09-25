@@ -124,10 +124,11 @@ class Chassis {
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
                 OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
-         * @brief Calibrate the chassis sensors
-         *
-         */
-        void calibrate();
+        * @brief Calibrate the chassis sensors
+        *
+        * @param calibrateIMU whether the IMU should be calibrated. true by default
+        */
+        void calibrate(bool calibrateIMU = true);
         /**
          * @brief Set the pose of the chassis
          *
