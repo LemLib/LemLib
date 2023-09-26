@@ -39,10 +39,11 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
 /**
  * @brief Calibrate the chassis sensors
  *
+ * @param calibrateIMU whether the IMU should be calibrated. true by default
  */
-void lemlib::Chassis::calibrate() {
-    // calibrate the imu if it exists
-    if (odomSensors.imu != nullptr) {
+void lemlib::Chassis::calibrate(bool calibrateIMU) {
+    // calibrate the IMU if it exists and the user doesn't specify otherwise
+    if (odomSensors.imu != nullptr && calibrateIMU) {
         int attempt = 1;
         // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
         while (odomSensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
