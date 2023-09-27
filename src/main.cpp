@@ -46,14 +46,9 @@ void initialize() {
     // for more information on how the formatting for the loggers
     // works, refer to the fmtlib docs
 
-    LEMLIB_INFO("{1}, {0}!", "LemLib", "Hello");
-
     // print odom values to the brain
     pros::Task screenTask([=]() {
-        while (true) {
-            LEMLIB_DEBUG("Chassis pose: {}", chassis.getPose());
-            pros::delay(50);
-        }
+        while (true) { pros::delay(50); }
     });
 }
 

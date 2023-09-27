@@ -8,7 +8,6 @@
 
 #include "pros/rtos.hpp"
 
-
 namespace lemlib {
 /**
  * @brief A buffered sink
@@ -21,6 +20,12 @@ class BufferedSink : public BaseSink {
          *
          */
         BufferedSink();
+
+        /**
+         * @brief Destroy the Buffered Sink object
+         *
+         */
+        ~BufferedSink();
 
         BufferedSink(const BufferedSink&) = delete;
         BufferedSink& operator=(const BufferedSink&) = delete;
@@ -58,5 +63,11 @@ class BufferedSink : public BaseSink {
          *
          */
         void loggingTask();
+
+        /**
+         * @brief Check to see if the buffers are empty
+         *
+         */
+        bool buffersEmpty();
 };
 } // namespace lemlib

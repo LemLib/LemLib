@@ -1,9 +1,17 @@
+#include "baseSink.hpp"
 #include "logger.hpp"
 
-#include "stdoutSink.hpp"
+#include "infoSink.hpp"
 
 namespace lemlib {
-Logger::Logger(std::initializer_list<BaseSink*> sinks) { this->sinks = sinks; }
+std::shared_ptr<InfoSink> Logger::infoSink = nullptr;
 
-Logger Logger::getDefault() { return {StdoutSink::get()}; }
+std::shared_ptr<InfoSink> Logger::getInfoSink() {
+    if (infoSink == nullptr) {
+        infoSink = std::make_shared<InfoSink>();
+        infoSink->setFormat("[LemLib] {level}: {message}\n");
+    }
+
+    return infoSink;
+}
 } // namespace lemlib

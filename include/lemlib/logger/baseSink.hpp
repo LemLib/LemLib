@@ -4,7 +4,8 @@
 
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
-#include "fmt/args.h"
+
+#include "pros/rtos.hpp"
 
 namespace lemlib {
 /**
@@ -30,55 +31,55 @@ class BaseSink {
         /**
          * @brief Log a message at the given level
          *
-         * @tparam T The types of the varadic arguments
-         * @param level The level to log at
+         * @tparam T
+         * @param level
          * @param format The format of the message
-         * @param args The arguments for formatting
+         * @param args
          */
         template <typename... T> void log(Level level, fmt::format_string<T...> format, T&&... args);
 
         /**
          * @brief Log a message at the debug level
          *
-         * @tparam T The types of the varadic arguments
-         * @param format The level to log at
-         * @param args The arguments for formatting
+         * @tparam T
+         * @param format
+         * @param args
          */
         template <typename... T> void debug(fmt::format_string<T...> format, T&&... args);
 
         /**
          * @brief Log a message at the info level
          *
-         * @tparam T The types of the varadic arguments
-         * @param format The level to log at
-         * @param args The arguments for formatting
+         * @tparam T
+         * @param format
+         * @param args
          */
         template <typename... T> void info(fmt::format_string<T...> format, T&&... args);
 
         /**
          * @brief Log a message at the warn level
          *
-         * @tparam T The types of the varadic arguments
-         * @param format The level to log at
-         * @param args The arguments for formatting
+         * @tparam T
+         * @param format
+         * @param args
          */
         template <typename... T> void warn(fmt::format_string<T...> format, T&&... args);
 
         /**
          * @brief Log a message at the error level.
          *
-         * @tparam T The types of the varadic arguments
-         * @param format The level to log at
-         * @param args The arguments for formatting
+         * @tparam T
+         * @param format
+         * @param args
          */
         template <typename... T> void error(fmt::format_string<T...> format, T&&... args);
 
         /**
          * @brief Log a message at the fatal level
          *
-         * @tparam T The types of the varadic arguments
-         * @param format The level to log at
-         * @param args The arguments for formatting
+         * @tparam T
+         * @param format
+         * @param args
          */
         template <typename... T> void fatal(fmt::format_string<T...> format, T&&... args);
     protected:
@@ -90,6 +91,40 @@ class BaseSink {
         virtual void logMessage(const Message& message) = 0;
     private:
         Level lowestLevel = Level::DEBUG;
-        std::string logFormat = "[LemLib] {level}: {message}";
+        std::string logFormat;
 };
+
+template <typename... T> void BaseSink::log(Level level, fmt::format_string<T...> format, T&&... args) {
+    if (level < lowestLevel) { return; }
+
+    // format the message first
+    std::string message = fmt::format(format, std::forward<T>(args)...);
+
+    uint32_t time = pros::millis();
+
+    std::string formattedString = fmt::format(logFormat, fmt::arg("time", time), fmt::arg("level", level),
+                                              fmt::arg("message", std::move(message)));
+
+    logMessage(Message {std::move(formattedString), level, time});
+}
+
+template <typename... T> void BaseSink::debug(fmt::format_string<T...> format, T&&... args) {
+    log(Level::DEBUG, format, std::forward<T>(args)...);
+}
+
+template <typename... T> void BaseSink::info(fmt::format_string<T...> format, T&&... args) {
+    log(Level::INFO, format, std::forward<T>(args)...);
+}
+
+template <typename... T> void BaseSink::warn(fmt::format_string<T...> format, T&&... args) {
+    log(Level::WARN, format, std::forward<T>(args)...);
+}
+
+template <typename... T> void BaseSink::error(fmt::format_string<T...> format, T&&... args) {
+    log(Level::ERROR, format, std::forward<T>(args)...);
+}
+
+template <typename... T> void BaseSink::fatal(fmt::format_string<T...> format, T&&... args) {
+    log(Level::FATAL, format, std::forward<T>(args)...);
+}
 } // namespace lemlib
