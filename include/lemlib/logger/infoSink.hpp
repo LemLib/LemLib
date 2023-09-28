@@ -22,7 +22,6 @@ class InfoSink : public BufferedSink {
 
         InfoSink(const InfoSink&) = delete;
         InfoSink& operator=(const InfoSink&) = delete;
-
     protected:
         void handleMessage(const Message& message) override;
 };

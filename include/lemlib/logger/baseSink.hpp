@@ -36,7 +36,19 @@ class BaseSink {
          * @param format The format of the message
          * @param args
          */
-        template <typename... T> void log(Level level, fmt::format_string<T...> format, T&&... args);
+        template <typename... T> void log(Level level, fmt::format_string<T...> format, T&&... args) {
+            if (level < lowestLevel) { return; }
+
+            // format the message first
+            std::string message = fmt::format(format, std::forward<T>(args)...);
+
+            uint32_t time = pros::millis();
+
+            std::string formattedString = fmt::format(logFormat, fmt::arg("time", time), fmt::arg("level", level),
+                                                      fmt::arg("message", std::move(message)));
+
+            logMessage(Message {std::move(formattedString), level, time});
+        }
 
         /**
          * @brief Log a message at the debug level
@@ -45,7 +57,9 @@ class BaseSink {
          * @param format
          * @param args
          */
-        template <typename... T> void debug(fmt::format_string<T...> format, T&&... args);
+        template <typename... T> void debug(fmt::format_string<T...> format, T&&... args) {
+            log(Level::DEBUG, format, std::forward<T>(args)...);
+        }
 
         /**
          * @brief Log a message at the info level
@@ -54,7 +68,9 @@ class BaseSink {
          * @param format
          * @param args
          */
-        template <typename... T> void info(fmt::format_string<T...> format, T&&... args);
+        template <typename... T> void info(fmt::format_string<T...> format, T&&... args) {
+            log(Level::INFO, format, std::forward<T>(args)...);
+        }
 
         /**
          * @brief Log a message at the warn level
@@ -63,7 +79,9 @@ class BaseSink {
          * @param format
          * @param args
          */
-        template <typename... T> void warn(fmt::format_string<T...> format, T&&... args);
+        template <typename... T> void warn(fmt::format_string<T...> format, T&&... args) {
+            log(Level::WARN, format, std::forward<T>(args)...);
+        }
 
         /**
          * @brief Log a message at the error level.
@@ -72,7 +90,9 @@ class BaseSink {
          * @param format
          * @param args
          */
-        template <typename... T> void error(fmt::format_string<T...> format, T&&... args);
+        template <typename... T> void error(fmt::format_string<T...> format, T&&... args) {
+            log(Level::ERROR, format, std::forward<T>(args)...);
+        }
 
         /**
          * @brief Log a message at the fatal level
@@ -81,7 +101,9 @@ class BaseSink {
          * @param format
          * @param args
          */
-        template <typename... T> void fatal(fmt::format_string<T...> format, T&&... args);
+        template <typename... T> void fatal(fmt::format_string<T...> format, T&&... args) {
+            log(Level::FATAL, format, std::forward<T>(args)...);
+        }
     protected:
         /**
          * @brief Log the given message
@@ -93,38 +115,4 @@ class BaseSink {
         Level lowestLevel = Level::DEBUG;
         std::string logFormat;
 };
-
-template <typename... T> void BaseSink::log(Level level, fmt::format_string<T...> format, T&&... args) {
-    if (level < lowestLevel) { return; }
-
-    // format the message first
-    std::string message = fmt::format(format, std::forward<T>(args)...);
-
-    uint32_t time = pros::millis();
-
-    std::string formattedString = fmt::format(logFormat, fmt::arg("time", time), fmt::arg("level", level),
-                                              fmt::arg("message", std::move(message)));
-
-    logMessage(Message {std::move(formattedString), level, time});
-}
-
-template <typename... T> void BaseSink::debug(fmt::format_string<T...> format, T&&... args) {
-    log(Level::DEBUG, format, std::forward<T>(args)...);
-}
-
-template <typename... T> void BaseSink::info(fmt::format_string<T...> format, T&&... args) {
-    log(Level::INFO, format, std::forward<T>(args)...);
-}
-
-template <typename... T> void BaseSink::warn(fmt::format_string<T...> format, T&&... args) {
-    log(Level::WARN, format, std::forward<T>(args)...);
-}
-
-template <typename... T> void BaseSink::error(fmt::format_string<T...> format, T&&... args) {
-    log(Level::ERROR, format, std::forward<T>(args)...);
-}
-
-template <typename... T> void BaseSink::fatal(fmt::format_string<T...> format, T&&... args) {
-    log(Level::FATAL, format, std::forward<T>(args)...);
-}
 } // namespace lemlib
