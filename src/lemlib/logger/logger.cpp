@@ -4,9 +4,7 @@
 #include "infoSink.hpp"
 
 namespace lemlib {
-std::shared_ptr<InfoSink> Logger::infoSink = nullptr;
-
-InfoSink& getInfoSink() {
+InfoSink& Logger::getInfoSink() {
     static InfoSink infoSink;
     return infoSink;
 }

@@ -16,7 +16,4 @@
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/chassis/chassis.hpp"
 
-#include "lemlib/logger/message.hpp"
-#include "lemlib/logger/baseSink.hpp"
-#include "lemlib/logger/infoSink.hpp"
 #include "lemlib/logger/logger.hpp"
