@@ -5,7 +5,7 @@
 #include "stdout.hpp"
 
 namespace lemlib {
-InfoSink::InfoSink() {}
+InfoSink::InfoSink() { setFormat("[LemLib] {level}: {message}\n"); }
 
 std::string getColor(Level level) {
     switch (level) {

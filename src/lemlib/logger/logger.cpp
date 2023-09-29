@@ -6,12 +6,8 @@
 namespace lemlib {
 std::shared_ptr<InfoSink> Logger::infoSink = nullptr;
 
-std::shared_ptr<InfoSink> Logger::getInfoSink() {
-    if (infoSink == nullptr) {
-        infoSink = std::make_shared<InfoSink>();
-        infoSink->setFormat("[LemLib] {level}: {message}\n");
-    }
-
+InfoSink& getInfoSink() {
+    static InfoSink infoSink;
     return infoSink;
 }
 } // namespace lemlib
