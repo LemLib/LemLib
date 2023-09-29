@@ -1,4 +1,4 @@
-#include "bufferedSink.hpp"
+#include "buffer.hpp"
 
 #include "fmt/core.h"
 #include "fmt/color.h"
@@ -6,35 +6,35 @@
 #include "message.hpp"
 
 namespace lemlib {
-BufferedSink::BufferedSink() : task([&]() { loggingTask(); }) {}
+Buffer::Buffer(std::function<void(const std::string&)> bufferFunc)
+    : bufferFunc(bufferFunc), task([&]() { loggingTask(); }) {}
 
-bool BufferedSink::buffersEmpty() {
+bool Buffer::buffersEmpty() {
     mutex.take();
     bool status = buffer.size() == 0;
     mutex.give();
     return status;
 }
 
-BufferedSink::~BufferedSink() {
+Buffer::~Buffer() {
     // make sure when the destructor is called so all
     // the messages are logged
     while (!buffersEmpty()) { pros::delay(10); }
 }
 
-void BufferedSink::setRate(uint32_t rate) { this->rate = rate; }
-
-void BufferedSink::logMessage(const Message& message) {
+void Buffer::pushToBuffer(const std::string& bufferData) {
     mutex.take();
-    buffer.push_back(message);
+    buffer.push_back(bufferData);
     mutex.give();
 }
 
-void BufferedSink::loggingTask() {
+void Buffer::setRate(uint32_t rate) { this->rate = rate; }
+
+void Buffer::loggingTask() {
     while (true) {
         mutex.take();
         if (buffer.size() > 0) {
-            Message message = buffer.at(0);
-            handleMessage(message);
+            bufferFunc(buffer.at(0));
             buffer.pop_front();
         }
         mutex.give();

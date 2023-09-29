@@ -1,7 +1,7 @@
 #pragma once
 
-#include "bufferedSink.hpp"
 #include "message.hpp"
+#include "baseSink.hpp"
 
 #include <deque>
 
@@ -12,7 +12,7 @@ namespace lemlib {
  * @brief A sink where info data goes
  *
  */
-class InfoSink : public BufferedSink {
+class InfoSink : public BaseSink {
     public:
         /**
          * @brief Construct a new Info Sink object
@@ -22,7 +22,12 @@ class InfoSink : public BufferedSink {
 
         InfoSink(const InfoSink&) = delete;
         InfoSink& operator=(const InfoSink&) = delete;
-    protected:
-        void handleMessage(const Message& message) override;
+    private:
+        /**
+         * @brief Log the given message
+         *
+         * @param message
+         */
+        void logMessage(const Message& message) override;
 };
 } // namespace lemlib

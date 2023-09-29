@@ -1,27 +1,24 @@
 #include "infoSink.hpp"
 
-#include "bufferedSink.hpp"
-#include "fmt/core.h"
-#include "fmt/color.h"
-
 #include "message.hpp"
+
+#include "stdout.hpp"
 
 namespace lemlib {
 InfoSink::InfoSink() {}
 
-static fmt::terminal_color convertToColor(Level level) {
+std::string getColor(Level level) {
     switch (level) {
-        case Level::INFO: return fmt::terminal_color::cyan;
-        case Level::DEBUG: return fmt::terminal_color::green;
-        case Level::WARN: return fmt::terminal_color::yellow;
-        case Level::ERROR: return fmt::terminal_color::red;
-        case Level::FATAL: return fmt::terminal_color::bright_red;
+        case Level::DEBUG: return "\033[0;36m"; // cyan
+        case Level::INFO: return "\033[0;32m"; // green
+        case Level::WARN: return "\033[0;33m"; // yellow
+        case Level::ERROR: return "\033[0;31m"; // red
+        case Level::FATAL: return "\033[0;31;2m"; // dark red
     }
-
     __builtin_unreachable();
 }
 
-void InfoSink::handleMessage(const Message& message) {
-    fmt::print(fmt::fg(convertToColor(message.level)), "{}\033[0m", std::move(message.message));
+void InfoSink::logMessage(const Message& message) {
+    Stdout::print("{}\033[0m{}\n", getColor(message.level), message.message);
 }
 } // namespace lemlib
