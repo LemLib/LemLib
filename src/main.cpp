@@ -51,7 +51,7 @@ void initialize() {
     pros::Task screenTask([=]() {
         while (true) {
             lemlib::Pose pose = chassis.getPose();
-            lemlib::Logger::logInfo("Chassis pose: {}", pose);
+            lemlib::Logger::info("Chassis pose: {}", pose);
             pros::delay(50);
         }
     });

@@ -39,40 +39,40 @@ class Logger {
          * @param format
          * @param args
          */
-        template <typename... T> static void logDebug(fmt::format_string<T...> format, T&&... args) {
+        template <typename... T> static void debug(fmt::format_string<T...> format, T&&... args) {
             log(Level::DEBUG, format, std::forward<T>(args)...);
         }
 
         /**
-         * @brief Log an info message to the info logger
+         * @brief Log a info message to the info logger
          *
          * @tparam T
          * @param format
          * @param args
          */
-        template <typename... T> static void logInfo(fmt::format_string<T...> format, T&&... args) {
+        template <typename... T> static void info(fmt::format_string<T...> format, T&&... args) {
             log(Level::INFO, format, std::forward<T>(args)...);
         }
 
         /**
-         * @brief Log an warn message to the info logger
+         * @brief Log a warn message to the info logger
          *
          * @tparam T
          * @param format
          * @param args
          */
-        template <typename... T> static void logWarn(fmt::format_string<T...> format, T&&... args) {
+        template <typename... T> static void warn(fmt::format_string<T...> format, T&&... args) {
             log(Level::WARN, format, std::forward<T>(args)...);
         }
 
         /**
-         * @brief Log an error message to the info logger
+         * @brief Log a error message to the info logger
          *
          * @tparam T
          * @param format
          * @param args
          */
-        template <typename... T> static void logError(fmt::format_string<T...> format, T&&... args) {
+        template <typename... T> static void error(fmt::format_string<T...> format, T&&... args) {
             log(Level::ERROR, format, std::forward<T>(args)...);
         }
 
@@ -83,7 +83,7 @@ class Logger {
          * @param format
          * @param args
          */
-        template <typename... T> static void logFatal(fmt::format_string<T...> format, T&&... args) {
+        template <typename... T> static void fatal(fmt::format_string<T...> format, T&&... args) {
             log(Level::FATAL, format, std::forward<T>(args)...);
         }
 };
