@@ -19,9 +19,6 @@ class InfoSink : public BaseSink {
          *
          */
         InfoSink();
-
-        InfoSink(const InfoSink&) = delete;
-        InfoSink& operator=(const InfoSink&) = delete;
     private:
         /**
          * @brief Log the given message

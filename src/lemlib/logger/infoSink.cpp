@@ -7,7 +7,7 @@
 namespace lemlib {
 InfoSink::InfoSink() { setFormat("[LemLib] {level}: {message}"); }
 
-std::string getColor(Level level) {
+static std::string getColor(Level level) {
     switch (level) {
         case Level::DEBUG: return "\033[0;36m"; // cyan
         case Level::INFO: return "\033[0;32m"; // green
