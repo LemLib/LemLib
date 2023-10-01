@@ -4,30 +4,9 @@
 #include <vector>
 #include "lemlib/pose.hpp"
 #include "lemlib/asset.hpp"
-#include "lemlib/chassis/structs.hpp"
 #include "lemlib/movements/movement.hpp"
 
 namespace lemlib {
-/**
- * @brief Waypoint class. Derived from Pose. Has speed field
- */
-class Waypoint : public Pose {
-    public:
-        /**
-         * @brief Construct a new Waypoint
-         *
-         * @param x
-         * @param y
-         * @param theta
-         * @param speed
-         */
-        Waypoint(float x, float y, float theta, float speed)
-            : Pose(x, y, theta),
-              speed(speed) {}
-
-        float speed;
-};
-
 /**
  * @brief Pure Pursuit class. Derived from Movement
  */
@@ -36,16 +15,15 @@ class PurePursuit : public Movement {
         /**
          * @brief Construct a new Pure Pursuit movement
          *
-         * @param drive drivetrain settings
+         * @param trackWidth the width of the chassis. Units in inches
          * @param path const reference to the asset containing the path
-         * @param lookahead the lookahead distance. Units in inches. Recommended value is 15, but can be changed if
+         * @param lookaheadDist the lookahead distance. Units in inches. Recommended value is 15, but can be changed if
          * needed
          * @param timeout the maximum time the robot can spend moving
          * @param forwards whether the chassis should move forwards or backwards. True by default
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
          */
-        PurePursuit(Drivetrain_t drive, const asset& path, float lookahead, int timeout, bool forwards = true,
-                    int maxSpeed = 127);
+        PurePursuit(float trackWidth, const asset& path, float lookaheadDist, int timeout, bool forwards, int maxSpeed);
 
         /**
          * @brief Update the movement
@@ -66,16 +44,18 @@ class PurePursuit : public Movement {
          */
         float getDist() override;
     private:
-        Drivetrain_t drive;
         std::vector<Waypoint> path;
+        Pose prevPose = Pose(0, 0, 0);
+        Waypoint prevLookahead = Waypoint(0, 0);
+        float trackWidth;
         int startTime;
-        float lookahead;
+        float lookaheadDist;
         int timeout;
         bool forwards;
         int maxSpeed;
 
         int compState;
-        int state = 0; // 0 = in progress, 1 = settling, 2 = done
+        int state = 0; // 0 = in progress, 1 = done
         float dist = 0;
 };
 }; // namespace lemlib

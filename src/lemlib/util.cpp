@@ -1,4 +1,5 @@
 #include <vector>
+#include <string.h>
 #include "lemlib/pose.hpp"
 #include "lemlib/util.hpp"
 
@@ -55,25 +56,18 @@ float lemlib::ema(float current, float previous, float smooth) {
 }
 
 /**
- * @brief Get the signed curvature of a circle that intersects the first pose and the second pose
+ * Finds the curvature of a circle which intersects 2 points, and is tangent to the first point
  *
- * @note The circle will be tangent to the theta value of the first pose
- * @note The curvature is signed. Positive curvature means the circle is going clockwise, negative means
- * counter-clockwise
- * @note Theta has to be in radians and in standard form. That means 0 is right and increases counter-clockwise
- *
- * @param pose the first pose
- * @param other the second pose
- * @return float curvature
+ * Inspired by: https://www.chiefdelphi.com/t/paper-implementation-of-the-adaptive-pure-pursuit-controller/166552
  */
-float lemlib::getCurvature(Pose pose, Pose other) {
+float lemlib::getCurvature(Pose p1, Pose p2) {
     // calculate whether the pose is on the left or right side of the circle
-    float side = lemlib::sgn(std::sin(pose.theta) * (other.x - pose.x) - std::cos(pose.theta) * (other.y - pose.y));
+    float side = sgn(std::sin(p1.theta) * (p2.x - p1.x) - std::cos(p1.theta) * (p2.y - p1.y));
     // calculate center point and radius
-    float a = -std::tan(pose.theta);
-    float c = std::tan(pose.theta) * pose.x - pose.y;
-    float x = std::fabs(a * other.x + other.y + c) / std::sqrt((a * a) + 1);
-    float d = std::hypot(other.x - pose.x, other.y - pose.y);
+    float a = -std::tan(p1.theta);
+    float c = std::tan(p1.theta) * p1.x - p1.y;
+    float x = std::fabs(a * p2.x + p2.y + c) / std::sqrt((a * a) + 1);
+    float d = p1.distance(p2);
 
     // return curvature
     return side * ((2 * x) / (d * d));

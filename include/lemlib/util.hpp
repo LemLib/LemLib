@@ -81,4 +81,35 @@ float ema(float current, float previous, float smooth);
  * @return float curvature
  */
 float getCurvature(Pose pose, Pose other);
+
+/**
+ * @brief function that returns elements in a string separated by a delimeter
+ *
+ * @param input the raw string
+ * @param delimeter string separating the elements in the input string
+ * @return std::vector<std::string> vector of elements read from the file
+ */
+std::vector<std::string> splitString(const std::string& input, const std::string& delimiter);
+
+/**
+ * @brief Finds the closest waypoint in a vector of waypoints to a target pose
+ *
+ * @param poses the vector of waypoints
+ * @param target the target pose
+ * @return Pose
+ */
+Waypoint closestWaypoint(const std::vector<Waypoint>& waypoints, const Pose& target);
+
+/**
+ * @brief Find the intersection between a circle and a line
+ *
+ *
+ * @param p1 the start of the line
+ * @param p2 the end of the line
+ * @param center the center of the circle
+ * @param radius the radius of the circle
+ * @return Pose the intersection point. If no intersection is found, the circle center will be returned. If there are
+ * multiple intersections, the first one will be returned
+ */
+Pose circleLineIntersect(Pose p1, Pose p2, Pose center, float radius);
 } // namespace lemlib

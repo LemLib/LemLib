@@ -55,6 +55,20 @@ class Pose {
          */
         Pose operator/(const float& other);
         /**
+         * @brief Check if two poses are equal
+         *
+         * @param other the other pose
+         * @return bool
+         */
+        bool operator==(const Pose& other);
+        /**
+         * @brief Check if two poses are not equal
+         *
+         * @param other the other pose
+         * @return bool
+         */
+        bool operator!=(const Pose& other);
+        /**
          * @brief Linearly interpolate between two poses
          *
          * @param other the other pose
