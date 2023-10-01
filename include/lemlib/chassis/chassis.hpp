@@ -101,13 +101,19 @@ class Chassis {
         Pose getPose(bool radians = false);
 
         /**
-         * @brief Wait until the robot has traveled a certain distance along the path
+         * @brief Wait until the robot has traveled a certain distance, or angle, along the path
          *
          * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
          *
          * @param dist the distance the robot needs to travel before returning
          */
-        void waitUntilDist(float dist);
+        void waitUntil(float dist);
+
+        /**
+         * @brief Wait until the current movement is done
+         *
+         */
+        void waitUntilDone();
 
         /**
          * @brief Turn the chassis so it is facing a point

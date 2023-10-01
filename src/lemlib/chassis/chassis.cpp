@@ -77,18 +77,33 @@ Pose Chassis::getPose(bool radians) {
 }
 
 /**
- * Wait until the robot has traveled a certain distance during a movement
+ * Wait until the robot has traveled a certain distance, or angle
  *
  * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
  *
  * Just uses a while loop and exits when the distance traveled is greater than the specified distance
  * or if the motion has finished
  */
-void Chassis::waitUntilDist(float dist) {
+void Chassis::waitUntil(float dist) {
+    // give the movement time to start
+    pros::delay(10);
+    // wait until the robot has travelled a certain distance
+    while (movement != nullptr && movement->getDist() < dist && movement->getDist() >= prevDist) {
+        prevDist = movement->getDist(); // update previous distance
+        pros::delay(10);
+    }
+    // set prevDist to 0
+    prevDist = 0;
+}
+
+/**
+ * Wait until the robot has completed the current movement
+ */
+void Chassis::waitUntilDone() {
     // give the movement time to start
     pros::delay(10);
     // wait until the movement is done
-    while (movement != nullptr && movement->getDist() < dist && movement->getDist() >= prevDist) {
+    while (movement != nullptr && movement->getDist() >= prevDist) {
         prevDist = movement->getDist(); // update previous distance
         pros::delay(10);
     }
@@ -109,8 +124,8 @@ void Chassis::waitUntilDist(float dist) {
  * pointer.
  */
 void Chassis::turnToPose(float x, float y, int timeout, bool reversed, int maxSpeed) {
-    // if a movement is already running, return
-    if (movement == nullptr) return;
+    // if a movement is already running, wait until it is done
+    if (movement == nullptr) waitUntilDone();
     // set up the PID
     FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
@@ -132,8 +147,8 @@ void Chassis::turnToPose(float x, float y, int timeout, bool reversed, int maxSp
  * pointer.
  */
 void Chassis::turnToHeading(float heading, int timeout, int maxSpeed) {
-    // if a movement is already running, return
-    if (movement == nullptr) return;
+    // if a movement is already running, wait until it is done
+    if (movement == nullptr) waitUntilDone();
     // convert heading to radians and standard form
     float newHeading = M_PI_2 - degToRad(heading);
     // set up the PID
@@ -158,8 +173,8 @@ void Chassis::turnToHeading(float heading, int timeout, int maxSpeed) {
  */
 void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, float chasePower, float lead,
                      int maxSpeed) {
-    // if a movement is already running, return
-    if (movement == nullptr) return;
+    // if a movement is already running, wait until it is done
+    if (movement == nullptr) waitUntilDone();
     // convert target theta to radians and standard form
     Pose target = Pose(x, y, M_PI_2 - degToRad(theta));
     // set up PIDs
@@ -180,8 +195,8 @@ void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, 
  * Pure Pursuit constructor
  */
 void Chassis::follow(const asset& path, float lookahead, int timeout, bool forwards, int maxSpeed) {
-    // if a movement is already running, return
-    if (movement == nullptr) return;
+    // if a movement is already running, wait until it is done
+    if (movement == nullptr) waitUntilDone();
     // create the movement
     movement = new PurePursuit(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
 }

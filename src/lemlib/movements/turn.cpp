@@ -74,7 +74,7 @@ std::pair<int, int> lemlib::Turn::update(Pose pose) {
         dist = 0.0001;
         startPose = pose;
     }
-    dist = fabs(angleError(pose.theta, startPose.theta));
+    dist = fabs(radToDeg(angleError(pose.theta, startPose.theta)));
 
     if (targetPose != std::nullopt) targetHeading = pose.angle(targetPose.value());
 
