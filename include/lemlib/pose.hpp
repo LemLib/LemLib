@@ -63,6 +63,20 @@ class Pose {
          */
         Pose operator/(const float& other);
         /**
+         * @brief Check if two poses are equal
+         *
+         * @param other the other pose
+         * @return bool
+         */
+        bool operator==(const Pose& other);
+        /**
+         * @brief Check if two poses are not equal
+         *
+         * @param other the other pose
+         * @return bool
+         */
+        bool operator!=(const Pose& other);
+        /**
          * @brief Linearly interpolate between two poses
          *
          * @param other the other pose
@@ -92,4 +106,27 @@ class Pose {
          */
         Pose rotate(float angle);
 };
+
+/**
+ * @brief Waypoint class. Derived from Pose. Has speed field
+ */
+class Waypoint : public Pose {
+    public:
+        /**
+         * @brief Construct a new Waypoint
+         *
+         * @param x
+         * @param y
+         * @param theta
+         * @param speed
+         */
+        Waypoint(float x, float y, float theta = 0, float speed = 0, int index = 0)
+            : Pose(x, y, theta),
+              speed(speed),
+              index(index) {}
+
+        float speed;
+        int index;
+};
+
 } // namespace lemlib
