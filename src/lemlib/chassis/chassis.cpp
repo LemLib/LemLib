@@ -28,9 +28,9 @@ using namespace lemlib;
  *
  * Calibrates sensors and starts the chassis task
  */
-void Chassis::initialize() {
+void Chassis::initialize(bool calibrateIMU) {
     // calibrate odom
-    odom.calibrate();
+    odom.calibrate(calibrateIMU);
     // start the chassis task if it doesn't exist
     if (task == nullptr)
         task = new pros::Task([&]() {
