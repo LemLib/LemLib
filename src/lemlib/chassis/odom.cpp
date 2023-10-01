@@ -104,21 +104,21 @@ void lemlib::update() {
 
     // calculate the heading of the robot
     // Priority:
-    // 1. Horizontal tracking wheels
-    // 2. Vertical tracking wheels
-    // 3. Inertial Sensor
+    // 1. Inertial Sensor
+    // 2. Horizontal tracking wheels
+    // 3. Vertical tracking wheels
     // 4. Drivetrain
     float heading = odomPose.theta;
-    // calculate the heading using the horizontal tracking wheels
-    if (odomSensors.horizontal1 != nullptr && odomSensors.horizontal2 != nullptr)
+    // if the inertial sensor exists, use it
+    if (odomSensors.imu != nullptr) heading += deltaImu;
+    // else, if both horizontal tracking wheels calculate the heading, use the
+    else if (odomSensors.horizontal1 != nullptr && odomSensors.horizontal2 != nullptr)
         heading += (deltaHorizontal1 - deltaHorizontal2) /
                    (odomSensors.horizontal1->getOffset() - odomSensors.horizontal2->getOffset());
     // else, if both vertical tracking wheels aren't substituted by the drivetrain, use the vertical tracking wheels
     else if (!odomSensors.vertical1->getType() && !odomSensors.vertical2->getType())
         heading += (deltaVertical1 - deltaVertical2) /
                    (odomSensors.vertical1->getOffset() - odomSensors.vertical2->getOffset());
-    // else, if the inertial sensor exists, use it
-    else if (odomSensors.imu != nullptr) heading += deltaImu;
     // else, use the the substituted tracking wheels
     else
         heading += (deltaVertical1 - deltaVertical2) /
