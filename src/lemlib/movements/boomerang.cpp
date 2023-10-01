@@ -9,14 +9,16 @@
  * Some members of the class need to be explicitly initialized
  * But, some members need to be configured further in the body
  *
- * Here we just store the arguments in member variables, and configure the PIDs
+ * Here we just store the arguments in member variables, and store the
+ * initial competition state, and manipulate the target heading based on
+ * whether the robot is going to be moving forwards or backwards
  */
-lemlib::Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, int timeout, bool forwards,
-                             float chasePower, float lead, int maxSpeed)
-    : linearPID(linearPID),
+lemlib::Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, bool forwards, float chasePower,
+                             float lead, int maxSpeed)
+    : Movement(),
+      linearPID(linearPID),
       angularPID(angularPID),
       target(target),
-      timeout(timeout),
       forwards(forwards),
       chasePower(chasePower),
       lead(lead),
@@ -26,6 +28,14 @@ lemlib::Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, int
     // flip target theta if moving backwards
     if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI);
 }
+
+/**
+ * Get the distance travelled during the movement
+ *
+ * This is useful if you want to wait until the robot has travelled a certain distance.
+ * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
+ */
+float lemlib::Boomerang::getDist() { return dist; }
 
 /**
  * The boomerang controller is a motion algorithm inspired by adaptive PID seeking
@@ -62,19 +72,19 @@ std::pair<int, int> lemlib::Boomerang::update(Pose pose) {
     // update completion vars
     if (dist == 0) { // if dist is 0, this is the first time update() has been called
         dist = 0.0001;
-        lastPose = pose;
+        prevPose = pose;
     }
-    dist += pose.distance(lastPose);
-    lastPose = pose;
+    dist += pose.distance(prevPose);
+    prevPose = pose;
 
     // calculate the carrot point
     Pose carrot = target - (Pose(cos(target.theta), sin(target.theta)) * lead * pose.distance(target));
     if (state == 1) carrot = target; // settling behavior
 
     // calculate error
-    float angularError = angleError(pose.angle(carrot), pose.theta, true); // angular error
+    float angularError = angleError(pose.angle(carrot), pose.theta); // angular error
     float linearError = pose.distance(carrot) * cos(angularError); // linear error
-    if (state == 1) angularError = angleError(target.theta, pose.theta, true); // settling behavior
+    if (state == 1) angularError = angleError(target.theta, pose.theta); // settling behavior
     if (!forwards) linearError = -linearError;
 
     // get PID outputs
@@ -106,11 +116,3 @@ std::pair<int, int> lemlib::Boomerang::update(Pose pose) {
     // return motor output
     return {linearPower + angularPower, linearPower - angularPower};
 }
-
-/**
- * Get the distance travelled during the movement
- *
- * This is useful if you want to wait until the robot has travelled a certain distance.
- * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
- */
-float lemlib::Boomerang::getDist() { return dist; }
