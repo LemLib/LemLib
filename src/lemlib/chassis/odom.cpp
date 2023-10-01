@@ -130,9 +130,9 @@ using namespace lemlib;
  * tracking wheels, we will simply substitute one side of the drivetrain, and then we
  * calibrate them. For horizontal wheels, we just calibrate them if they exist.
  */
-void Odometry::calibrate() {
+void Odometry::calibrate(bool calibrateIMU) {
     // calibrate the imu if it exists
-    if (sensors.imu != nullptr) {
+    if (sensors.imu != nullptr && calibrateIMU) {
         int attempt = 1;
         // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
         while (sensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&

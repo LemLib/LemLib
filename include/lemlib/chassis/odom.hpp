@@ -18,8 +18,9 @@ class Odometry {
         /**
          * @brief Calibrate sensors used for odometry
          *
+         * @param calibrateIMU whether to calibrate the imu.
          */
-        void calibrate();
+        void calibrate(bool calibrateIMU);
 
         /**
          * @brief Get the Pose
