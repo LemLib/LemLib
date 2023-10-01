@@ -77,7 +77,7 @@ Pose Chassis::getPose(bool radians) {
 }
 
 /**
- * Wait until the robot has traveled a certain distance during a movement
+ * Wait until the robot has traveled a certain distance, or angle
  *
  * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
  *

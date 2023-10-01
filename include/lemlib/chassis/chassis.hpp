@@ -269,7 +269,7 @@ class Chassis {
         Pose getPose(bool radians = false);
 
         /**
-         * @brief Wait until the robot has traveled a certain distance along the path
+         * @brief Wait until the robot has traveled a certain distance, or angle, along the path
          *
          * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
          *
