@@ -15,6 +15,7 @@
 #include "lemlib/util.hpp"
 #include "lemlib/pid.hpp"
 #include "lemlib/movements/boomerang.hpp"
+#include "lemlib/movements/purepursuit.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
@@ -83,9 +84,15 @@ Pose Chassis::getPose(bool radians) {
  * or if the motion has finished
  */
 void Chassis::waitUntilDist(float dist) {
-    // do while to give the thread time to start
-    do pros::delay(10);
-    while (distTravelled <= dist && distTravelled != -1);
+    // give the movement time to start
+    pros::delay(10);
+    // wait until the movement is done
+    while (movement != nullptr && movement->getDist() < dist && movement->getDist() >= prevDist) {
+        prevDist = movement->getDist(); // update previous distance
+        pros::delay(10);
+    }
+    // set prevDist to 0
+    prevDist = 0;
 }
 
 /**
@@ -176,7 +183,7 @@ void Chassis::turnTo(float x, float y, int timeout, bool async, bool reversed, f
  * the drivetrain struct, but it can be overridden by the user if needed.
  */
 void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, float chasePower, float lead,
-                     float maxSpeed) {
+                     int maxSpeed) {
     // if a movement is already running, return
     if (movement == nullptr) return;
     // convert target theta to radians and standard form
@@ -193,11 +200,39 @@ void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, 
 }
 
 /**
+ * This function sets up Pure Pursuit
+ *
+ * Unlike the chassis::moveTo function, we can just pass the parameters directly to the
+ * Pure Pursuit constructor
+ */
+void Chassis::follow(const asset& path, float lookahead, int timeout, bool forwards, int maxSpeed) {
+    // if a movement is already running, return
+    if (movement == nullptr) return;
+    // create the movement
+    movement = new PurePursuit(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
+}
+
+/**
  * Chassis update function
  *
  * This function is called in a loop by the chassis task
- * It updates any motion alg that may be running
+ * It updates any motion controller that may be running
  * And it updates the odometry
  * Once implemented, it will also update the drivetrain velocity controllers
  */
-void Chassis::update() { odom.update(); }
+void Chassis::update() {
+    // update odometry
+    odom.update();
+    // update the motion controller, if one is running
+    if (movement != nullptr) {
+        std::pair<int, int> output = movement->update(odom.getPose()); // get output
+        if (output.first == 128 && output.second == 128) { // if the movement is done
+            movement = nullptr; // stop movement
+            output.first = 0;
+            output.second = 0;
+        }
+        // move the motors
+        drivetrain.leftMotors->move(output.first);
+        drivetrain.rightMotors->move(output.second);
+    }
+}

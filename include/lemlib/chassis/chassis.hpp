@@ -142,22 +142,19 @@ class Chassis {
          * @param maxSpeed the maximum speed the robot can move at. 127 at default
          */
         void moveTo(float x, float y, float theta, int timeout, bool forwards = true, float chasePower = 0,
-                    float lead = 0.6, float maxSpeed = 127);
+                    float lead = 0.6, int maxSpeed = 127);
 
         /**
          * @brief Move the chassis along a path
          *
          * @param filePath the filename of the path to follow
-         * @param timeout the maximum time the robot can spend moving
          * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
          * will follow the path less accurately
-         * @param async whether the function should be run asynchronously. false by default
+         * @param timeout the maximum time the robot can spend moving
          * @param forwards whether the robot should follow the path going forwards. true by default
          * @param maxSpeed the maximum speed the robot can move at
-         * @param log whether the chassis should log the path on a log file. false by default.
          */
-        void follow(const asset& path, int timeout, float lookahead, bool async = false, bool forwards = true,
-                    float maxSpeed = 127, bool log = false);
+        void follow(const asset& path, float lookahead, int timeout, bool forwards = true, int maxSpeed = 127);
 
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this
@@ -197,6 +194,8 @@ class Chassis {
          *
          */
         void update();
+
+        float prevDist = 0; // the previous distance travelled by the movement
 
         Odometry odom;
         Movement* movement;
