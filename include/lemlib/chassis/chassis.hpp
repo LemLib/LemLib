@@ -74,7 +74,7 @@ class Chassis {
          * @param calibrateIMU whether to calibrate the IMU. True by default
          */
         void initialize(bool calibrateIMU = true);
- 
+
         /**
          * @brief Set the pose of the chassis
          *
