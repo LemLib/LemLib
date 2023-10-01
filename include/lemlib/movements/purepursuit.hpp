@@ -26,6 +26,13 @@ class PurePursuit : public Movement {
         PurePursuit(float trackWidth, const asset& path, float lookaheadDist, int timeout, bool forwards, int maxSpeed);
 
         /**
+         * @brief Get the distance travelled during the movement
+         *
+         * @return float
+         */
+        float getDist() override;
+
+        /**
          * @brief Update the movement
          *
          * @note This function should be called in a loop
@@ -36,13 +43,6 @@ class PurePursuit : public Movement {
          * @return std::pair<int, int> left and right motor power respectively. 128 means movement is done
          */
         std::pair<int, int> update(Pose pose) override;
-
-        /**
-         * @brief Get the distance travelled during the movement
-         *
-         * @return float
-         */
-        float getDist() override;
     private:
         std::vector<Waypoint> path;
         Pose prevPose = Pose(0, 0, 0);

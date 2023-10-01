@@ -4,35 +4,32 @@
 #include <optional>
 #include "lemlib/pose.hpp"
 #include "lemlib/pid.hpp"
-#include "lemlib/chassis/structs.hpp"
 #include "lemlib/movements/movement.hpp"
 
 namespace lemlib {
 /**
  * @brief Turn class. Derived from Movement
  */
-class Turn : protected Movement {
+class Turn : public Movement {
     public:
         /**
          * @brief Construct a new Turn movement
          *
-         * @param angularSettings the angular PID gains
+         * @param angularPID the angular PID to use
          * @param target the target heading. Radians, 0 is right, increases counterclockwise
-         * @param timeout the maximum time the robot can spend moving
-         * @param maxSpeed the maximum speed the robot can turn at. 127 by default
+         * @param maxSpeed the maximum speed the robot can turn at
          */
-        Turn(ChassisController_t angularSettings, float target, int timeout, int maxSpeed = 127);
+        Turn(FAPID angularPID, float target, int maxSpeed);
 
         /**
          * @brief Construct a new Turn movement
          *
-         * @param angularSettings the angular PID gains
-         * @param target the target position
-         * @param timeout the maximum time the robot can spend moving
-         * @param reversed whether the robot should face the point with its back or front. False by default
-         * @param maxSpeed the maximum speed the robot can turn at. 127 by default
+         * @param angularPID the angular PID to use
+         * @param target the target pose
+         * @param reversed whether the robot should face the point with its back or front
+         * @param maxSpeed the maximum speed the robot can turn at
          */
-        Turn(ChassisController_t angularSettings, Pose target, int timeout, bool reversed = false, int maxSpeed = 127);
+        Turn(FAPID angularPID, Pose target, bool reversed, int maxSpeed);
 
         /**
          * @brief Update the movement
@@ -54,15 +51,14 @@ class Turn : protected Movement {
         float getDist() override;
     private:
         FAPID angularPID;
-        ChassisController_t angularSettings;
-        float targetHeading;
         std::optional<Pose> targetPose = std::nullopt;
-        int timeout;
-        bool reversed;
+        Pose startPose = Pose(0, 0, 0);
+        float targetHeading = 0;
+        bool reversed = false;
         int maxSpeed;
 
         int compState;
-        int state = 0; // 0 = in progress, 1 = settling, 2 = done
+        int state = 0; // 0 = in progress, 1 = done
         float dist = 0;
 };
 }; // namespace lemlib

@@ -16,6 +16,7 @@
 #include "lemlib/pid.hpp"
 #include "lemlib/movements/boomerang.hpp"
 #include "lemlib/movements/purepursuit.hpp"
+#include "lemlib/movements/turn.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
@@ -96,78 +97,51 @@ void Chassis::waitUntilDist(float dist) {
 }
 
 /**
- * @brief Turn the chassis so it is facing the target point
+ * This function sets up the Turn controller
  *
- * The PID logging id is "angularPID"
+ * Like all chassis movement functions, it sets a member pointer to a new movement.
+ * the movement is a derived class of the Movement class
  *
- * @param x x location
- * @param y y location
- * @param timeout longest time the robot can spend moving
- * @param async whether the function should be run asynchronously. false by default
- * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
- * @param maxSpeed the maximum speed the robot can turn at. Default is 200
- * @param log whether the chassis should log the turnTo function. false by default
+ * There are some things that need to be done before instantiating the movement however.
+ * It needs to set up a PID which the movement will use to turn the robot. We also need
+ * to convert the x and y values given passed in to a Pose object. All that needs to be
+ * done then is to pass the parameters to a new instance of Turn, and set the movement
+ * pointer.
  */
-void Chassis::turnTo(float x, float y, int timeout, bool async, bool reversed, float maxSpeed, bool log) {
-    // try to take the mutex
-    // if its unsuccessful after 10ms, return
-    if (!mutex.take(10)) return;
-    // if the function is async, run it in a new task
-    if (async) {
-        pros::Task task([&]() { turnTo(x, y, timeout, false, reversed, maxSpeed, log); });
-        mutex.give();
-        pros::delay(10); // delay to give the task time to start
-        return;
-    }
-    float targetTheta;
-    float deltaX, deltaY, deltaTheta;
-    float motorPower;
-    float startTheta = getPose().theta;
-    std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
+void Chassis::turnToPose(float x, float y, int timeout, bool reversed, int maxSpeed) {
+    // if a movement is already running, return
+    if (movement == nullptr) return;
+    // set up the PID
+    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
+                       angularSettings.smallErrorTimeout, timeout);
+    // create the movement
+    movement = new Turn(angularPID, Pose(x, y), reversed, maxSpeed);
+}
 
-    // create a new PID controller
-    FAPID pid = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    pid.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
-                angularSettings.smallErrorTimeout, timeout);
-
-    // main loop
-    while (pros::competition::get_status() == compState && !pid.settled()) {
-        // update variables
-        Pose pose = getPose();
-        pose.theta = (reversed) ? fmod(pose.theta - 180, 360) : fmod(pose.theta, 360);
-
-        // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
-
-        deltaX = x - pose.x;
-        deltaY = y - pose.y;
-        targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
-
-        // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta);
-
-        // calculate the speed
-        motorPower = pid.update(0, deltaTheta, log);
-
-        // cap the speed
-        if (motorPower > maxSpeed) motorPower = maxSpeed;
-        else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
-
-        // move the drivetrain
-        drivetrain.leftMotors->move(-motorPower);
-        drivetrain.rightMotors->move(motorPower);
-
-        pros::delay(10);
-    }
-
-    // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
-    // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
-    // give the mutex back
-    mutex.give();
+/**
+ * This function sets up the Turn controller
+ *
+ * Like all chassis movement functions, it sets a member pointer to a new movement.
+ * the movement is a derived class of the Movement class
+ *
+ * There are some things that need to be done before instantiating the movement however.
+ * It needs to set up a PID which the movement will use to turn the robot. We also need to
+ * convert the heading passed by the user to radians and standard position. All that needs to be
+ * done then is to pass the parameters to a new instance of Turn, and set the movement
+ * pointer.
+ */
+void Chassis::turnToHeading(float heading, int timeout, int maxSpeed) {
+    // if a movement is already running, return
+    if (movement == nullptr) return;
+    // convert heading to radians and standard form
+    float newHeading = M_PI_2 - degToRad(heading);
+    // set up the PID
+    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
+                       angularSettings.smallErrorTimeout, timeout);
+    // create the movement
+    movement = new Turn(angularPID, newHeading, maxSpeed);
 }
 
 /**
@@ -196,7 +170,7 @@ void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, 
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = drivetrain.chasePower;
     // create the movement
-    movement = new Boomerang(linearPID, angularPID, target, timeout, forwards, chasePower, lead, maxSpeed);
+    movement = new Boomerang(linearPID, angularPID, target, forwards, chasePower, lead, maxSpeed);
 }
 
 /**

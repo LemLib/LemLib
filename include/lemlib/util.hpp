@@ -48,10 +48,10 @@ float degToRad(float deg);
  *
  * @param angle1
  * @param angle2
- * @param radians true if angle is in radians, false if not. False by default
+ * @param radians true if angle is in radians, false if not. true by default
  * @return float wrapped angle
  */
-float angleError(float angle1, float angle2, bool radians = false);
+float angleError(float angle1, float angle2, bool radians = true);
 
 /**
  * @brief Return the sign of a number

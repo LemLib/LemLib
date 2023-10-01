@@ -110,20 +110,28 @@ class Chassis {
         void waitUntilDist(float dist);
 
         /**
-         * @brief Turn the chassis so it is facing the target point
+         * @brief Turn the chassis so it is facing a point
          *
          * The PID logging id is "angularPID"
          *
          * @param x x location
          * @param y y location
          * @param timeout longest time the robot can spend moving
-         * @param async whether the function should be run asynchronously. false by default
          * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
-         * @param maxSpeed the maximum speed the robot can turn at. Default is 200
-         * @param log whether the chassis should log the turnTo function. false by default
+         * @param maxSpeed the maximum speed the robot can turn at. Default is 127
          */
-        void turnTo(float x, float y, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127,
-                    bool log = false);
+        void turnToPose(float x, float y, int timeout, bool reversed = false, int maxSpeed = 127);
+
+        /**
+         * @brief Turn the chassis so it is facing a heading
+         *
+         * The PID logging id is "angularPID"
+         *
+         * @param heading the heading the robot should face. Units are in degrees
+         * @param timeout longest time the robot can spend moving
+         * @param maxSpeed the maximum speed the robot can turn at. Default is 127
+         */
+        void turnToHeading(float heading, int timeout, int maxSpeed = 127);
 
         /**
          * @brief Move the chassis towards the target pose

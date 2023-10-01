@@ -18,7 +18,8 @@
  */
 lemlib::PurePursuit::PurePursuit(float trackWidth, const asset& path, float lookaheadDist, int timeout, bool forwards,
                                  int maxSpeed)
-    : trackWidth(trackWidth),
+    : Movement(),
+      trackWidth(trackWidth),
       lookaheadDist(lookaheadDist),
       timeout(timeout),
       forwards(forwards),
@@ -40,6 +41,14 @@ lemlib::PurePursuit::PurePursuit(float trackWidth, const asset& path, float look
         this->path.push_back({x, y, 0, speed}); // save data
     }
 }
+
+/**
+ * Get the distance travelled during the movement
+ *
+ * This is useful if you want to wait until the robot has travelled a certain distance.
+ * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
+ */
+float lemlib::PurePursuit::getDist() { return dist; }
 
 /**
  * Pure Pursuit is a motion algorithm published by R. Craig Coulter in 1992

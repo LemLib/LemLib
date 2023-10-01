@@ -1,5 +1,6 @@
 #pragma once
 
+#include <queue>
 #include <utility>
 #include "lemlib/pose.hpp"
 #include "lemlib/pid.hpp"
@@ -17,15 +18,21 @@ class Boomerang : public Movement {
          * @param linearPID the linear PID to use
          * @param angularPID the angular PID to use
          * @param target the target pose
-         * @param timeout longest time the robot can spend moving
          * @param forwards whether the robot should move forwards or backwards. true for forwards, false for
          * backwards
          * @param lead the lead parameter. Determines how curved the robot will move. (0 < lead < 1)
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          * @param maxSpeed the maximum speed the robot can move at
          */
-        Boomerang(FAPID linearPID, FAPID angularPID, Pose target, int timeout, bool forwards, float chasePower,
-                  float lead, int maxSpeed);
+        Boomerang(FAPID linearPID, FAPID angularPID, Pose target, bool forwards, float chasePower, float lead,
+                  int maxSpeed);
+
+        /**
+         * @brief Get the distance travelled during the movement
+         *
+         * @return float
+         */
+        float getDist() override;
 
         /**
          * @brief Update the movement
@@ -38,19 +45,11 @@ class Boomerang : public Movement {
          * @return std::pair<int, int> left and right motor power respectively. 128 means movement is done
          */
         std::pair<int, int> update(Pose pose) override;
-
-        /**
-         * @brief Get the distance travelled during the movement
-         *
-         * @return float
-         */
-        float getDist() override;
     private:
         FAPID angularPID;
         FAPID linearPID;
         Pose target;
-        Pose lastPose = Pose(0, 0, 0);
-        int timeout;
+        Pose prevPose = Pose(0, 0, 0);
         bool forwards;
         float chasePower;
         float lead;
