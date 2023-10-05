@@ -1,26 +1,29 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "pros/motors.h"
 
 // drive motors
-pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
-pros::Motor lB(-21, pros::E_MOTOR_GEARSET_06); // left back motor. port 21, reversed
-pros::Motor rF(12, pros::E_MOTOR_GEARSET_06); // right front motor. port 12
-pros::Motor rB(16, pros::E_MOTOR_GEARSET_06); // right back motor. port 16
+pros::Motor lF(-8, pros::E_MOTOR_GEARSET_06); // left front motor. port 8, reversed
+pros::Motor lM(-20, pros::E_MOTOR_GEARSET_06); // left middle motor. port 20, reversed
+pros::Motor lB(19, pros::E_MOTOR_GEARSET_06); // left back motor. port 19
+pros::Motor rF(2, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
+pros::Motor rM(11, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
+pros::Motor rB(-13, pros::E_MOTOR_GEARSET_06); // right back motor. port 13, reversed
 
 // motor groups
-pros::MotorGroup leftMotors({lF, lB}); // left motor group
-pros::MotorGroup rightMotors({rF, rB}); // right motor group
+pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
+pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
 // Inertial Sensor on port 11
-pros::Imu imu(11);
+pros::Imu imu(12);
 
 // tracking wheels
-pros::Rotation horizontalEnc(7);
+pros::Rotation verticalEnc(4);
 // horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
+lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain
-lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 360, 2};
+lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_4, 300, 8};
 
 // lateral motion controller
 lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
@@ -29,7 +32,7 @@ lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
 lemlib::ChassisController_t angularController {2, 10, 1, 100, 3, 500, 20};
 
 // sensors for odometry
-lemlib::OdomSensors_t sensors {nullptr, nullptr, &horizontal, nullptr, &imu};
+lemlib::OdomSensors_t sensors {&vertical, nullptr, nullptr, nullptr, &imu};
 
 lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 
@@ -41,7 +44,6 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
  */
 void initialize() {
     pros::lcd::initialize();
-    lemlib::Logger::initialize();
     chassis.initialize(); // calibrate sensors
 
     // print odom values to the brain
@@ -50,8 +52,7 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x);
             pros::lcd::print(1, "Y: %f", chassis.getPose().y);
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
-            lemlib::Logger::logOdom(chassis.getPose());
-            pros::delay(50);
+            pros::delay(10);
         }
     });
 }
