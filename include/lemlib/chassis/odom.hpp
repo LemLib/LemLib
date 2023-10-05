@@ -59,8 +59,8 @@ class Odometry {
          */
         void update();
     private:
-        OdomSensors_t& sensors;
-        Drivetrain_t& drive;
+        OdomSensors_t sensors;
+        Drivetrain_t drive;
         Pose pose = Pose(0, 0, 0);
 
         float prevVertical = 0;
