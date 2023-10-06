@@ -53,6 +53,7 @@ class TrackingWheel {
          * @param rpm theoretical maximum rpm of the drivetrain wheels
          */
         TrackingWheel(pros::Motor_Group* motors, float wheelDiameter, float distance, float rpm);
+
         /**
          * @brief Reset the tracking wheel position to 0
          *
