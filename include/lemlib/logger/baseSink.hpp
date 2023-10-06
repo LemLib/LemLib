@@ -4,6 +4,7 @@
 
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
+#include "fmt/args.h"
 
 #include "pros/rtos.hpp"
 
@@ -22,13 +23,6 @@ class BaseSink {
         void setLowestLevel(Level level);
 
         /**
-         * @brief Set the format of the logger
-         *
-         * @param format
-         */
-        void setFormat(const std::string& format);
-
-        /**
          * @brief Log a message at the given level
          *
          * @tparam T
@@ -42,12 +36,16 @@ class BaseSink {
             // format the message first
             std::string message = fmt::format(format, std::forward<T>(args)...);
 
-            uint32_t time = pros::millis();
+            // get the arguments
+            fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs = getExtraFormattingArgs();
 
-            std::string formattedString = fmt::format(logFormat, fmt::arg("time", time), fmt::arg("level", level),
-                                                      fmt::arg("message", std::move(message)));
+            formattingArgs.push_back(fmt::arg("time", pros::millis()));
+            formattingArgs.push_back(fmt::arg("level", level));
+            formattingArgs.push_back(fmt::arg("message", message));
 
-            logMessage(Message {std::move(formattedString), level, time});
+            std::string formattedString = fmt::format(logFormat, std::move(formattingArgs));
+
+            logMessage(Message {std::move(formattedString), level});
         }
 
         /**
@@ -111,6 +109,20 @@ class BaseSink {
          * @param message
          */
         virtual void logMessage(const Message& message) = 0;
+
+        /**
+         * @brief Set the format of the logger
+         *
+         * @param format
+         */
+        void setFormat(const std::string& format);
+
+        /**
+         * @brief Get the arguments for formatting
+         *
+         * @return fmt::dynamic_format_arg_store<fmt::format_context>
+         */
+        virtual fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs();
     private:
         Level lowestLevel = Level::DEBUG;
         std::string logFormat;
