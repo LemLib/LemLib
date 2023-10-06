@@ -1,20 +1,25 @@
 #pragma once
-#include "lemlib/logger/logger.hpp"
+
 #include <string>
 
-//#include "lemlib/logger/logger.hpp"
-
 namespace lemlib {
-
-enum class Level;
+enum class Level {
+    Info,
+    Debug,
+    Warn,
+    Error,
+    Fatal,
+    Telemetry
+}; // This must be defined here, otherwise there will be a circular dependency with the logger. I hate this a
+   // lot, but it has to be this way.
 
 class Message {
     public:
-        enum class Type { Telemetry, Log };
+        Message(Level i_level, std::string i_message);
 
-        Message(Level level, Type type, std::string message);
-        Level level;
-        Type type;
+        static std::string getLevelString(Level level, bool isColored);
+
         std::string message;
+        Level level = Level::Info;
 };
 } // namespace lemlib

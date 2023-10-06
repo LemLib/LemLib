@@ -42,18 +42,19 @@ void Buffer::loggingTask() {
     while (true) {
         mutex.take();
         if (buffer.size() > 0) {
-            ::lemlib::Message message = buffer.at(0);
+            Message message = buffer.at(0);
             // TODO: handle sending messages to the ui.
-            switch (message.type) {
-                case Message::Type::Log: {
-                    std::cout << message.message << std::endl;
-                    break;
-                }
-                case Message::Type::Telemetry: {
+            switch (message.level) {
+                case Level::Telemetry: {
                     // If we're printing telemetry this is information we don't want the user to see.
                     // We use an ANSI escape code to delete line from view
                     // Std::flush ensures that the message is still sent, despite there not being a newline.
                     std::cout << message.message << "\033[2K\r" << std::flush;
+                    break;
+                }
+                default: {
+                    // If it isn't a telemetry message we know that it should be logged normally
+                    std::cout << message.message << std::endl;
                     break;
                 }
             }
