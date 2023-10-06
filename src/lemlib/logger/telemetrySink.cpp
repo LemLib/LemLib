@@ -14,5 +14,15 @@ fmt::dynamic_format_arg_store<fmt::format_context> TelemetrySink::getExtraFormat
     return args;
 }
 
-void TelemetrySink::logMessage(const Message& message) { Stdout::print("{}\033[2K\r", message.message); }
+void TelemetrySink::logMessage(const Message& message) {
+    std::string outputEscapeSequence = "\033[2K\r";
+
+    for (char messageChar : message.message) {
+        if (messageChar == '\n') {
+            outputEscapeSequence += "\033[1A\033[2K\r";
+        }
+    }
+    
+    Stdout::print("TELE-BEGIN{}{}TELE-END", message.message, outputEscapeSequence);
+}
 } // namespace lemlib
