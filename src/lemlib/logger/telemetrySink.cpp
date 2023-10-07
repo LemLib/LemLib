@@ -4,7 +4,7 @@
 #include "stdout.hpp"
 
 namespace lemlib {
-TelemetrySink::TelemetrySink() { setFormat("{id}{message}"); }
+TelemetrySink::TelemetrySink() { setFormat("TELE-BEGIN{id}{message}TELE-END"); }
 
 void TelemetrySink::setTelemetryId(uint8_t id) { this->id = id; }
 
@@ -15,12 +15,6 @@ fmt::dynamic_format_arg_store<fmt::format_context> TelemetrySink::getExtraFormat
 }
 
 void TelemetrySink::logMessage(const Message& message) {
-    std::string outputEscapeSequence = "\033[2K\r";
-
-    for (char messageChar : message.message) {
-        if (messageChar == '\n') { outputEscapeSequence += "\033[1A\033[2K\r"; }
-    }
-
-    Stdout::print("TELE-BEGIN{}TELE-END{}", message.message, outputEscapeSequence);
+    Stdout::print("\033[s{}\033[u\033[0J", message.message);
 }
 } // namespace lemlib
