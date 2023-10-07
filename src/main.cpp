@@ -49,7 +49,7 @@ void initialize() {
     // print odom values to the brain
     pros::Task screenTask([=]() {
         while (true) {
-            lemlib::Logger::info("Chassis pose: {}", chassis.getPose());
+            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             pros::delay(50);
         }
     });
