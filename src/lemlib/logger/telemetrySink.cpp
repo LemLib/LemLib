@@ -18,11 +18,9 @@ void TelemetrySink::logMessage(const Message& message) {
     std::string outputEscapeSequence = "\033[2K\r";
 
     for (char messageChar : message.message) {
-        if (messageChar == '\n') {
-            outputEscapeSequence += "\033[1A\033[2K\r";
-        }
+        if (messageChar == '\n') { outputEscapeSequence += "\033[1A\033[2K\r"; }
     }
-    
+
     Stdout::print("TELE-BEGIN{}{}TELE-END", message.message, outputEscapeSequence);
 }
 } // namespace lemlib

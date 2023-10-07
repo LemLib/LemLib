@@ -41,7 +41,7 @@ class BaseSink {
 
             formattingArgs.push_back(fmt::arg("time", pros::millis()));
             formattingArgs.push_back(fmt::arg("level", level));
-            //formattingArgs.push_back(fmt::arg("message", message));
+            formattingArgs.push_back(fmt::arg("message", message));
 
             std::string formattedString = fmt::vformat(logFormat, std::move(formattingArgs));
 
