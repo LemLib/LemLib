@@ -1,14 +1,14 @@
-#include "baseSink.hpp"
+
 #include "logger.hpp"
 
 namespace lemlib {
-InfoSink& Logger::getInfoSink() {
-    static InfoSink infoSink;
+std::shared_ptr<InfoSink> infoSink() {
+    static std::shared_ptr<InfoSink> infoSink = std::make_shared<InfoSink>();
     return infoSink;
 }
 
-TelemetrySink& Logger::getTelemetrySink() {
-    static TelemetrySink telemetrySink;
+std::shared_ptr<TelemetrySink> telemetrySink() {
+    static std::shared_ptr<TelemetrySink> telemetrySink = std::make_shared<TelemetrySink>();
     return telemetrySink;
 }
 } // namespace lemlib
