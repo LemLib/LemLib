@@ -4,7 +4,7 @@
 #include "stdout.hpp"
 
 namespace lemlib {
-TelemetrySink::TelemetrySink() { setFormat("TELE-BEGIN{id}{tele_level}{message}TELE-END"); }
+TelemetrySink::TelemetrySink() { setFormat("TELE_BEGIN{id}{tele_level}{message}TELE_END"); }
 
 void TelemetrySink::setTelemetryId(uint8_t id) { this->id = id; }
 

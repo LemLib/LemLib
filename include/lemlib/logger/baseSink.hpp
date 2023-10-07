@@ -34,19 +34,20 @@ class BaseSink {
             if (level < lowestLevel) { return; }
 
             // format the message first
-            std::string message = fmt::format(format, std::forward<T>(args)...);
+            std::string messageString = fmt::format(format, std::forward<T>(args)...);
+
+            Message message = Message {.level = level, .time = pros::millis()};
 
             // get the arguments
-            fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs =
-                getExtraFormattingArgs(Message {"", level});
+            fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs = getExtraFormattingArgs(message);
 
-            formattingArgs.push_back(fmt::arg("time", pros::millis()));
-            formattingArgs.push_back(fmt::arg("level", level));
-            formattingArgs.push_back(fmt::arg("message", message));
+            formattingArgs.push_back(fmt::arg("time", message.time));
+            formattingArgs.push_back(fmt::arg("level", message.level));
+            formattingArgs.push_back(fmt::arg("message", messageString));
 
             std::string formattedString = fmt::vformat(logFormat, std::move(formattingArgs));
 
-            logMessage(Message {std::move(formattedString), level});
+            logMessage(std::move(message));
         }
 
         /**
