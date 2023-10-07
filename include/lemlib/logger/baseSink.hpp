@@ -63,6 +63,8 @@ class BaseSink {
 
             std::string formattedString = fmt::vformat(logFormat, std::move(formattingArgs));
 
+            message.message = std::move(formattedString);
+
             logMessage(std::move(message));
         }
 
