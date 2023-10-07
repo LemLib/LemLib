@@ -8,6 +8,8 @@
 
 #include "pros/rtos.hpp"
 
+#include <initializer_list>
+
 namespace lemlib {
 /**
  * @brief A base for any sink in LemLib to implement
@@ -15,6 +17,15 @@ namespace lemlib {
  */
 class BaseSink {
     public:
+        BaseSink() = default;
+
+        /**
+         * @brief Construct a new Base Sink object
+         *
+         * @param sinks The sinks to use
+         */
+        BaseSink(std::initializer_list<std::shared_ptr<BaseSink>> sinks);
+
         /**
          * @brief Set the lowest level
          *
@@ -31,6 +42,11 @@ class BaseSink {
          * @param args
          */
         template <typename... T> void log(Level level, fmt::format_string<T...> format, T&&... args) {
+            if (!sinks.empty()) {
+                for (auto sink : sinks) { sink->log(level, format, std::forward<T>(args)...); }
+                return;
+            }
+
             if (level < lowestLevel) { return; }
 
             // format the message first
@@ -110,7 +126,7 @@ class BaseSink {
          *
          * @param message
          */
-        virtual void logMessage(const Message& message) = 0;
+        virtual void logMessage(const Message& message);
 
         /**
          * @brief Set the format of the logger
@@ -128,5 +144,7 @@ class BaseSink {
     private:
         Level lowestLevel = Level::DEBUG;
         std::string logFormat;
+
+        std::vector<std::shared_ptr<BaseSink>> sinks {};
 };
 } // namespace lemlib

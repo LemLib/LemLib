@@ -8,4 +8,6 @@ void BaseSink::setFormat(const std::string& logFormat) { this->logFormat = logFo
 fmt::dynamic_format_arg_store<fmt::format_context> BaseSink::getExtraFormattingArgs(const Message& messageInfo) {
     return {};
 }
+
+void BaseSink::logMessage(const Message& message) {}
 } // namespace lemlib
