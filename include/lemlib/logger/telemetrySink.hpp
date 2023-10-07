@@ -27,7 +27,7 @@ class TelemetrySink : public BaseSink {
          *
          * @return fmt::dynamic_format_arg_store<fmt::format_context>
          */
-        fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs() override;
+        fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs(const Message& messageInfo) override;
     private:
         /**
          * @brief Log the given message

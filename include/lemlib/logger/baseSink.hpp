@@ -37,7 +37,8 @@ class BaseSink {
             std::string message = fmt::format(format, std::forward<T>(args)...);
 
             // get the arguments
-            fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs = getExtraFormattingArgs();
+            fmt::dynamic_format_arg_store<fmt::format_context> formattingArgs =
+                getExtraFormattingArgs(Message {"", level});
 
             formattingArgs.push_back(fmt::arg("time", pros::millis()));
             formattingArgs.push_back(fmt::arg("level", level));
@@ -122,7 +123,7 @@ class BaseSink {
          *
          * @return fmt::dynamic_format_arg_store<fmt::format_context>
          */
-        virtual fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs();
+        virtual fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs(const Message& messageInfo);
     private:
         Level lowestLevel = Level::DEBUG;
         std::string logFormat;
