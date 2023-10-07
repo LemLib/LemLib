@@ -43,7 +43,7 @@ class BaseSink {
          */
         template <typename... T> void log(Level level, fmt::format_string<T...> format, T&&... args) {
             if (!sinks.empty()) {
-                for (auto sink : sinks) { sink->log(level, format, std::forward<T>(args)...); }
+                for (std::shared_ptr<BaseSink> sink : sinks) { sink->log(level, format, std::forward<T>(args)...); }
                 return;
             }
 
