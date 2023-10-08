@@ -7,7 +7,7 @@
 
 namespace lemlib {
 Buffer::Buffer(std::function<void(const std::string&)> bufferFunc)
-    : bufferFunc(bufferFunc), task([&]() { loggingTask(); }) {}
+    : bufferFunc(bufferFunc), task([=]() { taskLoop(); }) {}
 
 bool Buffer::buffersEmpty() {
     mutex.take();
@@ -30,7 +30,7 @@ void Buffer::pushToBuffer(const std::string& bufferData) {
 
 void Buffer::setRate(uint32_t rate) { this->rate = rate; }
 
-void Buffer::loggingTask() {
+void Buffer::taskLoop() {
     while (true) {
         mutex.take();
         if (buffer.size() > 0) {
