@@ -195,8 +195,8 @@ class BaseSink {
          * fmt::dynamic_format_arg_store<fmt::format_context>
          * ExampleSink::getExtraFormattingArgs(const Message& messageInfo) {
          *     fmt::dynamic_format_arg_store<fmt::format_context> args;
-         *       args.push_back(fmt::arg("zero", 0);
-         *       return args;
+         *      args.push_back(fmt::arg("zero", 0);
+         *      return args;
          * }
          * @endcode
          *
