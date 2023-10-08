@@ -65,7 +65,7 @@ class BaseSink {
 
             message.message = std::move(formattedString);
 
-            logMessage(std::move(message));
+            sendMessage(std::move(message));
         }
 
         /**
@@ -128,7 +128,7 @@ class BaseSink {
          *
          * @param message
          */
-        virtual void logMessage(const Message& message);
+        virtual void sendMessage(const Message& message);
 
         /**
          * @brief Set the format of the logger

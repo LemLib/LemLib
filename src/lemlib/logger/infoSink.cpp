@@ -18,7 +18,7 @@ static std::string getColor(Level level) {
     __builtin_unreachable();
 }
 
-void InfoSink::logMessage(const Message& message) {
+void InfoSink::sendMessage(const Message& message) {
     Stdout::print("{}{}\033[0m\n", getColor(message.level), message.message);
 }
 } // namespace lemlib

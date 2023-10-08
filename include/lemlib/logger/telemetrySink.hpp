@@ -20,6 +20,6 @@ class TelemetrySink : public BaseSink {
          *
          * @param message
          */
-        void logMessage(const Message& message) override;
+        void sendMessage(const Message& message) override;
 };
 } // namespace lemlib
