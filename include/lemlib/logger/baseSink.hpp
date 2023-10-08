@@ -20,22 +20,24 @@ class BaseSink {
         BaseSink() = default;
 
         /**
-         * @brief Construct a new Base Sink object
+         * @brief Construct a new combined sink
          *
          * @param sinks The sinks to use
          */
         BaseSink(std::initializer_list<std::shared_ptr<BaseSink>> sinks);
 
         /**
-         * @brief Set the lowest level
-         *
+         * @brief Set the lowest level.
+         * If this is a combined sink, this operation will
+         * apply for all the parent sinks.
          * @param level
          */
         void setLowestLevel(Level level);
 
         /**
          * @brief Log a message at the given level
-         *
+         * If this is a combined sink, this operation will
+         * apply for all the parent sinks.
          * @tparam T
          * @param level
          * @param format The format of the message
@@ -69,8 +71,9 @@ class BaseSink {
         }
 
         /**
-         * @brief Log a message at the debug level
-         *
+         * @brief Log a message at the debug level.
+         * If this is a combined sink, this operation will
+         * apply for all the parent sinks.
          * @tparam T
          * @param format
          * @param args
@@ -81,7 +84,8 @@ class BaseSink {
 
         /**
          * @brief Log a message at the info level
-         *
+         * If this is a combined sink, this operation will
+         * apply for all the parent sinks.
          * @tparam T
          * @param format
          * @param args
@@ -92,7 +96,8 @@ class BaseSink {
 
         /**
          * @brief Log a message at the warn level
-         *
+         * If this is a combined sink, this operation will
+         * apply for all the parent sinks.
          * @tparam T
          * @param format
          * @param args
@@ -103,7 +108,8 @@ class BaseSink {
 
         /**
          * @brief Log a message at the error level.
-         *
+         * If this is a combined sink, this operation will
+         * apply for all the parent sinks.
          * @tparam T
          * @param format
          * @param args
@@ -114,7 +120,8 @@ class BaseSink {
 
         /**
          * @brief Log a message at the fatal level
-         *
+         * If this is a combined sink, this operation will
+         * apply for all the parent sinks.
          * @tparam T
          * @param format
          * @param args
