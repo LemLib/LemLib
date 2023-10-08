@@ -13,9 +13,8 @@ namespace lemlib {
 
  * <h3> Example Usage </h3>
  * @code
- * #define TEMPERATURE_ID 1
  * lemlib::telemetrySink()->setLowestLevel(lemlib::Level::INFO);
- * lemlib::telemetrySink()->info("{},{},{}", TEMPERATURE_ID, motor1.get_temperature(), motor2.get_temperature());
+ * lemlib::telemetrySink()->info("{},{}", motor1.get_temperature(), motor2.get_temperature());
  * @endcode
  */
 class TelemetrySink : public BaseSink {
