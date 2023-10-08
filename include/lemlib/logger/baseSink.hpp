@@ -49,6 +49,7 @@ class BaseSink {
          * @brief Log a message at the given level
          * If this is a combined sink, this operation will
          * apply for all the parent sinks.
+         *
          * @tparam T
          * @param level The level at which to send the message.
          * @param format The format that the message will use. Use "{}" as placeholders.
