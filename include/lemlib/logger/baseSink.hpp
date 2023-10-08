@@ -23,7 +23,7 @@ class BaseSink {
         BaseSink() = default;
 
         /**
-         * @brief Construct a new Base Sink object.
+         * @brief Construct a new combined sink
          *
          * @param sinks The sinks that will have messages sent to them when
          */
@@ -49,7 +49,6 @@ class BaseSink {
          * @brief Log a message at the given level
          * If this is a combined sink, this operation will
          * apply for all the parent sinks.
-         *
          * @tparam T
          * @param level The level at which to send the message.
          * @param format The format that the message will use. Use "{}" as placeholders.
@@ -94,7 +93,7 @@ class BaseSink {
          * apply for all the parent sinks.
          * @tparam T
          * @param format
-         * @param args The
+         * @param args
          */
         template <typename... T> void debug(fmt::format_string<T...> format, T&&... args) {
             log(Level::DEBUG, format, std::forward<T>(args)...);
