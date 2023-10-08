@@ -5,6 +5,14 @@
 #include "fmt/core.h"
 
 namespace lemlib {
+/**
+ * @brief Buffered printing to Stout.
+ *
+ * LemLib uses a buffered wrapper around stdout in order to guarantee that messages are printed at a constant
+ * rate, no matter how many different threads are trying to use the logger. This is a concern  because not every type of
+ * connection to the brain has the same amount of bandwidth.
+ */
+
 class Stdout : protected Buffer {
     public:
         Stdout(const Stdout&) = delete;
