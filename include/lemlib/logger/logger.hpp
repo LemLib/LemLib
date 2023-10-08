@@ -38,8 +38,7 @@ std::shared_ptr<InfoSink> infoSink();
  * #define TEMPERATURE_ID 1
  * lemlib::telemetrySink()->setLowestLevel(lemlib::Level::INFO);
  * lemlib::telemetrySink()->setLowestLevel(lemlib::Level::INFO);
- * lemlib::telemetrySink()->setId(TEMPERATURE_ID);
- * lemlib::telemetrySink()->info("{},{}", motor1.get_temperature(), motor2.get_temperature());
+ * lemlib::telemetrySink()->info("{},{},{}", TEMPERATURE_ID, motor1.get_temperature(), motor2.get_temperature());
  * @endcode
  * @return std::shared_ptr<TelemetrySink>
  */
