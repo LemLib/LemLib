@@ -9,7 +9,7 @@ namespace lemlib {
  * This is the primary way of interacting with the telemetry portion of LemLib's logging implementation. This sink is
  * used for sending data that is not meant to be viewed by the user, but will still be used by something else, like a
  * data visualization tool. Messages sent through this sink will not be cleared from the terminal and not be visible to
- * the user. For more information see TelemetrySink.
+ * the user.
 
  * <h3> Example Usage </h3>
  * @code

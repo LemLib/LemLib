@@ -12,8 +12,7 @@ namespace lemlib {
  * @brief Sink for sending messages to the terminal.
  *
  * This is the primary way of interacting with LemLib's logging implementation. This sink is used for printing useful
- * information to the user's terminal. For more information
- on sinks see BaseSink.
+ * information to the user's terminal.
  * <h3> Example Usage </h3>
  * @code
  * lemlib::infoSink()->setLowestLevel(lemlib::Level::INFO);
@@ -32,7 +31,7 @@ class InfoSink : public BaseSink {
         InfoSink();
     private:
         /**
-         * @brief Log the given message
+         * @brief Sends log message to the Stdout buffer.
          *
          * @param message
          */

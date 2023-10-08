@@ -25,6 +25,12 @@ class BaseSink {
         /**
          * @brief Construct a new combined sink
          *
+         * <h3> Example Usage </h3>
+         * @code
+         * lemlib::BaseSink combinedSink({lemlib::telemetrySink(), lemlib::infoSink()});
+         * combinedSink.info("This will be sent to both sinks!");
+         * @endcode
+         *
          * @param sinks The sinks that will have messages sent to them when
          */
         BaseSink(std::initializer_list<std::shared_ptr<BaseSink>> sinks);
@@ -69,7 +75,7 @@ class BaseSink {
 
             if (level < lowestLevel) { return; }
 
-            // format the message first
+            // substitute the user's arguments into the format.
             std::string messageString = fmt::format(format, std::forward<T>(args)...);
 
             Message message = Message {.level = level, .time = pros::millis()};
@@ -177,7 +183,22 @@ class BaseSink {
         void setFormat(const std::string& format);
 
         /**
-         * @brief Get the arguments for formatting
+         * @brief Get the extra named arguments for formatting
+         *
+         * Can be overridden to add extra named arguments to the sink's format.
+         * <h3> Example Usage </h3>
+         *
+         * The following code would add a {zero} formatting argument which could be used in setFormat method of this
+         * sink.
+         *
+         * @code
+         * fmt::dynamic_format_arg_store<fmt::format_context>
+         * ExampleSink::getExtraFormattingArgs(const Message& messageInfo) {
+         *     fmt::dynamic_format_arg_store<fmt::format_context> args;
+         *       args.push_back(fmt::arg("zero", 0);
+         *       return args;
+         * }
+         * @endcode
          *
          * @return fmt::dynamic_format_arg_store<fmt::format_context>
          */
