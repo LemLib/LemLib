@@ -10,8 +10,6 @@ namespace lemlib {
 /**
  * @brief A buffer implementation
  *
- * Asynchronously processes a backlog of strings at a given rate. The strings are processed in a first in last out
- * order.
  */
 class Buffer {
     public:
@@ -45,21 +43,17 @@ class Buffer {
         void setRate(uint32_t rate);
 
         /**
-         * @brief Check to see if the internal buffer is empty
+         * @brief Check to see if the buffers are empty
          *
          */
         bool buffersEmpty();
     private:
         /**
-         * @brief The function that will be run inside of the buffer's task.
+         * @brief Code for the logging task
          *
          */
-        void taskLoop();
+        void loggingTask();
 
-        /**
-         * @brief The function that will be applied to each string in the buffer when it is removed.
-         *
-         */
         std::function<void(std::string)> bufferFunc;
 
         std::deque<std::string> buffer = {};
