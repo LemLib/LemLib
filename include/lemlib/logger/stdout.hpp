@@ -1,8 +1,9 @@
 #pragma once
-#include "buffer.hpp"
 
 #define FMT_HEADER_ONLY
+
 #include "fmt/core.h"
+#include "lemlib/logger/buffer.hpp"
 
 namespace lemlib {
 /**
