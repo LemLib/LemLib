@@ -1,4 +1,4 @@
-#include "message.hpp"
+#include "lemlib/logger/message.hpp"
 
 namespace lemlib {
 std::string format_as(Level level) {
