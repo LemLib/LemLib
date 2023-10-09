@@ -1,8 +1,6 @@
-#include "infoSink.hpp"
-
-#include "message.hpp"
-
-#include "stdout.hpp"
+#include "lemlib/logger/infoSink.hpp"
+#include "lemlib/logger/message.hpp"
+#include "lemlib/logger/stdout.hpp"
 
 namespace lemlib {
 InfoSink::InfoSink() { setFormat("[LemLib] {level}: {message}"); }
