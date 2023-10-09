@@ -1,5 +1,4 @@
-
-#include "logger.hpp"
+#include "lemlib/logger/logger.hpp"
 
 namespace lemlib {
 std::shared_ptr<InfoSink> infoSink() {
