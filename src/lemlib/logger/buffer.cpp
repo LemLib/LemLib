@@ -1,9 +1,7 @@
-#include "buffer.hpp"
-
 #include "fmt/core.h"
 #include "fmt/color.h"
-
-#include "message.hpp"
+#include "lemlib/logger/buffer.hpp"
+#include "lemlib/logger/message.hpp"
 
 namespace lemlib {
 Buffer::Buffer(std::function<void(const std::string&)> bufferFunc)
