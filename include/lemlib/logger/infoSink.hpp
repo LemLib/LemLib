@@ -1,11 +1,10 @@
 #pragma once
 
-#include "message.hpp"
-#include "baseSink.hpp"
-
 #include <deque>
 
 #include "pros/rtos.hpp"
+#include "lemlib/logger/message.hpp"
+#include "lemlib/logger/baseSink.hpp"
 
 namespace lemlib {
 /**
