@@ -49,6 +49,9 @@ void initialize() {
     // print odom values to the brain
     pros::Task screenTask([=]() {
         while (true) {
+            pros::lcd::print(0, "X: %f", chassis.getPose().x);
+            pros::lcd::print(1, "Y: %f", chassis.getPose().y);
+            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             pros::delay(50);
         }
