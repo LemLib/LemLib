@@ -1,11 +1,11 @@
 #pragma once
 
-#define FMT_HEADER_ONLY
-
 #include <memory>
 #include <array>
 
+#define FMT_HEADER_ONLY
 #include "fmt/core.h"
+
 #include "lemlib/logger/baseSink.hpp"
 #include "lemlib/logger/infoSink.hpp"
 #include "lemlib/logger/telemetrySink.hpp"

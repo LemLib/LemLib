@@ -1,3 +1,4 @@
+#define FMT_HEADER_ONLY
 #include "fmt/format.h"
 #include "lemlib/logger/telemetrySink.hpp"
 #include "lemlib/logger/stdout.hpp"
