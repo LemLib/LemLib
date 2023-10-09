@@ -8,11 +8,12 @@
  * @copyright Copyright (c) 2023
  *
  */
-#include <math.h>
-#include "lemlib/pose.hpp"
-
 #define FMT_HEADER_ONLY
+
+#include <math.h>
+
 #include "fmt/core.h"
+#include "lemlib/pose.hpp"
 
 /**
  * @brief Create a new pose
