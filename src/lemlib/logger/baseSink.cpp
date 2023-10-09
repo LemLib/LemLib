@@ -1,4 +1,4 @@
-#include "baseSink.hpp"
+#include "lemlib/logger/baseSink.hpp"
 
 namespace lemlib {
 BaseSink::BaseSink(std::initializer_list<std::shared_ptr<BaseSink>> sinks) { this->sinks = sinks; }
