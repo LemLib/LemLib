@@ -6,7 +6,7 @@
 #include "pros/rtos.hpp"
 #include "fmt/core.h"
 #include "fmt/args.h"
-#include "lemlib/logger/message.hpp
+#include "lemlib/logger/message.hpp"
 
 namespace lemlib {
 /**
