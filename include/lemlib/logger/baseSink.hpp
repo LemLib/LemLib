@@ -1,14 +1,12 @@
 #pragma once
 
-#include "message.hpp"
-
 #define FMT_HEADER_ONLY
-#include "fmt/core.h"
-#include "fmt/args.h"
-
-#include "pros/rtos.hpp"
 
 #include <initializer_list>
+#include "pros/rtos.hpp"
+#include "fmt/core.h"
+#include "fmt/args.h"
+#include "lemlib/logger/message.hpp
 
 namespace lemlib {
 /**
