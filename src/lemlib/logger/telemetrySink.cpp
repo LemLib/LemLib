@@ -1,7 +1,6 @@
-#include "telemetrySink.hpp"
-
 #include "fmt/format.h"
-#include "stdout.hpp"
+#include "lemlib/logger/telemetrySink.hpp"
+#include "lemlib/logger/stdout.hpp"
 
 namespace lemlib {
 TelemetrySink::TelemetrySink() { setFormat("TELE_{level}:{message}TELE_END"); }
