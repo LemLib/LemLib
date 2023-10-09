@@ -12,7 +12,6 @@ namespace lemlib {
  * rate, no matter how many different threads are trying to use the logger. This is a concern  because not every type of
  * connection to the brain has the same amount of bandwidth.
  */
-
 class Stdout : protected Buffer {
     public:
         Stdout(const Stdout&) = delete;
