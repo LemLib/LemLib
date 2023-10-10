@@ -161,6 +161,13 @@ class Chassis {
                     float lead = 0.6, int maxSpeed = 127);
 
         /**
+         * @brief Move the chassis using a custom motion algorithm
+         *
+         * @param movement shared pointer to the custom movement
+         */
+        void moveCustom(std::unique_ptr<Movement> movement);
+
+        /**
          * @brief Move the chassis along a path
          *
          * @param filePath the filename of the path to follow
@@ -214,7 +221,7 @@ class Chassis {
         float prevDist = 0; // the previous distance travelled by the movement
 
         Odometry odom;
-        std::shared_ptr<Movement> movement;
+        std::unique_ptr<Movement> movement;
         std::unique_ptr<pros::Task> task;
 
         ChassisController_t lateralSettings;

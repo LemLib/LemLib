@@ -125,13 +125,13 @@ void Chassis::waitUntilDone() {
  */
 void Chassis::turnToPose(float x, float y, int timeout, bool reversed, int maxSpeed) {
     // if a movement is already running, wait until it is done
-    if (movement == nullptr) waitUntilDone();
+    if (movement != nullptr) waitUntilDone();
     // set up the PID
     FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
                        angularSettings.smallErrorTimeout, timeout);
     // create the movement
-    movement = std::make_shared<Turn>(angularPID, Pose(x, y), reversed, maxSpeed);
+    movement = std::make_unique<Turn>(angularPID, Pose(x, y), reversed, maxSpeed);
 }
 
 /**
@@ -148,7 +148,7 @@ void Chassis::turnToPose(float x, float y, int timeout, bool reversed, int maxSp
  */
 void Chassis::turnToHeading(float heading, int timeout, int maxSpeed) {
     // if a movement is already running, wait until it is done
-    if (movement == nullptr) waitUntilDone();
+    if (movement != nullptr) waitUntilDone();
     // convert heading to radians and standard form
     float newHeading = M_PI_2 - degToRad(heading);
     // set up the PID
@@ -156,7 +156,7 @@ void Chassis::turnToHeading(float heading, int timeout, int maxSpeed) {
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
                        angularSettings.smallErrorTimeout, timeout);
     // create the movement
-    movement = std::make_shared<Turn>(angularPID, newHeading, maxSpeed);
+    movement = std::make_unique<Turn>(angularPID, newHeading, maxSpeed);
 }
 
 /**
@@ -174,7 +174,7 @@ void Chassis::turnToHeading(float heading, int timeout, int maxSpeed) {
 void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, float chasePower, float lead,
                      int maxSpeed) {
     // if a movement is already running, wait until it is done
-    if (movement == nullptr) waitUntilDone();
+    if (movement != nullptr) waitUntilDone();
     // convert target theta to radians and standard form
     Pose target = Pose(x, y, M_PI_2 - degToRad(theta));
     // set up PIDs
@@ -185,7 +185,17 @@ void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, 
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = drivetrain.chasePower;
     // create the movement
-    movement = std::make_shared<Boomerang>(linearPID, angularPID, target, forwards, chasePower, lead, maxSpeed);
+    movement = std::make_unique<Boomerang>(linearPID, angularPID, target, forwards, chasePower, lead, maxSpeed);
+}
+
+/**
+ * Move the robot with a custom motion algorithm
+ */
+void Chassis::moveCustom(std::unique_ptr<Movement> movement) {
+    // if a movement is already running, wait until it is done
+    if (movement != nullptr) waitUntilDone();
+    // create the movement
+    this->movement = std::move(movement);
 }
 
 /**
@@ -196,9 +206,9 @@ void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, 
  */
 void Chassis::follow(const asset& path, float lookahead, int timeout, bool forwards, int maxSpeed) {
     // if a movement is already running, wait until it is done
-    if (movement == nullptr) waitUntilDone();
+    if (movement != nullptr) waitUntilDone();
     // create the movement
-    movement = std::make_shared<PurePursuit>(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
+    movement = std::make_unique<PurePursuit>(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
 }
 
 /**
