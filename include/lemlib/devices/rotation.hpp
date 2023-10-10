@@ -29,7 +29,7 @@ class RotationEncoder : public Encoder {
          */
         bool reset() override;
     private:
-        const float ratio;
         pros::Rotation rotation;
+        const float ratio;
 };
 } // namespace lemlib

@@ -191,10 +191,10 @@ void Odometry::update() {
     float horizontal1Raw = 0;
     float horizontal2Raw = 0;
     float imuRaw = 0;
-    if (sensors.vertical1 != nullptr) vertical1Raw = sensors.vertical1->getDistanceTraveled();
-    if (sensors.vertical2 != nullptr) vertical2Raw = sensors.vertical2->getDistanceTraveled();
-    if (sensors.horizontal1 != nullptr) horizontal1Raw = sensors.horizontal1->getDistanceTraveled();
-    if (sensors.horizontal2 != nullptr) horizontal2Raw = sensors.horizontal2->getDistanceTraveled();
+    if (sensors.vertical1 != nullptr) vertical1Raw = sensors.vertical1->getDistance();
+    if (sensors.vertical2 != nullptr) vertical2Raw = sensors.vertical2->getDistance();
+    if (sensors.horizontal1 != nullptr) horizontal1Raw = sensors.horizontal1->getDistance();
+    if (sensors.horizontal2 != nullptr) horizontal2Raw = sensors.horizontal2->getDistance();
     if (sensors.imu != nullptr) imuRaw = degToRad(sensors.imu->get_rotation());
 
     // calculate the change in sensor values
@@ -231,20 +231,16 @@ void Odometry::update() {
 >>>>>>> ef00cb0 (Started work on odom refactor)
 
     // choose tracking wheels to use
-    // Prioritize non-powered tracking wheels
-    TrackingWheel* verticalWheel = nullptr;
+    TrackingWheel* verticalWheel = sensors.vertical1;
     TrackingWheel* horizontalWheel = nullptr;
-    // vertical tracking wheels
-    verticalWheel = sensors.vertical1;
-    if (!sensors.vertical2->getType()) verticalWheel = sensors.vertical2;
     // horizontal tracking wheels
     if (sensors.horizontal1 != nullptr) horizontalWheel = sensors.horizontal1;
     if (sensors.horizontal2 != nullptr) horizontalWheel = sensors.horizontal2;
     // get raw values
     float rawVertical = 0;
     float rawHorizontal = 0;
-    if (verticalWheel != nullptr) rawVertical = verticalWheel->getDistanceTraveled();
-    if (horizontalWheel != nullptr) rawHorizontal = horizontalWheel->getDistanceTraveled();
+    rawVertical = verticalWheel->getDistance();
+    if (horizontalWheel != nullptr) rawHorizontal = horizontalWheel->getDistance();
     // get offsets
     float horizontalOffset = 0;
     float verticalOffset = 0;
@@ -254,7 +250,7 @@ void Odometry::update() {
     // calculate change in x and y
     float deltaX = 0;
     float deltaY = 0;
-    if (verticalWheel != nullptr) deltaY = rawVertical - prevVertical;
+    deltaY = rawVertical - prevVertical;
     if (horizontalWheel != nullptr) deltaX = rawHorizontal - prevHorizontal;
     prevVertical = rawVertical;
     prevHorizontal = rawHorizontal;

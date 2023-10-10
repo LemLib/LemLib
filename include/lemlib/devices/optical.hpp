@@ -5,6 +5,7 @@
 
 namespace lemlib {
 class OpticalEncoder : public Encoder {
+    public:
         /**
          * @brief Construct a new Optical Encoder
          *
@@ -29,7 +30,7 @@ class OpticalEncoder : public Encoder {
          */
         bool reset() override;
     private:
-        const float ratio;
         pros::ADIEncoder optical;
+        const float ratio;
 };
 } // namespace lemlib
