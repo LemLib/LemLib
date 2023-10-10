@@ -12,6 +12,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
@@ -213,8 +214,8 @@ class Chassis {
         float prevDist = 0; // the previous distance travelled by the movement
 
         Odometry odom;
-        Movement* movement;
-        pros::Task* task;
+        std::shared_ptr<Movement> movement;
+        std::unique_ptr<pros::Task> task;
 
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;

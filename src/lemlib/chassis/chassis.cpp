@@ -33,7 +33,7 @@ void Chassis::initialize(bool calibrateIMU) {
     odom.calibrate(calibrateIMU);
     // start the chassis task if it doesn't exist
     if (task == nullptr)
-        task = new pros::Task([&]() {
+        task = std::make_unique<pros::Task>([&]() {
             while (true) {
                 update();
                 pros::delay(10);
@@ -131,7 +131,7 @@ void Chassis::turnToPose(float x, float y, int timeout, bool reversed, int maxSp
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
                        angularSettings.smallErrorTimeout, timeout);
     // create the movement
-    movement = new Turn(angularPID, Pose(x, y), reversed, maxSpeed);
+    movement = std::make_shared<Turn>(angularPID, Pose(x, y), reversed, maxSpeed);
 }
 
 /**
@@ -156,7 +156,7 @@ void Chassis::turnToHeading(float heading, int timeout, int maxSpeed) {
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
                        angularSettings.smallErrorTimeout, timeout);
     // create the movement
-    movement = new Turn(angularPID, newHeading, maxSpeed);
+    movement = std::make_shared<Turn>(angularPID, newHeading, maxSpeed);
 }
 
 /**
@@ -185,7 +185,7 @@ void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, 
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = drivetrain.chasePower;
     // create the movement
-    movement = new Boomerang(linearPID, angularPID, target, forwards, chasePower, lead, maxSpeed);
+    movement = std::make_shared<Boomerang>(linearPID, angularPID, target, forwards, chasePower, lead, maxSpeed);
 }
 
 /**
@@ -198,7 +198,7 @@ void Chassis::follow(const asset& path, float lookahead, int timeout, bool forwa
     // if a movement is already running, wait until it is done
     if (movement == nullptr) waitUntilDone();
     // create the movement
-    movement = new PurePursuit(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
+    movement = std::make_shared<PurePursuit>(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
 }
 
 /**
