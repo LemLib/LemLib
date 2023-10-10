@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
