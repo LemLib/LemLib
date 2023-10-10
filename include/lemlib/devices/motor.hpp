@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "pros/motors.hpp"
 #include "lemlib/devices/encoder.hpp"
 

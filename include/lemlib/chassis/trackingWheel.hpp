@@ -11,9 +11,12 @@
 
 #pragma once
 
+#include <memory>
+#include <cstdint>
 #include "pros/motors.hpp"
 #include "pros/adi.hpp"
 #include "pros/rotation.hpp"
+#include "lemlib/devices/encoder.hpp"
 
 namespace lemlib {
 
@@ -38,63 +41,74 @@ constexpr float OLD_4_HALF = 4.175;
 class TrackingWheel {
     public:
         /**
-         * @brief Create a new tracking wheel
+         * @brief Create a new motor-encoder tracking wheel
          *
-         * @param encoder the optical shaft encoder to use
-         * @param wheelDiameter the diameter of the wheel
-         * @param distance distance between the tracking wheel and the center of rotation in inches
-         * @param gearRatio gear ratio of the tracking wheel, defaults to 1
+         * @param motors pointer to the motor group to be used for the tracking wheel
+         * @param diameter the diameter of the wheel, in inches
+         * @param offset distance between the wheel and the tracking center, in inches
+         * @param rpm of the rpm of the wheels the motor group is driving
          */
-        TrackingWheel(pros::ADIEncoder* encoder, float wheelDiameter, float distance, float gearRatio = 1);
+        TrackingWheel(pros::MotorGroup* motors, float diameter, float offset, float rpm);
         /**
-         * @brief Create a new tracking wheel
+         * @brief Create a new optical encoder tracking wheel
          *
-         * @param encoder the v5 rotation sensor to use
-         * @param wheelDiameter the diameter of the wheel
-         * @param distance distance between the tracking wheel and the center of rotation in inches
-         * @param gearRatio gear ratio of the tracking wheel, defaults to 1
+         * @param topPort the top port of the optical shaft encoder. 'a' - 'h'
+         * @param bottomPort the bottom port of the optical shaft encoder 'a' - 'h'
+         * @param reversed whether the optical shaft encoder should be reversed or not
+         * @param diameter the diameter of the wheel, in inches
+         * @param offset distance between the wheel and the tracking center, in inches
+         * @param ratio gear ratio of the tracking wheel, defaults to 1. Input / Output
          */
-        TrackingWheel(pros::Rotation* encoder, float wheelDiameter, float distance, float gearRatio = 1);
+        TrackingWheel(char topPort, char bottomPort, bool reversed, float diameter, float offset, float ratio = 1);
         /**
-         * @brief Create a new tracking wheel
+         * @brief Create a new rotation sensor tracking wheel
          *
-         * @param motors the motor group to use
-         * @param wheelDiameter the diameter of the wheel
-         * @param distance half the track width of the drivetrain in inches
-         * @param rpm theoretical maximum rpm of the drivetrain wheels
+         * @param port the port the rotation sensor is connected to. 1-21
+         * @param reversed whether the rotation sensor should be reversed or not
+         * @param diameter the diameter of the wheel, in inches
+         * @param offset distance between the wheel and the tracking center, in inches
+         * @param ratio gear ratio of the tracking wheel, defaults to 1. Input / Output
          */
-        TrackingWheel(pros::Motor_Group* motors, float wheelDiameter, float distance, float rpm);
+        TrackingWheel(uint8_t port, bool reversed, float diameter, float offset, float ratio = 1);
+        /**
+         * @brief Create a new rotation sensor tracking wheel
+         *
+         * @param port the signed port the rotation sensor is connected to. Positive is not reversed, negative is
+         * reversed. 1-21
+         * @param diameter the diameter of the wheel, in inches
+         * @param offset distance between the wheel and the tracking center, in inches
+         * @param ratio gear ratio of the tracking wheel, defaults to 1. Input / Output
+         */
+        TrackingWheel(int port, float diameter, float offset, float ratio = 1);
 
         /**
          * @brief Reset the tracking wheel position to 0
          *
+         * @return true reset failed
+         * @return false reset succeeded
          */
-        void reset();
+        bool reset();
         /**
          * @brief Get the distance traveled by the tracking wheel
          *
          * @return float distance traveled in inches
          */
-        float getDistanceTraveled();
+        float getDistance();
         /**
          * @brief Get the offset of the tracking wheel from the center of rotation
          *
          * @return float offset in inches
          */
-        float getOffset();
+        float getOffset() const;
         /**
-         * @brief Get the type of tracking wheel
+         * @brief Get the diameter of the wheel
          *
-         * @return int - 1 if motor group, 0 otherwise
+         * @return float diameter, in inches
          */
-        int getType();
+        float getDiameter() const;
     private:
-        float diameter;
-        float distance;
-        float rpm;
-        pros::ADIEncoder* encoder = nullptr;
-        pros::Rotation* rotation = nullptr;
-        pros::Motor_Group* motors = nullptr;
-        float gearRatio = 1;
+        std::unique_ptr<Encoder> encoder;
+        const float diameter;
+        const float offset;
 };
 } // namespace lemlib

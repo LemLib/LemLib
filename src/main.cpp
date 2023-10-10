@@ -17,10 +17,8 @@ pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 // Inertial Sensor on port 11
 pros::Imu imu(12);
 
-// tracking wheels
-pros::Rotation verticalEnc(4);
-// horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot
-lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -3.7);
+// vertical tracking wheel. Port 4, not reversed, 2.75" diameter, 3.7" offset, left of the robot center
+lemlib::TrackingWheel vertical(4, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain
 lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_4, 300, 8};
