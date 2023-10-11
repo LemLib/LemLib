@@ -30,6 +30,14 @@ constexpr float OLD_4_HALF = 4.175;
 class TrackingWheel {
     public:
         /**
+         * @brief Create a tracking wheel with a custom encoder
+         *
+         * @param encoder unique ptr to the custom encoder to be used
+         * @param diameter the diameter of the wheel, in inches
+         * @param offset distance between the wheel and the tracking center, in inches
+         */
+        TrackingWheel(std::unique_ptr<Encoder> encoder, float diameter, float offset);
+        /**
          * @brief Create a new motor-encoder tracking wheel
          *
          * @param motors pointer to the motor group to be used for the tracking wheel

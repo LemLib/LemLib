@@ -6,6 +6,18 @@
 #include "lemlib/devices/rotation.hpp"
 
 /**
+ * @brief Create a tracking wheel with a custom encoder
+ *
+ * @param encoder unique ptr to the custom encoder to be used
+ * @param diameter the diameter of the wheel, in inches
+ * @param offset distance between the wheel and the tracking center, in inches
+ */
+lemlib::TrackingWheel::TrackingWheel(std::unique_ptr<Encoder> encoder, float diameter, float offset)
+    : encoder(std::move(encoder)),
+      diameter(diameter),
+      offset(offset) {}
+
+/**
  * Construct a new motor encoder tracking wheel
  *
  * We pass a pointer to a motor group instead of a reference motor group due to a
