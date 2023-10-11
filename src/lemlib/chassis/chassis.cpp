@@ -19,7 +19,6 @@
 #include "lemlib/movements/turn.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
-#include "lemlib/chassis/trackingWheel.hpp"
 
 using namespace lemlib;
 

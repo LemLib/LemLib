@@ -2,7 +2,7 @@
 
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
-#include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/devices/trackingWheel.hpp"
 
 namespace lemlib {
 /**

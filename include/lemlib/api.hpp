@@ -14,5 +14,4 @@
 #include "lemlib/pid.hpp"
 #include "lemlib/logger.hpp"
 #include "lemlib/pose.hpp"
-#include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/chassis/chassis.hpp"

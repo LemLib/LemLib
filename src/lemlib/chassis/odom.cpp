@@ -19,7 +19,7 @@
 #include "pros/misc.h"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/odom.hpp"
-#include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/devices/trackingWheel.hpp"
 
 using namespace lemlib;
 
