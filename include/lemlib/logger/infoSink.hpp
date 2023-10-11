@@ -30,7 +30,7 @@ class InfoSink : public BaseSink {
         InfoSink();
     private:
         /**
-         * @brief Sends log message to the Stdout buffer.
+         * @brief Log the given message
          *
          * @param message
          */

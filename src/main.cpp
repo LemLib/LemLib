@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "lemlib/logger/stdout.hpp"
 
 // drive motors
 pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
@@ -42,6 +43,10 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
 void initialize() {
     pros::lcd::initialize();
     chassis.calibrate(); // calibrate sensors
+
+    // the default rate is 50. however, if you need to change the rate, you
+    // can do the following.
+    // lemlib::bufferedStdout().setRate(...);
 
     // for more information on how the formatting for the loggers
     // works, refer to the fmtlib docs

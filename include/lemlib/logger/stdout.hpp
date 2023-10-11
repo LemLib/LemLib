@@ -13,21 +13,22 @@ namespace lemlib {
  * rate, no matter how many different threads are trying to use the logger. This is a concern  because not every type of
  * connection to the brain has the same amount of bandwidth.
  */
-class Stdout : protected Buffer {
+class BufferedStdout : public Buffer {
     public:
-        Stdout(const Stdout&) = delete;
-        Stdout operator=(const Stdout&) = delete;
+        BufferedStdout();
 
         /**
          * @brief Print a string (thread-safe).
          *
          */
-        template <typename... T> static void print(fmt::format_string<T...> format, T&&... args) {
-            static Stdout theStdout;
-            theStdout.pushToBuffer(fmt::format(format, std::forward<T>(args)...));
+        template <typename... T> void print(fmt::format_string<T...> format, T&&... args) {
+            pushToBuffer(fmt::format(format, std::forward<T>(args)...));
         }
-    private:
-        Stdout();
-        ~Stdout() = default;
 };
+
+/**
+ * @brief Get the buffered stdout.
+ *
+ */
+BufferedStdout& bufferedStdout();
 } // namespace lemlib
