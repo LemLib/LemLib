@@ -1,6 +1,6 @@
 #include <math.h>
 #include "lemlib/util.hpp"
-#include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/devices/trackingWheel.hpp"
 #include "lemlib/devices/motor.hpp"
 #include "lemlib/devices/optical.hpp"
 #include "lemlib/devices/rotation.hpp"
