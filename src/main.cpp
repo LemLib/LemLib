@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "lemlib/logger/stdout.hpp"
 
 // drive motors
 pros::Motor lF(-8, pros::E_MOTOR_GEARSET_06); // left front motor. port 8, reversed
@@ -43,13 +44,21 @@ void initialize() {
     pros::lcd::initialize();
     chassis.initialize(); // calibrate sensors
 
+    // the default rate is 50. however, if you need to change the rate, you
+    // can do the following.
+    // lemlib::bufferedStdout().setRate(...);
+
+    // for more information on how the formatting for the loggers
+    // works, refer to the fmtlib docs
+
     // print odom values to the brain
     pros::Task screenTask([=]() {
         while (true) {
             pros::lcd::print(0, "X: %f", chassis.getPose().x);
             pros::lcd::print(1, "Y: %f", chassis.getPose().y);
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
-            pros::delay(10);
+            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+            pros::delay(50);
         }
     });
 }
