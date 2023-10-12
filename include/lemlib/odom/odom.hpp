@@ -6,6 +6,12 @@ namespace lemlib {
 class Odom {
     public:
         /**
+         * @brief Calibrate any sensors which may be used, or anything else that needs to be done
+         * before tracking starts
+         *
+         */
+        virtual void calibrate() = 0;
+        /**
          * @brief Update odom pose
          *
          */
