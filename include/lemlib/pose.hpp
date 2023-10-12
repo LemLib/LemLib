@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace lemlib {
 class Pose {
     public:
@@ -95,6 +97,13 @@ class Pose {
          * @return Pose
          */
         Pose rotate(float angle);
+        /**
+         * @brief Format a pose
+         *
+         * @param pose
+         * @return std::string
+         */
+        std::string format_as(const Pose& pose);
 };
 
 /**
