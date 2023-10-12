@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lemlib/pid.hpp"
+#include "lemlib/logger.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/chassis.hpp"
