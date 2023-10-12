@@ -5,7 +5,8 @@
 
 namespace lemlib {
 Buffer::Buffer(std::function<void(const std::string&)> bufferFunc)
-    : bufferFunc(bufferFunc), task([=]() { taskLoop(); }) {}
+    : bufferFunc(bufferFunc),
+      task([=]() { taskLoop(); }) {}
 
 bool Buffer::buffersEmpty() {
     mutex.take();
