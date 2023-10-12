@@ -9,7 +9,7 @@ class Odom {
          * @brief Calibrate the sensors used for odom
          *
          */
-        virtual void calibrate() = 0;
+        virtual void calibrate(int timeout = 3000) = 0;
         /**
          * @brief Update te position of odom
          *
