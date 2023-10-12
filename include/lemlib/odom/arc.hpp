@@ -21,7 +21,7 @@ class Arc : public Odom {
          * @brief Calibrate the sensors used for odom
          *
          */
-        void calibrate(int timeout = 3000) override;
+        void calibrate() override;
         /**
          * @brief Update te position of odom
          *
