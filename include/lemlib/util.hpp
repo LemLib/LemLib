@@ -62,14 +62,6 @@ float angleError(float angle1, float angle2, bool radians = true);
 int sgn(float x);
 
 /**
- * @brief Return the average of a vector of numbers
- *
- * @param values
- * @return float
- */
-float avg(std::vector<float> values);
-
-/**
  * @brief Exponential moving average
  *
  * @param current current measurement
@@ -123,4 +115,12 @@ Waypoint closestWaypoint(const std::vector<Waypoint>& waypoints, const Pose& tar
  * multiple intersections, the first one will be returned
  */
 Pose circleLineIntersect(Pose p1, Pose p2, Pose center, float radius);
+
+/**
+ * @brief Check errno to see if a pros function has failed
+ *
+ * @return true errno indicates failure
+ * @return false errno does not indicate failure
+ */
+bool checkErrno();
 } // namespace lemlib

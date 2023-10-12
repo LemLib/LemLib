@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2023
  *
  */
+#include <errno.h>
 #include <math.h>
 #include <vector>
 #include <string.h>
@@ -207,3 +208,8 @@ lemlib::Pose lemlib::circleLineIntersect(Pose p1, Pose p2, Pose center, float ra
     // no intersection found
     return center;
 }
+
+/**
+ * Check errno to see if a device setup has failed
+ */
+bool checkErrno() { return errno == INT32_MAX || errno == ENODEV || errno == ENXIO; }
