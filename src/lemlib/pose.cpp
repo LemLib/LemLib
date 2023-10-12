@@ -8,12 +8,7 @@
  * @copyright Copyright (c) 2023
  *
  */
-
 #include <math.h>
-
-#define FMT_HEADER_ONLY
-#include "fmt/core.h"
-
 #include "lemlib/pose.hpp"
 
 /**
@@ -133,9 +128,4 @@ float lemlib::Pose::angle(lemlib::Pose other) { return std::atan2(other.y - this
 lemlib::Pose lemlib::Pose::rotate(float angle) {
     return lemlib::Pose(this->x * std::cos(angle) - this->y * std::sin(angle),
                         this->x * std::sin(angle) + this->y * std::cos(angle), this->theta);
-}
-
-std::string lemlib::format_as(const lemlib::Pose& pose) {
-    // the double brackets become single brackets
-    return fmt::format("lemlib::Pose {{ x: {}, y: {}, theta: {} }}", pose.x, pose.y, pose.theta);
 }

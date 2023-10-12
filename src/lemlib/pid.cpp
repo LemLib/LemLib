@@ -13,6 +13,7 @@
 #include <math.h>
 #include "lemlib/pid.hpp"
 #include "lemlib/util.hpp"
+#include "lemlib/logger.hpp"
 
 // define static variables
 std::string lemlib::FAPID::input = "FAPID";
@@ -93,6 +94,7 @@ float lemlib::FAPID::update(float target, float position, bool log) {
     prevError = error;
     totalError += error;
 
+    if (log) { Logger::logPid(name, output, error, kP * error, kD * totalError, kD * deltaError); }
     return output;
 }
 

@@ -12,7 +12,6 @@
 
 #include "lemlib/util.hpp"
 #include "lemlib/pid.hpp"
+#include "lemlib/logger.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/chassis/chassis.hpp"
-
-#include "lemlib/logger/logger.hpp"
