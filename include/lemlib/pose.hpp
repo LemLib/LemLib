@@ -107,14 +107,15 @@ class Pose {
          * @return Pose
          */
         Pose rotate(float angle);
-        /**
-         * @brief Format a pose
-         *
-         * @param pose
-         * @return std::string
-         */
-        std::string format_as(const Pose& pose);
 };
+
+/**
+ * @brief Format a pose
+ *
+ * @param pose
+ * @return std::string
+ */
+std::string format_as(const Pose& pose);
 
 /**
  * @brief Waypoint class. Derived from Pose. Has speed field
