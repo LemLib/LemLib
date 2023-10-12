@@ -36,7 +36,7 @@ class TrackingWheel {
          * @param diameter the diameter of the wheel, in inches
          * @param offset distance between the wheel and the tracking center, in inches
          */
-        TrackingWheel(std::unique_ptr<Encoder> encoder, float diameter, float offset);
+        TrackingWheel(std::shared_ptr<Encoder> encoder, float diameter, float offset);
         /**
          * @brief Create a new motor-encoder tracking wheel
          *
@@ -104,7 +104,7 @@ class TrackingWheel {
          */
         float getDiameter() const;
     private:
-        std::unique_ptr<Encoder> encoder;
+        std::shared_ptr<Encoder> encoder;
         const float diameter;
         const float offset;
 };

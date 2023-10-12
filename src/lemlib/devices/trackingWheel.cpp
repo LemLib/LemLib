@@ -12,8 +12,8 @@
  * @param diameter the diameter of the wheel, in inches
  * @param offset distance between the wheel and the tracking center, in inches
  */
-lemlib::TrackingWheel::TrackingWheel(std::unique_ptr<Encoder> encoder, float diameter, float offset)
-    : encoder(std::move(encoder)),
+lemlib::TrackingWheel::TrackingWheel(std::shared_ptr<Encoder> encoder, float diameter, float offset)
+    : encoder(encoder),
       diameter(diameter),
       offset(offset) {}
 
@@ -36,7 +36,7 @@ lemlib::TrackingWheel::TrackingWheel(pros::MotorGroup* motors, float diameter, f
  */
 lemlib::TrackingWheel::TrackingWheel(char topPort, char bottomPort, bool reversed, float diameter, float offset,
                                      float ratio)
-    : encoder(std::make_unique<OpticalEncoder>(topPort, bottomPort, reversed, ratio)),
+    : encoder(std::make_shared<OpticalEncoder>(topPort, bottomPort, reversed, ratio)),
       diameter(diameter),
       offset(offset) {}
 
@@ -44,7 +44,7 @@ lemlib::TrackingWheel::TrackingWheel(char topPort, char bottomPort, bool reverse
  * Construct a new rotation sensor tracking wheel
  */
 lemlib::TrackingWheel::TrackingWheel(uint8_t port, bool reversed, float diameter, float offset, float ratio)
-    : encoder(std::make_unique<RotationEncoder>(port, reversed, ratio)),
+    : encoder(std::make_shared<RotationEncoder>(port, reversed, ratio)),
       diameter(diameter),
       offset(offset) {}
 
@@ -55,7 +55,7 @@ lemlib::TrackingWheel::TrackingWheel(uint8_t port, bool reversed, float diameter
  * means that the rotation sensor should be reversed.
  */
 lemlib::TrackingWheel::TrackingWheel(int port, float diameter, float offset, float ratio)
-    : encoder(std::make_unique<RotationEncoder>(port, port < 0, ratio)),
+    : encoder(std::make_shared<RotationEncoder>(port, port < 0, ratio)),
       diameter(diameter),
       offset(offset) {}
 
