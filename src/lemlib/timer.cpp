@@ -73,14 +73,22 @@ void Timer::reset() {
  * Pause the timer
  */
 void Timer::pause() {
+    if (!paused) lastTime = pros::millis();
     paused = true;
-    lastTime = pros::millis();
 }
 
 /**
  * Resume the timer
  */
 void Timer::resume() {
+    if (paused) lastTime = pros::millis();
     paused = false;
-    lastTime = pros::millis();
+}
+
+/**
+ * Wait until the timer is done
+ */
+void Timer::waitUntilDone() {
+    do pros::delay(5);
+    while (!this->isDone());
 }

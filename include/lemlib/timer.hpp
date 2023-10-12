@@ -57,6 +57,11 @@ class Timer {
          *
          */
         void resume();
+        /**
+         * @brief wait
+         *
+         */
+        void waitUntilDone();
     private:
         uint32_t period;
         uint32_t lastTime;
