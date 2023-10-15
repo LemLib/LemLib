@@ -17,6 +17,17 @@ class ArcOdom : public Odom {
          */
         ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
                 std::vector<pros::Imu>& imus);
+
+        /**
+         * @brief Calibrate tracking wheels and inertial sensors
+         *
+         */
+        void calibrate() override;
+        /**
+         * @brief Update odom pose
+         *
+         */
+        void update() override;
     private:
         std::vector<TrackingWheel> verticals;
         std::vector<TrackingWheel> horizontals;
