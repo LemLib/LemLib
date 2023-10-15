@@ -16,7 +16,7 @@
 #include "pros/motors.hpp"
 #include "pros/adi.hpp"
 #include "pros/rotation.hpp"
-#include "lemlib/devices/encoder.hpp"
+#include "lemlib/devices/encoder/encoder.hpp"
 
 namespace lemlib {
 
@@ -116,7 +116,7 @@ class TrackingWheel {
         float getDiameter() const;
     private:
         std::shared_ptr<Encoder> encoder;
-        const float diameter;
-        const float offset;
+        float diameter;
+        float offset;
 };
 } // namespace lemlib

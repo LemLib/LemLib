@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pros/rotation.hpp"
-#include "lemlib/devices/encoder.hpp"
+#include "lemlib/devices/encoder/encoder.hpp"
 
 namespace lemlib {
 class RotationEncoder : public Encoder {

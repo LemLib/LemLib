@@ -12,9 +12,9 @@
 #include <math.h>
 #include "lemlib/util.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
-#include "lemlib/devices/motor.hpp"
-#include "lemlib/devices/optical.hpp"
-#include "lemlib/devices/rotation.hpp"
+#include "lemlib/devices/encoder/motor.hpp"
+#include "lemlib/devices/encoder/optical.hpp"
+#include "lemlib/devices/encoder/rotation.hpp"
 
 /**
  * @brief Create a tracking wheel with a custom encoder
