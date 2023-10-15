@@ -1,9 +1,10 @@
 #pragma once
 
 #include <vector>
-#include "pros/imu.hpp"
+#include <memory>
 #include "lemlib/odom/odom.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
+#include "lemlib/devices/gyro/gyro.hpp"
 
 namespace lemlib {
 class ArcOdom : public Odom {
@@ -16,7 +17,7 @@ class ArcOdom : public Odom {
          * @param imus vector containing imus to be used
          */
         ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                std::vector<pros::Imu>& imus);
+                std::vector<std::shared_ptr<Gyro>>& gyros);
 
         /**
          * @brief Calibrate tracking wheels and inertial sensors
@@ -31,6 +32,6 @@ class ArcOdom : public Odom {
     private:
         std::vector<TrackingWheel> verticals;
         std::vector<TrackingWheel> horizontals;
-        std::vector<pros::Imu> imus;
+        std::vector<std::shared_ptr<Gyro>> gyros;
 };
 } // namespace lemlib
