@@ -14,10 +14,10 @@
  * any tracking wheel + imu setup
  */
 lemlib::ArcOdom::ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                         std::vector<pros::Imu>& imus)
+                         std::vector<std::shared_ptr<Gyro>>& gyros)
     : verticals(verticals),
       horizontals(horizontals),
-      imus(imus) {}
+      gyros(gyros) {}
 
 /**
  * Calibrate the sensors
@@ -26,7 +26,7 @@ lemlib::ArcOdom::ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<Trac
  * calibration. The encoders will output errors if they fail to calibrate.
  */
 void lemlib::ArcOdom::calibrate() {
-    // loop through vertical tracking wheels
+    // calibrate vertical tracking wheels
     for (auto it = verticals.begin(); it != verticals.end(); it++) {
         if (it->reset()) verticals.erase(it); // remove the tracking wheel if calibration failed
     }
@@ -35,25 +35,19 @@ void lemlib::ArcOdom::calibrate() {
         if (it->reset()) horizontals.erase(it); // remove the tracking wheel if calibration failed
     }
 
-    // loop through imus
-    for (auto it = imus.begin(); it != imus.end(); it++) it->reset();
-    // We will spend a maximum of 3000 seconds calibrating imus before we give up
-    // we wil continue to try and calibrate the IMU's until we run out of time
-    Timer timer(3000);
-    std::vector<pros::Imu> newImus;
-    while (!timer.isDone() && imus.size() > 0) { // loop until the timer is done or imus are calibrated
-        for (auto it = imus.begin(); it != imus.end(); it++) { // loop through all IMUs
-            if (!it->is_calibrating() && !(errno == PROS_ERR || errno == ENODEV || errno == ENXIO)) {
-                // erase imu from old vector and add to new one
-                imus.erase(it);
-                newImus.push_back(*it);
-            }
+    // calibrate gyros
+    for (auto it = gyros.begin(); it != gyros.end(); it++) (**it).calibrate();
+    Timer timer(3000); // try calibrating gyros for 3000 ms
+    while (!timer.isDone()) {
+        for (auto it = gyros.begin(); it != gyros.end(); it++) { // loop through all IMUs
+            if (!(**it).isCalibrating() && !(**it).isCalibrated()) (**it).calibrate();
         }
         pros::delay(10);
     }
-    // output errors if any imus did not calibrate
-    for (auto it = imus.begin(); it != imus.end(); it++) infoSink()->error("Error: IMU failed to calibrate");
-    imus = newImus;
+    // if a gyro failed to calibrate, output an error
+    for (auto it = gyros.begin(); it != gyros.end(); it++) {
+        if (!(**it).isCalibrated()) infoSink()->error("Error: IMU failed to calibrate");
+    }
 }
 
 void lemlib::ArcOdom::update() {}
