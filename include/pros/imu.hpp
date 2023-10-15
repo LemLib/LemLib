@@ -450,15 +450,6 @@ class Imu {
          * false if it is not.
          */
         virtual bool is_calibrating() const;
-
-        /**
-         * @brief Get the port of the imu
-         *
-         * I'm tired of waiting for this basic feature, so I'm implementing it myself
-         *
-         * @return std::uint8_t
-         */
-        std::uint8_t get_port() const { return _port; }
 };
 
 using IMU = Imu;

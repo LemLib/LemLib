@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "pros/motors.hpp"
-#include "lemlib/devices/encoder.hpp"
+#include "lemlib/devices/encoder/encoder.hpp"
 
 namespace lemlib {
 class MotorEncoder : public Encoder {

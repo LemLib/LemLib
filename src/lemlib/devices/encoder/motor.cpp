@@ -1,6 +1,6 @@
 #include <cmath>
 #include "lemlib/util.hpp"
-#include "lemlib/devices/motor.hpp"
+#include "lemlib/devices/encoder/motor.hpp"
 
 /**
  * Construct a new motor encoder object

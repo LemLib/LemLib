@@ -1,5 +1,5 @@
 #include <cmath>
-#include "lemlib/devices/rotation.hpp"
+#include "lemlib/devices/encoder/rotation.hpp"
 
 /**
  * Construct a new Rotation Encoder

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pros/adi.hpp"
-#include "lemlib/devices/encoder.hpp"
+#include "lemlib/devices/encoder/encoder.hpp"
 
 namespace lemlib {
 class OpticalEncoder : public Encoder {

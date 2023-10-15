@@ -52,8 +52,8 @@ void lemlib::ArcOdom::calibrate() {
         pros::delay(10);
     }
     // output errors if any imus did not calibrate
-    for (auto it = imus.begin(); it != imus.end(); it++) {
-        infoSink()->error("Error: IMU on port {} failed to calibrate", it->get_port());
-    }
+    for (auto it = imus.begin(); it != imus.end(); it++) infoSink()->error("Error: IMU failed to calibrate");
     imus = newImus;
 }
+
+void lemlib::ArcOdom::update() {}

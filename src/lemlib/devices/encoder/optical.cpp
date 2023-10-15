@@ -1,5 +1,5 @@
 #include <cmath>
-#include "lemlib/devices/optical.hpp"
+#include "lemlib/devices/encoder/optical.hpp"
 
 /**
  * Construct a new Optical Encoder
