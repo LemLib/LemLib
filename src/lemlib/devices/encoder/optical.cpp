@@ -9,7 +9,7 @@
  * checked.
  */
 lemlib::OpticalEncoder::OpticalEncoder(char topPort, char bottomPort, bool reversed, float ratio)
-    : optical(pros::ADIEncoder(topPort, bottomPort, reversed)),
+    : optical(pros::adi::Encoder(topPort, bottomPort, reversed)),
       ratio(ratio) {}
 
 /**

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pros/motors.hpp"
+#include "pros/motor_group.hpp"
 #include "pros/imu.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
 
@@ -64,8 +64,8 @@ typedef struct {
  * @param chasePower higher values make the robot move faster but causes more overshoot on turns
  */
 typedef struct {
-        pros::Motor_Group* leftMotors;
-        pros::Motor_Group* rightMotors;
+        pros::MotorGroup* leftMotors;
+        pros::MotorGroup* rightMotors;
         float trackWidth;
         float wheelDiameter;
         float rpm;

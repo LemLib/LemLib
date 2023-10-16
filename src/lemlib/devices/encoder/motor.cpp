@@ -25,16 +25,16 @@ lemlib::MotorEncoder::MotorEncoder(pros::MotorGroup* motors, float rpm)
  */
 float lemlib::MotorEncoder::getAngle() {
     // get gearboxes and encoder position for each motor in the group
-    std::vector<pros::motor_gearset_e_t> gearsets = this->motors->get_gearing();
-    std::vector<double> positions = this->motors->get_positions();
+    std::vector<pros::MotorGears> gearsets = this->motors->get_gearing_all();
+    std::vector<double> positions = this->motors->get_position_all();
     std::vector<float> angles;
     // calculate ratio'd output for each motor
     for (int i = 0; i < this->motors->size(); i++) {
         float in;
         switch (gearsets[i]) {
-            case pros::E_MOTOR_GEARSET_36: in = 100; break;
-            case pros::E_MOTOR_GEARSET_18: in = 200; break;
-            case pros::E_MOTOR_GEARSET_06: in = 600; break;
+            case pros::MotorGears::rpm_100: in = 100; break;
+            case pros::MotorGears::rpm_200: in = 200; break;
+            case pros::MotorGears::rpm_600: in = 600; break;
             default: in = 200; break;
         }
         angles.push_back(positions[i] * (rpm / in) * 2 * M_PI);
