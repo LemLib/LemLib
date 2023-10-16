@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "pros/motors.hpp"
+#include "pros/motor_group.hpp"
 #include "lemlib/devices/encoder/encoder.hpp"
 
 namespace lemlib {

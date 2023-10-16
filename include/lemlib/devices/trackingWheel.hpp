@@ -13,7 +13,7 @@
 
 #include <memory>
 #include <cstdint>
-#include "pros/motors.hpp"
+#include "pros/motor_group.hpp"
 #include "pros/adi.hpp"
 #include "pros/rotation.hpp"
 #include "lemlib/devices/encoder/encoder.hpp"

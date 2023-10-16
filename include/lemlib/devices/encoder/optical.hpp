@@ -30,7 +30,7 @@ class OpticalEncoder : public Encoder {
          */
         bool reset() override;
     private:
-        pros::ADIEncoder optical;
+        pros::adi::Encoder optical;
         const float ratio;
 };
 } // namespace lemlib
