@@ -5,19 +5,24 @@
         "target": "v5",
         "templates": {
             "kernel": {
+<<<<<<< HEAD
                 "location": "/home/liam/.config/pros/templates/kernel@3.8.2",
+=======
+                "location": "C:\\Users\\liamt\\AppData\\Roaming\\PROS\\templates\\kernel@4.0.5",
+>>>>>>> d327a45 (Switch to pros 4.0.5)
                 "metadata": {
                     "cold_addr": "58720256",
                     "cold_output": "bin/cold.package.bin",
                     "hot_addr": "125829120",
                     "hot_output": "bin/hot.package.bin",
-                    "origin": "pros-mainline",
+                    "origin": "kernel-beta-mainline",
                     "output": "bin/monolith.bin"
                 },
                 "name": "kernel",
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": null,
                 "system_files": [
+<<<<<<< HEAD
                     "include\\display\\lv_misc\\lv_color.h",
                     "include\\display\\lv_themes\\lv_theme.h",
                     "include\\pros\\misc.h",
@@ -164,6 +169,66 @@
                     "src\\main.cc"
                 ],
                 "version": "3.8.2"
+=======
+                    "include\\pros\\adi.h",
+                    "include\\pros\\rtos.h",
+                    "include\\pros\\llemu.h",
+                    "firmware\\libm.a",
+                    "firmware\\libpros.a",
+                    "include\\pros\\gps.h",
+                    "include\\pros\\llemu.hpp",
+                    "include\\pros\\rotation.hpp",
+                    "include\\pros\\motors.hpp",
+                    "include\\pros\\motor_group.hpp",
+                    "include\\pros\\imu.hpp",
+                    "include\\pros\\error.h",
+                    "firmware\\v5-common.ld",
+                    "firmware\\v5-hot.ld",
+                    "include\\pros\\colors.hpp",
+                    "include\\pros\\optical.h",
+                    "include\\pros\\ext_adi.h",
+                    "include\\pros\\rotation.h",
+                    "include\\pros\\vision.h",
+                    "include\\pros\\distance.hpp",
+                    "include\\pros\\apix.h",
+                    "include\\pros\\misc.h",
+                    "include\\pros\\vision.hpp",
+                    "include\\pros\\optical.hpp",
+                    "include\\pros\\imu.h",
+                    "include\\pros\\abstract_motor.hpp",
+                    "include\\pros\\gps.hpp",
+                    "firmware\\libc.a",
+                    "include\\pros\\colors.h",
+                    "include\\pros\\link.h",
+                    "include\\pros\\link.hpp",
+                    "firmware\\v5.ld",
+                    "include\\pros\\serial.hpp",
+                    "include\\pros\\device.hpp",
+                    "include\\pros\\screen.hpp",
+                    "include\\pros\\adi.hpp",
+                    "include\\pros\\distance.h",
+                    "include\\api.h",
+                    "include\\pros\\serial.h",
+                    "include\\pros\\device.h",
+                    "include\\pros\\misc.hpp",
+                    "common.mk",
+                    "include\\pros\\screen.h",
+                    "include\\pros\\rtos.hpp",
+                    "include\\pros\\motors.h"
+                ],
+                "target": "v5",
+                "user_files": [
+                    "src\\main.cc",
+                    ".gitignore",
+                    "include\\main.hpp",
+                    "Makefile",
+                    "include\\main.h",
+                    "src\\main.cpp",
+                    "include\\main.hh",
+                    "src\\main.c"
+                ],
+                "version": "4.0.5"
+>>>>>>> d327a45 (Switch to pros 4.0.5)
             }
         },
         "upload_options": {}
