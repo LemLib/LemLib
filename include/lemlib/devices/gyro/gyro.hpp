@@ -37,24 +37,24 @@ class Gyro {
          *
          * @note 0 is in the positive x direction, and heading increases counterclockwise
          *
-         * @return float heading, in radians, locked from 0-2pi
+         * @return float heading, in radians, locked from -pi to +pi
          */
         virtual float getHeading() = 0;
         /**
-         * @brief Get the orientation of the gyro
+         * @brief Get the rotation of the gyro
          *
          * @note 0 is in the positive x direction, and heading increases counterclockwise
          *
-         * @return float orientation, in radians
+         * @return float rotation, in radians
          */
-        virtual float getOrientation() = 0;
+        virtual float getRotation() = 0;
         /**
-         * @brief Set the orientation of the gyro
+         * @brief Set the rotation of the gyro
          *
          * @brief 0 is in the positive x direction, and heading increases counterclockwise
          *
-         * @param orientation orientation, in radians
+         * @param rotation, rotation in radians
          */
-        virtual void setOrientation(float orientation) = 0;
+        virtual void setRotation(float rotation) = 0;
 };
 } // namespace lemlib

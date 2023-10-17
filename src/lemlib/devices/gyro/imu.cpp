@@ -1,3 +1,5 @@
+#include <cmath>
+#include "lemlib/util.hpp"
 #include "lemlib/devices/gyro/imu.hpp"
 
 /**
@@ -34,52 +36,37 @@ bool lemlib::Imu::calibrate(bool blocking) {
 }
 
 /**
- * @brief Get wether the IMU is calibrating or not
+ * return wether the IMU is calibrating or not.
  *
- * @return true IMU is calibrating
- * @return false IMU is not calibrating
+ * Just a wrapper for the pros::Imu::is_calibrating() function
  */
-bool isCalibrating();
+bool lemlib::Imu::isCalibrating() { return imu.is_calibrating(); }
 
 /**
- * @brief Get wether the IMU is calibrated or not
+ * return whether the IMU has been calibrated
  *
- * @return true the IMU is calibrated
- * @return false the IMU is not calibrated
+ * This function checks if the Imu is connected, is not calibrating,
  */
-bool isCalibrated();
+bool lemlib::Imu::isCalibrated() { return (isConnected() && !imu.is_calibrating() && !std::isinf(imu.get_heading())); }
 
 /**
- * @brief Get whether the IMU is connected or not
+ * return whether the IMU is installed
  *
- * @return true the IMU is connected
- * @return false the IMU is not connected
+ * Just a wrapper for the pros::Imu::is_installed() function
  */
-bool isConnected();
+bool lemlib::Imu::isConnected() { return imu.is_installed(); }
 
 /**
- * @brief Get the heading of the gyro
- *
- * @note 0 is in the positive x direction, and heading increases counterclockwise
- *
- * @return float heading, in radians, locked from 0-2pi
+ * return the heading of the imu in radians and in standard position
  */
-float getHeading();
+float lemlib::Imu::getHeading() { return (M_PI - degToRad(imu.get_heading())); }
 
 /**
- * @brief Get the orientation of the gyro
- *
- * @note 0 is in the positive x direction, and heading increases counterclockwise
- *
- * @return float orientation, in radians
+ * Get the rotation of the imu in radians and in standard position
  */
-float getOrientation();
+float lemlib::Imu::getRotation() { return (M_PI - degToRad(imu.get_rotation())); }
 
 /**
- * @brief Set the orientation of the gyro
- *
- * @brief 0 is in the positive x direction, and heading increases counterclockwise
- *
- * @param orientation orientation, in radians
+ * Set the rotation of the imu in radians and in standard position
  */
-void setOrientation(float orientation);
+void lemlib::Imu::setRotation(float orientation) { imu.set_rotation(radToDeg(M_PI - radToDeg(orientation))); }
