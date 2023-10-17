@@ -23,9 +23,8 @@ lemlib::TrackingWheel::TrackingWheel(std::shared_ptr<Encoder> encoder, float dia
  * We pass a pointer to a motor group instead of a reference motor group due to a
  * limitation of PROS 3. This is fixed in PROS 4, but its not ready for release yet
  */
-lemlib::TrackingWheel::TrackingWheel(std::unique_ptr<pros::MotorGroup>&& motors, float diameter, float offset,
-                                     float rpm)
-    : encoder(new MotorEncoder(std::move(motors), rpm)),
+lemlib::TrackingWheel::TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, float diameter, float offset, float rpm)
+    : encoder(std::make_shared<MotorEncoder>(MotorEncoder(motors, rpm))),
       diameter(diameter),
       offset(offset) {}
 

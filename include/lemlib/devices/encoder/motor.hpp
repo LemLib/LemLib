@@ -15,7 +15,7 @@ class MotorEncoder : public Encoder {
          * @param motors pointer to the motor group to be used
          * @param rpm output rpm
          */
-        MotorEncoder(std::unique_ptr<pros::MotorGroup>&& motors, float rpm);
+        MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm);
 
         /**
          * @brief Get the angle rotated by the motor encoders, in radians
@@ -31,7 +31,7 @@ class MotorEncoder : public Encoder {
          */
         bool reset() const override;
     private:
-        std::unique_ptr<pros::MotorGroup> motors;
+        std::shared_ptr<pros::MotorGroup> motors;
         const float rpm;
 };
 } // namespace lemlib

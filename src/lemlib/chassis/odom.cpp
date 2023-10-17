@@ -149,10 +149,10 @@ void Odometry::calibrate(bool calibrateIMU) {
     }
     // substitute tracking wheels with a side of the drivetrain if needed
     if (sensors.vertical1 == nullptr)
-        sensors.vertical1 = new TrackingWheel(std::unique_ptr<pros::MotorGroup>(drive.leftMotors), drive.wheelDiameter,
+        sensors.vertical1 = new TrackingWheel(std::shared_ptr<pros::MotorGroup>(drive.leftMotors), drive.wheelDiameter,
                                               -(drive.trackWidth / 2), drive.rpm);
     if (sensors.vertical2 == nullptr)
-        sensors.vertical2 = new TrackingWheel(std::unique_ptr<pros::MotorGroup>(drive.rightMotors), drive.wheelDiameter,
+        sensors.vertical2 = new TrackingWheel(std::shared_ptr<pros::MotorGroup>(drive.rightMotors), drive.wheelDiameter,
                                               drive.trackWidth / 2, drive.rpm);
     // calibrate the tracking wheels
     sensors.vertical1->reset();

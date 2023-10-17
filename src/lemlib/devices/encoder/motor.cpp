@@ -10,7 +10,7 @@
  * a reference, due to limitations in PROS 3. This is fixed in PROS 4, but
  * we have to deal with this for now.
  */
-lemlib::MotorEncoder::MotorEncoder(std::unique_ptr<pros::MotorGroup>&& motors, float rpm)
+lemlib::MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm)
     : motors(std::move(motors)),
       rpm(rpm) {}
 
