@@ -6,7 +6,7 @@
 pros::MotorGroup leftMotors({-8, -20, 19}, pros::v5::MotorGears::blue); // left motor group
 pros::MotorGroup rightMotors({2, 11, -13}, pros::v5::MotorGears::blue); // right motor group
 
-// Inertial Sensor on port 11
+// Inertial Sensor on port 12
 pros::Imu imu(12);
 
 // vertical tracking wheel. Port 4, not reversed, 2.75" diameter, 3.7" offset, left of the robot center

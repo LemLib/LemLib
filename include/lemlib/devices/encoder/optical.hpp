@@ -21,14 +21,14 @@ class OpticalEncoder : public Encoder {
          *
          * @return float angle rotated by the optical encoder, in radians
          */
-        float getAngle() override;
+        float getAngle() const override;
         /**
          * @brief Reset the optical encoder
          *
          * @return true calibration failed
          * @return false calibration succeeded
          */
-        bool reset() override;
+        bool reset() const override;
     private:
         pros::adi::Encoder optical;
         const float ratio;
