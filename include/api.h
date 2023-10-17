@@ -47,9 +47,14 @@
 =======
 #define PROS_VERSION_MAJOR 4
 #define PROS_VERSION_MINOR 0
+<<<<<<< HEAD
 #define PROS_VERSION_PATCH 5
 #define PROS_VERSION_STRING "4.0.5"
 >>>>>>> d327a45 (Switch to pros 4.0.5)
+=======
+#define PROS_VERSION_PATCH 6
+#define PROS_VERSION_STRING "4.0.6"
+>>>>>>> 7749307 (Upgrade to pros 4.0.6)
 
 #include "pros/adi.h"
 #include "pros/colors.h"

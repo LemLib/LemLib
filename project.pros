@@ -6,10 +6,14 @@
         "templates": {
             "kernel": {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "location": "/home/liam/.config/pros/templates/kernel@3.8.2",
 =======
                 "location": "C:\\Users\\liamt\\AppData\\Roaming\\PROS\\templates\\kernel@4.0.5",
 >>>>>>> d327a45 (Switch to pros 4.0.5)
+=======
+                "location": "C:\\Users\\liamt\\AppData\\Roaming\\PROS\\templates\\kernel@4.0.6",
+>>>>>>> 7749307 (Upgrade to pros 4.0.6)
                 "metadata": {
                     "cold_addr": "58720256",
                     "cold_output": "bin/cold.package.bin",
@@ -22,6 +26,7 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": null,
                 "system_files": [
+<<<<<<< HEAD
 <<<<<<< HEAD
                     "include\\display\\lv_misc\\lv_color.h",
                     "include\\display\\lv_themes\\lv_theme.h",
@@ -201,34 +206,71 @@
                     "include\\pros\\colors.h",
                     "include\\pros\\link.h",
                     "include\\pros\\link.hpp",
+=======
+>>>>>>> 7749307 (Upgrade to pros 4.0.6)
                     "firmware\\v5.ld",
+                    "include\\pros\\colors.h",
+                    "include\\pros\\distance.hpp",
+                    "include\\pros\\llemu.hpp",
+                    "firmware\\libm.a",
+                    "include\\pros\\motor_group.hpp",
                     "include\\pros\\serial.hpp",
+                    "common.mk",
                     "include\\pros\\device.hpp",
                     "include\\pros\\screen.hpp",
-                    "include\\pros\\adi.hpp",
-                    "include\\pros\\distance.h",
-                    "include\\api.h",
-                    "include\\pros\\serial.h",
-                    "include\\pros\\device.h",
-                    "include\\pros\\misc.hpp",
-                    "common.mk",
+                    "include\\pros\\abstract_motor.hpp",
+                    "include\\pros\\gps.h",
+                    "include\\pros\\colors.hpp",
+                    "include\\pros\\adi.h",
                     "include\\pros\\screen.h",
+                    "include\\pros\\rotation.hpp",
+                    "firmware\\v5-hot.ld",
+                    "include\\pros\\link.h",
+                    "include\\pros\\rotation.h",
+                    "include\\api.h",
+                    "include\\pros\\ext_adi.h",
+                    "include\\pros\\device.h",
+                    "include\\pros\\motors.hpp",
+                    "firmware\\v5-common.ld",
+                    "include\\pros\\apix.h",
                     "include\\pros\\rtos.hpp",
-                    "include\\pros\\motors.h"
+                    "include\\pros\\vision.hpp",
+                    "include\\pros\\vision.h",
+                    "include\\pros\\gps.hpp",
+                    "include\\pros\\motors.h",
+                    "include\\pros\\rtos.h",
+                    "include\\pros\\imu.hpp",
+                    "include\\pros\\llemu.h",
+                    "include\\pros\\distance.h",
+                    "firmware\\libc.a",
+                    "include\\pros\\misc.hpp",
+                    "include\\pros\\error.h",
+                    "include\\pros\\serial.h",
+                    "firmware\\libpros.a",
+                    "include\\pros\\optical.h",
+                    "include\\pros\\optical.hpp",
+                    "include\\pros\\misc.h",
+                    "include\\pros\\imu.h",
+                    "include\\pros\\adi.hpp",
+                    "include\\pros\\link.hpp"
                 ],
                 "target": "v5",
                 "user_files": [
-                    "src\\main.cc",
-                    ".gitignore",
                     "include\\main.hpp",
-                    "Makefile",
+                    ".gitignore",
                     "include\\main.h",
                     "src\\main.cpp",
+                    "Makefile",
                     "include\\main.hh",
-                    "src\\main.c"
+                    "src\\main.c",
+                    "src\\main.cc"
                 ],
+<<<<<<< HEAD
                 "version": "4.0.5"
 >>>>>>> d327a45 (Switch to pros 4.0.5)
+=======
+                "version": "4.0.6"
+>>>>>>> 7749307 (Upgrade to pros 4.0.6)
             }
         },
         "upload_options": {}
