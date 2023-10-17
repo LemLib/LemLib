@@ -56,7 +56,7 @@ class TrackingWheel {
          * @param offset distance between the wheel and the tracking center, in inches
          * @param rpm of the rpm of the wheels the motor group is driving
          */
-        TrackingWheel(std::unique_ptr<pros::MotorGroup>&& motors, float diameter, float offset, float rpm);
+        TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, float diameter, float offset, float rpm);
         /**
          * @brief Create a new optical encoder tracking wheel
          *
