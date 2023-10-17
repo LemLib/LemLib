@@ -15,23 +15,23 @@ class MotorEncoder : public Encoder {
          * @param motors pointer to the motor group to be used
          * @param rpm output rpm
          */
-        MotorEncoder(pros::MotorGroup* motors, float rpm);
+        MotorEncoder(std::unique_ptr<pros::MotorGroup>&& motors, float rpm);
 
         /**
          * @brief Get the angle rotated by the motor encoders, in radians
          *
          * @return float angle rotated by the motor encoders, in radians
          */
-        float getAngle() override;
+        float getAngle() const override;
         /**
          * @brief Reset the motor encoder
          *
          * @return true calibration failed
          * @return false calibration succeeded
          */
-        bool reset() override;
+        bool reset() const override;
     private:
-        pros::MotorGroup* motors;
+        std::unique_ptr<pros::MotorGroup> motors;
         const float rpm;
 };
 } // namespace lemlib

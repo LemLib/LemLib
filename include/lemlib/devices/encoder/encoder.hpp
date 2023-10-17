@@ -18,13 +18,13 @@ class Encoder {
          *
          * @return float angle rotated by the encoder, in radians
          */
-        virtual float getAngle() = 0;
+        virtual float getAngle() const = 0;
         /**
          * @brief Reset the encoder
          *
          * @return true encoder calibration failed
          * @return false encoder calibration succeeded
          */
-        virtual bool reset() = 0;
+        virtual bool reset() const = 0;
 };
 } // namespace lemlib
