@@ -2,17 +2,9 @@
 #include "lemlib/api.hpp"
 #include "lemlib/logger/stdout.hpp"
 
-// drive motors
-pros::Motor lF(-8, pros::E_MOTOR_GEARSET_06); // left front motor. port 8, reversed
-pros::Motor lM(-20, pros::E_MOTOR_GEARSET_06); // left middle motor. port 20, reversed
-pros::Motor lB(19, pros::E_MOTOR_GEARSET_06); // left back motor. port 19
-pros::Motor rF(2, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
-pros::Motor rM(11, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
-pros::Motor rB(-13, pros::E_MOTOR_GEARSET_06); // right back motor. port 13, reversed
-
-// motor groups
-pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
-pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
+// drive motor groups
+pros::MotorGroup leftMotors({-8, -20, 19}, pros::v5::MotorGears::blue); // left motor group
+pros::MotorGroup rightMotors({2, 11, -13}, pros::v5::MotorGears::blue); // right motor group
 
 // Inertial Sensor on port 11
 pros::Imu imu(12);
