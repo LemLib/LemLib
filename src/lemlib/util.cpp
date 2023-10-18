@@ -38,7 +38,7 @@ float lemlib::slew(float target, float current, float maxChange) {
  * @return float wrapped angle
  */
 float lemlib::angleError(float angle1, float angle2, bool radians) {
-    return std::remainder(angle1 - angle2, radians ? 2_* M_PI : 360);
+    return std::remainder(angle1 - angle2, radians ? 2 * M_PI : 360);
 }
 
 /**
