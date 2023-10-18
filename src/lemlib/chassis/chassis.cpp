@@ -298,71 +298,94 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool fo
  * @param async whether the function should be run asynchronously. false by default
  * @param maxSpeed the maximum speed the robot can move at. 127 by default
  */
-void lemlib::Chassis::moveToOld(float x, float y, int timeout, bool async, float maxSpeed) {
+void lemlib::Chassis::moveToOld(float x, float y, int timeout, bool forwards, bool async, float maxSpeed) {
     // try to take the mutex
     // if its unsuccessful after 10ms, return
     if (!mutex.take(10)) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveToOld(x, y, timeout, false, maxSpeed); });
+        pros::Task task([&]() { moveToOld(x, y, timeout, forwards, false, maxSpeed); });
         mutex.give();
         pros::delay(10); // delay to give the task time to start
         return;
     }
 
-    Pose target(x, y); // target pose in standard form
-    Pose lastPose = getPose(); // last pose
-    FAPID linearPID = FAPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
-    FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.smallErrorTimeout,
-                      lateralSettings.smallErrorTimeout, timeout); // exit conditions
-    float prevLinearPower = 0; // previous linear power
-    int compState = pros::competition::get_status();
+    Pose pose(0, 0);
+    Pose lastPose = getPose();
+    float prevLateralPower = 0;
+    float prevAngularPower = 0;
+    bool close = false;
     int start = pros::millis();
+    std::uint8_t compState = pros::competition::get_status();
     distTravelled = 0;
 
-    bool close = false; // used for settling
+    // create a new PID controller
+    FAPID lateralPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "lateralPID");
+    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
+                       lateralSettings.smallErrorTimeout, timeout);
 
     // main loop
-    while (pros::competition::get_status() == compState && (!linearPID.settled() || pros::millis() - start < 300)) {
-        // get current pose
+    while (pros::competition::get_status() == compState && (!lateralPID.settled() || pros::millis() - start < 300)) {
+        Pose target(x, y);
+        // get the current position
         Pose pose = getPose(true);
-        pose.theta = M_PI_2 - pose.theta; // convert to standard form
 
         // update completion vars
         distTravelled += pose.distance(lastPose);
         lastPose = pose;
 
-        // check if the robot is close enough to the target to start settling
-        if (pose.distance(target) < 5 && close == false) {
+        // update error
+        float targetTheta = M_PI_2 - pose.angle(target);
+        float hypot = pose.distance(target);
+        float angularError =
+            (forwards) ? angleError(pose.theta, targetTheta, true) : angleError(pose.theta, targetTheta + M_PI, true);
+        float lateralError = hypot * cos(angleError(pose.theta, targetTheta));
+
+        // calculate speed
+        float lateralPower = lateralPID.update(lateralError, 0);
+        float angularPower = -angularPID.update(radToDeg(angularError), 0);
+
+        // if the robot is close to the target
+        if (pose.distance(target) < 7.5) {
             close = true;
-            maxSpeed = fmax(fabs(prevLinearPower), 30);
+            maxSpeed = (std::fabs(prevLateralPower) < 30) ? 30 : std::fabs(prevLateralPower);
         }
 
-        // calculate error
-        float angularError = angleError(pose.angle(target), pose.theta, true); // angular error
-        float angularError2 = angleError(pose.angle(target), pose.theta + M_PI, true);
-        if (fabs(angularError2) < fabs(angularError)) angularError = angularError2;
-        float linearError = pose.distance(target) * cos(angularError); // linear error
+        // limit acceleration
+        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
+        if (std::fabs(angularError) > 25)
+            angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
 
-        // get PID outputs
-        float angularPower = -angularPID.update(radToDeg(angularError), 0);
-        float linearPower = linearPID.update(linearError, 0);
+        // cap the speed
+        if (lateralPower > maxSpeed) lateralPower = maxSpeed;
+        else if (lateralPower < -maxSpeed) lateralPower = -maxSpeed;
+        if (close) angularPower = 0;
 
-        // calculate motor powers
-        float leftPower = linearPower + angularPower;
-        float rightPower = linearPower - angularPower;
+        prevLateralPower = lateralPower;
+        prevAngularPower = angularPower;
+
+        float leftPower = lateralPower + angularPower;
+        float rightPower = lateralPower - angularPower;
+
+        // ratio the speeds to respect the max speed
+        float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+        if (ratio > 1) {
+            leftPower /= ratio;
+            rightPower /= ratio;
+        }
 
         // move the motors
         drivetrain.leftMotors->move(leftPower);
         drivetrain.rightMotors->move(rightPower);
 
-        pros::delay(10); // delay to save resources
+        pros::delay(10);
     }
 
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
+
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     // give the mutex back

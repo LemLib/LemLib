@@ -127,7 +127,7 @@ class Chassis {
          * @param async whether the function should be run asynchronously. false by default
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
          */
-        void moveToOld(float x, float y, int timeout, bool async = false, float maxSpeed = 127);
+        void moveToOld(float x, float y, int timeout, bool forwards = true, bool async = false, float maxSpeed = 127);
         /**
          * @brief Move the chassis along a path
          *
