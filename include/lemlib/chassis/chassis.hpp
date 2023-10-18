@@ -217,12 +217,22 @@ class Chassis {
         void moveTo(float x, float y, float theta, int timeout, bool async = false, bool forwards = true,
                     float chasePower = 0, float lead = 0.6, float maxSpeed = 127, bool log = false);
         /**
+         * @brief Move the chassis towards a target point
+         *
+         * @param x x location
+         * @param y y location
+         * @param timeout longest time the robot can spend moving
+         * @param async whether the function should be run asynchronously. false by default
+         * @param maxSpeed the maximum speed the robot can move at. 127 by default
+         */
+        void moveToOld(float x, float y, int timeout, bool async = false, float maxSpeed = 127);
+        /**
          * @brief Move the chassis along a path
          *
          * @param filePath the filename of the path to follow
          * @param timeout the maximum time the robot can spend moving
-         * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
-         * will follow the path less accurately
+         * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster
+         * but will follow the path less accurately
          * @param async whether the function should be run asynchronously. false by default
          * @param forwards whether the robot should follow the path going forwards. true by default
          * @param maxSpeed the maximum speed the robot can move at
