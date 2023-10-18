@@ -40,7 +40,7 @@ bool lemlib::Imu::calibrate(bool blocking) {
  *
  * Just a wrapper for the pros::Imu::is_calibrating() function
  */
-bool lemlib::Imu::isCalibrating() { return imu.is_calibrating(); }
+bool lemlib::Imu::isCalibrating() const { return imu.is_calibrating(); }
 
 /**
  * return whether the IMU has been calibrated
@@ -59,14 +59,19 @@ bool lemlib::Imu::isConnected() { return imu.is_installed(); }
 /**
  * return the heading of the imu in radians and in standard position
  */
-float lemlib::Imu::getHeading() { return (M_PI - degToRad(imu.get_heading())); }
+float lemlib::Imu::getHeading() const { return (M_PI - degToRad(imu.get_heading())); }
 
 /**
  * Get the rotation of the imu in radians and in standard position
  */
-float lemlib::Imu::getRotation() { return (M_PI - degToRad(imu.get_rotation())); }
+float lemlib::Imu::getRotation() const { return (M_PI - degToRad(imu.get_rotation())); }
 
 /**
  * Set the rotation of the imu in radians and in standard position
  */
-void lemlib::Imu::setRotation(float orientation) { imu.set_rotation(radToDeg(M_PI - radToDeg(orientation))); }
+void lemlib::Imu::setRotation(float orientation) const { imu.set_rotation(radToDeg(M_PI - radToDeg(orientation))); }
+
+/**
+ * Wrapper function for pros::Imu.get_port()
+ */
+std::uint8_t lemlib::Imu::getPort() { return imu.get_port(); }

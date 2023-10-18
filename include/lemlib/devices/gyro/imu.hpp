@@ -33,7 +33,7 @@ class Imu : public Gyro {
          * @return true IMU is calibrating
          * @return false IMU is not calibrating
          */
-        bool isCalibrating() override;
+        bool isCalibrating() const override;
         /**
          * @brief Get wether the IMU is calibrated or not
          *
@@ -55,7 +55,7 @@ class Imu : public Gyro {
          *
          * @return float heading, in radians, locked from -pi to pi
          */
-        float getHeading() override;
+        float getHeading() const override;
         /**
          * @brief Get the rotation of the IMU
          *
@@ -63,7 +63,7 @@ class Imu : public Gyro {
          *
          * @return float rotation, in radians
          */
-        float getRotation() override;
+        float getRotation() const override;
         /**
          * @brief Set the rotation of the IMU
          *
@@ -71,7 +71,13 @@ class Imu : public Gyro {
          *
          * @param rotation, rotation in radians
          */
-        void setRotation(float rotation) override;
+        void setRotation(float rotation) const override;
+        /**
+         * @brief Get the port of the IMU
+         *
+         * @return std::uint8_t unsigned port of the gyro
+         */
+        std::uint8_t getPort() override;
     private:
         pros::Imu imu;
 };
