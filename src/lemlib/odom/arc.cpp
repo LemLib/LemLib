@@ -44,9 +44,12 @@ void lemlib::ArcOdom::calibrate() {
         }
         pros::delay(10);
     }
-    // if a gyro failed to calibrate, output an error
+    // if a gyro failed to calibrate, output an error and erase the gyro
     for (auto it = gyros.begin(); it != gyros.end(); it++) {
-        if (!(**it).isCalibrated()) infoSink()->error("Error: IMU failed to calibrate");
+        if (!(**it).isCalibrated()) {
+            infoSink()->warn("Error: IMU on port {} failed to calibrate", (**it).getPort());
+            gyros.erase(it);
+        }
     }
 }
 

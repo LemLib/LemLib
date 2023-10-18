@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace lemlib {
 class Gyro {
     public:
@@ -17,7 +19,7 @@ class Gyro {
          * @return true Gyro is calibrating
          * @return false Gyro is not calibrating
          */
-        virtual bool isCalibrating() = 0;
+        virtual bool isCalibrating() const = 0;
         /**
          * @brief Get wether the gyro is calibrated or not
          *
@@ -39,7 +41,7 @@ class Gyro {
          *
          * @return float heading, in radians, locked from -pi to +pi
          */
-        virtual float getHeading() = 0;
+        virtual float getHeading() const = 0;
         /**
          * @brief Get the rotation of the gyro
          *
@@ -47,7 +49,7 @@ class Gyro {
          *
          * @return float rotation, in radians
          */
-        virtual float getRotation() = 0;
+        virtual float getRotation() const = 0;
         /**
          * @brief Set the rotation of the gyro
          *
@@ -55,6 +57,12 @@ class Gyro {
          *
          * @param rotation, rotation in radians
          */
-        virtual void setRotation(float rotation) = 0;
+        virtual void setRotation(float rotation) const = 0;
+        /**
+         * @brief Get the port of the gyro
+         *
+         * @return std::uint8_t unsigned port of the gyro
+         */
+        virtual std::uint8_t getPort() = 0;
 };
 } // namespace lemlib
