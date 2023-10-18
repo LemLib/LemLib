@@ -3,25 +3,27 @@
 #include "lemlib/logger/stdout.hpp"
 
 // drive motors
-pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
-pros::Motor lB(-21, pros::E_MOTOR_GEARSET_06); // left back motor. port 21, reversed
-pros::Motor rF(12, pros::E_MOTOR_GEARSET_06); // right front motor. port 12
-pros::Motor rB(16, pros::E_MOTOR_GEARSET_06); // right back motor. port 16
+pros::Motor lF(-8, pros::E_MOTOR_GEARSET_06); // left front motor. port 8, reversed
+pros::Motor lM(-20, pros::E_MOTOR_GEARSET_06); // left middle motor. port 20, reversed
+pros::Motor lB(19, pros::E_MOTOR_GEARSET_06); // left back motor. port 19
+pros::Motor rF(2, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
+pros::Motor rM(11, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
+pros::Motor rB(-13, pros::E_MOTOR_GEARSET_06); // right back motor. port 13, reversed
 
 // motor groups
-pros::MotorGroup leftMotors({lF, lB}); // left motor group
-pros::MotorGroup rightMotors({rF, rB}); // right motor group
+pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
+pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
 // Inertial Sensor on port 11
-pros::Imu imu(11);
+pros::Imu imu(12);
 
 // tracking wheels
-pros::Rotation horizontalEnc(7);
+pros::Rotation verticalEnc(4);
 // horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
+lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain
-lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 360, 2};
+lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_4, 300, 8};
 
 // lateral motion controller
 lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
@@ -30,7 +32,7 @@ lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
 lemlib::ChassisController_t angularController {2, 10, 1, 100, 3, 500, 20};
 
 // sensors for odometry
-lemlib::OdomSensors_t sensors {nullptr, nullptr, &horizontal, nullptr, &imu};
+lemlib::OdomSensors_t sensors {&vertical, nullptr, nullptr, nullptr, &imu};
 
 lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 
@@ -107,4 +109,4 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() { chassis.moveTo(20, 15, 90, 4000); }
+void opcontrol() { chassis.moveToOld(20, 15, 3000, false); }
