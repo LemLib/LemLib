@@ -381,6 +381,8 @@ void lemlib::Chassis::moveToOld(float x, float y, int timeout, bool async, float
 
         // calculate error
         float angularError = angleError(pose.angle(target), pose.theta, true); // angular error
+        float angularError2 = angleError(pose.angle(target), pose.theta + M_PI, true);
+        if (fabs(angularError2) < fabs(angularError)) angularError = angularError2;
         float linearError = pose.distance(target) * cos(angularError); // linear error
 
         // get PID outputs
