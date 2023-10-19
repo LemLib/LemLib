@@ -33,9 +33,7 @@ float slew(float target, float current, float maxChange);
  * @param rad radians
  * @return float degrees
  */
-constexpr float radToDeg(float rad) {
-	return rad * 180 / M_PI;
-}
+constexpr float radToDeg(float rad) { return rad * 180 / M_PI; }
 
 /**
  * @brief Convert degrees to radians
@@ -43,9 +41,7 @@ constexpr float radToDeg(float rad) {
  * @param deg degrees
  * @return float radians
  */
-constexpr float degToRad(float deg) {
-	return deg * M_PI / 180;
-}
+constexpr float degToRad(float deg) { return deg * M_PI / 180; }
 
 /**
  * @brief Calculate the error between 2 angles. Useful when calculating the error between 2 headings
