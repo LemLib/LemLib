@@ -33,7 +33,7 @@ float slew(float target, float current, float maxChange);
  * @param rad radians
  * @return float degrees
  */
-constexpr float lemlib::radToDeg(float rad) {
+constexpr float radToDeg(float rad) {
 	return rad * 180 / M_PI;
 }
 
@@ -43,7 +43,7 @@ constexpr float lemlib::radToDeg(float rad) {
  * @param deg degrees
  * @return float radians
  */
-constexpr float lemlib::degToRad(float deg) {
+constexpr float degToRad(float deg) {
 	return deg * M_PI / 180;
 }
 
