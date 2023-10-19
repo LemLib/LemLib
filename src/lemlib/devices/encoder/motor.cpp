@@ -51,6 +51,5 @@ float lemlib::MotorEncoder::getAngle() {
  */
 bool lemlib::MotorEncoder::reset() {
     lastAngle = 0;
-    getAngleDelta();
     return (motors->tare_position()) ? 0 : 1;
 }
