@@ -25,10 +25,7 @@ class Encoder {
          *
          * @return float angle rotated by the encoder, in radians
          */
-        float getAngleDelta() {
-            float prevAngle = lastAngle; // save lastAngle, as it will get reset when calling getAngle() below
-            return (getAngle() - prevAngle);
-        }
+        float getAngleDelta();
 
         /**
          * @brief Reset the encoder
