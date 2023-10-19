@@ -103,6 +103,12 @@ class TrackingWheel {
          */
         float getDistance();
         /**
+         * @brief Get the difference between the current distance measured and the last distance measured
+         *
+         * @return float difference in distance, in inches
+         */
+        float getDistanceDelta();
+        /**
          * @brief Get the offset of the tracking wheel from the center of rotation
          *
          * @return float offset in inches

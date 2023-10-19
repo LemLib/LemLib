@@ -1,6 +1,7 @@
-#include "lemlib/odom/arc.hpp"
+#include "lemlib/util.hpp"
 #include "lemlib/timer.hpp"
 #include "lemlib/logger/logger.hpp"
+#include "lemlib/odom/arc.hpp"
 
 /**
  * Construct a odometry through tracking arcs
@@ -75,32 +76,19 @@ void lemlib::ArcOdom::calibrate() {
  * http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
  */
 void lemlib::ArcOdom::update() {
-    /*
-    // get the current sensor values
-    float vertical1Raw = 0;
-    float vertical2Raw = 0;
-    float horizontal1Raw = 0;
-    float horizontal2Raw = 0;
-    float imuRaw = 0;
-    if (sensors.vertical1 != nullptr) vertical1Raw = sensors.vertical1->getDistance();
-    if (sensors.vertical2 != nullptr) vertical2Raw = sensors.vertical2->getDistance();
-    if (sensors.horizontal1 != nullptr) horizontal1Raw = sensors.horizontal1->getDistance();
-    if (sensors.horizontal2 != nullptr) horizontal2Raw = sensors.horizontal2->getDistance();
-    if (sensors.imu != nullptr) imuRaw = degToRad(sensors.imu->get_rotation());
-
-    // calculate the change in sensor values
-    float deltaVertical1 = vertical1Raw - prevVertical1;
-    float deltaVertical2 = vertical2Raw - prevVertical2;
-    float deltaHorizontal1 = horizontal1Raw - prevHorizontal1;
-    float deltaHorizontal2 = horizontal2Raw - prevHorizontal2;
-    float deltaImu = imuRaw - prevImu;
-
-    // update the previous sensor values
-    prevVertical1 = vertical1Raw;
-    prevVertical2 = vertical2Raw;
-    prevHorizontal1 = horizontal1Raw;
-    prevHorizontal2 = horizontal2Raw;
-    prevImu = imuRaw;
+    // calculate change in heading
+    float heading = pose.theta;
+    if (gyros.size() > 0) { // calculate heading with imus if we have enough
+        std::vector<float> angles;
+        for (auto it = gyros.begin(); it != gyros.end(); it++) angles += it->getAngleDelta();
+        heading += avg(angles);
+    } else if (verticals.size() > 1) { // calculate heading with vertical tracking wheels if we have enough
+        heading += (verticals.at(0).getDistanceDelta() - verticals.at(1).getDistanceDelta()) /
+                   (verticals.at(0).getOffset() - verticals.at(1).getOffset());
+    } else if (horizontals.size() > 1) { // calculate heading with horizontal tracking wheels if we have enough
+        heading += (horizontals.at(0).getDistanceDelta() - horizontals.at(1).getDistanceDelta()) /
+                   (horizontals.at(0).getOffset() - horizontals.at(1).getOffset());
+    }
 
     // calculate the heading of the robot
     // Priority:
@@ -162,5 +150,4 @@ void lemlib::ArcOdom::update() {
     pose.x += localX * -cos(avgHeading);
     pose.y += localX * sin(avgHeading);
     pose.theta = heading;
-    */
 }
