@@ -28,11 +28,18 @@ lemlib::ArcOdom::ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<Trac
 void lemlib::ArcOdom::calibrate() {
     // calibrate vertical tracking wheels
     for (auto it = verticals.begin(); it != verticals.end(); it++) {
-        if (it->reset()) verticals.erase(it); // remove the tracking wheel if calibration failed
+        if (it->reset()) {
+            infoSink()->warn("Vertical tracker at offset {} failed calibration!", it->getOffset());
+            verticals.erase(it);
+        }
     }
-    // loop through horizontal tracking wheels
+
+    // calibrate horizontal tracking wheels
     for (auto it = horizontals.begin(); it != horizontals.end(); it++) {
-        if (it->reset()) horizontals.erase(it); // remove the tracking wheel if calibration failed
+        if (it->reset()) {
+            infoSink()->warn("Horizontal tracker at offset {} failed calibration!", it->getOffset());
+            horizontals.erase(it);
+        }
     }
 
     // calibrate gyros
@@ -44,10 +51,11 @@ void lemlib::ArcOdom::calibrate() {
         }
         pros::delay(10);
     }
+
     // if a gyro failed to calibrate, output an error and erase the gyro
     for (auto it = gyros.begin(); it != gyros.end(); it++) {
         if (!(**it).isCalibrated()) {
-            infoSink()->warn("Error: IMU on port {} failed to calibrate", (**it).getPort());
+            infoSink()->warn("Warning: IMU on port {} failed to calibrate! Removing", (**it).getPort());
             gyros.erase(it);
         }
     }
