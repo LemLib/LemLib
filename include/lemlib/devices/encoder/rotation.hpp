@@ -20,14 +20,14 @@ class RotationEncoder : public Encoder {
          *
          * @return float angle rotated by the rotation sensor, in radians
          */
-        float getAngle() const override;
+        float getAngle() override;
         /**
          * @brief Reset the rotation sensor
          *
          * @return true calibration failed
          * @return false calibration succeeded
          */
-        bool reset() const override;
+        bool reset() override;
     private:
         pros::Rotation rotation;
         const float ratio;

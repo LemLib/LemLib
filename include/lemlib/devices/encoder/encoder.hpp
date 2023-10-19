@@ -18,13 +18,26 @@ class Encoder {
          *
          * @return float angle rotated by the encoder, in radians
          */
-        virtual float getAngle() const = 0;
+        virtual float getAngle() = 0;
+
+        /**
+         * @brief Get the angle rotated by the encoder since the last time it was checked, in radians
+         *
+         * @return float angle rotated by the encoder, in radians
+         */
+        float getAngleDelta() {
+            float prevAngle = lastAngle; // save lastAngle, as it will get reset when calling getAngle() below
+            return (getAngle() - prevAngle);
+        }
+
         /**
          * @brief Reset the encoder
          *
          * @return true encoder calibration failed
          * @return false encoder calibration succeeded
          */
-        virtual bool reset() const = 0;
+        virtual bool reset() = 0;
+    protected:
+        float lastAngle = 0;
 };
 } // namespace lemlib

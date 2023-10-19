@@ -22,11 +22,16 @@ lemlib::RotationEncoder::RotationEncoder(int port, bool reversed, float ratio)
  * Pretty straightforward, raw value from the rotation sensor gets converted to rotations
  * which gets converted to radians
  */
-float lemlib::RotationEncoder::getAngle() const {
-    return (float(rotation.get_position()) / 36000) * (2 * M_PI) / ratio;
+float lemlib::RotationEncoder::getAngle() {
+    float angle = (float(rotation.get_position()) / 36000) * (2 * M_PI) / ratio;
+    lastAngle = angle;
+    return angle;
 }
 
 /**
  * Reset/calibrate the optical encoder
  */
-bool lemlib::RotationEncoder::reset() const { return (rotation.reset_position()) ? 0 : 1; }
+bool lemlib::RotationEncoder::reset() {
+    lastAngle = 0;
+    return (rotation.reset_position()) ? 0 : 1;
+}

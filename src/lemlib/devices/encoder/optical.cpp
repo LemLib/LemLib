@@ -18,9 +18,13 @@ lemlib::OpticalEncoder::OpticalEncoder(char topPort, char bottomPort, bool rever
  * Pretty straightforward, raw value from the encoder gets converted to rotations
  * which gets converted to radians
  */
-float lemlib::OpticalEncoder::getAngle() const { return (float(optical.get_value()) * (2 * M_PI) / 360) / ratio; }
+float lemlib::OpticalEncoder::getAngle() {
+    float angle = (float(optical.get_value()) * (2 * M_PI) / 360) / ratio;
+    lastAngle = angle;
+    return angle;
+}
 
 /**
  * Reset/calibrate the optical encoder
  */
-bool lemlib::OpticalEncoder::reset() const { return (optical.reset()) ? 0 : 1; }
+bool lemlib::OpticalEncoder::reset() { return (optical.reset()) ? 0 : 1; }
