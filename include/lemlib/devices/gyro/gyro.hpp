@@ -53,11 +53,12 @@ class Gyro {
         /**
          * @brief Set the rotation of the gyro
          *
-         * @brief 0 is in the positive x direction, and heading increases counterclockwise
+         * @note 0 is in the positive x direction, and heading increases counterclockwise
          *
          * @param rotation, rotation in radians
          */
         virtual void setRotation(float rotation) const = 0;
+        float getRotationDelta();
         /**
          * @brief Get the port of the gyro
          *

@@ -76,6 +76,17 @@ bool lemlib::TrackingWheel::reset() { return encoder->reset(); }
 float lemlib::TrackingWheel::getDistance() { return encoder->getAngle() / 2 * diameter; }
 
 /**
+ * Get the difference in distance travelled by the tracking wheel, in inches
+ *
+ * Since we get angle in radians, but need to convert to inches, we can simplify
+ * the calculation. So, instead of writing
+ * (angle / (2 * pi)) * pi * diameter
+ * we do
+ * (angle / 2) * diameter
+ */
+float lemlib::TrackingWheel::getDistanceDelta() { return encoder->getAngleDelta() / 2 * diameter; }
+
+/**
  * Get the offset from the tracking center, in inches
  */
 float lemlib::TrackingWheel::getOffset() const { return this->offset; }
