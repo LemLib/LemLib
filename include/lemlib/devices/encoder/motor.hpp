@@ -22,14 +22,14 @@ class MotorEncoder : public Encoder {
          *
          * @return float angle rotated by the motor encoders, in radians
          */
-        float getAngle() const override;
+        float getAngle() override;
         /**
          * @brief Reset the motor encoder
          *
          * @return true calibration failed
          * @return false calibration succeeded
          */
-        bool reset() const override;
+        bool reset() override;
     private:
         std::shared_ptr<pros::MotorGroup> motors;
         const float rpm;

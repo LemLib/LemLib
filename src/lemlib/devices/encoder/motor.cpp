@@ -1,4 +1,5 @@
 #include <cmath>
+#include <numeric>
 #include "lemlib/util.hpp"
 #include "lemlib/devices/encoder/motor.hpp"
 
@@ -23,7 +24,7 @@ lemlib::MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, flo
  * output rpm by the input rpm. Then we just multiply the output by 2 pi
  * to get angle in radians.
  */
-float lemlib::MotorEncoder::getAngle() const {
+float lemlib::MotorEncoder::getAngle() {
     // get gearboxes and encoder position for each motor in the group
     std::vector<pros::MotorGears> gearsets = motors->get_gearing_all();
     std::vector<double> positions = motors->get_position_all();
@@ -39,11 +40,17 @@ float lemlib::MotorEncoder::getAngle() const {
         }
         angles.push_back(positions[i] * (rpm / in) * 2 * M_PI);
     }
-    // return average of elements in the angles vector
-    return avg(angles);
+    // calc average of the angles
+    float angle = avg(angles);
+    lastAngle = angle;
+    return angle;
 }
 
 /**
  * Reset the motor encoders.
  */
-bool lemlib::MotorEncoder::reset() const { return (motors->tare_position()) ? 0 : 1; }
+bool lemlib::MotorEncoder::reset() {
+    lastAngle = 0;
+    getAngleDelta();
+    return (motors->tare_position()) ? 0 : 1;
+}
