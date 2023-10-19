@@ -59,10 +59,7 @@ float angleError(float angle1, float angle2, bool radians = false);
  * @param x the number to get the sign of
  * @return int - -1 if negative, 1 if positive
  */
-template <typename T>
-constexpr T sgn(T value) {
-	return value < 0 ? -1 : 1;
-}
+template <typename T> constexpr T sgn(T value) { return value < 0 ? -1 : 1; }
 
 /**
  * @brief Return the average of a vector of numbers
