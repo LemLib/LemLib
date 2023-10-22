@@ -84,7 +84,7 @@ float lemlib::TrackingWheel::getDistance() { return encoder->getAngle() / 2 * di
  * we do
  * (angle / 2) * diameter
  */
-float lemlib::TrackingWheel::getDistanceDelta() { return encoder->getAngleDelta() / 2 * diameter; }
+float lemlib::TrackingWheel::getDistanceDelta(bool update) { return encoder->getAngleDelta(update) / 2 * diameter; }
 
 /**
  * Get the offset from the tracking center, in inches

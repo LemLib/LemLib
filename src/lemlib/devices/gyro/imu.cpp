@@ -59,12 +59,20 @@ bool lemlib::Imu::isConnected() { return imu.is_installed(); }
 /**
  * return the heading of the imu in radians and in standard position
  */
-float lemlib::Imu::getHeading() const { return (M_PI - degToRad(imu.get_heading())); }
+float lemlib::Imu::getHeading() {
+    float heading = std::fmod(getRotation(), 2 * M_PI);
+    if (heading < 0) heading += 2 * M_PI;
+    return heading;
+}
 
 /**
  * Get the rotation of the imu in radians and in standard position
  */
-float lemlib::Imu::getRotation() const { return (M_PI - degToRad(imu.get_rotation())); }
+float lemlib::Imu::getRotation() {
+    const float rotation = imu.get_rotation();
+    lastAngle = rotation;
+    return (M_PI - degToRad(imu.get_rotation()));
+}
 
 /**
  * Set the rotation of the imu in radians and in standard position

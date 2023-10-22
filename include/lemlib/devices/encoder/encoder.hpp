@@ -23,9 +23,10 @@ class Encoder {
         /**
          * @brief Get the angle rotated by the encoder since the last time it was checked, in radians
          *
+         * @param update whether to update the last angle measured by the encoder. True by default
          * @return float angle rotated by the encoder, in radians
          */
-        float getAngleDelta();
+        float getAngleDelta(bool update = true);
 
         /**
          * @brief Reset the encoder
