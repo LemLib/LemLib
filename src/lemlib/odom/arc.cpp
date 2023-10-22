@@ -76,78 +76,49 @@ void lemlib::ArcOdom::calibrate() {
  * http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
  */
 void lemlib::ArcOdom::update() {
-    // calculate change in heading
-    float heading = pose.theta;
-    if (gyros.size() > 0) { // calculate heading with imus if we have enough
-        std::vector<float> angles;
-        for (auto it = gyros.begin(); it != gyros.end(); it++) angles += it->getAngleDelta();
-        heading += avg(angles);
-    } else if (verticals.size() > 1) { // calculate heading with vertical tracking wheels if we have enough
-        heading += (verticals.at(0).getDistanceDelta() - verticals.at(1).getDistanceDelta()) /
-                   (verticals.at(0).getOffset() - verticals.at(1).getOffset());
-    } else if (horizontals.size() > 1) { // calculate heading with horizontal tracking wheels if we have enough
-        heading += (horizontals.at(0).getDistanceDelta() - horizontals.at(1).getDistanceDelta()) /
-                   (horizontals.at(0).getOffset() - horizontals.at(1).getOffset());
-    }
-
-    // calculate the heading of the robot
+    // calculate theta
     // Priority:
     // 1. IMU
     // 2. Horizontal tracking wheels
     // 3. Vertical tracking wheels
-    float heading = pose.theta;
-    // calculate heading with inertial sensor if it exists
-    if (sensors.imu != nullptr) heading += deltaImu;
-    // else, use horizontal tracking wheels if they both exist
-    else if (sensors.horizontal1 != nullptr && sensors.horizontal2 != nullptr)
-        heading += (deltaHorizontal1 - deltaHorizontal2) /
-                   (sensors.horizontal1->getOffset() - sensors.horizontal2->getOffset());
-    else
-        heading +=
-            (deltaVertical1 - deltaVertical2) / (sensors.vertical1->getOffset() - sensors.vertical2->getOffset());
-    float deltaHeading = heading - pose.theta;
-    float avgHeading = pose.theta + deltaHeading / 2;
-
-    // choose tracking wheels to use
-    TrackingWheel* verticalWheel = sensors.vertical1;
-    TrackingWheel* horizontalWheel = nullptr;
-    // horizontal tracking wheels
-    if (sensors.horizontal1 != nullptr) horizontalWheel = sensors.horizontal1;
-    if (sensors.horizontal2 != nullptr) horizontalWheel = sensors.horizontal2;
-    // get raw values
-    float rawVertical = 0;
-    float rawHorizontal = 0;
-    rawVertical = verticalWheel->getDistance();
-    if (horizontalWheel != nullptr) rawHorizontal = horizontalWheel->getDistance();
-    // get offsets
-    float horizontalOffset = 0;
-    float verticalOffset = 0;
-    verticalOffset = verticalWheel->getOffset();
-    if (horizontalWheel != nullptr) horizontalOffset = horizontalWheel->getOffset();
-
-    // calculate change in x and y
-    float deltaX = 0;
-    float deltaY = 0;
-    deltaY = rawVertical - prevVertical;
-    if (horizontalWheel != nullptr) deltaX = rawHorizontal - prevHorizontal;
-    prevVertical = rawVertical;
-    prevHorizontal = rawHorizontal;
-
-    // calculate local x and y
-    float localX = 0;
-    float localY = 0;
-    if (deltaHeading == 0) { // prevent divide by 0
-        localX = deltaX;
-        localY = deltaY;
+    float theta = pose.theta;
+    if (gyros.size() > 0) { // calculate heading with imus if we have enough
+        std::vector<float> angles;
+        for (const auto& gyro : gyros) angles.push_back(gyro->getRotationDelta());
+        theta += avg(angles);
+    } else if (horizontals.size() > 1) { // calculate heading with horizontal tracking wheels if we have enough
+        theta += (horizontals.at(0).getDistanceDelta(false) - horizontals.at(1).getDistanceDelta(false)) /
+                 (horizontals.at(0).getOffset() - horizontals.at(1).getOffset());
+    } else if (verticals.size() > 1) { // calculate heading with vertical tracking wheels if we have enough
+        theta += (verticals.at(0).getDistanceDelta(false) - verticals.at(1).getDistanceDelta(false)) /
+                 (verticals.at(0).getOffset() - verticals.at(1).getOffset());
     } else {
-        localX = 2 * sin(deltaHeading / 2) * (deltaX / deltaHeading + horizontalOffset);
-        localY = 2 * sin(deltaHeading / 2) * (deltaY / deltaHeading + verticalOffset);
+        infoSink()->error("Odom calculation failure! Not enough sensors to calculate heading");
+        return;
     }
+    const float deltaTheta = theta - pose.theta;
+    const float avgTheta = pose.theta + deltaTheta / 2;
 
-    // calculate global x and y
-    pose.x += localY * sin(avgHeading);
-    pose.y += localY * cos(avgHeading);
-    pose.x += localX * -cos(avgHeading);
-    pose.y += localX * sin(avgHeading);
-    pose.theta = heading;
+    // calculate local change in position
+    Pose local(0, 0, deltaTheta);
+    // set sinDTheta2 to 1 if deltaTheta is 0. Simplifies local position calculations.
+    const float sinDTheta2 = (deltaTheta == 0) ? 1 : 2 * std::sin(deltaTheta / 2);
+    // calculate local x position
+    for (auto& tracker : horizontals) {
+        // prevent divide by 0
+        const float radius = (deltaTheta == 0) ? tracker.getDistanceDelta()
+                                               : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
+        local.x += sinDTheta2 * radius / horizontals.size();
+    }
+    // calculate local y position
+    for (auto& tracker : verticals) {
+        // prevent divide by 0
+        const float radius = (deltaTheta == 0) ? tracker.getDistanceDelta()
+                                               : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
+        local.y += sinDTheta2 * radius / horizontals.size();
+    }
+    if (verticals.empty()) infoSink()->warn("No vertical tracking wheels! Assuming movement is 0");
+
+    // calculate new position
+    pose += local.rotate(avgTheta);
 }

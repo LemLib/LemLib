@@ -41,7 +41,7 @@ class Gyro {
          *
          * @return float heading, in radians, locked from -pi to +pi
          */
-        virtual float getHeading() const = 0;
+        virtual float getHeading() = 0;
         /**
          * @brief Get the rotation of the gyro
          *
@@ -49,7 +49,7 @@ class Gyro {
          *
          * @return float rotation, in radians
          */
-        virtual float getRotation() const = 0;
+        virtual float getRotation() = 0;
         /**
          * @brief Set the rotation of the gyro
          *
@@ -58,12 +58,22 @@ class Gyro {
          * @param rotation, rotation in radians
          */
         virtual void setRotation(float rotation) const = 0;
-        float getRotationDelta();
+        /**
+         * @brief Get the change in rotation of the gyro
+         *
+         * @note positive change is counterclockwise, negative change is clockwise
+         *
+         * @param update whether to update the last angle measured by the gyro. True by default
+         * @return change in angle rotated by the encoder, in radians
+         */
+        float getRotationDelta(bool update = true);
         /**
          * @brief Get the port of the gyro
          *
          * @return std::uint8_t unsigned port of the gyro
          */
         virtual std::uint8_t getPort() = 0;
+    protected:
+        float lastAngle = 0;
 };
 } // namespace lemlib

@@ -37,12 +37,24 @@ class Pose {
          */
         Pose operator+(const Pose& other);
         /**
+         * @brief Set the value of this pose to its value + the value of another pose
+         *
+         * @param other other pose
+         */
+        void operator+=(const Pose& other);
+        /**
          * @brief Subtract a pose from this pose
          *
          * @param other other pose
          * @return Pose
          */
         Pose operator-(const Pose& other);
+        /**
+         * @brief Set the value of this pose to its value - the value of another pose
+         *
+         * @param other other pose
+         */
+        void operator-=(const Pose& other);
         /**
          * @brief Multiply a pose by this pose
          *
@@ -102,6 +114,8 @@ class Pose {
         float angle(Pose other);
         /**
          * @brief Rotate a pose by an angle
+         *
+         * @note positive angle results in counterclockwise translation
          *
          * @param angle angle in radians
          * @return Pose

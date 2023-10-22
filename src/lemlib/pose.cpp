@@ -40,6 +40,17 @@ lemlib::Pose lemlib::Pose::operator+(const lemlib::Pose& other) {
 }
 
 /**
+ * @brief Set the value of this pose to its value + the value of another pose
+ *
+ * @param other other pose
+ */
+void lemlib::Pose::operator+=(const Pose& other) {
+    this->x += other.x;
+    this->y += other.y;
+    this->theta += other.theta;
+}
+
+/**
  * @brief Subtract a pose from this pose
  *
  * @param other other pose
@@ -47,6 +58,17 @@ lemlib::Pose lemlib::Pose::operator+(const lemlib::Pose& other) {
  */
 lemlib::Pose lemlib::Pose::operator-(const lemlib::Pose& other) {
     return lemlib::Pose(this->x - other.x, this->y - other.y, this->theta);
+}
+
+/**
+ * @brief Set the value of this pose to its value - the value of another pose
+ *
+ * @param other other pose
+ */
+void lemlib::Pose::operator-=(const Pose& other) {
+    this->x -= other.x;
+    this->y -= other.y;
+    this->theta -= other.theta;
 }
 
 /**
@@ -131,8 +153,10 @@ float lemlib::Pose::angle(lemlib::Pose other) { return std::atan2(other.y - this
  * @return Pose
  */
 lemlib::Pose lemlib::Pose::rotate(float angle) {
-    return lemlib::Pose(this->x * std::cos(angle) - this->y * std::sin(angle),
-                        this->x * std::sin(angle) + this->y * std::cos(angle), this->theta);
+    const float cosAngle = std::cos(angle);
+    const float sinAngle = std::sin(angle);
+
+    return lemlib::Pose(this->x * cosAngle - this->y * sinAngle, this->x * sinAngle + this->y * cosAngle, this->theta);
 }
 
 std::string lemlib::format_as(const lemlib::Pose& pose) {
