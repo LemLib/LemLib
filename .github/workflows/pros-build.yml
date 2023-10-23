@@ -74,22 +74,3 @@ jobs:
           name: LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}
           path: 'template/*'
           retention-days: 89
-      - name: Install jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install jq -y
-      # - name: Get Artifact URL
-      #   id: get-artifact-url
-      #   run: |
-      #     sleep 5
-      #     ARTIFACT_INFO=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts")
-      #     echo "Artifact Info: $ARTIFACT_INFO"
-
-      #     ARTIFACT_URL=$(echo "$ARTIFACT_INFO" | jq '.artifacts[0].archive_download_url')
-      #     echo "Artifact URL: $ARTIFACT_URL"
-      #     echo "artifact_url=$ARTIFACT_URL" >> $GITHUB_OUTPUT
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Use Artifact URL
-      #   run: |
-      #     echo "Artifact URL from previous step: ${{ steps.get-artifact-url.outputs.artifact_url }}"
