@@ -51,8 +51,8 @@ jobs:
               return core.error(`No artifacts found`);
             }
             let body = `## Download the template for this pull request: \n\n`;
-            body += `- via (manual download)[https://nightly.link/${owner}/${repo}/actions/artifacts/${artifacts[0].id}.zip]\n`;
-            body += `- via windows command: \n \`\`\`\ncurl.exe --output ${artifacts[0].title} --url https://nightly.link/${owner}/${repo}/actions/artifacts/${artifacts[0].id}.zip \n\`\`\``;
+            body += `- via manual download: [${artifacts[0].name}](https://nightly.link/${owner}/${repo}/actions/artifacts/${artifacts[0].id}.zip)\n`;
+            body += `- via windows command: \n \`\`\`\ncurl.exe --output ${artifacts[0].name} --url https://nightly.link/${owner}/${repo}/actions/artifacts/${artifacts[0].id}.zip \n\`\`\``;
             
             core.info("Review thread message body:", body);
 
