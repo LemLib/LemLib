@@ -77,9 +77,9 @@ jobs:
       - name: Get Artifact URL
         id: get-artifact-url
         run: |
-          ARTIFACT_URL=$(curl -s "https://api.github.com/repos/lemlib/lemlib/actions/runs/${{ github.run_id }}/artifacts" | jq -r '.artifacts[0].archive_download_url')
+          ARTIFACT_URL=$(curl -s "https://api.github.com/repos/$GIT/actions/runs/${{ github.repository }}/artifacts" | jq -r '.artifacts[0].archive_download_url')
           echo "Artifact URL: $ARTIFACT_URL"
-          echo "::set-output name=artifact_url::$ARTIFACT_URL"
+          echo "artifact_url=$ARTIFACT_URL" >> $GITHUB_OUTPUT
       - name: Use Artifact URL
         run: |
           echo "Artifact URL from previous step: ${{ steps.get-artifact-url.outputs.artifact_url }}"
