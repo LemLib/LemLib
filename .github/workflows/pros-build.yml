@@ -82,7 +82,10 @@ jobs:
         id: get-artifact-url
         run: |
           sleep 5
-          ARTIFACT_URL=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{github.repository}}/actions/runs/${{ github.run_id }}/artifacts" | jq '.artifacts[0].archive_download_url')
+          ARTIFACT_INFO=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts")
+          echo "Artifact Info: $ARTIFACT_INFO"
+
+          ARTIFACT_URL=$(echo "$ARTIFACT_INFO" | jq '.artifacts[0].archive_download_url')
           echo "Artifact URL: $ARTIFACT_URL"
           echo "artifact_url=$ARTIFACT_URL" >> $GITHUB_OUTPUT
         env:
