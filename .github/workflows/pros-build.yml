@@ -81,6 +81,7 @@ jobs:
       - name: Get Artifact URL
         id: get-artifact-url
         run: |
+          sleep 5
           ARTIFACT_URL=$(curl -s "https://api.github.com/repos/${{github.repository}}/actions/runs/${{ github.run_id }}/artifacts" | jq '.artifacts[0].archive_download_url')
           echo "Artifact URL: $ARTIFACT_URL"
           echo "artifact_url=$ARTIFACT_URL" >> $GITHUB_OUTPUT
