@@ -74,3 +74,12 @@ jobs:
           name: LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}
           path: 'template/*'
           retention-days: 89
+      - name: Get Artifact URL
+        id: get-artifact-url
+        run: |
+          ARTIFACT_URL=$(curl -s "https://api.github.com/repos/lemlib/lemlib/actions/runs/${{ github.run_id }}/artifacts" | jq -r '.artifacts[0].archive_download_url')
+          echo "Artifact URL: $ARTIFACT_URL"
+          echo "::set-output name=artifact_url::$ARTIFACT_URL"
+      - name: Use Artifact URL
+        run: |
+          echo "Artifact URL from previous step: ${{ steps.get-artifact-url.outputs.artifact_url }}"
