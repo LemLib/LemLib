@@ -74,6 +74,10 @@ jobs:
           name: LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}
           path: 'template/*'
           retention-days: 89
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install jq -y
       - name: Get Artifact URL
         id: get-artifact-url
         run: |
