@@ -74,4 +74,3 @@ jobs:
           name: LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}
           path: 'template/*'
           retention-days: 89
-# test
