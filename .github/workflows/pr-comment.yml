@@ -54,7 +54,7 @@ jobs:
 
             let body = `## Download the template for this pull request: \n\n`;
             body += `- via manual download: [${template.name}](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)\n`;
-            body += `- via windows command: \n \`\`\`\n
+            body += `- via windows command: \n \`\`\`
             curl.exe --output ${template.name} --url https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip;
             pros c fetch ${template.name}.zip;
             pros c apply ${template.name};
