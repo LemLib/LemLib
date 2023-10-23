@@ -55,10 +55,10 @@ jobs:
             let body = `## Download the template for this pull request: \n\n`;
             body += `- via manual download: [${template.name}](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)\n`;
             body += `- via windows command: \n \`\`\`\n
-              curl.exe --output ${template.name} --url https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip; \n
-              pros fetch ${template.name}.zip;
-              pros apply ${template.name};
-              \`\`\``;
+            curl.exe --output ${template.name} --url https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip;
+            pros fetch ${template.name}.zip;
+            pros apply ${template.name};
+            \`\`\``;
             
             core.info("Review thread message body:", body);
 
