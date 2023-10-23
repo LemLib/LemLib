@@ -47,8 +47,8 @@ void lemlib::ArcOdom::calibrate() {
     for (auto it = gyros.begin(); it != gyros.end(); it++) (**it).calibrate();
     Timer timer(3000); // try calibrating gyros for 3000 ms
     while (!timer.isDone()) {
-        for (auto it = gyros.begin(); it != gyros.end(); it++) { // continuously calibrate in case of failure
-            if (!(**it).isCalibrating() && !(**it).isCalibrated()) (**it).calibrate();
+        for (auto& gyro : gyros) { // continuously calibrate in case of failure
+            if (!gyro->isCalibrating() && !gyro->isCalibrated()) gyro->calibrate();
         }
         pros::delay(10);
     }
@@ -60,6 +60,35 @@ void lemlib::ArcOdom::calibrate() {
             gyros.erase(it);
         }
     }
+}
+
+/**
+ * @brief Calculate the change in heading given 2 tracking wheels
+ *
+ * @note positive change in counterclockwise
+ *
+ * @param tracker1 the first tracking wheel
+ * @param tracker2 the second tracking wheel
+ * @return float change in angle, in radians
+ */
+float calcDeltaTheta(lemlib::TrackingWheel& tracker1, lemlib::TrackingWheel& tracker2) {
+    const float numerator = tracker1.getDistanceDelta(false) - tracker2.getDistanceDelta(false);
+    const float denominator = tracker1.getOffset() - tracker2.getOffset();
+    return numerator / denominator;
+}
+
+/**
+ * @brief Calculate the change in heading given a vector of imus
+ *
+ * @note positive change in counterclockwise
+ *
+ * @param gyros vector of Gyro shared pointers
+ * @return float the average change in heading
+ */
+float calcDeltaTheta(std::vector<std::shared_ptr<lemlib::Gyro>>& gyros) {
+    float deltaTheta = 0;
+    for (const auto& gyro : gyros) deltaTheta += gyro->getRotationDelta() / gyros.size();
+    return deltaTheta;
 }
 
 /**
@@ -83,15 +112,11 @@ void lemlib::ArcOdom::update() {
     // 3. Vertical tracking wheels
     float theta = pose.theta;
     if (gyros.size() > 0) { // calculate heading with imus if we have enough
-        std::vector<float> angles;
-        for (const auto& gyro : gyros) angles.push_back(gyro->getRotationDelta());
-        theta += avg(angles);
+        theta += calcDeltaTheta(gyros);
     } else if (horizontals.size() > 1) { // calculate heading with horizontal tracking wheels if we have enough
-        theta += (horizontals.at(0).getDistanceDelta(false) - horizontals.at(1).getDistanceDelta(false)) /
-                 (horizontals.at(0).getOffset() - horizontals.at(1).getOffset());
+        theta += calcDeltaTheta(horizontals.at(0), horizontals.at(1));
     } else if (verticals.size() > 1) { // calculate heading with vertical tracking wheels if we have enough
-        theta += (verticals.at(0).getDistanceDelta(false) - verticals.at(1).getDistanceDelta(false)) /
-                 (verticals.at(0).getOffset() - verticals.at(1).getOffset());
+        theta += calcDeltaTheta(verticals.at(0), verticals.at(1));
     } else {
         infoSink()->error("Odom calculation failure! Not enough sensors to calculate heading");
         return;
@@ -117,8 +142,8 @@ void lemlib::ArcOdom::update() {
                                                : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
         local.y += sinDTheta2 * radius / horizontals.size();
     }
-    if (verticals.empty()) infoSink()->warn("No vertical tracking wheels! Assuming movement is 0");
+    if (verticals.empty()) infoSink()->warn("No vertical tracking wheels! Assuming y movement is 0");
 
-    // calculate new position
+    // calculate global position
     pose += local.rotate(avgTheta);
 }
