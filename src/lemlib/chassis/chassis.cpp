@@ -11,8 +11,7 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 
-using namespace lemlib;
-
+namespace lemlib {
 /**
  * @brief Calibrate the chassis sensors
  *
@@ -773,3 +772,4 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     distTravelled = -1;
     this->endMotion();
 }
+}; // namespace lemlib

@@ -2,13 +2,14 @@
 #include "lemlib/util.hpp"
 #include "lemlib/devices/gyro/imu.hpp"
 
+namespace lemlib {
 /**
  * Construct a new Imu
  *
  * Takes an unsigned integer for the port of the IMU. Pros imu is constructed
  * in an initializer list
  */
-lemlib::Imu::Imu(uint8_t port)
+Imu::Imu(uint8_t port)
     : imu(pros::Imu(port)) {}
 
 /**
@@ -17,7 +18,7 @@ lemlib::Imu::Imu(uint8_t port)
  * Takes a reference to a pros Imu to be used. Pros imu is then constructed in an
  * initializer list
  */
-lemlib::Imu::Imu(pros::Imu& imu)
+Imu::Imu(pros::Imu& imu)
     : imu(imu) {}
 
 /**
@@ -28,7 +29,7 @@ lemlib::Imu::Imu(pros::Imu& imu)
  * unless the function is non-blocking, in which case success is returned whether or not
  * the imu has calibrated successfully, as we can't look into the future
  */
-bool lemlib::Imu::calibrate(bool blocking) {
+bool Imu::calibrate(bool blocking) {
     if (!isConnected()) return true; // return true if imu is not connected
     imu.reset(blocking);
     if (!blocking) return false; // return false if function is non-blocking
@@ -40,26 +41,26 @@ bool lemlib::Imu::calibrate(bool blocking) {
  *
  * Just a wrapper for the pros::Imu::is_calibrating() function
  */
-bool lemlib::Imu::isCalibrating() const { return imu.is_calibrating(); }
+bool Imu::isCalibrating() const { return imu.is_calibrating(); }
 
 /**
  * return whether the IMU has been calibrated
  *
  * This function checks if the Imu is connected, is not calibrating,
  */
-bool lemlib::Imu::isCalibrated() { return (isConnected() && !imu.is_calibrating() && !std::isinf(imu.get_heading())); }
+bool Imu::isCalibrated() { return (isConnected() && !imu.is_calibrating() && !std::isinf(imu.get_heading())); }
 
 /**
  * return whether the IMU is installed
  *
  * Just a wrapper for the pros::Imu::is_installed() function
  */
-bool lemlib::Imu::isConnected() { return imu.is_installed(); }
+bool Imu::isConnected() { return imu.is_installed(); }
 
 /**
  * return the heading of the imu in radians and in standard position
  */
-float lemlib::Imu::getHeading() {
+float Imu::getHeading() {
     float heading = std::fmod(getRotation(), 2 * M_PI);
     if (heading < 0) heading += 2 * M_PI;
     return heading;
@@ -68,7 +69,7 @@ float lemlib::Imu::getHeading() {
 /**
  * Get the rotation of the imu in radians and in standard position
  */
-float lemlib::Imu::getRotation() {
+float Imu::getRotation() {
     const float rotation = imu.get_rotation();
     lastAngle = rotation;
     return (M_PI - degToRad(imu.get_rotation()));
@@ -77,9 +78,10 @@ float lemlib::Imu::getRotation() {
 /**
  * Set the rotation of the imu in radians and in standard position
  */
-void lemlib::Imu::setRotation(float orientation) const { imu.set_rotation(radToDeg(M_PI - radToDeg(orientation))); }
+void Imu::setRotation(float orientation) const { imu.set_rotation(radToDeg(M_PI - radToDeg(orientation))); }
 
 /**
  * Wrapper function for pros::Imu.get_port()
  */
-std::uint8_t lemlib::Imu::getPort() { return imu.get_port(); }
+std::uint8_t Imu::getPort() { return imu.get_port(); }
+}; // namespace lemlib

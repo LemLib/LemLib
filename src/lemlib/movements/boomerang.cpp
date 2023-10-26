@@ -3,6 +3,7 @@
 #include "lemlib/util.hpp"
 #include "lemlib/movements/boomerang.hpp"
 
+namespace lemlib {
 /**
  * Boomerang constructor
  *
@@ -13,8 +14,8 @@
  * initial competition state, and manipulate the target heading based on
  * whether the robot is going to be moving forwards or backwards
  */
-lemlib::Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, bool forwards, float chasePower,
-                             float lead, int maxSpeed)
+Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, bool forwards, float chasePower, float lead,
+                     int maxSpeed)
     : Movement(),
       linearPID(linearPID),
       angularPID(angularPID),
@@ -35,7 +36,7 @@ lemlib::Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, boo
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float lemlib::Boomerang::getDist() { return dist; }
+float Boomerang::getDist() { return dist; }
 
 /**
  * The boomerang controller is a motion algorithm inspired by adaptive PID seeking
@@ -58,7 +59,7 @@ float lemlib::Boomerang::getDist() { return dist; }
  *
  * Desmos Demo: https://www.desmos.com/calculator/sptjw5szex
  */
-std::pair<int, int> lemlib::Boomerang::update(Pose pose) {
+std::pair<int, int> Boomerang::update(Pose pose) {
     // set state to 1 if in state 0 and close to the target
     if (state == 0 && pose.distance(target) < 7.5) state = 1;
     // set state to 2 if in state 1 and the linear PID has settled
@@ -116,3 +117,4 @@ std::pair<int, int> lemlib::Boomerang::update(Pose pose) {
     // return motor output
     return {linearPower + angularPower, linearPower - angularPower};
 }
+}; // namespace lemlib

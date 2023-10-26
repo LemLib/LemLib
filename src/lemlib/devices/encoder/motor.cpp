@@ -3,6 +3,7 @@
 #include "lemlib/util.hpp"
 #include "lemlib/devices/encoder/motor.hpp"
 
+namespace lemlib {
 /**
  * Construct a new motor encoder object
  *
@@ -11,7 +12,7 @@
  * a reference, due to limitations in PROS 3. This is fixed in PROS 4, but
  * we have to deal with this for now.
  */
-lemlib::MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm)
+MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm)
     : motors(std::move(motors)),
       rpm(rpm) {}
 
@@ -24,7 +25,7 @@ lemlib::MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, flo
  * output rpm by the input rpm. Then we just multiply the output by 2 pi
  * to get angle in radians.
  */
-float lemlib::MotorEncoder::getAngle() {
+float MotorEncoder::getAngle() {
     // get gearboxes and encoder position for each motor in the group
     std::vector<pros::MotorGears> gearsets = motors->get_gearing_all();
     std::vector<double> positions = motors->get_position_all();
@@ -49,7 +50,8 @@ float lemlib::MotorEncoder::getAngle() {
 /**
  * Reset the motor encoders.
  */
-bool lemlib::MotorEncoder::reset() {
+bool MotorEncoder::reset() {
     lastAngle = 0;
     return (motors->tare_position()) ? 0 : 1;
 }
+}; // namespace lemlib
