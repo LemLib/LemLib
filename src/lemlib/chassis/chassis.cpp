@@ -59,7 +59,7 @@ void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
 void Chassis::setPose(Pose pose, bool radians) {
     if (!radians) pose.theta = degToRad(pose.theta);
     pose.theta = M_PI_2 - pose.theta;
-    odom->setPose(pose);
+    odom.setPose(pose);
 }
 
 /**
@@ -69,7 +69,7 @@ void Chassis::setPose(Pose pose, bool radians) {
  * but it also transforms the pose to the format needed by the user
  */
 Pose Chassis::getPose(bool radians) {
-    Pose pose = odom->getPose();
+    Pose pose = odom.getPose();
     pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
     return pose;
