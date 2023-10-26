@@ -21,9 +21,10 @@
 #include "lemlib/asset.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/movements/movement.hpp"
+#include "lemlib/devices/gyro/imu.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
 #include "lemlib/chassis/structs.hpp"
-#include "lemlib/chassis/odom.hpp"
+#include "lemlib/odom/odom.hpp"
 
 namespace lemlib {
 /**
@@ -45,11 +46,100 @@ typedef std::function<float(float, float)> DriveCurveFunction_t;
 float defaultDriveCurve(float input, float scale);
 
 /**
+ * @brief Struct containing all the sensors used for odometry
+ *
+ * The sensors are kept in arrays to support virtually any odometry setup.
+ * Vectors are useful because they can any number of elements, including 0
+ *
+ * This struct contains 2 vectors of tracking wheels, and 1 vector of the abstract
+ * gyro class
+ */
+struct Sensors {
+        // vector of sensors to use
+        std::vector<TrackingWheel> verticals;
+        std::vector<TrackingWheel> horizontals;
+        std::vector<std::shared_ptr<Gyro>> gyros;
+
+        /**
+         * @brief Construct a new Sensors object
+         *
+         * @param verticals reference to a vector of vertical tracking wheels
+         * @param horizontals reference to a vector of horizontal tracking wheels
+         * @param gyros reference to a vector of abstract gyros
+         */
+        Sensors(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
+                std::vector<std::shared_ptr<Gyro>>& gyros)
+            : verticals(verticals),
+              horizontals(horizontals),
+              gyros(gyros) {}
+
+        /**
+         * @brief Construct a new Sensors object
+         *
+         * @param verticals reference to a vector of vertical tracking wheels
+         * @param horizontals reference to a vector of horizontal tracking wheels
+         * @param gyros reference to a vector of pros IMUs
+         */
+        Sensors(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
+                std::vector<pros::Imu>& imus)
+            : verticals(verticals),
+              horizontals(horizontals) {
+            gyros = {};
+            for (auto& imu : imus) gyros.push_back(std::make_shared<Imu>(imu));
+        }
+};
+
+/**
+ * @brief Struct containing constants for a chassis controller
+ *
+ * The constants are stored in a struct so that they can be easily passed to the chassis class
+ * Set a constant to 0 and it will be ignored
+ *
+ * @param kP proportional constant for the chassis controller
+ * @param kD derivative constant for the chassis controller
+ * @param smallError the error at which the chassis controller will switch to a slower control loop
+ * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
+ * @param largeError the error at which the chassis controller will switch to a faster control loop
+ * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
+ * @param slew the maximum acceleration of the chassis controller
+ */
+typedef struct {
+        float kP;
+        float kD;
+        float smallError;
+        float smallErrorTimeout;
+        float largeError;
+        float largeErrorTimeout;
+        float slew;
+} ChassisController_t;
+
+/**
+ * @brief Struct containing constants for a drivetrain
+ *
+ * The constants are stored in a struct so that they can be easily passed to the chassis class
+ * Set a constant to 0 and it will be ignored
+ *
+ * @param leftMotors pointer to the left motors
+ * @param rightMotors pointer to the right motors
+ * @param trackWidth the track width of the robot
+ * @param wheelDiameter the diameter of the wheel used on the drivetrain
+ * @param rpm the rpm of the wheels
+ * @param chasePower higher values make the robot move faster but causes more overshoot on turns
+ */
+typedef struct {
+        pros::MotorGroup* leftMotors;
+        pros::MotorGroup* rightMotors;
+        float trackWidth;
+        float wheelDiameter;
+        float rpm;
+        float chasePower;
+} Drivetrain_t;
+
+/**
  * @brief Chassis class
  *
  */
 class Chassis {
-        friend class Odometry;
     public:
         /**
          * @brief Construct a new Chassis
@@ -60,21 +150,24 @@ class Chassis {
          * @param sensors sensors to be used for odometry
          * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
-        Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve)
-            : drivetrain(drivetrain),
-              lateralSettings(lateralSettings),
-              angularSettings(angularSettings),
-              sensors(sensors),
-              driveCurve(driveCurve),
-              odom(sensors, drivetrain) {}
+        Chassis(Drivetrain_t& drivetrain, ChassisController_t& lateralSettings, ChassisController_t& angularSettings,
+                Sensors& sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
+        /**
+         * @brief Construct a new Chassis
+         *
+         * @param drivetrain drivetrain to be used for the chassis
+         * @param lateralSettings settings for the lateral controller
+         * @param angularSettings settings for the angular controller
+         * @param odom unique pointer to the odom instance to use
+         * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
+         */
+        Chassis(Drivetrain_t& drivetrain, ChassisController_t& lateralSettings, ChassisController_t& angularSettings,
+                std::unique_ptr<Odom> odom, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
 
         /**
          * @brief Initialize the chassis
-         *
-         * @param calibrateIMU whether to calibrate the IMU. True by default
          */
-        void initialize(bool calibrateIMU = true);
+        void initialize();
 
         /**
          * @brief Set the pose of the chassis
@@ -220,14 +313,13 @@ class Chassis {
 
         float prevDist = 0; // the previous distance travelled by the movement
 
-        Odometry odom;
+        std::unique_ptr<Odom> odom;
         std::unique_ptr<Movement> movement;
         std::unique_ptr<pros::Task> task;
 
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;
-        OdomSensors_t sensors;
         DriveCurveFunction_t driveCurve;
 };
 } // namespace lemlib
