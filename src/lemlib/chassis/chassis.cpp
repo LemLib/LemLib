@@ -14,54 +14,22 @@
 #include "pros/misc.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/pid.hpp"
-#include "lemlib/odom/arc.hpp"
-#include "lemlib/devices/gyro/imu.hpp"
 #include "lemlib/movements/boomerang.hpp"
 #include "lemlib/movements/purepursuit.hpp"
 #include "lemlib/movements/turn.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/chassis/odom.hpp"
 
-namespace lemlib {
-/**
- * Construct a new chassis
- *
- * The constructor is very complex at the moment, and that is because of the structs that are passed as parameters.
- * TODO: change structs to make odom initialization nicer
- */
-Chassis::Chassis(Drivetrain_t& drivetrain, ChassisController_t& lateralSettings, ChassisController_t& angularSettings,
-                 Sensors& sensors, DriveCurveFunction_t driveCurve)
-    : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
-      angularSettings(angularSettings),
-      driveCurve(driveCurve) {
-    if (sensors.verticals.size() < 2)
-        sensors.verticals.push_back(TrackingWheel(std::make_shared<pros::MotorGroup>(drivetrain.leftMotors),
-                                                  drivetrain.wheelDiameter, -drivetrain.trackWidth / 2,
-                                                  drivetrain.rpm));
-}
-
-/**
- * Construct a new chassis
- *
- * This constructor has the user pass the unique pointer directly to the constructor,
- * which is useful for advanced teams who want to use their own odometry algorithm
- */
-Chassis::Chassis(Drivetrain_t& drivetrain, ChassisController_t& lateralSettings, ChassisController_t& angularSettings,
-                 std::unique_ptr<Odom> odom, DriveCurveFunction_t driveCurve)
-    : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
-      angularSettings(angularSettings),
-      odom(std::move(odom)),
-      driveCurve(driveCurve) {}
+using namespace lemlib;
 
 /**
  * Initialize the chassis
  *
  * Calibrates sensors and starts the chassis task
  */
-void Chassis::initialize() {
+void Chassis::initialize(bool calibrateIMU) {
     // calibrate odom
-    odom->calibrate();
+    odom.calibrate(calibrateIMU);
     // start the chassis task if it doesn't exist
     if (task == nullptr)
         task = std::make_unique<pros::Task>([&]() {
@@ -91,7 +59,7 @@ void Chassis::setPose(float x, float y, float theta, bool radians) {
 void Chassis::setPose(Pose pose, bool radians) {
     if (!radians) pose.theta = degToRad(pose.theta);
     pose.theta = M_PI_2 - pose.theta;
-    odom->setPose(pose);
+    odom.setPose(pose);
 }
 
 /**
@@ -101,7 +69,7 @@ void Chassis::setPose(Pose pose, bool radians) {
  * but it also transforms the pose to the format needed by the user
  */
 Pose Chassis::getPose(bool radians) {
-    Pose pose = odom->getPose();
+    Pose pose = odom.getPose();
     pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
     return pose;
@@ -252,10 +220,10 @@ void Chassis::follow(const asset& path, float lookahead, int timeout, bool forwa
  */
 void Chassis::update() {
     // update odometry
-    odom->update();
+    odom.update();
     // update the motion controller, if one is running
     if (movement != nullptr) {
-        std::pair<int, int> output = movement->update(odom->getPose()); // get output
+        std::pair<int, int> output = movement->update(odom.getPose()); // get output
         if (output.first == 128 && output.second == 128) { // if the movement is done
             movement = nullptr; // stop movement
             output.first = 0;
@@ -266,4 +234,3 @@ void Chassis::update() {
         drivetrain.rightMotors->move(output.second);
     }
 }
-} // namespace lemlib
