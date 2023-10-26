@@ -201,7 +201,7 @@ Odometry</h1>
 <div class="line"><a class="code hl_class" href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a> left_tracking_wheel(&amp;enc, 2.75, 4.3, 2);</div>
 <div class="ttc" id="aclasslemlib_1_1TrackingWheel_html"><div class="ttname"><a href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a></div><div class="ttdef"><b>Definition:</b> trackingWheel.hpp:19</div></div>
 </div><!-- fragment --><p >Hold on, how far away from the tracking center is the tracking wheel? Turns out, its not the straight distance to the center of the robot, but only one component of it. Below is a diagram which shows the relationship between the tracking center and the tracking wheel: <img src="./assets/2_setting_up_the_chassis/tracking_wheel_distance.png" alt="" height="800" style="display: block;margin-left: auto;margin-right: auto;" class="inline"/></p>
-<p >Remember, vertical tracking wheels should have a negative offset if on the left of the tracking center, and horizontal tracking wheels should have a negative offset if in front of the tracking center.</p>
+<p >Remember, vertical tracking wheels should have a negative offset if on the left of the tracking center, and horizontal tracking wheels should have a negative offset if behindthe tracking center.</p>
 <p >Now, we can put all the tracking wheels together into a struct with <code><a class="el" href="structlemlib_1_1OdomSensors__t.html" title="Struct containing all the sensors used for odometry.">lemlib::OdomSensors_t</a></code>. This struct will be passed to the LemLib chassis. Below is an example of how to do this: </p><div class="fragment"><div class="line"><span class="comment">// left tracking wheel encoder</span></div>
 <div class="line">pros::ADIEncoder left_enc(<span class="charliteral">&#39;A&#39;</span>, <span class="charliteral">&#39;B&#39;</span>, <span class="keyword">true</span>); <span class="comment">// ports A and B, reversed</span></div>
 <div class="line"><span class="comment">// right tracking wheel encoder</span></div>
@@ -213,7 +213,7 @@ Odometry</h1>
 <div class="line"><a class="code hl_class" href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a> left_tracking_wheel(&amp;left_enc, 2.75, -4.6); <span class="comment">// 2.75&quot; wheel diameter, -4.6&quot; offset from tracking center</span></div>
 <div class="line"><span class="comment">// right tracking wheel</span></div>
 <div class="line"><a class="code hl_class" href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a> right_tracking_wheel(&amp;right_rot, 2.75, 1.7); <span class="comment">// 2.75&quot; wheel diameter, 1.7&quot; offset from tracking center</span></div>
-<div class="line"><a class="code hl_class" href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a> back_tracking_wheel(&amp;back_enc, 2.75, 4.5); <span class="comment">// 2.75&quot; wheel diameter, 4.5&quot; offset from tracking center</span></div>
+<div class="line"><a class="code hl_class" href="classlemlib_1_1TrackingWheel.html">lemlib::TrackingWheel</a> back_tracking_wheel(&amp;back_enc, 2.75, -4.5); <span class="comment">// 2.75&quot; wheel diameter, -4.5&quot; offset from tracking center</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// inertial sensor</span></div>
 <div class="line">pros::Imu inertial_sensor(2); <span class="comment">// port 2</span></div>
