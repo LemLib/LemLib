@@ -14,10 +14,11 @@
 #include "lemlib/pid.hpp"
 #include "lemlib/util.hpp"
 
+namespace lemlib {
 // define static variables
-std::string lemlib::FAPID::input = "FAPID";
-pros::Task* lemlib::FAPID::logTask = nullptr;
-pros::Mutex lemlib::FAPID::logMutex = pros::Mutex();
+std::string FAPID::input = "FAPID";
+pros::Task* FAPID::logTask = nullptr;
+pros::Mutex FAPID::logMutex = pros::Mutex();
 
 /**
  * @brief Construct a new FAPID
@@ -29,7 +30,7 @@ pros::Mutex lemlib::FAPID::logMutex = pros::Mutex();
  * @param kD derivative gain, multiplied by change in error and added to output
  * @param name name of the FAPID. Used for logging
  */
-lemlib::FAPID::FAPID(float kF, float kA, float kP, float kI, float kD, std::string name) {
+FAPID::FAPID(float kF, float kA, float kP, float kI, float kD, std::string name) {
     this->kF = kF;
     this->kA = kA;
     this->kP = kP;
@@ -47,7 +48,7 @@ lemlib::FAPID::FAPID(float kF, float kA, float kP, float kI, float kD, std::stri
  * @param kI integral gain, multiplied by total error and added to output
  * @param kD derivative gain, multiplied by change in error and added to output
  */
-void lemlib::FAPID::setGains(float kF, float kA, float kP, float kI, float kD) {
+void FAPID::setGains(float kF, float kA, float kP, float kI, float kD) {
     this->kF = kF;
     this->kA = kA;
     this->kP = kP;
@@ -64,7 +65,7 @@ void lemlib::FAPID::setGains(float kF, float kA, float kP, float kI, float kD) {
  * @param smallTime
  * @param maxTime
  */
-void lemlib::FAPID::setExit(float largeError, float smallError, int largeTime, int smallTime, int maxTime) {
+void FAPID::setExit(float largeError, float smallError, int largeTime, int smallTime, int maxTime) {
     this->largeError = largeError;
     this->smallError = smallError;
     this->largeTime = largeTime;
@@ -81,14 +82,14 @@ void lemlib::FAPID::setExit(float largeError, float smallError, int largeTime, i
  * PIDs could slow down the program.
  * @return float - output
  */
-float lemlib::FAPID::update(float target, float position, bool log) {
+float FAPID::update(float target, float position, bool log) {
     // check most recent input if logging is enabled
     // this does not run by default because the mutexes could slow down the program
     // calculate output
     float error = target - position;
     float deltaError = error - prevError;
     float output = kF * target + kP * error + kI * totalError + kD * deltaError;
-    if (kA != 0) output = lemlib::slew(output, prevOutput, kA);
+    if (kA != 0) output = slew(output, prevOutput, kA);
     prevOutput = output;
     prevError = error;
     totalError += error;
@@ -99,7 +100,7 @@ float lemlib::FAPID::update(float target, float position, bool log) {
 /**
  * @brief Reset the FAPID
  */
-void lemlib::FAPID::reset() {
+void FAPID::reset() {
     prevError = 0;
     totalError = 0;
     prevOutput = 0;
@@ -113,7 +114,7 @@ void lemlib::FAPID::reset() {
  * @return true - the FAPID has settled
  * @return false - the FAPID has not settled
  */
-bool lemlib::FAPID::settled() {
+bool FAPID::settled() {
     if (startTime == 0) { // if maxTime has not been set
         startTime = pros::c::millis();
         return false;
@@ -147,7 +148,7 @@ bool lemlib::FAPID::settled() {
  * list of functions that can be called:
  * reset()
  */
-void lemlib::FAPID::init() {
+void FAPID::init() {
     if (logTask != nullptr) {
         logTask = new pros::Task {[=] {
             while (true) {
@@ -162,7 +163,7 @@ void lemlib::FAPID::init() {
 /**
  * @brief Log the FAPID
  */
-void lemlib::FAPID::log() {
+void FAPID::log() {
     // check if the input starts with the name of the FAPID
     // try to obtain the logging mutex
     if (logMutex.take(5)) {
@@ -207,3 +208,4 @@ void lemlib::FAPID::log() {
         logMutex.give();
     }
 }
+}; // namespace lemlib

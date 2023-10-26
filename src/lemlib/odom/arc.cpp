@@ -3,6 +3,7 @@
 #include "lemlib/logger/logger.hpp"
 #include "lemlib/odom/arc.hpp"
 
+namespace lemlib {
 /**
  * Construct a odometry through tracking arcs
  *
@@ -14,8 +15,8 @@
  * Vectors are passed since they can have a varying number of sensors in them, allowing for
  * any tracking wheel + imu setup
  */
-lemlib::ArcOdom::ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                         std::vector<std::shared_ptr<Gyro>>& gyros)
+ArcOdom::ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
+                 std::vector<std::shared_ptr<Gyro>>& gyros)
     : verticals(verticals),
       horizontals(horizontals),
       gyros(gyros) {}
@@ -26,7 +27,7 @@ lemlib::ArcOdom::ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<Trac
  * We have to calibrate tracking wheels and imus. We calibrate them all and remove any that fail
  * calibration. The encoders will output errors if they fail to calibrate.
  */
-void lemlib::ArcOdom::calibrate() {
+void ArcOdom::calibrate() {
     // calibrate vertical tracking wheels
     for (auto it = verticals.begin(); it != verticals.end(); it++) {
         if (it->reset()) {
@@ -71,7 +72,7 @@ void lemlib::ArcOdom::calibrate() {
  * @param tracker2 the second tracking wheel
  * @return float change in angle, in radians
  */
-float calcDeltaTheta(lemlib::TrackingWheel& tracker1, lemlib::TrackingWheel& tracker2) {
+float calcDeltaTheta(TrackingWheel& tracker1, TrackingWheel& tracker2) {
     const float numerator = tracker1.getDistanceDelta(false) - tracker2.getDistanceDelta(false);
     const float denominator = tracker1.getOffset() - tracker2.getOffset();
     return numerator / denominator;
@@ -85,7 +86,7 @@ float calcDeltaTheta(lemlib::TrackingWheel& tracker1, lemlib::TrackingWheel& tra
  * @param gyros vector of Gyro shared pointers
  * @return float the average change in heading
  */
-float calcDeltaTheta(std::vector<std::shared_ptr<lemlib::Gyro>>& gyros) {
+float calcDeltaTheta(std::vector<std::shared_ptr<Gyro>>& gyros) {
     float deltaTheta = 0;
     for (const auto& gyro : gyros) deltaTheta += gyro->getRotationDelta() / gyros.size();
     return deltaTheta;
@@ -104,7 +105,7 @@ float calcDeltaTheta(std::vector<std::shared_ptr<lemlib::Gyro>>& gyros) {
  * 5225A has published a fantastic paper on this odom algorithm:
  * http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
  */
-void lemlib::ArcOdom::update() {
+void ArcOdom::update() {
     // calculate theta
     // Priority:
     // 1. IMU
@@ -147,3 +148,4 @@ void lemlib::ArcOdom::update() {
     // calculate global position
     pose += local.rotate(avgTheta);
 }
+}; // namespace lemlib

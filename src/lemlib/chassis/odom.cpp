@@ -21,8 +21,7 @@
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
 
-using namespace lemlib;
-
+namespace lemlib {
 /**
  * Calibrate odometry sensors
  *
@@ -180,3 +179,4 @@ void Odometry::update() {
     pose.y += localX * sin(avgHeading);
     pose.theta = heading;
 }
+}; // namespace lemlib

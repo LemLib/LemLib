@@ -4,6 +4,7 @@
 #include "lemlib/util.hpp"
 #include "lemlib/movements/purepursuit.hpp"
 
+namespace lemlib {
 /**
  * Construct a new Pure Pursuit movement
  *
@@ -16,8 +17,8 @@
  * it into a vector of strings. We then convert each of these strings into
  * floats, and then push back a new waypoint to the path vector
  */
-lemlib::PurePursuit::PurePursuit(float trackWidth, const asset& path, float lookaheadDist, int timeout, bool forwards,
-                                 int maxSpeed)
+PurePursuit::PurePursuit(float trackWidth, const asset& path, float lookaheadDist, int timeout, bool forwards,
+                         int maxSpeed)
     : Movement(),
       trackWidth(trackWidth),
       lookaheadDist(lookaheadDist),
@@ -31,7 +32,7 @@ lemlib::PurePursuit::PurePursuit(float trackWidth, const asset& path, float look
     // decode the asset
     // TODO: be able to pass in a buffer directly instead of covert to string
     std::string input(reinterpret_cast<char*>(path.buf), path.size);
-    std::vector<std::string> lines = lemlib::splitString(input, "\n");
+    std::vector<std::string> lines = splitString(input, "\n");
     for (const std::string& line : lines) { // loop through all lines
         if (line == "endData" || line == "endData\r") break;
         std::vector<std::string> pointInput = splitString(line, ", "); // parse line
@@ -48,7 +49,7 @@ lemlib::PurePursuit::PurePursuit(float trackWidth, const asset& path, float look
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float lemlib::PurePursuit::getDist() { return dist; }
+float PurePursuit::getDist() { return dist; }
 
 /**
  * Pure Pursuit is a motion algorithm published by R. Craig Coulter in 1992
@@ -64,7 +65,7 @@ float lemlib::PurePursuit::getDist() { return dist; }
  * determines the speed of the robot at each point, allowing for smooth deceleration
  * and a slower speed around corners, or a user defined speed.
  */
-std::pair<int, int> lemlib::PurePursuit::update(Pose pose) {
+std::pair<int, int> PurePursuit::update(Pose pose) {
     // exit if the competition state has changed
     if (pros::competition::get_status() != compState) state = 1;
     // exit if the timeout has been reached
@@ -129,3 +130,4 @@ std::pair<int, int> lemlib::PurePursuit::update(Pose pose) {
 
     return {std::round(leftVel), std::round(rightVel)};
 }
+}; // namespace lemlib

@@ -16,6 +16,7 @@
 
 #include "lemlib/pose.hpp"
 
+namespace lemlib {
 /**
  * @brief Create a new pose
  *
@@ -23,10 +24,10 @@
  * @param y component
  * @param theta heading. Defaults to 0
  */
-lemlib::Pose::Pose(float x, float y, float theta) {
-    this->x = x;
-    this->y = y;
-    this->theta = theta;
+Pose::Pose(float x, float y, float theta) {
+    x = x;
+    y = y;
+    theta = theta;
 }
 
 /**
@@ -35,19 +36,17 @@ lemlib::Pose::Pose(float x, float y, float theta) {
  * @param other other pose
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::operator+(const lemlib::Pose& other) {
-    return lemlib::Pose(this->x + other.x, this->y + other.y, this->theta);
-}
+Pose Pose::operator+(const Pose& other) { return Pose(x + other.x, y + other.y, theta); }
 
 /**
  * @brief Set the value of this pose to its value + the value of another pose
  *
  * @param other other pose
  */
-void lemlib::Pose::operator+=(const Pose& other) {
-    this->x += other.x;
-    this->y += other.y;
-    this->theta += other.theta;
+void Pose::operator+=(const Pose& other) {
+    x += other.x;
+    y += other.y;
+    theta += other.theta;
 }
 
 /**
@@ -56,19 +55,17 @@ void lemlib::Pose::operator+=(const Pose& other) {
  * @param other other pose
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::operator-(const lemlib::Pose& other) {
-    return lemlib::Pose(this->x - other.x, this->y - other.y, this->theta);
-}
+Pose Pose::operator-(const Pose& other) { return Pose(x - other.x, y - other.y, theta); }
 
 /**
  * @brief Set the value of this pose to its value - the value of another pose
  *
  * @param other other pose
  */
-void lemlib::Pose::operator-=(const Pose& other) {
-    this->x -= other.x;
-    this->y -= other.y;
-    this->theta -= other.theta;
+void Pose::operator-=(const Pose& other) {
+    x -= other.x;
+    y -= other.y;
+    theta -= other.theta;
 }
 
 /**
@@ -77,7 +74,7 @@ void lemlib::Pose::operator-=(const Pose& other) {
  * @param other other pose
  * @return Pose
  */
-float lemlib::Pose::operator*(const lemlib::Pose& other) { return this->x * other.x + this->y * other.y; }
+float Pose::operator*(const Pose& other) { return x * other.x + y * other.y; }
 
 /**
  * @brief Multiply a pose by a float
@@ -85,9 +82,7 @@ float lemlib::Pose::operator*(const lemlib::Pose& other) { return this->x * othe
  * @param other float
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::operator*(const float& other) {
-    return lemlib::Pose(this->x * other, this->y * other, this->theta);
-}
+Pose Pose::operator*(const float& other) { return Pose(x * other, y * other, theta); }
 
 /**
  * @brief Divide a pose by a float
@@ -95,9 +90,7 @@ lemlib::Pose lemlib::Pose::operator*(const float& other) {
  * @param other float
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::operator/(const float& other) {
-    return lemlib::Pose(this->x / other, this->y / other, this->theta);
-}
+Pose Pose::operator/(const float& other) { return Pose(x / other, y / other, theta); }
 
 /**
  * @brief Check if two poses are equal
@@ -105,9 +98,7 @@ lemlib::Pose lemlib::Pose::operator/(const float& other) {
  * @param other the other pose
  * @return bool
  */
-bool lemlib::Pose::operator==(const Pose& other) {
-    return this->x == other.x && this->y == other.y && this->theta == other.theta;
-}
+bool Pose::operator==(const Pose& other) { return x == other.x && y == other.y && theta == other.theta; }
 
 /**
  * @brief Check if two poses are not equal
@@ -115,9 +106,7 @@ bool lemlib::Pose::operator==(const Pose& other) {
  * @param other the other pose
  * @return bool
  */
-bool lemlib::Pose::operator!=(const Pose& other) {
-    return this->x != other.x || this->y != other.y || this->theta != other.theta;
-}
+bool Pose::operator!=(const Pose& other) { return x != other.x || y != other.y || theta != other.theta; }
 
 /**
  * @brief Linearly interpolate between two poses
@@ -126,9 +115,7 @@ bool lemlib::Pose::operator!=(const Pose& other) {
  * @param t t value
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::lerp(lemlib::Pose other, float t) {
-    return lemlib::Pose(this->x + (other.x - this->x) * t, this->y + (other.y - this->y) * t, this->theta);
-}
+Pose Pose::lerp(Pose other, float t) { return Pose(x + (other.x - x) * t, y + (other.y - y) * t, theta); }
 
 /**
  * @brief Get the distance between two poses
@@ -136,7 +123,7 @@ lemlib::Pose lemlib::Pose::lerp(lemlib::Pose other, float t) {
  * @param other the other pose
  * @return float
  */
-float lemlib::Pose::distance(lemlib::Pose other) { return std::hypot(this->x - other.x, this->y - other.y); }
+float Pose::distance(Pose other) { return std::hypot(x - other.x, y - other.y); }
 
 /**
  * @brief Get the angle between two poses
@@ -144,7 +131,7 @@ float lemlib::Pose::distance(lemlib::Pose other) { return std::hypot(this->x - o
  * @param other the other pose
  * @return float in radians
  */
-float lemlib::Pose::angle(lemlib::Pose other) { return std::atan2(other.y - this->y, other.x - this->x); }
+float Pose::angle(Pose other) { return std::atan2(other.y - y, other.x - x); }
 
 /**
  * @brief Rotate a pose by an angle
@@ -152,14 +139,15 @@ float lemlib::Pose::angle(lemlib::Pose other) { return std::atan2(other.y - this
  * @param angle angle in radians
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::rotate(float angle) {
+Pose Pose::rotate(float angle) {
     const float cosAngle = std::cos(angle);
     const float sinAngle = std::sin(angle);
 
-    return lemlib::Pose(this->x * cosAngle - this->y * sinAngle, this->x * sinAngle + this->y * cosAngle, this->theta);
+    return Pose(x * cosAngle - y * sinAngle, x * sinAngle + y * cosAngle, theta);
 }
 
-std::string lemlib::format_as(const lemlib::Pose& pose) {
+std::string format_as(const Pose& pose) {
     // the double brackets become single brackets
     return fmt::format("lemlib::Pose {{ x: {}, y: {}, theta: {} }}", pose.x, pose.y, pose.theta);
 }
+} // namespace lemlib

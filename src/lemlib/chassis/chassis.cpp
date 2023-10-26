@@ -20,8 +20,7 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 
-using namespace lemlib;
-
+namespace lemlib {
 /**
  * Initialize the chassis
  *
@@ -234,3 +233,4 @@ void Chassis::update() {
         drivetrain.rightMotors->move(output.second);
     }
 }
+}; // namespace lemlib

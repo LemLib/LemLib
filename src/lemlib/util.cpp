@@ -14,6 +14,7 @@
 #include "lemlib/pose.hpp"
 #include "lemlib/util.hpp"
 
+namespace lemlib {
 /**
  * @brief Slew rate limiter
  *
@@ -22,7 +23,7 @@
  * @param maxChange maximum change. No maximum if set to 0
  * @return float - the limited value
  */
-float lemlib::slew(float target, float current, float maxChange) {
+float slew(float target, float current, float maxChange) {
     float change = target - current;
     if (maxChange == 0) return target;
     if (change > maxChange) change = maxChange;
@@ -36,7 +37,7 @@ float lemlib::slew(float target, float current, float maxChange) {
  * @param rad radians
  * @return float degrees
  */
-float lemlib::radToDeg(float rad) { return rad * 180 / M_PI; }
+float radToDeg(float rad) { return rad * 180 / M_PI; }
 
 /**
  * @brief Convert degrees to radians
@@ -44,7 +45,7 @@ float lemlib::radToDeg(float rad) { return rad * 180 / M_PI; }
  * @param deg degrees
  * @return float radians
  */
-float lemlib::degToRad(float deg) { return deg * M_PI / 180; }
+float degToRad(float deg) { return deg * M_PI / 180; }
 
 /**
  * @brief Calculate the error between 2 angles. Useful when calculating the error between 2 headings
@@ -54,7 +55,7 @@ float lemlib::degToRad(float deg) { return deg * M_PI / 180; }
  * @param radians true if angle is in radians, false if not. False by default
  * @return float wrapped angle
  */
-float lemlib::angleError(float angle1, float angle2, bool radians) {
+float angleError(float angle1, float angle2, bool radians) {
     float max = radians ? 2 * M_PI : 360;
     float half = radians ? M_PI : 180;
     angle1 = fmod(angle1, max);
@@ -71,7 +72,7 @@ float lemlib::angleError(float angle1, float angle2, bool radians) {
  * @param x the number to get the sign of
  * @return int - -1 if negative, 1 if positive
  */
-int lemlib::sgn(float x) {
+int sgn(float x) {
     if (x < 0) return -1;
     else return 1;
 }
@@ -82,7 +83,7 @@ int lemlib::sgn(float x) {
  * @param values
  * @return float
  */
-float lemlib::avg(std::vector<float> values) {
+float avg(std::vector<float> values) {
     float sum = 0;
     for (float value : values) { sum += value; }
     return sum / values.size();
@@ -96,16 +97,14 @@ float lemlib::avg(std::vector<float> values) {
  * @param smooth smoothing factor (0-1). 1 means no smoothing, 0 means no change
  * @return float - the smoothed output
  */
-float lemlib::ema(float current, float previous, float smooth) {
-    return (current * smooth) + (previous * (1 - smooth));
-}
+float ema(float current, float previous, float smooth) { return (current * smooth) + (previous * (1 - smooth)); }
 
 /**
  * Finds the curvature of a circle which intersects 2 points, and is tangent to the first point
  *
  * Inspired by: https://www.chiefdelphi.com/t/paper-implementation-of-the-adaptive-pure-pursuit-controller/166552
  */
-float lemlib::getCurvature(Pose p1, Pose p2) {
+float getCurvature(Pose p1, Pose p2) {
     // calculate whether the pose is on the left or right side of the circle
     float side = sgn(std::sin(p1.theta) * (p2.x - p1.x) - std::cos(p1.theta) * (p2.y - p1.y));
     // calculate center point and radius
@@ -125,7 +124,7 @@ float lemlib::getCurvature(Pose p1, Pose p2) {
  * For each instance of the delimeter, the part of the string before the delimeter is pushed to the vector.
  * The last part of the string is pushed to the vector after the loop is done.
  */
-std::vector<std::string> lemlib::splitString(const std::string& input, const std::string& delimiter) {
+std::vector<std::string> splitString(const std::string& input, const std::string& delimiter) {
     std::vector<std::string> output;
     const size_t delimLength = delimiter.length();
     size_t start = 0;
@@ -154,7 +153,7 @@ std::vector<std::string> lemlib::splitString(const std::string& input, const std
  * The function only calculates the square of the distance, because the exact distance is not needed.
  * It only needs to know what waypoint is closest.
  */
-lemlib::Waypoint lemlib::closestWaypoint(const std::vector<Waypoint>& waypoints, const Pose& target) {
+Waypoint closestWaypoint(const std::vector<Waypoint>& waypoints, const Pose& target) {
     Waypoint closest = waypoints[0];
     float dist = pow(target.x - closest.x, 2) + pow(target.y - closest.y, 2);
 
@@ -179,10 +178,10 @@ lemlib::Waypoint lemlib::closestWaypoint(const std::vector<Waypoint>& waypoints,
  * If there are no intersections, it returns the center of the circle.
  * If there are multiple intersections, it returns the first one.
  */
-lemlib::Pose lemlib::circleLineIntersect(Pose p1, Pose p2, Pose center, float radius) {
+Pose circleLineIntersect(Pose p1, Pose p2, Pose center, float radius) {
     // uses the quadratic formula to calculate intersection points
-    lemlib::Pose d = p2 - p1;
-    lemlib::Pose f = p1 - center;
+    Pose d = p2 - p1;
+    Pose f = p1 - center;
     float a = d * d;
     float b = 2 * (f * d);
     float c = (f * f) - pow(radius, 2);
@@ -207,3 +206,4 @@ lemlib::Pose lemlib::circleLineIntersect(Pose p1, Pose p2, Pose center, float ra
     // no intersection found
     return center;
 }
+}; // namespace lemlib

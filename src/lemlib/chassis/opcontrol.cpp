@@ -3,7 +3,6 @@
 #include <math.h>
 
 namespace lemlib {
-
 /**
  * @brief  Default drive curve. Modifies the input with an exponential curve. If the input is 127, the function
  * will always output 127, no matter the value of scale, likewise for -127. A scale of zero disable the curve

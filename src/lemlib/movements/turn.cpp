@@ -6,6 +6,7 @@
 #include "lemlib/pose.hpp"
 #include "lemlib/movements/turn.hpp"
 
+namespace lemlib {
 /**
  * Turn constructor
  *
@@ -15,7 +16,7 @@
  * Here we just store the arguments in member variables, and store the
  * initial competition state.
  */
-lemlib::Turn::Turn(FAPID angularPID, float target, int maxSpeed)
+Turn::Turn(FAPID angularPID, float target, int maxSpeed)
     : angularPID(angularPID),
       targetHeading(target),
       maxSpeed(maxSpeed) {
@@ -32,7 +33,7 @@ lemlib::Turn::Turn(FAPID angularPID, float target, int maxSpeed)
  * Here we just store the arguments in member variables, and store the
  * initial competition state.
  */
-lemlib::Turn::Turn(FAPID angularPID, Pose target, bool reversed, int maxSpeed)
+Turn::Turn(FAPID angularPID, Pose target, bool reversed, int maxSpeed)
     : angularPID(angularPID),
       targetPose(target),
       reversed(reversed),
@@ -47,7 +48,7 @@ lemlib::Turn::Turn(FAPID angularPID, Pose target, bool reversed, int maxSpeed)
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float lemlib::Turn::getDist() { return dist; }
+float Turn::getDist() { return dist; }
 
 /**
  * The turning algorithm uses field-relative position of the robot to face a target heading
@@ -60,7 +61,7 @@ float lemlib::Turn::getDist() { return dist; }
  *
  * This algorithm only uses 1 PID to turn the chassis.
  */
-std::pair<int, int> lemlib::Turn::update(Pose pose) {
+std::pair<int, int> Turn::update(Pose pose) {
     // set state to 1 if the pid has settled
     if (angularPID.settled()) state = 1;
     // exit if movement is in state 1 (settled)
@@ -89,3 +90,4 @@ std::pair<int, int> lemlib::Turn::update(Pose pose) {
     // return output
     return {output, -output};
 }
+}; // namespace lemlib
