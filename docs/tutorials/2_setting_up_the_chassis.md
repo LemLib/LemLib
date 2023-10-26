@@ -69,7 +69,7 @@ lemlib::TrackingWheel left_tracking_wheel(&enc, 2.75, 4.3, 2);
 Hold on, how far away from the tracking center is the tracking wheel? Turns out, its not the straight distance to the center of the robot, but only one component of it. Below is a diagram which shows the relationship between the tracking center and the tracking wheel:
 <img src="./assets/2_setting_up_the_chassis/tracking_wheel_distance.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
 
-Remember, vertical tracking wheels should have a negative offset if on the left of the tracking center, and horizontal tracking wheels should have a negative offset if in front of the tracking center.
+Remember, vertical tracking wheels should have a negative offset if on the left of the tracking center, and horizontal tracking wheels should have a negative offset if behindthe tracking center.
 
 Now, we can put all the tracking wheels together into a struct with `lemlib::OdomSensors_t`. This struct will be passed to the LemLib chassis. Below is an example of how to do this:
 ```cpp
@@ -84,7 +84,7 @@ pros::ADIEncoder back_enc('C', 'D', false); // ports C and D, not reversed
 lemlib::TrackingWheel left_tracking_wheel(&left_enc, 2.75, -4.6); // 2.75" wheel diameter, -4.6" offset from tracking center
 // right tracking wheel
 lemlib::TrackingWheel right_tracking_wheel(&right_rot, 2.75, 1.7); // 2.75" wheel diameter, 1.7" offset from tracking center
-lemlib::TrackingWheel back_tracking_wheel(&back_enc, 2.75, 4.5); // 2.75" wheel diameter, 4.5" offset from tracking center
+lemlib::TrackingWheel back_tracking_wheel(&back_enc, 2.75, -4.5); // 2.75" wheel diameter, -4.5" offset from tracking center
 
 // inertial sensor
 pros::Imu inertial_sensor(2); // port 2
