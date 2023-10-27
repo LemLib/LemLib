@@ -22,8 +22,9 @@ class ArcOdom : public Odom {
         /**
          * @brief Calibrate tracking wheels and inertial sensors
          *
+         * @param calibrateGyros Whether or not to calibrate gyros. True by default. Here for compatibility reasons
          */
-        void calibrate() override;
+        void calibrate(bool calibrateGyros = true) override;
         /**
          * @brief Update odom pose
          *

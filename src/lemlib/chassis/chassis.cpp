@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <math.h>
-#include <optional>
-#include "lemlib/logger/baseSink.hpp"
+#include "main.h"
+#include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
@@ -9,32 +9,69 @@
 #include "lemlib/logger/logger.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/chassis.hpp"
-#include "lemlib/chassis/odom.hpp"
+#include "lemlib/odom/arc.hpp"
+#include "lemlib/devices/gyro/imu.hpp"
 
 namespace lemlib {
+std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t> ports,
+                                                 const pros::v5::MotorGears gears) {
+    // create the shared pointer
+    std::shared_ptr<pros::MotorGroup> motors =
+        std::make_shared<pros::MotorGroup>(std::initializer_list<int8_t> {ports}, gears);
+    return motors;
+}
+
 /**
- * @brief Calibrate the chassis sensors
+ * Construct a new Chassis
  *
- * @param calibrateIMU whether the IMU should be calibrated. true by default
+ * Most member variables get initialized here, in an initializer list.
+ * A notable exception is the odometry, which at the moment is too complex to
+ * construct in the initializer list
  */
-void lemlib::Chassis::calibrate(bool calibrateImu) {
-    // calibrate the IMU if it exists and the user doesn't specify otherwise
-    if (sensors.imu != nullptr && calibrateImu) calibrateIMU(sensors);
-    // initialize odom
-    if (sensors.vertical1 == nullptr)
-        sensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
-                                                      -(drivetrain.trackWidth / 2), drivetrain.rpm);
-    if (sensors.vertical2 == nullptr)
-        sensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
-                                                      drivetrain.trackWidth / 2, drivetrain.rpm);
-    sensors.vertical1->reset();
-    sensors.vertical2->reset();
-    if (sensors.horizontal1 != nullptr) sensors.horizontal1->reset();
-    if (sensors.horizontal2 != nullptr) sensors.horizontal2->reset();
-    setSensors(sensors, drivetrain);
-    init();
-    // rumble to controller to indicate success
-    pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
+Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
+                 OdomSensors_t sensors, DriveCurveFunction_t driveCurve)
+    : drivetrain(drivetrain),
+      lateralSettings(lateralSettings),
+      angularSettings(angularSettings),
+      driveCurve(driveCurve) {
+    // create sensor vectors
+    std::vector<TrackingWheel> verticals;
+    std::vector<TrackingWheel> horizontals;
+    std::vector<std::shared_ptr<Gyro>> imus;
+    // configure vertical tracking wheels
+    if (sensors.vertical1 != nullptr) verticals.push_back(*sensors.vertical1); // add vertical tracker if configured
+    else // else use left drivetrain encoders
+        verticals.push_back(
+            TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.rpm));
+    if (sensors.vertical2 != nullptr) verticals.push_back(*sensors.vertical2); // add vertical tracker if configured
+    else // else use right drivetrain encoders
+        verticals.push_back(
+            TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
+    // configure horizontal tracking wheels
+    if (sensors.horizontal1 != nullptr) horizontals.push_back(*sensors.horizontal1);
+    if (sensors.horizontal2 != nullptr) horizontals.push_back(*sensors.horizontal2);
+    // configure imu
+    if (sensors.imu != nullptr) imus.push_back(std::make_shared<Imu>(*sensors.imu));
+    // create odom instance
+    odom = std::make_unique<ArcOdom>(ArcOdom(verticals, horizontals, imus));
+}
+
+/**
+ * Initialize the chassis
+ *
+ * Calibrates sensors and starts the chassis task
+ */
+void Chassis::initialize(bool calibrateIMU) {
+    // calibrate odom
+    odom->calibrate(calibrateIMU);
+    // start the chassis task if it doesn't exist
+    if (task == nullptr)
+        task = std::make_unique<pros::Task>([&]() {
+            while (true) {
+                update();
+                pros::delay(10);
+            }
+        });
 }
 
 /**
@@ -58,7 +95,7 @@ void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
 void Chassis::setPose(Pose pose, bool radians) {
     if (!radians) pose.theta = degToRad(pose.theta);
     pose.theta = M_PI_2 - pose.theta;
-    odom.setPose(pose);
+    odom->setPose(pose);
 }
 
 /**
@@ -68,7 +105,7 @@ void Chassis::setPose(Pose pose, bool radians) {
  * but it also transforms the pose to the format needed by the user
  */
 Pose Chassis::getPose(bool radians) {
-    Pose pose = odom.getPose();
+    Pose pose = odom->getPose();
     pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
     return pose;
@@ -648,113 +685,31 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
  * @param params struct to simulate named parameters
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointParams params, bool async) {
-    params.earlyExitRange = fabs(params.earlyExitRange);
-    this->requestMotionStart();
-    // were all motions cancelled?
-    if (!this->motionRunning) return;
-    // if the function is async, run it in a new task
-    if (async) {
-        pros::Task task([&]() { moveToPoint(x, y, timeout, params, false); });
-        this->endMotion();
-        pros::delay(10); // delay to give the task time to start
-        return;
-    }
+void Chassis::follow(const asset& path, float lookahead, int timeout, bool forwards, int maxSpeed) {
+    // if a movement is already running, wait until it is done
+    if (movement != nullptr) waitUntilDone();
+    // create the movement
+    movement = std::make_unique<PurePursuit>(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
+}
 
-    // reset PIDs and exit conditions
-    lateralPID.reset();
-    lateralLargeExit.reset();
-    lateralSmallExit.reset();
-    angularPID.reset();
-
-    // initialize vars used between iterations
-    Pose lastPose = getPose();
-    distTravelled = 0;
-    Timer timer(timeout);
-    bool close = false;
-    float prevLateralOut = 0; // previous lateral power
-    float prevAngularOut = 0; // previous angular power
-    const int compState = pros::competition::get_status();
-    std::optional<bool> prevSide = std::nullopt;
-
-    // calculate target pose in standard form
-    Pose target(x, y);
-    target.theta = lastPose.angle(target);
-
-    // main loop
-    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) &&
-           this->motionRunning) {
-        // update position
-        const Pose pose = getPose(true, true);
-
-        // update distance travelled
-        distTravelled += pose.distance(lastPose);
-        lastPose = pose;
-
-        // calculate distance to the target point
-        const float distTarget = pose.distance(target);
-
-        // check if the robot is close enough to the target to start settling
-        if (distTarget < 7.5 && close == false) {
-            close = true;
-            params.maxSpeed = fmax(fabs(prevLateralOut), 60);
-        }
-
-        // motion chaining
-        const bool side =
-            (pose.y - target.y) * -sin(target.theta) <= (pose.x - target.x) * cos(target.theta) + params.earlyExitRange;
-        if (prevSide == std::nullopt) prevSide = side;
-        const bool sameSide = side == prevSide;
-        // exit if close
-        if (!sameSide && params.minSpeed != 0) break;
-        prevSide = side;
-
-        // calculate error
-        const float adjustedRobotTheta = params.forwards ? pose.theta : pose.theta + M_PI;
-        const float angularError = angleError(adjustedRobotTheta, pose.angle(target));
-        float lateralError = pose.distance(target) * cos(angleError(pose.theta, pose.angle(target)));
-
-        // update exit conditions
-        lateralSmallExit.update(lateralError);
-        lateralLargeExit.update(lateralError);
-
-        // get output from PIDs
-        float lateralOut = lateralPID.update(lateralError);
-        float angularOut = angularPID.update(radToDeg(angularError));
-        if (close) angularOut = 0;
-
-        // apply restrictions on angular speed
-        angularOut = std::clamp(angularOut, -params.maxSpeed, params.maxSpeed);
-        angularOut = slew(angularOut, prevAngularOut, angularSettings.slew);
-
-        // apply restrictions on lateral speed
-        lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
-        // constrain lateral output by max accel
-        // but not for decelerating, since that would interfere with settling
-        if (!close) lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-
-        // prevent moving in the wrong direction
-        if (params.forwards && !close) lateralOut = std::fmax(lateralOut, 0);
-        else if (!params.forwards && !close) lateralOut = std::fmin(lateralOut, 0);
-
-        // constrain lateral output by the minimum speed
-        if (params.forwards && lateralOut < fabs(params.minSpeed) && lateralOut > 0) lateralOut = fabs(params.minSpeed);
-        if (!params.forwards && -lateralOut < fabs(params.minSpeed) && lateralOut < 0)
-            lateralOut = -fabs(params.minSpeed);
-
-        // update previous output
-        prevAngularOut = angularOut;
-        prevLateralOut = lateralOut;
-
-        infoSink()->debug("Angular Out: {}, Lateral Out: {}", angularOut, lateralOut);
-
-        // ratio the speeds to respect the max speed
-        float leftPower = lateralOut + angularOut;
-        float rightPower = lateralOut - angularOut;
-        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / params.maxSpeed;
-        if (ratio > 1) {
-            leftPower /= ratio;
-            rightPower /= ratio;
+/**
+ * Chassis update function
+ *
+ * This function is called in a loop by the chassis task
+ * It updates any motion controller that may be running
+ * And it updates the odometry
+ * Once implemented, it will also update the drivetrain velocity controllers
+ */
+void Chassis::update() {
+    // update odometry
+    odom->update();
+    // update the motion controller, if one is running
+    if (movement != nullptr) {
+        std::pair<int, int> output = movement->update(odom->getPose()); // get output
+        if (output.first == 128 && output.second == 128) { // if the movement is done
+            movement = nullptr; // stop movement
+            output.first = 0;
+            output.second = 0;
         }
 
         // move the drivetrain

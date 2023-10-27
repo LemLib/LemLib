@@ -27,7 +27,7 @@ ArcOdom::ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<TrackingWhee
  * We have to calibrate tracking wheels and imus. We calibrate them all and remove any that fail
  * calibration. The encoders will output errors if they fail to calibrate.
  */
-void ArcOdom::calibrate() {
+void ArcOdom::calibrate(bool calibrateGyros) {
     // calibrate vertical tracking wheels
     for (auto it = verticals.begin(); it != verticals.end(); it++) {
         if (it->reset()) {
@@ -45,20 +45,22 @@ void ArcOdom::calibrate() {
     }
 
     // calibrate gyros
-    for (auto it = gyros.begin(); it != gyros.end(); it++) (**it).calibrate();
-    Timer timer(3000); // try calibrating gyros for 3000 ms
-    while (!timer.isDone()) {
-        for (auto& gyro : gyros) { // continuously calibrate in case of failure
-            if (!gyro->isCalibrating() && !gyro->isCalibrated()) gyro->calibrate();
+    if (calibrateGyros) {
+        for (auto& it : gyros) it->calibrate();
+        Timer timer(3000); // try calibrating gyros for 3000 ms
+        while (!timer.isDone()) {
+            for (auto& gyro : gyros) { // continuously calibrate in case of failure
+                if (!gyro->isCalibrating() && !gyro->isCalibrated()) gyro->calibrate();
+            }
+            pros::delay(10);
         }
-        pros::delay(10);
-    }
 
-    // if a gyro failed to calibrate, output an error and erase the gyro
-    for (auto it = gyros.begin(); it != gyros.end(); it++) {
-        if (!(**it).isCalibrated()) {
-            infoSink()->warn("IMU on port {} failed to calibrate! Removing", (**it).getPort());
-            gyros.erase(it);
+        // if a gyro failed to calibrate, output an error and erase the gyro
+        for (auto it = gyros.begin(); it != gyros.end(); it++) {
+            if (!(**it).isCalibrated()) {
+                infoSink()->warn("IMU on port {} failed to calibrate! Removing", (**it).getPort());
+                gyros.erase(it);
+            }
         }
     }
 }
