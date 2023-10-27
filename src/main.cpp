@@ -20,6 +20,7 @@ lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.
 lemlib::Drivetrain_t drivetrain {leftDrive, rightDrive, 10, lemlib::Omniwheel::NEW_4, 300, 8};
 
 // lateral motion controller
+<<<<<<< HEAD
 lemlib::ControllerSettings linearController(10, // proportional gain (kP)
                                             0, // integral gain (kI)
                                             3, // derivative gain (kD)
@@ -42,6 +43,28 @@ lemlib::ControllerSettings angularController(2, // proportional gain (kP)
                                              500, // large error range timeout, in milliseconds
                                              0 // maximum acceleration (slew)
 );
+=======
+lemlib::ChassisController_t lateralController {
+    10, // kP
+    30, // kD
+    1, // small exit range
+    100, // small exit timeout
+    3, // large error range
+    500, // large error timeout
+    20 // acceleration cap
+};
+
+// angular motion controller
+lemlib::ChassisController_t angularController {
+    2, // kP
+    10, // kD
+    1, // small exit range
+    100, // small exit timeout
+    3, // large exit range
+    500, // large exit timeout
+    20 // acceleration cap
+};
+>>>>>>> 6dbbcff (add pid comments in main.cpp example)
 
 // sensors for odometry
 // note that in this example we use internal motor encoders (IMEs), so we don't pass vertical tracking wheels
