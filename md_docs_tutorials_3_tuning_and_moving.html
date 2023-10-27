@@ -184,6 +184,7 @@ Odometry</h1>
 <div class="line">}</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">void</span> initialize() {</div>
+<div class="line">    pros::lcd::initialize(); <span class="comment">// initialize brain screen</span></div>
 <div class="line">    chassis.calibrate(); <span class="comment">// calibrate the chassis</span></div>
 <div class="line">    pros::Task screenTask(screen); <span class="comment">// create a task to print the position to the screen</span></div>
 <div class="line">}</div>
