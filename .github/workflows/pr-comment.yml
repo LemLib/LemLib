@@ -7,6 +7,10 @@ jobs:
   pr_comment:
     if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    
+    permissions: 
+      pull-requests: write
+    
     steps:
       - uses: actions/github-script@v6
         with:
@@ -38,9 +42,23 @@ jobs:
             const {owner, repo} = context.repo;
             const run_id = ${{github.event.workflow_run.id}};
 
-            const pull_requests = ${{ toJSON(github.event.workflow_run.pull_requests) }};
-            if (!pull_requests.length) {
-              return core.error("This workflow doesn't match any pull requests!");
+            const pull_head_sha = '${{github.event.workflow_run.head_sha}}';
+            const pull_user_id = ${{github.event.sender.id}};
+
+            const issue_number = await (async () => {
+              const pulls = await github.rest.pulls.list({owner, repo});
+              for await (const {data} of github.paginate.iterator(pulls)) {
+                for (const pull of data) {
+                  if (pull.head.sha === pull_head_sha && pull.user.id === pull_user_id) {
+                    return pull.number;
+                  }
+                }
+              }
+            })();
+            if (issue_number) {
+              core.info(`Using pull request ${issue_number}`);
+            } else {
+              return core.error(`No matching pull request found`);
             }
 
             const artifacts = await github.paginate(
@@ -61,7 +79,5 @@ jobs:
             
             core.info("Review thread message body:", body);
 
-            for (const pr of pull_requests) {
-              await upsertComment(owner, repo, pr.number,
+              await upsertComment(owner, repo, issue_number,
                 "nightly-link", body);
-            }
