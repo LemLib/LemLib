@@ -1,10 +1,11 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
 
 // drive motor groups
-pros::MotorGroup leftMotors({-8, -20, 19}, pros::v5::MotorGears::blue); // left motor group
-pros::MotorGroup rightMotors({2, 11, -13}, pros::v5::MotorGears::blue); // right motor group
+auto leftDrive = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
+auto rightDrive = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
 // Inertial Sensor on port 12
 pros::Imu imu(12);
@@ -13,7 +14,7 @@ pros::Imu imu(12);
 lemlib::TrackingWheel vertical(4, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain
-lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_4, 300, 8};
+lemlib::Drivetrain_t drivetrain {leftDrive, rightDrive, 10, lemlib::Omniwheel::NEW_4, 300, 8};
 
 // lateral motion controller
 lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
@@ -39,6 +40,7 @@ void initialize() {
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
     // lemlib::bufferedStdout().setRate(...);
+    // If you use bluetooth or a wired connection, you will want to have a rate of 10ms
 
     // for more information on how the formatting for the loggers
     // works, refer to the fmtlib docs

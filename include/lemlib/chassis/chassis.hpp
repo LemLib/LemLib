@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 
+#include "pros/abstract_motor.hpp"
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
@@ -22,10 +23,89 @@
 #include "lemlib/pose.hpp"
 #include "lemlib/movements/movement.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
-#include "lemlib/chassis/structs.hpp"
-#include "lemlib/chassis/odom.hpp"
+#include "lemlib/odom/odom.hpp"
 
 namespace lemlib {
+/**
+ * @brief Struct containing all the sensors used for odometry
+ *
+ * The sensors are stored in a struct so that they can be easily passed to the chassis class
+ * The variables are pointers so that they can be set to nullptr if they are not used
+ * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
+ *
+ * @param vertical1 pointer to the first vertical tracking wheel
+ * @param vertical2 pointer to the second vertical tracking wheel
+ * @param horizontal1 pointer to the first horizontal tracking wheel
+ * @param horizontal2 pointer to the second horizontal tracking wheel
+ * @param imu pointer to the IMU
+ */
+typedef struct {
+        TrackingWheel* vertical1;
+        TrackingWheel* vertical2;
+        TrackingWheel* horizontal1;
+        TrackingWheel* horizontal2;
+        pros::Imu* imu;
+} OdomSensors_t;
+
+/**
+ * @brief Struct containing constants for a chassis controller
+ *
+ * The constants are stored in a struct so that they can be easily passed to the chassis class
+ * Set a constant to 0 and it will be ignored
+ *
+ * @param kP proportional constant for the chassis controller
+ * @param kD derivative constant for the chassis controller
+ * @param smallError the error at which the chassis controller will switch to a slower control loop
+ * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
+ * @param largeError the error at which the chassis controller will switch to a faster control loop
+ * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
+ * @param slew the maximum acceleration of the chassis controller
+ */
+typedef struct {
+        float kP;
+        float kD;
+        float smallError;
+        float smallErrorTimeout;
+        float largeError;
+        float largeErrorTimeout;
+        float slew;
+} ChassisController_t;
+
+/**
+ * @brief Struct containing constants for a drivetrain
+ *
+ * The constants are stored in a struct so that they can be easily passed to the chassis class
+ * Set a constant to 0 and it will be ignored
+ *
+ * @param leftMotors pointer to the left motors
+ * @param rightMotors pointer to the right motors
+ * @param trackWidth the track width of the robot
+ * @param wheelDiameter the diameter of the wheel used on the drivetrain
+ * @param rpm the rpm of the wheels
+ * @param chasePower higher values make the robot move faster but causes more overshoot on turns
+ */
+typedef struct {
+        std::shared_ptr<pros::MotorGroup> leftMotors;
+        std::shared_ptr<pros::MotorGroup> rightMotors;
+        float trackWidth;
+        float wheelDiameter;
+        float rpm;
+        float chasePower;
+} Drivetrain_t;
+
+/**
+ * @brief Construct a shared pointer to a tracking wheel.
+ *
+ * This function exists to reduce complexity for the client. The client could make their own
+ * shared pointer to a motor group, but this function makes it easy
+ *
+ * @param ports array of signed ports. Negative ports mean the motor should be reversed
+ * @param gears the gearbox used by the motors
+ * @return std::shared_ptr<pros::MotorGroup> a shared pointer to the motor group
+ */
+std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t> ports,
+                                                 const pros::v5::MotorGears gears);
+
 /**
  * @brief Function pointer type for drive curve functions.
  * @param input The control input in the range [-127, 127].
@@ -49,7 +129,6 @@ float defaultDriveCurve(float input, float scale);
  *
  */
 class Chassis {
-        friend class Odometry;
     public:
         /**
          * @brief Construct a new Chassis
@@ -61,13 +140,7 @@ class Chassis {
          * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve)
-            : drivetrain(drivetrain),
-              lateralSettings(lateralSettings),
-              angularSettings(angularSettings),
-              sensors(sensors),
-              driveCurve(driveCurve),
-              odom(sensors, drivetrain) {}
+                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
 
         /**
          * @brief Initialize the chassis
@@ -220,14 +293,13 @@ class Chassis {
 
         float prevDist = 0; // the previous distance travelled by the movement
 
-        Odometry odom;
+        std::unique_ptr<Odom> odom;
         std::unique_ptr<Movement> movement;
         std::unique_ptr<pros::Task> task;
 
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;
-        OdomSensors_t sensors;
         DriveCurveFunction_t driveCurve;
 };
 } // namespace lemlib

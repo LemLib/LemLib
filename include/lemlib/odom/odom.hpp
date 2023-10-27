@@ -9,8 +9,9 @@ class Odom {
          * @brief Calibrate any sensors which may be used, or anything else that needs to be done
          * before tracking starts
          *
+         * @param calibrateGyros Whether or not to calibrate gyros. True by default. Here for compatibility reasons
          */
-        virtual void calibrate() = 0;
+        virtual void calibrate(bool calibrateGyros = true) = 0;
         /**
          * @brief Update odom pose
          *
