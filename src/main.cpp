@@ -17,10 +17,26 @@ lemlib::TrackingWheel vertical(4, lemlib::Omniwheel::NEW_275, -3.7);
 lemlib::Drivetrain_t drivetrain {leftDrive, rightDrive, 10, lemlib::Omniwheel::NEW_4, 300, 8};
 
 // lateral motion controller
-lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
+lemlib::ChassisController_t lateralController {
+    10, // kP
+    30, // kD
+    1, // small exit range
+    100, // small exit timeout
+    3, // large error range
+    500, // large error timeout
+    20 // acceleration cap
+};
 
 // angular motion controller
-lemlib::ChassisController_t angularController {2, 10, 1, 100, 3, 500, 20};
+lemlib::ChassisController_t angularController {
+    2, // kP
+    10, // kD
+    1, // small exit range
+    100, // small exit timeout
+    3, // large exit range
+    500, // large exit timeout
+    20 // acceleration cap
+};
 
 // sensors for odometry
 lemlib::OdomSensors_t sensors {&vertical, nullptr, nullptr, nullptr, &imu};
