@@ -28,6 +28,7 @@ void screen() {
 }
 
 void initialize() {
+    pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate the chassis
     pros::Task screenTask(screen); // create a task to print the position to the screen
 }
