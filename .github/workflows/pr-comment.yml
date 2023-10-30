@@ -17,10 +17,6 @@ jobs:
           # This snippet is public-domain, taken from
           # https://github.com/oprypin/nightly.link/blob/master/.github/workflows/pr-comment.yml
           script: |
-            const octokit = new Octokit({
-              auth: '${{ secrets.GITHUB_TOKEN }}'
-            })
-            
             async function upsertComment(owner, repo, issue_number, purpose, body) {
               const {data: comments} = await github.rest.issues.listComments(
                 {owner, repo, issue_number});
@@ -28,7 +24,7 @@ jobs:
               const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->`;
 
               body = body.split(marker)[0] + marker + body;
-              await octokit.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
+              await github.rest.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
                 owner: owner,
                 repo: repo,
                 pull_number: issue_number,
