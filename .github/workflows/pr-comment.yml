@@ -20,10 +20,11 @@ jobs:
             async function upsertComment(owner, repo, issue_number, purpose, body) {
               const {data: comments} = await github.rest.issues.listComments(
                 {owner, repo, issue_number});
-              
+                
               const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->`;
+              const old_body = ${{github.event.pull_request.body}}
 
-              body = body.split(marker)[0] + marker + body;
+              body = old_body.split(marker)[0] + marker + body;
               await github.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
                 owner: owner,
                 repo: repo,
