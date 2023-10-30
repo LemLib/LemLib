@@ -17,12 +17,11 @@ jobs:
           # This snippet is public-domain, taken from
           # https://github.com/oprypin/nightly.link/blob/master/.github/workflows/pr-comment.yml
           script: |
-            async function upsertComment(owner, repo, issue_number, purpose, body) {
+            async function upsertComment(owner, repo, issue_number, purpose,old_body, body) {
               const {data: comments} = await github.rest.issues.listComments(
                 {owner, repo, issue_number});
                 
               const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->`;
-              const old_body = ${{github.event.pull_request.body}}
 
               body = old_body.split(marker)[0] + marker + body;
               await github.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
@@ -55,12 +54,12 @@ jobs:
             const pull_head_sha = '${{github.event.workflow_run.head_sha}}';
             const pull_user_id = ${{github.event.sender.id}};
 
-            const issue_number = await (async () => {
+            const {issue_number, old_body} = await (async () => {
               const pulls = await github.rest.pulls.list({owner, repo});
               for await (const {data} of github.paginate.iterator(pulls)) {
                 for (const pull of data) {
                   if (pull.head.sha === pull_head_sha && pull.user.id === pull_user_id) {
-                    return pull.number;
+                    return {issue_number: pull.number, old_body: pull.body};
                   }
                 }
               }
@@ -90,4 +89,4 @@ jobs:
             core.info("Review thread message body:", body);
 
               await upsertComment(owner, repo, issue_number,
-                "nightly-link", body);
+                "nightly-link", old_body, body);
