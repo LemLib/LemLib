@@ -21,7 +21,7 @@ jobs:
               const {data: comments} = await github.rest.issues.listComments(
                 {owner, repo, issue_number});
                 
-              const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->`;
+              const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->\n`;
 
               body = old_body.split(marker)[0] + marker + body;
               await github.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
@@ -78,6 +78,8 @@ jobs:
             const template = artifacts[0];
 
             let body = `## Download the template for this pull request: \n\n`;
+            body += `> [!NOTE]  
+            > This is auto generated`;  
             body += `- via manual download: [${template.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)\n`;
             body += `- via Pros Integrated Terminal: \n \`\`\`
             curl -o ${template.name}.zip https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip;
