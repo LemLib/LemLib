@@ -24,7 +24,7 @@ jobs:
               const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->`;
 
               body = body.split(marker)[0] + marker + body;
-              await github.rest.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
+              await github.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
                 owner: owner,
                 repo: repo,
                 pull_number: issue_number,
