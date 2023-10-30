@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <math.h>
+<<<<<<< HEAD
 #include "main.h"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
@@ -7,73 +8,12 @@
 #include "pros/rtos.h"
 #include "pros/misc.hpp"
 #include "lemlib/logger/logger.hpp"
+=======
+>>>>>>> 170c6ec (Abstract chassis class)
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/chassis.hpp"
-#include "lemlib/odom/arc.hpp"
-#include "lemlib/devices/gyro/imu.hpp"
 
 namespace lemlib {
-std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t> ports,
-                                                 const pros::v5::MotorGears gears) {
-    // create the shared pointer
-    std::shared_ptr<pros::MotorGroup> motors =
-        std::make_shared<pros::MotorGroup>(std::initializer_list<int8_t> {ports}, gears);
-    return motors;
-}
-
-/**
- * Construct a new Chassis
- *
- * Most member variables get initialized here, in an initializer list.
- * A notable exception is the odometry, which at the moment is too complex to
- * construct in the initializer list
- */
-Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                 OdomSensors_t sensors, DriveCurveFunction_t driveCurve)
-    : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
-      angularSettings(angularSettings),
-      driveCurve(driveCurve) {
-    // create sensor vectors
-    std::vector<TrackingWheel> verticals;
-    std::vector<TrackingWheel> horizontals;
-    std::vector<std::shared_ptr<Gyro>> imus;
-    // configure vertical tracking wheels
-    if (sensors.vertical1 != nullptr) verticals.push_back(*sensors.vertical1); // add vertical tracker if configured
-    else // else use left drivetrain encoders
-        verticals.push_back(
-            TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.rpm));
-    if (sensors.vertical2 != nullptr) verticals.push_back(*sensors.vertical2); // add vertical tracker if configured
-    else // else use right drivetrain encoders
-        verticals.push_back(
-            TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
-    // configure horizontal tracking wheels
-    if (sensors.horizontal1 != nullptr) horizontals.push_back(*sensors.horizontal1);
-    if (sensors.horizontal2 != nullptr) horizontals.push_back(*sensors.horizontal2);
-    // configure imu
-    if (sensors.imu != nullptr) imus.push_back(std::make_shared<Imu>(*sensors.imu));
-    // create odom instance
-    odom = std::make_unique<ArcOdom>(ArcOdom(verticals, horizontals, imus));
-}
-
-/**
- * Initialize the chassis
- *
- * Calibrates sensors and starts the chassis task
- */
-void Chassis::initialize(bool calibrateIMU) {
-    // calibrate odom
-    odom->calibrate(calibrateIMU);
-    // start the chassis task if it doesn't exist
-    if (task == nullptr)
-        task = std::make_unique<pros::Task>([&]() {
-            while (true) {
-                update();
-                pros::delay(10);
-            }
-        });
-}
-
 /**
  * @brief Set the Pose object
  *
@@ -351,6 +291,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToParams pa
 }
 
 /**
+<<<<<<< HEAD
  * @brief Turn the chassis so it is facing the target heading
  *
  * The PID logging id is "angularPID"
@@ -726,5 +667,14 @@ void Chassis::update() {
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
+=======
+ * Move the robot with a custom motion algorithm
+ */
+void Chassis::moveCustom(std::unique_ptr<Movement> movement) {
+    // if a movement is already running, wait until it is done
+    if (movement != nullptr) waitUntilDone();
+    // create the movement
+    this->movement = std::move(movement);
+>>>>>>> 170c6ec (Abstract chassis class)
 }
 }; // namespace lemlib

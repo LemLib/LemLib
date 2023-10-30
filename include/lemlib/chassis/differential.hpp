@@ -134,10 +134,9 @@ class Differential : public Chassis {
          * @param lateralSettings settings for the lateral controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
-         * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
         Differential(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                     OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
+                     OdomSensors_t sensors);
 
         /**
          * @brief Initialize the chassis
@@ -208,7 +207,7 @@ class Differential : public Chassis {
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 0 disables the curve entirely.
          */
-        void tank(int left, int right, float curveGain = 0.0);
+        void tank(int left, int right, float curveGain = 0.0, DriveCurveFunction_t driveCurve = defaultDriveCurve);
 
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
@@ -219,7 +218,7 @@ class Differential : public Chassis {
          * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void arcade(int throttle, int turn, float curveGain = 0.0);
+        void arcade(int throttle, int turn, float curveGain = 0.0, DriveCurveFunction_t driveCurve = defaultDriveCurve);
 
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
@@ -231,7 +230,8 @@ class Differential : public Chassis {
          * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void curvature(int throttle, int turn, float cureGain = 0.0);
+        void curvature(int throttle, int turn, float cureGain = 0.0,
+                       DriveCurveFunction_t driveCurve = defaultDriveCurve);
     private:
         /**
          * @brief Chassis update function. Updates chassis motion and odometry
@@ -242,6 +242,5 @@ class Differential : public Chassis {
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
         Drivetrain_t drivetrain;
-        DriveCurveFunction_t driveCurve;
 };
 } // namespace lemlib
