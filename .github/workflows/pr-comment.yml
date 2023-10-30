@@ -69,7 +69,7 @@ jobs:
             body += `> [!NOTE]  
             > This is auto generated from a workflow file\n`;  
             body += `- via manual download: [${template.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)\n`;
-            body += `- via Pros Integrated Terminal: \n \`\`\`
+            body += `- via PROS Integrated Terminal: \n \`\`\`
             curl -o ${template.name}.zip https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip;
             pros c fetch ${template.name}.zip;
             pros c apply ${template.name};
