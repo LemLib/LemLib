@@ -17,26 +17,39 @@ jobs:
           # This snippet is public-domain, taken from
           # https://github.com/oprypin/nightly.link/blob/master/.github/workflows/pr-comment.yml
           script: |
+            const octokit = new Octokit({
+              auth: '${{ secrets.GITHUB_TOKEN }}'
+            })
+            
             async function upsertComment(owner, repo, issue_number, purpose, body) {
               const {data: comments} = await github.rest.issues.listComments(
                 {owner, repo, issue_number});
+              
+              const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->`;
 
-              const marker = `<!-- bot: ${purpose} -->`;
-              body = marker + "\n" + body;
-
-              const existing = comments.filter((c) => c.body.includes(marker));
-              if (existing.length > 0) {
-                const last = existing[existing.length - 1];
-                core.info(`Updating comment ${last.id}`);
-                await github.rest.issues.updateComment({
-                  owner, repo,
-                  body,
-                  comment_id: last.id,
-                });
-              } else {
-                core.info(`Creating a comment in issue / PR #${issue_number}`);
-                await github.rest.issues.createComment({issue_number, body, owner, repo});
-              }
+              body = body.split(marker)[0] + marker + body;
+              await octokit.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
+                owner: owner,
+                repo: repo,
+                pull_number: issue_number,
+                body: body,
+                headers: {
+                  'X-GitHub-Api-Version': '2022-11-28'
+                }
+              }) 
+              # const existing = comments.filter((c) => c.body.includes(marker));
+              # if (existing.length > 0) {
+              #   const last = existing[existing.length - 1];
+              #   core.info(`Updating comment ${last.id}`);
+              #   await github.rest.issues.updateComment({
+              #     owner, repo,
+              #     body,
+              #     comment_id: last.id,
+              #   });
+              # } else {
+              #   core.info(`Creating a comment in issue / PR #${issue_number}`);
+              #   await github.rest.issues.createComment({issue_number, body, owner, repo});
+              # }
             }
 
             const {owner, repo} = context.repo;
