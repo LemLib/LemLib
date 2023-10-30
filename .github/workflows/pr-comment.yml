@@ -79,7 +79,7 @@ jobs:
 
             let body = `## Download the template for this pull request: \n\n`;
             body += `> [!NOTE]  
-            > This is auto generated`;  
+            > This is auto generated from [here](${{github.action_path}})`;  
             body += `- via manual download: [${template.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)\n`;
             body += `- via Pros Integrated Terminal: \n \`\`\`
             curl -o ${template.name}.zip https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip;
