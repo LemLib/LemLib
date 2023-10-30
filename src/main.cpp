@@ -56,10 +56,10 @@ lemlib::OdomSensors_t sensors {
 };
 
 // chassis
-lemlib::Chassis chassis(drivetrain, // drivetrain struct
-                        lateralController, // forwards/backwards PID struct
-                        angularController, // turning PID struct
-                        sensors // sensors struct
+lemlib::Differential chassis(drivetrain, // drivetrain struct
+                             lateralController, // forwards/backwards PID struct
+                             angularController, // turning PID struct
+                             sensors // sensors struct
 );
 
 /**
@@ -107,7 +107,7 @@ void competition_initialize() {}
 
 // get a path used for pure pursuit
 // this needs to be put outside a function
-ASSET(path_txt); // '.' replaced with "_" to make c++ happy
+ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 
 /**
  * Runs during auto
@@ -123,7 +123,7 @@ void autonomous() {
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
     // see line 110 to see how to define a path
-    chassis.follow(path_txt, 15, 4000, false);
+    chassis.follow(example_txt, 15, 4000, false);
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait

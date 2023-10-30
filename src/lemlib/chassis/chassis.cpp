@@ -9,81 +9,10 @@
  *
  */
 #include <math.h>
-#include "main.h"
-#include "pros/motor_group.hpp"
-#include "pros/motors.hpp"
-#include "pros/misc.hpp"
 #include "lemlib/util.hpp"
-#include "lemlib/pid.hpp"
-#include "lemlib/movements/boomerang.hpp"
-#include "lemlib/movements/purepursuit.hpp"
-#include "lemlib/movements/turn.hpp"
 #include "lemlib/chassis/chassis.hpp"
-#include "lemlib/odom/arc.hpp"
-#include "lemlib/devices/gyro/imu.hpp"
 
 namespace lemlib {
-std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t> ports,
-                                                 const pros::v5::MotorGears gears) {
-    // create the shared pointer
-    std::shared_ptr<pros::MotorGroup> motors =
-        std::make_shared<pros::MotorGroup>(std::initializer_list<int8_t> {ports}, gears);
-    return motors;
-}
-
-/**
- * Construct a new Chassis
- *
- * Most member variables get initialized here, in an initializer list.
- * A notable exception is the odometry, which at the moment is too complex to
- * construct in the initializer list
- */
-Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                 OdomSensors_t sensors, DriveCurveFunction_t driveCurve)
-    : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
-      angularSettings(angularSettings),
-      driveCurve(driveCurve) {
-    // create sensor vectors
-    std::vector<TrackingWheel> verticals;
-    std::vector<TrackingWheel> horizontals;
-    std::vector<std::shared_ptr<Gyro>> imus;
-    // configure vertical tracking wheels
-    if (sensors.vertical1 != nullptr) verticals.push_back(*sensors.vertical1); // add vertical tracker if configured
-    else // else use left drivetrain encoders
-        verticals.push_back(
-            TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.rpm));
-    if (sensors.vertical2 != nullptr) verticals.push_back(*sensors.vertical2); // add vertical tracker if configured
-    else // else use right drivetrain encoders
-        verticals.push_back(
-            TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
-    // configure horizontal tracking wheels
-    if (sensors.horizontal1 != nullptr) horizontals.push_back(*sensors.horizontal1);
-    if (sensors.horizontal2 != nullptr) horizontals.push_back(*sensors.horizontal2);
-    // configure imu
-    if (sensors.imu != nullptr) imus.push_back(std::make_shared<Imu>(*sensors.imu));
-    // create odom instance
-    odom = std::make_unique<ArcOdom>(ArcOdom(verticals, horizontals, imus));
-}
-
-/**
- * Initialize the chassis
- *
- * Calibrates sensors and starts the chassis task
- */
-void Chassis::initialize(bool calibrateIMU) {
-    // calibrate odom
-    odom->calibrate(calibrateIMU);
-    // start the chassis task if it doesn't exist
-    if (task == nullptr)
-        task = std::make_unique<pros::Task>([&]() {
-            while (true) {
-                update();
-                pros::delay(10);
-            }
-        });
-}
-
 /**
  * Set the pose of the chassis
  *
@@ -155,83 +84,6 @@ void Chassis::waitUntilDone() {
 }
 
 /**
- * This function sets up the Turn controller
- *
- * Like all chassis movement functions, it sets a member pointer to a new movement.
- * the movement is a derived class of the Movement class
- *
- * There are some things that need to be done before instantiating the movement however.
- * It needs to set up a PID which the movement will use to turn the robot. We also need
- * to convert the x and y values given passed in to a Pose object. All that needs to be
- * done then is to pass the parameters to a new instance of Turn, and set the movement
- * pointer.
- */
-void Chassis::turnToPose(float x, float y, int timeout, bool reversed, int maxSpeed) {
-    // if a movement is already running, wait until it is done
-    if (movement != nullptr) waitUntilDone();
-    // set up the PID
-    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
-                       angularSettings.smallErrorTimeout, timeout);
-    // create the movement
-    movement = std::make_unique<Turn>(angularPID, Pose(x, y), reversed, maxSpeed);
-}
-
-/**
- * This function sets up the Turn controller
- *
- * Like all chassis movement functions, it sets a member pointer to a new movement.
- * the movement is a derived class of the Movement class
- *
- * There are some things that need to be done before instantiating the movement however.
- * It needs to set up a PID which the movement will use to turn the robot. We also need to
- * convert the heading passed by the user to radians and standard position. All that needs to be
- * done then is to pass the parameters to a new instance of Turn, and set the movement
- * pointer.
- */
-void Chassis::turnToHeading(float heading, int timeout, int maxSpeed) {
-    // if a movement is already running, wait until it is done
-    if (movement != nullptr) waitUntilDone();
-    // convert heading to radians and standard form
-    float newHeading = M_PI_2 - degToRad(heading);
-    // set up the PID
-    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
-                       angularSettings.smallErrorTimeout, timeout);
-    // create the movement
-    movement = std::make_unique<Turn>(angularPID, newHeading, maxSpeed);
-}
-
-/**
- * This function sets up the Boomerang controller
- *
- * Like all chassis movement functions, it sets a member pointer to a new movement.
- * the movement is a derived class of the Movement class.
- *
- * There are some things that need to be done before instantiating the movement however.
- * Two PIDs need to be set up to be passed to the Boomerang constructor, and the target heading
- * needs to be converted to radians and standard form.
- * It also needs to decide what the chasePower should be. Usually this will be the value set in
- * the drivetrain struct, but it can be overridden by the user if needed.
- */
-void Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, float chasePower, float lead,
-                     int maxSpeed) {
-    // if a movement is already running, wait until it is done
-    if (movement != nullptr) waitUntilDone();
-    // convert target theta to radians and standard form
-    Pose target = Pose(x, y, M_PI_2 - degToRad(theta));
-    // set up PIDs
-    FAPID linearPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
-    linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
-                      lateralSettings.smallErrorTimeout, timeout);
-    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    // if chasePower is 0, is the value defined in the drivetrain struct
-    if (chasePower == 0) chasePower = drivetrain.chasePower;
-    // create the movement
-    movement = std::make_unique<Boomerang>(linearPID, angularPID, target, forwards, chasePower, lead, maxSpeed);
-}
-
-/**
  * Move the robot with a custom motion algorithm
  */
 void Chassis::moveCustom(std::unique_ptr<Movement> movement) {
@@ -239,43 +91,5 @@ void Chassis::moveCustom(std::unique_ptr<Movement> movement) {
     if (movement != nullptr) waitUntilDone();
     // create the movement
     this->movement = std::move(movement);
-}
-
-/**
- * This function sets up Pure Pursuit
- *
- * Unlike the chassis::moveTo function, we can just pass the parameters directly to the
- * Pure Pursuit constructor
- */
-void Chassis::follow(const asset& path, float lookahead, int timeout, bool forwards, int maxSpeed) {
-    // if a movement is already running, wait until it is done
-    if (movement != nullptr) waitUntilDone();
-    // create the movement
-    movement = std::make_unique<PurePursuit>(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
-}
-
-/**
- * Chassis update function
- *
- * This function is called in a loop by the chassis task
- * It updates any motion controller that may be running
- * And it updates the odometry
- * Once implemented, it will also update the drivetrain velocity controllers
- */
-void Chassis::update() {
-    // update odometry
-    odom->update();
-    // update the motion controller, if one is running
-    if (movement != nullptr) {
-        std::pair<int, int> output = movement->update(odom->getPose()); // get output
-        if (output.first == 128 && output.second == 128) { // if the movement is done
-            movement = nullptr; // stop movement
-            output.first = 0;
-            output.second = 0;
-        }
-        // move the motors
-        drivetrain.leftMotors->move(output.first);
-        drivetrain.rightMotors->move(output.second);
-    }
 }
 }; // namespace lemlib
