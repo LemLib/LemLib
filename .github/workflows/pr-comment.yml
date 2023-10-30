@@ -33,19 +33,6 @@ jobs:
                   'X-GitHub-Api-Version': '2022-11-28'
                 }
               }) 
-              // const existing = comments.filter((c) => c.body.includes(marker));
-              // if (existing.length > 0) {
-              //   const last = existing[existing.length - 1];
-              //   core.info(`Updating comment ${last.id}`);
-              //   await github.rest.issues.updateComment({
-              //     owner, repo,
-              //     body,
-              //     comment_id: last.id,
-              //   });
-              // } else {
-              //   core.info(`Creating a comment in issue / PR #${issue_number}`);
-              //   await github.rest.issues.createComment({issue_number, body, owner, repo});
-              // }
             }
 
             const {owner, repo} = context.repo;
