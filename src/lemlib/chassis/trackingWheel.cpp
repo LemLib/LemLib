@@ -11,6 +11,7 @@
 
 #include <math.h>
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/units.hpp"
 #include "lemlib/util.hpp"
 #include "pros/llemu.hpp"
 
@@ -32,6 +33,21 @@ lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, float wheelDiame
 /**
  * @brief Create a new tracking wheel
  *
+ * @param encoder the optical shaft encoder to use
+ * @param wheelDiameter the diameter of the wheel
+ * @param distance distance between the tracking wheel and the center of rotation in inches
+ * @param gearRatio gear ratio of the tracking wheel, defaults to 1
+ */
+lemlib::TrackingWheel::TrackingWheel(pros::ADIEncoder* encoder, Length wheelDiameter, Length distance, float gearRatio) {
+    this->encoder = encoder;
+    this->diameter = to_in(wheelDiameter);
+    this->distance = to_in(distance);
+    this->gearRatio = gearRatio;
+}
+
+/**
+ * @brief Create a new tracking wheel
+ *
  * @param encoder the v5 rotation sensor to use
  * @param wheelDiameter the diameter of the wheel
  * @param distance distance between the tracking wheel and the center of rotation in inches
@@ -47,6 +63,22 @@ lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, float wheelDiamete
 /**
  * @brief Create a new tracking wheel
  *
+ * @param encoder the v5 rotation sensor to use
+ * @param wheelDiameter the diameter of the wheel
+ * @param distance distance between the tracking wheel and the center of rotation in inches
+ * @param gearRatio gear ratio of the tracking wheel, defaults to 1
+ */
+lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, Length wheelDiameter, Length distance, float gearRatio) {
+    this->rotation = encoder;
+    this->diameter = to_in(wheelDiameter);
+    this->distance = to_in(distance);
+    this->gearRatio = gearRatio;
+}
+
+
+/**
+ * @brief Create a new tracking wheel
+ *
  * @param motors the motor group to use
  * @param wheelDiameter the diameter of the wheel
  * @param distance half the track width of the drivetrain in inches
@@ -58,6 +90,22 @@ lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group* motors, float wheelDiame
     this->diameter = wheelDiameter;
     this->distance = distance;
     this->rpm = rpm;
+}
+
+/**
+ * @brief Create a new tracking wheel
+ *
+ * @param motors the motor group to use
+ * @param wheelDiameter the diameter of the wheel
+ * @param distance half the track width of the drivetrain in inches
+ * @param rpm theoretical maximum rpm of the drivetrain wheels
+ */
+lemlib::TrackingWheel::TrackingWheel(pros::Motor_Group* motors, Length wheelDiameter, Length distance, AngularVelocity rpm) {
+    this->motors = motors;
+    this->motors->set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
+    this->diameter = to_in(wheelDiameter);
+    this->distance = to_in(distance);
+    this->rpm = to_rpm(rpm);
 }
 
 /**

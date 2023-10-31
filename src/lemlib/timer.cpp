@@ -10,6 +10,7 @@ using namespace lemlib;
  * makes the code more readable, and easier to develop.
  */
 Timer::Timer(uint32_t time) : period(time) { lastTime = pros::millis(); }
+Timer::Timer(Time time) : period(to_ms(time)) { lastTime = pros::millis(); }
 
 /**
  * Get the amount of time the timer is set to wait
@@ -58,6 +59,14 @@ bool Timer::isDone() {
  */
 void Timer::set(uint32_t time) {
     period = time; // set how long to wait
+    reset();
+}
+
+/**
+ * Set how long the timer should wait. Resets the timer.
+ */
+void Timer::set(Time time) {
+    period = to_ms(time); // set how long to wait
     reset();
 }
 

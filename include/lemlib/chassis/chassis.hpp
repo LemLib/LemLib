@@ -12,6 +12,8 @@
 #pragma once
 
 #include <functional>
+#include "chassis.hpp"
+#include "lemlib/units.hpp"
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
@@ -65,6 +67,26 @@ typedef struct {
         float slew;
 } ChassisController_t;
 
+typedef struct {
+        float kP;
+        float kD;
+        Length smallError;
+        Time smallErrorTimeout;
+        Length largeError;
+        Time largeErrorTimeout;
+        float slew;
+} LateralChassisController_t;
+
+typedef struct {
+        float kP;
+        float kD;
+        Angle smallError;
+        Time smallErrorTimeout;
+        Angle largeError;
+        Time largeErrorTimeout;
+        float slew;
+} AngularChassisController_t;
+
 /**
  * @brief Struct containing constants for a drivetrain
  *
@@ -86,6 +108,49 @@ typedef struct {
         float rpm;
         float chasePower;
 } Drivetrain_t;
+
+typedef struct {
+        pros::Motor_Group* leftMotors;
+        pros::Motor_Group* rightMotors;
+        Length trackWidth;
+        Length wheelDiameter;
+        AngularVelocity rpm;
+        float chasePower;
+} UnitDrivetrain_t;
+
+inline Drivetrain_t withoutUnits(const UnitDrivetrain_t& drivetrain) {
+        return lemlib::Drivetrain_t{
+        drivetrain.leftMotors, 
+        drivetrain.rightMotors, 
+        static_cast<float>(to_in(drivetrain.trackWidth)),
+        static_cast<float>(to_in(drivetrain.wheelDiameter)),
+        static_cast<float>(to_rpm(drivetrain.rpm)),
+        drivetrain.chasePower};
+}
+
+inline ChassisController_t withoutUnits(const LateralChassisController_t& lateralController) {
+        return lemlib::ChassisController_t {
+        lateralController.kP,
+        lateralController.kD,
+        static_cast<float>(to_in(lateralController.smallError)),
+        static_cast<float>(to_ms(lateralController.smallErrorTimeout)),
+        static_cast<float>(to_in(lateralController.largeError)),
+        static_cast<float>(to_ms(lateralController.largeErrorTimeout)),
+        lateralController.slew
+    };
+}
+
+inline ChassisController_t withoutUnits(const AngularChassisController_t& angularController) {
+        return lemlib::ChassisController_t {
+        angularController.kP,
+        angularController.kD,
+        static_cast<float>(to_deg(angularController.smallError)),
+        static_cast<float>(to_ms(angularController.smallErrorTimeout)),
+        static_cast<float>(to_deg(angularController.largeError)),
+        static_cast<float>(to_ms(angularController.largeErrorTimeout)),
+        angularController.slew
+    };
+}
 
 /**
  * @brief Function pointer type for drive curve functions.
@@ -123,6 +188,17 @@ class Chassis {
         Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
                 OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
+         * @brief Construct a new Chassis
+         *
+         * @param drivetrain drivetrain to be used for the chassis
+         * @param lateralSettings settings for the lateral controller
+         * @param angularSettings settings for the angular controller
+         * @param sensors sensors to be used for odometry
+         * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
+         */
+        Chassis(UnitDrivetrain_t drivetrain, LateralChassisController_t lateralSettings, AngularChassisController_t angularSettings,
+                OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
+        /**
          * @brief Calibrate the chassis sensors
          *
          * @param calibrateIMU whether the IMU should be calibrated. true by default
@@ -145,12 +221,35 @@ class Chassis {
          */
         void setPose(Pose pose, bool radians = false);
         /**
+         * @brief Set the pose of the chassis
+         *
+         * @param x new x value
+         * @param y new y value
+         * @param theta new theta value
+         */
+        void setPose(Length x, Length y, Angle theta);
+        /**
+         * @brief Set the pose of the chassis
+         *
+         * @param pose the new pose
+         */
+        void setPose(UnitPose pose);
+
+        /**
          * @brief Get the pose of the chassis
          *
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          */
         Pose getPose(bool radians = false);
+
+        /**
+         * @brief Get the pose of the chassis
+         *
+         * @return UnitPose
+         */
+        UnitPose getUnitPose();
+
         /**
          * @brief Get the speed of the robot
          *
@@ -158,6 +257,13 @@ class Chassis {
          * @return lemlib::Pose
          */
         Pose getSpeed(bool radians = false);
+
+        /**
+         * @brief Get the speed of the robot
+         * @return lemlib::UnitPose
+         */
+        UnitPose getUnitSpeed();
+
         /**
          * @brief Get the local speed of the robot
          *
@@ -165,6 +271,13 @@ class Chassis {
          * @return lemlib::Pose
          */
         Pose getLocalSpeed(bool radians = false);
+        /**
+         * @brief Get the local speed of the robot
+         *
+         * @return lemlib::UnitPose
+         */
+        UnitPose getLocalUnitSpeed();
+
         /**
          * @brief Estimate the pose of the robot after a certain amount of time
          *
@@ -174,6 +287,14 @@ class Chassis {
          */
         Pose estimatePose(float time, bool radians = false);
         /**
+         * @brief Estimate the pose of the robot after a certain amount of time
+         *
+         * @param time time
+         * @return lemlib::UnitPose
+         */
+        UnitPose estimateUnitPose(Time time);
+
+        /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *
          * @note Units are in inches if curret motion is moveTo or follow, degrees if using turnTo
@@ -181,6 +302,13 @@ class Chassis {
          * @param dist the distance the robot needs to travel before returning
          */
         void waitUntilDist(float dist);
+        /**
+         * @brief Wait until the robot has traveled a certain distance along the path
+         *
+         * @param dist the distance the robot needs to travel before returning
+         */
+        void waitUntilDist(Length dist);
+
         /**
          * @brief Turn the chassis so it is facing the target point
          *
@@ -196,6 +324,23 @@ class Chassis {
          */
         void turnTo(float x, float y, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127,
                     bool log = false);
+
+        /**
+         * @brief Turn the chassis so it is facing the target point
+         *
+         * The PID logging id is "angularPID"
+         *
+         * @param x x location
+         * @param y y location
+         * @param timeout longest time the robot can spend moving
+         * @param async whether the function should be run asynchronously. false by default
+         * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
+         * @param maxSpeed the maximum speed the robot can turn at. Default is 200
+         * @param log whether the chassis should log the turnTo function. false by default
+         */
+        void turnTo(Length x, Length y, Time timeout, bool async = false, bool reversed = false, float maxSpeed = 127,
+                    bool log = false);
+
         /**
          * @brief Move the chassis towards the target pose
          *
@@ -216,6 +361,28 @@ class Chassis {
          */
         void moveTo(float x, float y, float theta, int timeout, bool async = false, bool forwards = true,
                     float chasePower = 0, float lead = 0.6, float maxSpeed = 127, bool log = false);
+
+        /**
+         * @brief Move the chassis towards the target pose
+         *
+         * Uses the boomerang controller
+         *
+         * @param x x location
+         * @param y y location
+         * @param theta theta. Target angle
+         * @param timeout longest time the robot can spend moving
+         * @param async whether the function should be run asynchronously. false by default
+         * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
+         * backwards
+         * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
+         * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
+         * default to global value
+         * @param maxSpeed the maximum speed the robot can move at. 127 at default
+         * @param log whether the chassis should log the turnTo function. false by default
+         */
+        void moveTo(Length x, Length y, Angle theta, Time timeout, bool async = false, bool forwards = true,
+                    float chasePower = 0, float lead = 0.6, float maxSpeed = 127, bool log = false);
+        
         /**
          * @brief Move the chassis along a path
          *

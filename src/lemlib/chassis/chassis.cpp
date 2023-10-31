@@ -9,6 +9,8 @@
  *
  */
 #include <math.h>
+#include "lemlib/pose.hpp"
+#include "lemlib/units.hpp"
 #include "main.h"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
@@ -32,6 +34,26 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
     this->drivetrain = drivetrain;
     this->lateralSettings = lateralSettings;
     this->angularSettings = angularSettings;
+    this->odomSensors = sensors;
+    this->driveCurve = driveCurve;
+}
+
+
+/**
+ * @brief Construct a new Chassis
+ *
+ * @param drivetrain drivetrain to be used for the chassis
+ * @param lateralSettings settings for the lateral controller
+ * @param angularSettings settings for the angular controller
+ * @param sensors sensors to be used for odometry
+ * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
+ */
+
+lemlib::Chassis::Chassis(UnitDrivetrain_t drivetrain, LateralChassisController_t lateralSettings,
+                         AngularChassisController_t angularSettings, OdomSensors_t sensors, DriveCurveFunction_t driveCurve) {
+    this->drivetrain = withoutUnits(drivetrain);
+    this->lateralSettings = withoutUnits(lateralSettings);
+    this->angularSettings = withoutUnits(angularSettings);
     this->odomSensors = sensors;
     this->driveCurve = driveCurve;
 }
@@ -92,6 +114,24 @@ void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
 void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
 
 /**
+ * @brief Set the Pose object
+ *
+ * @param x new x value
+ * @param y new y value
+ * @param theta new theta value
+ */
+void lemlib::Chassis::setPose(Length x, Length y, Angle theta) {
+    lemlib::setPose(lemlib::withoutUnits(lemlib::UnitPose(x, y, theta)), true);
+}
+
+/**
+ * @brief Set the pose of the chassis
+ *
+ * @param UnitPose the new pose
+ */
+void lemlib::Chassis::setPose(UnitPose pose) { lemlib::setPose(lemlib::withoutUnits(pose), true); }
+
+/**
  * @brief Get the pose of the chassis
  *
  * @param radians whether theta should be in radians (true) or degrees (false). false by default
@@ -100,12 +140,28 @@ void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, r
 lemlib::Pose lemlib::Chassis::getPose(bool radians) { return lemlib::getPose(radians); }
 
 /**
+ * @brief Get the pose of the chassis
+ *
+ * @return UnitPose
+ */
+lemlib::UnitPose lemlib::Chassis::getUnitPose() { return lemlib::withUnits(lemlib::getPose(true)); }
+
+
+/**
  * @brief Get the speed of the robot
  *
  * @param radians true for theta in radians, false for degrees. False by default
  * @return lemlib::Pose
  */
 lemlib::Pose lemlib::Chassis::getSpeed(bool radians) { return lemlib::getSpeed(radians); }
+
+
+/**
+ * @brief Get the speed of the robot
+ *
+ * @return lemlib::UnitPose
+ */
+lemlib::UnitPose lemlib::Chassis::getUnitSpeed() { return lemlib::withUnits(lemlib::getSpeed(true)); }
 
 /**
  * @brief Get the local speed of the robot
@@ -116,6 +172,13 @@ lemlib::Pose lemlib::Chassis::getSpeed(bool radians) { return lemlib::getSpeed(r
 lemlib::Pose lemlib::Chassis::getLocalSpeed(bool radians) { return lemlib::getLocalSpeed(radians); }
 
 /**
+ * @brief Get the local speed of the robot
+ *
+ * @return lemlib::Pose
+ */
+lemlib::UnitPose lemlib::Chassis::getLocalUnitSpeed() { return lemlib::withUnits(lemlib::getLocalSpeed(true)); }
+
+/**
  * @brief Estimate the pose of the robot after a certain amount of time
  *
  * @param time time in seconds
@@ -123,6 +186,16 @@ lemlib::Pose lemlib::Chassis::getLocalSpeed(bool radians) { return lemlib::getLo
  * @return lemlib::Pose
  */
 lemlib::Pose lemlib::Chassis::estimatePose(float time, bool radians) { return lemlib::estimatePose(time, radians); }
+
+/**
+ * @brief Estimate the pose of the robot after a certain amount of time
+ *
+ * @param time time in seconds
+ * @return lemlib::Pose
+ */
+lemlib::UnitPose lemlib::Chassis::estimateUnitPose(Time time) { 
+    return lemlib::withUnits(lemlib::estimatePose(to_sec(time), true)); 
+}
 
 /**
  * @brief Wait until the robot has traveled a certain distance along the path
@@ -135,6 +208,19 @@ void lemlib::Chassis::waitUntilDist(float dist) {
     // do while to give the thread time to start
     do pros::delay(10);
     while (distTravelled <= dist && distTravelled != -1);
+}
+
+/**
+ * @brief Wait until the robot has traveled a certain distance along the path
+ *
+ * @note Units are in inches if curret motion is moveTo or follow, degrees if using turnTo
+ *
+ * @param dist the distance the robot needs to travel before returning
+ */
+void lemlib::Chassis::waitUntilDist(Length dist) {
+    // do while to give the thread time to start
+    do pros::delay(10);
+    while (distTravelled <= to_in(dist) && distTravelled != -1);
 }
 
 /**
@@ -210,6 +296,10 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
     distTravelled = -1;
     // give the mutex back
     mutex.give();
+}
+
+void lemlib::Chassis::turnTo(Length x, Length y, Time timeout, bool async, bool reversed, float maxSpeed, bool log) {
+    turnTo(to_in(x), to_in(y), to_ms(timeout), async, reversed, maxSpeed, log);
 }
 
 /**
@@ -327,4 +417,9 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
     distTravelled = -1;
     // give the mutex back
     mutex.give();
+}
+
+void lemlib::Chassis::moveTo(Length x, Length y, Angle theta, Time timeout, bool async, bool forwards, float chasePower,
+                             float lead, float maxSpeed, bool log) {
+    moveTo(to_in(x), to_in(y), to_deg(theta), to_ms(timeout), async, forwards, chasePower, lead, maxSpeed, log);
 }

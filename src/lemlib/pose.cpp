@@ -9,6 +9,7 @@
  *
  */
 
+#include "units.hpp"
 #include <math.h>
 
 #define FMT_HEADER_ONLY
@@ -29,6 +30,12 @@ lemlib::Pose::Pose(float x, float y, float theta) {
     this->theta = theta;
 }
 
+lemlib::UnitPose::UnitPose(Length x, Length y, Angle theta) {
+    this->x = x;
+    this->y = y;
+    this->theta = theta;
+}
+
 /**
  * @brief Add a pose to this pose
  *
@@ -37,6 +44,10 @@ lemlib::Pose::Pose(float x, float y, float theta) {
  */
 lemlib::Pose lemlib::Pose::operator+(const lemlib::Pose& other) {
     return lemlib::Pose(this->x + other.x, this->y + other.y, this->theta);
+}
+
+lemlib::UnitPose lemlib::UnitPose::operator+(const lemlib::UnitPose& other) {
+    return lemlib::UnitPose(this->x + other.x, this->y + other.y, this->theta);
 }
 
 /**
@@ -49,6 +60,10 @@ lemlib::Pose lemlib::Pose::operator-(const lemlib::Pose& other) {
     return lemlib::Pose(this->x - other.x, this->y - other.y, this->theta);
 }
 
+lemlib::UnitPose lemlib::UnitPose::operator-(const lemlib::UnitPose& other) {
+    return lemlib::UnitPose(this->x - other.x, this->y - other.y, this->theta);
+}
+
 /**
  * @brief Multiply a pose by this pose
  *
@@ -56,6 +71,8 @@ lemlib::Pose lemlib::Pose::operator-(const lemlib::Pose& other) {
  * @return Pose
  */
 float lemlib::Pose::operator*(const lemlib::Pose& other) { return this->x * other.x + this->y * other.y; }
+
+Length lemlib::UnitPose::operator*(const lemlib::UnitPose& other) { return this->x * other.x.raw() + this->y * other.y.raw(); }
 
 /**
  * @brief Multiply a pose by a float
@@ -67,6 +84,10 @@ lemlib::Pose lemlib::Pose::operator*(const float& other) {
     return lemlib::Pose(this->x * other, this->y * other, this->theta);
 }
 
+lemlib::UnitPose lemlib::UnitPose::operator*(const float& other) {
+    return lemlib::UnitPose(this->x * other, this->y * other, this->theta);
+}
+
 /**
  * @brief Divide a pose by a float
  *
@@ -75,6 +96,10 @@ lemlib::Pose lemlib::Pose::operator*(const float& other) {
  */
 lemlib::Pose lemlib::Pose::operator/(const float& other) {
     return lemlib::Pose(this->x / other, this->y / other, this->theta);
+}
+
+lemlib::UnitPose lemlib::UnitPose::operator/(const float& other) {
+    return lemlib::UnitPose(this->x / other, this->y / other, this->theta);
 }
 
 /**
@@ -88,6 +113,10 @@ lemlib::Pose lemlib::Pose::lerp(lemlib::Pose other, float t) {
     return lemlib::Pose(this->x + (other.x - this->x) * t, this->y + (other.y - this->y) * t, this->theta);
 }
 
+lemlib::UnitPose lemlib::UnitPose::lerp(lemlib::UnitPose other, float t) {
+    return lemlib::UnitPose(this->x + (other.x - this->x) * t, this->y + (other.y - this->y) * t, this->theta);
+}
+
 /**
  * @brief Get the distance between two poses
  *
@@ -95,6 +124,7 @@ lemlib::Pose lemlib::Pose::lerp(lemlib::Pose other, float t) {
  * @return float
  */
 float lemlib::Pose::distance(lemlib::Pose other) { return std::hypot(this->x - other.x, this->y - other.y); }
+Length lemlib::UnitPose::distance(lemlib::UnitPose other) { return units::hypot(this->x - other.x, this->y - other.y); }
 
 /**
  * @brief Get the angle between two poses
@@ -103,6 +133,7 @@ float lemlib::Pose::distance(lemlib::Pose other) { return std::hypot(this->x - o
  * @return float in radians
  */
 float lemlib::Pose::angle(lemlib::Pose other) { return std::atan2(other.y - this->y, other.x - this->x); }
+Angle lemlib::UnitPose::angle(lemlib::UnitPose other) { return units::atan2(other.y - this->y, other.x - this->x); }
 
 /**
  * @brief Rotate a pose by an angle
@@ -113,6 +144,11 @@ float lemlib::Pose::angle(lemlib::Pose other) { return std::atan2(other.y - this
 lemlib::Pose lemlib::Pose::rotate(float angle) {
     return lemlib::Pose(this->x * std::cos(angle) - this->y * std::sin(angle),
                         this->x * std::sin(angle) + this->y * std::cos(angle), this->theta);
+}
+
+lemlib::UnitPose lemlib::UnitPose::rotate(Angle angle) {
+    return lemlib::UnitPose(this->x * units::cos(angle) - this->y * units::sin(angle),
+                        this->x * units::sin(angle) + this->y * units::cos(angle), this->theta);
 }
 
 std::string lemlib::format_as(const lemlib::Pose& pose) {

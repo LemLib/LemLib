@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "lemlib/units.hpp"
 #include "pros/motors.hpp"
 #include "pros/adi.hpp"
 #include "pros/rotation.hpp"
@@ -46,6 +47,17 @@ class TrackingWheel {
          * @param gearRatio gear ratio of the tracking wheel, defaults to 1
          */
         TrackingWheel(pros::ADIEncoder* encoder, float wheelDiameter, float distance, float gearRatio = 1);
+
+        /**
+         * @brief Create a new tracking wheel
+         *
+         * @param encoder the optical shaft encoder to use
+         * @param wheelDiameter the diameter of the wheel
+         * @param distance distance between the tracking wheel and the center of rotation in inches
+         * @param gearRatio gear ratio of the tracking wheel, defaults to 1
+         */
+        TrackingWheel(pros::ADIEncoder* encoder, Length wheelDiameter, Length distance, float gearRatio = 1);
+
         /**
          * @brief Create a new tracking wheel
          *
@@ -58,12 +70,31 @@ class TrackingWheel {
         /**
          * @brief Create a new tracking wheel
          *
+         * @param encoder the v5 rotation sensor to use
+         * @param wheelDiameter the diameter of the wheel
+         * @param distance distance between the tracking wheel and the center of rotation in inches
+         * @param gearRatio gear ratio of the tracking wheel, defaults to 1
+         */
+        TrackingWheel(pros::Rotation* encoder, Length wheelDiameter, Length distance, float gearRatio = 1);
+
+        /**
+         * @brief Create a new tracking wheel
+         *
          * @param motors the motor group to use
          * @param wheelDiameter the diameter of the wheel
          * @param distance half the track width of the drivetrain in inches
          * @param rpm theoretical maximum rpm of the drivetrain wheels
          */
         TrackingWheel(pros::Motor_Group* motors, float wheelDiameter, float distance, float rpm);
+        /**
+         * @brief Create a new tracking wheel
+         *
+         * @param motors the motor group to use
+         * @param wheelDiameter the diameter of the wheel
+         * @param distance half the track width of the drivetrain in inches
+         * @param rpm theoretical maximum rpm of the drivetrain wheels
+         */
+        TrackingWheel(pros::Motor_Group* motors, Length wheelDiameter, Length distance, AngularVelocity rpm);
         /**
          * @brief Reset the tracking wheel position to 0
          *

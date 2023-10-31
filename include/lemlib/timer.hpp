@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include "lemlib/units.hpp"
 
 namespace lemlib {
 class Timer {
@@ -11,6 +12,7 @@ class Timer {
          * @param time how long to wait, in milliseconds
          */
         Timer(uint32_t time);
+        Timer(Time time);
         /**
          * @brief Get the amount of time the timer was set to
          *
@@ -42,6 +44,14 @@ class Timer {
          * @param time time in milliseconds
          */
         void set(uint32_t time);
+
+        /**
+         * @brief Set the amount of time the timer should count down. Resets the timer
+         *
+         * @param time time in milliseconds
+         */
+        void set(Time time);
+
         /**
          * @brief reset the timer
          *
