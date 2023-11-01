@@ -48,7 +48,7 @@ bool Imu::isCalibrating() const { return imu.is_calibrating(); }
  *
  * This function checks if the Imu is connected, is not calibrating,
  */
-bool Imu::isCalibrated() { return (isConnected() && !imu.is_calibrating() && !std::isinf(imu.get_heading())); }
+bool Imu::isCalibrated() { return isConnected() && !imu.is_calibrating() && !std::isinf(imu.get_heading()); }
 
 /**
  * return whether the IMU is installed
@@ -70,9 +70,9 @@ float Imu::getHeading() {
  * Get the rotation of the imu in radians and in standard position
  */
 float Imu::getRotation() {
-    const float rotation = imu.get_rotation();
+    const float rotation = M_PI_2 - degToRad(imu.get_rotation());
     lastAngle = rotation;
-    return (M_PI - degToRad(imu.get_rotation()));
+    return rotation;
 }
 
 /**

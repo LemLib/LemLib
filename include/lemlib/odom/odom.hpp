@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 #include "lemlib/pose.hpp"
 
 namespace lemlib {
@@ -30,6 +31,7 @@ class Odom {
          */
         void setPose(Pose pose);
     protected:
-        Pose pose = Pose(0, 0, 0);
+        // heading set to M_PI_2 because odom should default to IMU 0 angle
+        Pose pose = Pose(0, 0, M_PI_2);
 };
 } // namespace lemlib

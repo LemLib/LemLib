@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <math.h>
 
 namespace lemlib {
 class Gyro {
@@ -74,6 +75,6 @@ class Gyro {
          */
         virtual std::uint8_t getPort() = 0;
     protected:
-        float lastAngle = 0;
+        float lastAngle = M_PI_2;
 };
 } // namespace lemlib
