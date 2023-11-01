@@ -25,10 +25,9 @@ namespace lemlib {
  * @param theta heading. Defaults to 0
  */
 Pose::Pose(float x, float y, float theta)
-    :x(x),
-    y(y),
-    theta(theta)
-    {}
+    : x(x),
+      y(y),
+      theta(theta) {}
 
 /**
  * @brief Add a pose to this pose
