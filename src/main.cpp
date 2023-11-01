@@ -184,10 +184,14 @@ void autonomous() {
     // wait until the movement is done
     chassis.waitUntilDone();
 <<<<<<< HEAD
+<<<<<<< HEAD
     pros::lcd::print(4, "pure pursuit finished!");
 =======
     pros::lcd::print(5, "pure pursuit finished!");
 >>>>>>> c6869de (improve main.cpp documentation)
+=======
+    pros::lcd::print(4, "pure pursuit finished!");
+>>>>>>> f312d9b (Rename arcOdom.cpp to differentialArc.cpp)
 }
 
 /**
