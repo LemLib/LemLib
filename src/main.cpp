@@ -136,7 +136,7 @@ void autonomous() {
     pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
     // wait until the movement is done
     chassis.waitUntilDone();
-    pros::lcd::print(5, "pure pursuit finished!");
+    pros::lcd::print(4, "pure pursuit finished!");
 }
 
 /**
