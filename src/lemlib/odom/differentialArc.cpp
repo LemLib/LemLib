@@ -16,9 +16,10 @@ namespace lemlib {
  * any tracking wheel + imu setup
  */
 DifferentialArc::DifferentialArc(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                                 std::vector<std::shared_ptr<Gyro>>& gyros)
+                                 std::vector<TrackingWheel>& drivetrain, std::vector<std::shared_ptr<Gyro>>& gyros)
     : verticals(verticals),
       horizontals(horizontals),
+      drivetrain(drivetrain),
       gyros(gyros) {}
 
 /**
@@ -41,6 +42,16 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
         if (it->reset()) {
             infoSink()->warn("Horizontal tracker at offset {} failed calibration!", it->getOffset());
             horizontals.erase(it);
+        }
+    }
+
+    // calibrate drivetrain motors
+    for (auto it = drivetrain.begin(); it != drivetrain.end(); it++) {
+        if (it->reset()) {
+            if (sgn(it->getOffset() == 1))
+                infoSink()->warn("Left drivetrain motor failed to calibrate!", it->getOffset());
+            else infoSink()->warn("Right drivetrain motor failed to calibrate!", it->getOffset());
+            drivetrain.erase(it);
         }
     }
 
@@ -99,7 +110,8 @@ float calcDeltaTheta(std::vector<std::shared_ptr<Gyro>>& gyros) {
  * Tracking through arcs works through estimating the robot's change in position between
  * angles as an arc, rather than a straight line, improving accuracy.
  *
- * This alg can either use tracking wheels to calculate angle, or preferably an imu.
+ * This alg can either use tracking wheels to calculate angle, or preferably an imu, or motor encoders
+ * as a last resort.
  * Theoretically you can get better performance with tracking wheels, but this is very
  * difficult to achieve.
  *
@@ -112,6 +124,7 @@ void DifferentialArc::update() {
     // 1. IMU
     // 2. Horizontal tracking wheels
     // 3. Vertical tracking wheels
+    // 4. Drivetrain motor encoders
     float theta = pose.theta;
     if (gyros.size() > 0) { // calculate heading with imus if we have enough
         theta += calcDeltaTheta(gyros);
@@ -119,6 +132,8 @@ void DifferentialArc::update() {
         theta += calcDeltaTheta(horizontals.at(0), horizontals.at(1));
     } else if (verticals.size() > 1) { // calculate heading with vertical tracking wheels if we have enough
         theta += calcDeltaTheta(verticals.at(0), verticals.at(1));
+    } else if (drivetrain.size() > 1) { // calculate heading with drivetrain motor encoders
+        theta += calcDeltaTheta(drivetrain.at(0), drivetrain.at(1));
     } else {
         infoSink()->error("Odom calculation failure! Not enough sensors to calculate heading");
         return;
@@ -130,6 +145,7 @@ void DifferentialArc::update() {
     Pose local(0, 0, deltaTheta);
     // set sinDTheta2 to 1 if deltaTheta is 0. Simplifies local position calculations.
     const float sinDTheta2 = (deltaTheta == 0) ? 1 : 2 * std::sin(deltaTheta / 2);
+
     // calculate local y position
     for (auto& tracker : horizontals) {
         // prevent divide by 0
@@ -137,12 +153,23 @@ void DifferentialArc::update() {
                                                : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
         local.y += sinDTheta2 * radius / horizontals.size();
     }
+
     // calculate local x position
-    const float radius = (deltaTheta == 0)
-                             ? verticals.at(0).getDistanceDelta()
-                             : verticals.at(0).getDistanceDelta() / deltaTheta + verticals.at(0).getOffset();
-    local.x += sinDTheta2 * radius / verticals.size();
-    if (verticals.empty()) infoSink()->warn("No vertical tracking wheels! Assuming y movement is 0");
+    if (verticals.size() > 0) { // use dedicated tracking wheels if we have any
+        for (auto& tracker : verticals) {
+            const float radius = (deltaTheta == 0) ? tracker.getDistanceDelta()
+                                                   : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
+            local.x += sinDTheta2 * radius / verticals.size();
+        }
+    } else if (drivetrain.size() > 0) { // use motor encoders if we have no dedicated tracking wheels
+        for (auto& motor : drivetrain) {
+            const float radius = (deltaTheta == 0) ? motor.getDistanceDelta()
+                                                   : motor.getDistanceDelta() / deltaTheta + motor.getOffset();
+            local.x += sinDTheta2 * radius / drivetrain.size();
+        }
+    } else { // output a warning if there are no available sensors to calculate local x
+        infoSink()->warn("No vertical tracking wheels! Assuming y movement is 0");
+    }
 
     // calculate global position
     pose += local.rotate(avgTheta);

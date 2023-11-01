@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2023
  *
  */
-#include <math.h>
 #include "lemlib/chassis/differential.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/pid.hpp"
@@ -42,23 +41,28 @@ Differential::Differential(Drivetrain_t drivetrain, ChassisController_t lateralS
     // create sensor vectors
     std::vector<TrackingWheel> verticals;
     std::vector<TrackingWheel> horizontals;
+    std::vector<TrackingWheel> drive;
     std::vector<std::shared_ptr<Gyro>> imus;
+
     // configure vertical tracking wheels
     if (sensors.vertical1 != nullptr) verticals.push_back(*sensors.vertical1); // add vertical tracker if configured
-    else // else use left drivetrain encoders
-        verticals.push_back(
-            TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.rpm));
     if (sensors.vertical2 != nullptr) verticals.push_back(*sensors.vertical2); // add vertical tracker if configured
-    else // else use right drivetrain encoders
-        verticals.push_back(
-            TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
+
     // configure horizontal tracking wheels
     if (sensors.horizontal1 != nullptr) horizontals.push_back(*sensors.horizontal1);
     if (sensors.horizontal2 != nullptr) horizontals.push_back(*sensors.horizontal2);
+
+    // configure drivetrain
+    drive.push_back(
+        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.rpm));
+    drive.push_back(
+        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
+
     // configure imu
     if (sensors.imu != nullptr) imus.push_back(std::make_shared<Imu>(*sensors.imu));
+
     // create odom instance
-    odom = std::make_unique<DifferentialArc>(DifferentialArc(verticals, horizontals, imus));
+    odom = std::make_unique<DifferentialArc>(DifferentialArc(verticals, horizontals, drive, imus));
 }
 
 /**

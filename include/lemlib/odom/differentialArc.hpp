@@ -14,10 +14,11 @@ class DifferentialArc : public Odom {
          *
          * @param verticals vector containing vertical tracking wheels to be used
          * @param horizontals vector containing horizontal tracking wheels to be used
+         * @param drivetrain vector containing drivetrain motors as tracking wheels
          * @param imus vector containing imus to be used
          */
         DifferentialArc(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                        std::vector<std::shared_ptr<Gyro>>& gyros);
+                        std::vector<TrackingWheel>& drivetrain, std::vector<std::shared_ptr<Gyro>>& gyros);
 
         /**
          * @brief Calibrate tracking wheels and inertial sensors
@@ -33,6 +34,7 @@ class DifferentialArc : public Odom {
     private:
         std::vector<TrackingWheel> verticals;
         std::vector<TrackingWheel> horizontals;
+        std::vector<TrackingWheel> drivetrain;
         std::vector<std::shared_ptr<Gyro>> gyros;
 };
 } // namespace lemlib
