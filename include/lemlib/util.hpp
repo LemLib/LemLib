@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <string>
+#include <math.h>
 #include "lemlib/pose.hpp"
 
 namespace lemlib {
@@ -33,7 +34,7 @@ float slew(float target, float current, float maxChange);
  * @param rad radians
  * @return float degrees
  */
-float radToDeg(float rad);
+constexpr float radToDeg(float rad) { return rad * 180 / M_PI; }
 
 /**
  * @brief Convert degrees to radians
@@ -41,7 +42,7 @@ float radToDeg(float rad);
  * @param deg degrees
  * @return float radians
  */
-float degToRad(float deg);
+constexpr float degToRad(float deg) { return deg * M_PI / 180; }
 
 /**
  * @brief Calculate the error between 2 angles. Useful when calculating the error between 2 headings
@@ -59,7 +60,7 @@ float angleError(float angle1, float angle2, bool radians = true);
  * @param x the number to get the sign of
  * @return int - -1 if negative, 1 if positive
  */
-int sgn(float x);
+template <typename T> constexpr T sgn(T value) { return value < 0 ? -1 : 1; }
 
 /**
  * @brief Return the average of a vector of numbers
