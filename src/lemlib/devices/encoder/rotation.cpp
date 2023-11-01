@@ -24,7 +24,7 @@ RotationEncoder::RotationEncoder(int port, bool reversed, float ratio)
  * which gets converted to radians
  */
 float RotationEncoder::getAngle() {
-    float angle = (float(rotation.get_position()) / 36000) * (2 * M_PI) / ratio;
+    const float angle = (float(rotation.get_position()) / 36000) * (2 * M_PI) / ratio;
     lastAngle = angle;
     return angle;
 }

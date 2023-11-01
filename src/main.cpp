@@ -2,6 +2,7 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
+#include <iomanip>
 
 // left drive motors on ports 8, 20, 18. Motors on ports 8 and 20 are reversed
 auto leftDrive = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
@@ -79,18 +80,22 @@ void initialize() {
 
     // for more information on how the formatting for the loggers
     // works, refer to the fmtlib docs
+    std::cout << std::setprecision(5);
 
     // thread to for brain screen and position logging
-    pros::Task screenTask([=]() {
+    pros::Task screenTask([&]() {
+        lemlib::Pose pose(0, 0, 0);
         while (true) {
+            pose = chassis.getPose();
             // print to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
             // log position telemetry
-            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+            // lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+            std::cout << "x: " << pose.x << " y: " << pose.y << " theta: " << pose.theta << std::endl;
             // delay to save resources
-            pros::delay(50);
+            pros::delay(10);
         }
     });
 }

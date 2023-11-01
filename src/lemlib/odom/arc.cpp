@@ -131,20 +131,18 @@ void ArcOdom::update() {
     Pose local(0, 0, deltaTheta);
     // set sinDTheta2 to 1 if deltaTheta is 0. Simplifies local position calculations.
     const float sinDTheta2 = (deltaTheta == 0) ? 1 : 2 * std::sin(deltaTheta / 2);
-    // calculate local x position
-    for (auto& tracker : horizontals) {
-        // prevent divide by 0
-        const float radius = (deltaTheta == 0) ? tracker.getDistanceDelta()
-                                               : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
-        local.x += sinDTheta2 * radius / horizontals.size();
-    }
     // calculate local y position
-    for (auto& tracker : verticals) {
+    for (auto& tracker : horizontals) {
         // prevent divide by 0
         const float radius = (deltaTheta == 0) ? tracker.getDistanceDelta()
                                                : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
         local.y += sinDTheta2 * radius / horizontals.size();
     }
+    // calculate local x position
+    const float radius = (deltaTheta == 0)
+                             ? verticals.at(0).getDistanceDelta()
+                             : verticals.at(0).getDistanceDelta() / deltaTheta + verticals.at(0).getOffset();
+    local.x += sinDTheta2 * radius / verticals.size();
     if (verticals.empty()) infoSink()->warn("No vertical tracking wheels! Assuming y movement is 0");
 
     // calculate global position
