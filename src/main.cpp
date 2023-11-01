@@ -2,6 +2,7 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
+#include <iomanip>
 
 // left drive motors on ports 8, 20, 18. Motors on ports 8 and 20 are reversed
 auto leftDrive = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
@@ -28,30 +29,6 @@ lemlib::Drivetrain_t drivetrain {
 };
 
 // lateral motion controller
-<<<<<<< HEAD
-lemlib::ControllerSettings linearController(10, // proportional gain (kP)
-                                            0, // integral gain (kI)
-                                            3, // derivative gain (kD)
-                                            3, // anti windup
-                                            1, // small error range, in inches
-                                            100, // small error range timeout, in milliseconds
-                                            3, // large error range, in inches
-                                            500, // large error range timeout, in milliseconds
-                                            20 // maximum acceleration (slew)
-);
-
-// angular motion controller
-lemlib::ControllerSettings angularController(2, // proportional gain (kP)
-                                             0, // integral gain (kI)
-                                             10, // derivative gain (kD)
-                                             3, // anti windup
-                                             1, // small error range, in degrees
-                                             100, // small error range timeout, in milliseconds
-                                             3, // large error range, in degrees
-                                             500, // large error range timeout, in milliseconds
-                                             0 // maximum acceleration (slew)
-);
-=======
 lemlib::ChassisController_t lateralController {
     10, // kP
     30, // kD
@@ -72,21 +49,8 @@ lemlib::ChassisController_t angularController {
     500, // large exit timeout
     20 // acceleration cap
 };
->>>>>>> 6dbbcff (add pid comments in main.cpp example)
 
 // sensors for odometry
-<<<<<<< HEAD
-// note that in this example we use internal motor encoders (IMEs), so we don't pass vertical tracking wheels
-lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
-                            nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-                            &horizontal, // horizontal tracking wheel 1
-                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
-                            &imu // inertial sensor
-);
-
-// create the chassis
-lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors);
-=======
 lemlib::OdomSensors_t sensors {
     &vertical, // vertical tracking wheel
     nullptr, // we don't have a second vertical tracking wheel
@@ -101,7 +65,6 @@ lemlib::Differential chassis(drivetrain, // drivetrain struct
                              angularController, // turning PID struct
                              sensors // sensors struct
 );
->>>>>>> c6869de (improve main.cpp documentation)
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -110,14 +73,8 @@ lemlib::Differential chassis(drivetrain, // drivetrain struct
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-<<<<<<< HEAD
-    pros::lcd::initialize();
-    lemlib::Logger::initialize();
-    chassis.calibrate(); // calibrate sensors
-=======
     pros::lcd::initialize(); // initialize brain screen
     chassis.initialize(); // calibrate sensors
->>>>>>> c6869de (improve main.cpp documentation)
 
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
@@ -127,8 +84,10 @@ void initialize() {
 
     // for more information on how the formatting for the loggers
     // works, refer to the fmtlib docs
+    std::cout << std::setprecision(5);
 
     // thread to for brain screen and position logging
+<<<<<<< HEAD
 <<<<<<< HEAD
     pros::Task screenTask([&]() {
         lemlib::Pose pose(0, 0, 0);
@@ -136,16 +95,22 @@ void initialize() {
             // print robot location to the brain screen
 =======
     pros::Task screenTask([=]() {
+=======
+    pros::Task screenTask([&]() {
+        lemlib::Pose pose(0, 0, 0);
+>>>>>>> 7d98df9 (fix odom axis swap)
         while (true) {
+            pose = chassis.getPose();
             // print to the brain screen
 >>>>>>> c6869de (improve main.cpp documentation)
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
             // log position telemetry
-            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+            // lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+            std::cout << "x: " << pose.x << " y: " << pose.y << " theta: " << pose.theta << std::endl;
             // delay to save resources
-            pros::delay(50);
+            pros::delay(10);
         }
     });
 }
