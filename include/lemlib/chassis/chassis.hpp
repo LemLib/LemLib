@@ -86,8 +86,8 @@ class Chassis {
 
         float prevDist = 0; // the previous distance travelled by the movement
 
-        std::unique_ptr<Odom> odom;
-        std::unique_ptr<Movement> movement;
-        std::unique_ptr<pros::Task> task;
+        std::unique_ptr<Odom> odom = nullptr;
+        std::unique_ptr<Movement> movement = nullptr;
+        std::unique_ptr<pros::Task> task = nullptr;
 };
 } // namespace lemlib
