@@ -7,7 +7,7 @@
 #include "lemlib/devices/gyro/gyro.hpp"
 
 namespace lemlib {
-class ArcOdom : public Odom {
+class DifferentialArc : public Odom {
     public:
         /**
          * @brief Construct a new Arc Odom
@@ -16,8 +16,8 @@ class ArcOdom : public Odom {
          * @param horizontals vector containing horizontal tracking wheels to be used
          * @param imus vector containing imus to be used
          */
-        ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                std::vector<std::shared_ptr<Gyro>>& gyros);
+        DifferentialArc(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
+                        std::vector<std::shared_ptr<Gyro>>& gyros);
 
         /**
          * @brief Calibrate tracking wheels and inertial sensors

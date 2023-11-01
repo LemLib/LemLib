@@ -1,7 +1,7 @@
 #include "lemlib/util.hpp"
 #include "lemlib/timer.hpp"
 #include "lemlib/logger/logger.hpp"
-#include "lemlib/odom/arc.hpp"
+#include "lemlib/odom/differentialArc.hpp"
 
 namespace lemlib {
 /**
@@ -15,8 +15,8 @@ namespace lemlib {
  * Vectors are passed since they can have a varying number of sensors in them, allowing for
  * any tracking wheel + imu setup
  */
-ArcOdom::ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                 std::vector<std::shared_ptr<Gyro>>& gyros)
+DifferentialArc::DifferentialArc(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
+                                 std::vector<std::shared_ptr<Gyro>>& gyros)
     : verticals(verticals),
       horizontals(horizontals),
       gyros(gyros) {}
@@ -27,7 +27,7 @@ ArcOdom::ArcOdom(std::vector<TrackingWheel>& verticals, std::vector<TrackingWhee
  * We have to calibrate tracking wheels and imus. We calibrate them all and remove any that fail
  * calibration. The encoders will output errors if they fail to calibrate.
  */
-void ArcOdom::calibrate(bool calibrateGyros) {
+void DifferentialArc::calibrate(bool calibrateGyros) {
     // calibrate vertical tracking wheels
     for (auto it = verticals.begin(); it != verticals.end(); it++) {
         if (it->reset()) {
@@ -44,23 +44,22 @@ void ArcOdom::calibrate(bool calibrateGyros) {
         }
     }
 
+    if (!calibrateGyros) return; // return if we don't need to calibrate gyros
     // calibrate gyros
-    if (calibrateGyros) {
-        for (auto& it : gyros) it->calibrate();
-        Timer timer(3000); // try calibrating gyros for 3000 ms
-        while (!timer.isDone()) {
-            for (auto& gyro : gyros) { // continuously calibrate in case of failure
-                if (!gyro->isCalibrating() && !gyro->isCalibrated()) gyro->calibrate();
-            }
-            pros::delay(10);
+    for (auto& it : gyros) it->calibrate();
+    Timer timer(3000); // try calibrating gyros for 3000 ms
+    while (!timer.isDone()) {
+        for (auto& gyro : gyros) { // continuously calibrate in case of failure
+            if (!gyro->isCalibrating() && !gyro->isCalibrated()) gyro->calibrate();
         }
+        pros::delay(10);
+    }
 
-        // if a gyro failed to calibrate, output an error and erase the gyro
-        for (auto it = gyros.begin(); it != gyros.end(); it++) {
-            if (!(**it).isCalibrated()) {
-                infoSink()->warn("IMU on port {} failed to calibrate! Removing", (**it).getPort());
-                gyros.erase(it);
-            }
+    // if a gyro failed to calibrate, output an error and erase the gyro
+    for (auto it = gyros.begin(); it != gyros.end(); it++) {
+        if (!(**it).isCalibrated()) {
+            infoSink()->warn("IMU on port {} failed to calibrate! Removing", (**it).getPort());
+            gyros.erase(it);
         }
     }
 }
@@ -107,7 +106,7 @@ float calcDeltaTheta(std::vector<std::shared_ptr<Gyro>>& gyros) {
  * 5225A has published a fantastic paper on this odom algorithm:
  * http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
  */
-void ArcOdom::update() {
+void DifferentialArc::update() {
     // calculate theta
     // Priority:
     // 1. IMU

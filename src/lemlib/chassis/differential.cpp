@@ -15,7 +15,7 @@
 #include "lemlib/movements/boomerang.hpp"
 #include "lemlib/movements/purepursuit.hpp"
 #include "lemlib/movements/turn.hpp"
-#include "lemlib/odom/arc.hpp"
+#include "lemlib/odom/differentialArc.hpp"
 #include "lemlib/devices/gyro/imu.hpp"
 
 namespace lemlib {
@@ -58,7 +58,7 @@ Differential::Differential(Drivetrain_t drivetrain, ChassisController_t lateralS
     // configure imu
     if (sensors.imu != nullptr) imus.push_back(std::make_shared<Imu>(*sensors.imu));
     // create odom instance
-    odom = std::make_unique<ArcOdom>(ArcOdom(verticals, horizontals, imus));
+    odom = std::make_unique<DifferentialArc>(DifferentialArc(verticals, horizontals, imus));
 }
 
 /**
