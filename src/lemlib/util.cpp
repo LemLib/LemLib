@@ -32,22 +32,6 @@ float slew(float target, float current, float maxChange) {
 }
 
 /**
- * @brief Convert radians to degrees
- *
- * @param rad radians
- * @return float degrees
- */
-float radToDeg(float rad) { return rad * 180 / M_PI; }
-
-/**
- * @brief Convert degrees to radians
- *
- * @param deg degrees
- * @return float radians
- */
-float degToRad(float deg) { return deg * M_PI / 180; }
-
-/**
  * @brief Calculate the error between 2 angles. Useful when calculating the error between 2 headings
  *
  * @param angle1
@@ -55,7 +39,7 @@ float degToRad(float deg) { return deg * M_PI / 180; }
  * @param radians true if angle is in radians, false if not. False by default
  * @return float wrapped angle
  */
-float lemlib::angleError(float angle1, float angle2, bool radians) {
+float angleError(float angle1, float angle2, bool radians) {
     return std::remainder(angle1 - angle2, radians ? 2 * M_PI : 360);
 }
 
