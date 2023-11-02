@@ -77,12 +77,10 @@ jobs:
             \`\`\``;
             
             core.info("Review thread message body:", body);
-            core.info(${{github.event.workflow_run}});
-            console.log(${{github.event.workflow_run}});
-            core.info(context);
-            console.log(context);
-            core.info(github);
-            console.log(github);
+            core.info(context.worflow_run);
+            console.log(context.worflow_run);
+            core.info(context.worflow_run.event);
+            console.log(context.worflow_run.event);
 
               await upsertComment(owner, repo, issue_number,
                 "nightly-link", old_body, body);
