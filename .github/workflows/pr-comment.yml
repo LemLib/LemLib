@@ -77,10 +77,12 @@ jobs:
             \`\`\``;
             
             core.info("Review thread message body:", body);
-            core.info(context.workflow_run);
-            console.log(context.workflow_run);
-            core.info(context.workflow_run.event);
-            console.log(context.workflow_run.event);
+            core.info(context);
+            console.log(context);
+            core.info(context.payload.workflow_run);
+            console.log(context.payload.workflow_run);
+            core.info(context.payload.workflow_run.event);
+            console.log(context.payload.workflow_run.event);
 
               await upsertComment(owner, repo, issue_number,
                 "nightly-link", old_body, body);
