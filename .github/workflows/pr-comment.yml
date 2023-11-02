@@ -79,7 +79,7 @@ jobs:
             core.info(`Review thread message body: \n${body}`);
             
             console.log(context.payload.workflow_run);
-            console.log(context.payload.workflow_run.event);
+            console.log(context.payload.workflow_run.pull_requests);
 
               await upsertComment(owner, repo, issue_number,
                 "nightly-link", old_body, body);
