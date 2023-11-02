@@ -12,9 +12,6 @@ jobs:
       pull-requests: write
     
     steps:
-      - name: Print event context
-        run: echo ${{ github.event.workflow_run }}
-
       - uses: actions/github-script@v6
         with:
           # This snippet is public-domain, taken from
@@ -80,6 +77,12 @@ jobs:
             \`\`\``;
             
             core.info("Review thread message body:", body);
+            core.info(${{github.event.workflow_run}});
+            console.log(${{github.event.workflow_run}});
+            core.info(context);
+            console.log(context);
+            core.info(github);
+            console.log(github);
 
               await upsertComment(owner, repo, issue_number,
                 "nightly-link", old_body, body);
