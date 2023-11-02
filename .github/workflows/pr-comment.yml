@@ -5,7 +5,7 @@ on:
     types: [completed]
 jobs:
   pr_comment:
-    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
+    # if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     permissions: 
@@ -76,12 +76,9 @@ jobs:
             rm ${template.name}.zip;
             \`\`\``;
             
-            core.info("Review thread message body:", body);
-            core.info(context);
-            console.log(context);
-            core.info(context.payload.workflow_run);
+            core.info(`Review thread message body: \n${body}`);
+            
             console.log(context.payload.workflow_run);
-            core.info(context.payload.workflow_run.event);
             console.log(context.payload.workflow_run.event);
 
               await upsertComment(owner, repo, issue_number,
