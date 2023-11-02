@@ -12,6 +12,9 @@ jobs:
       pull-requests: write
     
     steps:
+      - name: Print event context
+        run: echo ${{ github.event.workflow_run }}
+
       - uses: actions/github-script@v6
         with:
           # This snippet is public-domain, taken from
