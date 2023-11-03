@@ -29,7 +29,7 @@ Now that we have the motors set up, we need to tell LemLib about the track width
 
 <img src="./assets/2_setting_up_the_chassis/track_width.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
-We also need to tell LemLib the diameter of the wheels. Wheels typically come in 4 sizes: 2.75&quot;, 3.25&quot;, 4&quot;, and 4.125&quot;. After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to [this spreadsheet](https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0) to find the rpm of the wheels.
+We also need to tell LemLib the diameter of the wheels. LemLib has wheel presets you can use for this (e.g `lemlib::Omniwheel::NEW_4` for the new 4 inch wheels) After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to [this spreadsheet](https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0) to find the rpm of the wheels. And finally, we need to tell the robot how fast it can go around corners. If you have traction wheels, you can start at 8+, but if you don't have traction wheels, start at 2. We will tune this later.
 
 Now that we have all the information we need, we can create a `lemlib::Drivetrain_t` struct to pass to LemLib. Below is an example:
 ```cpp
@@ -37,8 +37,9 @@ lemlib::Drivetrain_t drivetrain {
 	&leftMotors, // left drivetrain motors
 	&rightMotors, // right drivetrain motors
 	10, // track width
-	3.25, // wheel diameter
-	360 // wheel rpm
+	lemlib::Omniwheel::NEW_325, // wheel diameter. New 3.25" Omniwheel
+	360, // wheel rpm
+	2 // chasePower. Set to 2, as we don't have traction wheels
 };
 ``` 
 
@@ -62,8 +63,8 @@ pros::Rotation rot(1, false); // port 1, not reversed
 
 Next, we have to create a `lemlib::TrackingWheel` object. This contains information about the tracking wheel, such as the diameter and its offset from the tracking center. Below is an example of how to do this:
 ```cpp
-// uses "enc" as the encoder. 2.75" wheel diameter, 4.3" offset from tracking center, 2:1 gear ratio
-lemlib::TrackingWheel left_tracking_wheel(&enc, 2.75, 4.3, 2);
+// uses "enc" as the encoder. old 2.75" wheel, 4.3" offset from tracking center, 2:1 gear ratio
+lemlib::TrackingWheel left_tracking_wheel(&enc, lemlib::Omniwheel::OLD_275, 4.3, 2);
 ```
 
 Hold on, how far away from the tracking center is the tracking wheel? Turns out, its not the straight distance to the center of the robot, but only one component of it. Below is a diagram which shows the relationship between the tracking center and the tracking wheel:
@@ -81,10 +82,10 @@ pros::Rotation right_rot(1, false); // port 1, not reversed
 pros::ADIEncoder back_enc('C', 'D', false); // ports C and D, not reversed
 
 // left tracking wheel
-lemlib::TrackingWheel left_tracking_wheel(&left_enc, 2.75, -4.6); // 2.75" wheel diameter, -4.6" offset from tracking center
+lemlib::TrackingWheel left_tracking_wheel(&left_enc, lemlib::Omniwheel::OLD_275, -4.6); // old 2.75 wheel, 4.6" left to the tracking center
 // right tracking wheel
-lemlib::TrackingWheel right_tracking_wheel(&right_rot, 2.75, 1.7); // 2.75" wheel diameter, 1.7" offset from tracking center
-lemlib::TrackingWheel back_tracking_wheel(&back_enc, 2.75, 4.5); // 2.75" wheel diameter, 4.5" offset from tracking center
+lemlib::TrackingWheel right_tracking_wheel(&right_rot, NEW_275_HALF, 1.7); // new half-cut 2.75" wheel, 1.7" right to the tracking center
+lemlib::TrackingWheel back_tracking_wheel(&back_enc, lemlib::Omniwheel::OLD_275, -4.5); // old 2.75 wheel, 4.5" behind tracking center
 
 // inertial sensor
 pros::Imu inertial_sensor(2); // port 2
@@ -113,7 +114,7 @@ lemlib::ChassisController_t lateralController {
 	100, // smallErrorTimeout
 	3, // largeErrorRange
 	500, // largeErrorTimeout
-	5 // slew rate
+	20 // max acceleration
 };
 
 // turning PID
@@ -124,7 +125,7 @@ lemlib::ChassisController_t angularController {
 	100, // smallErrorTimeout
 	3, // largeErrorRange
 	500, // largeErrorTimeout
-	0 // slew rate
+	0 // max acceleration. 0 means no limit
 };
 ```
 
@@ -147,7 +148,8 @@ lemlib::Drivetrain_t drivetrain {
 	&right_side_motors, // right drivetrain motors
 	10, // track width
 	3.25, // wheel diameter
-	360 // wheel rpm
+	360, // wheel rpm
+	2 // chase power
 };
 
 // left tracking wheel encoder
@@ -158,10 +160,10 @@ pros::Rotation right_rot(1, false); // port 1, not reversed
 pros::ADIEncoder back_enc('C', 'D', false); // ports C and D, not reversed
 
 // left tracking wheel
-lemlib::TrackingWheel left_tracking_wheel(&left_enc, 2.75, -4.6); // 2.75" wheel diameter, -4.6" offset from tracking center
+lemlib::TrackingWheel left_tracking_wheel(&left_enc, lemlib::Omniwheel::OLD_275, -4.6); // old 2.75 wheel, 4.6" left to the tracking center
 // right tracking wheel
-lemlib::TrackingWheel right_tracking_wheel(&right_rot, 2.75, 1.7); // 2.75" wheel diameter, 1.7" offset from tracking center
-lemlib::TrackingWheel back_tracking_wheel(&back_enc, 2.75, 4.5); // 2.75" wheel diameter, 4.5" offset from tracking center
+lemlib::TrackingWheel right_tracking_wheel(&right_rot, NEW_275_HALF, 1.7); // new half-cut 2.75" wheel, 1.7" right to the tracking center
+lemlib::TrackingWheel back_tracking_wheel(&back_enc, lemlib::Omniwheel::OLD_275, -4.5); // old 2.75 wheel, 4.5" behind tracking center
 
 // inertial sensor
 pros::Imu inertial_sensor(2); // port 2
@@ -183,7 +185,7 @@ lemlib::ChassisController_t lateralController {
 	100, // smallErrorTimeout
 	3, // largeErrorRange
 	500, // largeErrorTimeout
-	5 // slew rate
+	20 // max acceleration
 };
 
 // turning PID
@@ -194,7 +196,7 @@ lemlib::ChassisController_t angularController {
 	100, // smallErrorTimeout
 	3, // largeErrorRange
 	500, // largeErrorTimeout
-	40 // slew rate
+	0 // max acceleration. 0 means no limit
 };
 
 
