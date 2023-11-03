@@ -147,9 +147,9 @@ lemlib::Drivetrain_t drivetrain {
 	&left_side_motors, // left drivetrain motors
 	&right_side_motors, // right drivetrain motors
 	10, // track width
-	3.25, // wheel diameter
+	lemlib::Omniwheel::NEW_325, // wheel diameter
 	360, // wheel rpm
-	2 // chase power
+	2 // chase power (speed around corners, higher is faster)
 };
 
 // left tracking wheel encoder
