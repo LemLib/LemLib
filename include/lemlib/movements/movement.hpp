@@ -10,11 +10,6 @@ namespace lemlib {
 class Movement {
     public:
         /**
-         * @brief Construct a new Movement object
-         */
-        Movement() {}
-
-        /**
          * @brief Get the distance travelled during the movement
          *
          * @return float
