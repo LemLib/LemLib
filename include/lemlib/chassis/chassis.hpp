@@ -176,11 +176,11 @@ class Chassis {
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *
-         * @note Units are in inches if curret motion is moveTo or follow, degrees if using turnTo
+         * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
          *
          * @param dist the distance the robot needs to travel before returning
          */
-        void waitUntilDist(float dist);
+        void waitUntil(float dist);
         /**
          * @brief Turn the chassis so it is facing the target point
          *
@@ -189,13 +189,11 @@ class Chassis {
          * @param x x location
          * @param y y location
          * @param timeout longest time the robot can spend moving
-         * @param async whether the function should be run asynchronously. false by default
-         * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
-         * @param maxSpeed the maximum speed the robot can turn at. Default is 200
-         * @param log whether the chassis should log the turnTo function. false by default
+         * @param forwards whether the robot should turn to face the point with the front of the robot. true by default
+         * @param maxSpeed the maximum speed the robot can turn at. Default is 127
+         * @param async whether the function should be run asynchronously. true by default
          */
-        void turnTo(float x, float y, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127,
-                    bool log = false);
+        void turnTo(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *
@@ -203,33 +201,29 @@ class Chassis {
          *
          * @param x x location
          * @param y y location
-         * @param theta theta (in degrees). Target angle
+         * @param theta target heading in degrees.
          * @param timeout longest time the robot can spend moving
-         * @param async whether the function should be run asynchronously. false by default
          * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
          * backwards
-         * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
          * default to global value
+         * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
          * @param maxSpeed the maximum speed the robot can move at. 127 at default
-         * @param log whether the chassis should log the turnTo function. false by default
+         * @param async whether the function should be run asynchronously. true by default
          */
-        void moveTo(float x, float y, float theta, int timeout, bool async = false, bool forwards = true,
-                    float chasePower = 0, float lead = 0.6, float maxSpeed = 127, bool log = false);
+        void moveTo(float x, float y, float theta, int timeout, bool forwards = true, float chasePower = 0,
+                    float lead = 0.6, float maxSpeed = 127, bool async = false);
         /**
          * @brief Move the chassis along a path
          *
-         * @param filePath the filename of the path to follow
-         * @param timeout the maximum time the robot can spend moving
+         * @param path the path asset to follow
          * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
          * will follow the path less accurately
-         * @param async whether the function should be run asynchronously. false by default
+         * @param timeout the maximum time the robot can spend moving
          * @param forwards whether the robot should follow the path going forwards. true by default
-         * @param maxSpeed the maximum speed the robot can move at
-         * @param log whether the chassis should log the path on a log file. false by default.
+         * @param async whether the function should be run asynchronously. true by default
          */
-        void follow(const asset& path, int timeout, float lookahead, bool async = false, bool forwards = true,
-                    float maxSpeed = 127, bool log = false);
+        void follow(const asset& path, float lookahead, int timeout, bool forwards = true, bool async = true);
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this
          * control scheme one joystick axis controls one half of the robot, and another joystick axis controls another.

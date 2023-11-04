@@ -17,6 +17,7 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "pros/rtos.h"
 
 /**
  * @brief Construct a new Chassis
@@ -127,11 +128,11 @@ lemlib::Pose lemlib::Chassis::estimatePose(float time, bool radians) { return le
 /**
  * @brief Wait until the robot has traveled a certain distance along the path
  *
- * @note Units are in inches if curret motion is moveTo or follow, degrees if using turnTo
+ * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
  *
  * @param dist the distance the robot needs to travel before returning
  */
-void lemlib::Chassis::waitUntilDist(float dist) {
+void lemlib::Chassis::waitUntil(float dist) {
     // do while to give the thread time to start
     do pros::delay(10);
     while (distTravelled <= dist && distTravelled != -1);
@@ -145,18 +146,16 @@ void lemlib::Chassis::waitUntilDist(float dist) {
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
- * @param async whether the function should be run asynchronously. false by default
- * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
- * @param maxSpeed the maximum speed the robot can turn at. Default is 200
- * @param log whether the chassis should log the turnTo function. false by default
+ * @param forwards whether the robot should turn to face the point with the front of the robot. true by default
+ * @param maxSpeed the maximum speed the robot can turn at. Default is 127
+ * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool reversed, float maxSpeed, bool log) {
-    // try to take the mutex
-    // if its unsuccessful after 10ms, return
-    if (!mutex.take(10)) return;
+void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
+    // take the mutex
+    mutex.take(TIMEOUT_MAX);
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { turnTo(x, y, timeout, false, reversed, maxSpeed, log); });
+        pros::Task task([&]() { turnTo(x, y, timeout, forwards, maxSpeed, false); });
         mutex.give();
         pros::delay(10); // delay to give the task time to start
         return;
@@ -177,7 +176,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
     while (pros::competition::get_status() == compState && !pid.settled()) {
         // update variables
         Pose pose = getPose();
-        pose.theta = (reversed) ? fmod(pose.theta - 180, 360) : fmod(pose.theta, 360);
+        pose.theta = (forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
 
         // update completion vars
         distTravelled = fabs(angleError(pose.theta, startTheta));
@@ -190,7 +189,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
         deltaTheta = angleError(targetTheta, pose.theta);
 
         // calculate the speed
-        motorPower = pid.update(0, deltaTheta, log);
+        motorPower = pid.update(0, deltaTheta);
 
         // cap the speed
         if (motorPower > maxSpeed) motorPower = maxSpeed;
@@ -219,25 +218,23 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool async, bool rev
  *
  * @param x x location
  * @param y y location
- * @param theta theta (in degrees). Target angle
+ * @param theta target heading in degrees.
  * @param timeout longest time the robot can spend moving
- * @param async whether the function should be run asynchronously. false by default
  * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
  * backwards
- * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
  * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
  * default to global value
+ * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
  * @param maxSpeed the maximum speed the robot can move at. 127 at default
- * @param log whether the chassis should log the turnTo function. false by default
+ * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool async, bool forwards, float chasePower,
-                             float lead, float maxSpeed, bool log) {
-    // try to take the mutex
-    // if its unsuccessful after 10ms, return
-    if (!mutex.take(10)) return;
+void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, float chasePower, float lead,
+                             float maxSpeed, bool async) {
+    // take the mutex
+    mutex.take(TIMEOUT_MAX);
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveTo(x, y, theta, timeout, false, forwards, chasePower, lead, maxSpeed, log); });
+        pros::Task task([&]() { moveTo(x, y, theta, timeout, forwards, chasePower, lead, maxSpeed, false); });
         mutex.give();
         pros::delay(10); // delay to give the task time to start
         return;
@@ -287,8 +284,8 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool as
         if (!forwards) linearError = -linearError;
 
         // get PID outputs
-        float angularPower = -angularPID.update(radToDeg(angularError), 0, log);
-        float linearPower = linearPID.update(linearError, 0, log);
+        float angularPower = -angularPID.update(radToDeg(angularError), 0);
+        float linearPower = linearPID.update(linearError, 0);
 
         // calculate radius of turn
         float curvature = fabs(getCurvature(pose, carrot));
