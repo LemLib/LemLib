@@ -205,7 +205,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
     if (!mutex.take(10)) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { follow(path, timeout, lookahead, false, forwards, maxSpeed, log); });
+        pros::Task task([&]() { follow(path, lookahead, timeout, forwards, false); });
         mutex.give();
         pros::delay(10); // delay to give the task time to start
         return;
@@ -258,7 +258,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
         float targetRightVel = targetVel * (2 - curvature * drivetrain.trackWidth) / 2;
 
         // ratio the speeds to respect the max speed
-        float ratio = std::max(std::fabs(targetLeftVel), std::fabs(targetRightVel)) / maxSpeed;
+        float ratio = std::max(std::fabs(targetLeftVel), std::fabs(targetRightVel)) / 127;
         if (ratio > 1) {
             targetLeftVel /= ratio;
             targetRightVel /= ratio;
