@@ -148,7 +148,7 @@ lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::
     // - made the starting index the one after lastLookahead's index,
     // as anything before would be discarded
     // - searched the path in reverse, as the first hit would be
-    // the garunteed farthest lookahead point
+    // the guaranteed farthest lookahead point
     for (int i = path.size() - 1; i > lastLookahead.theta; i--) {
         // since we are searching in reverse, instead of getting
         // the current pose and the next one, we should get the
@@ -192,7 +192,7 @@ float findLookaheadCurvature(lemlib::Pose pose, float heading, lemlib::Pose look
 
 /**
  * @brief Move the chassis along a path
- *wefowefoi
+ *
  * @param path the path asset to follow
  * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
  * will follow the path less accurately
