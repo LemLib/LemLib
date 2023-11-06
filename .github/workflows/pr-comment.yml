@@ -22,7 +22,7 @@ jobs:
               {owner, repo, issue_number});
               
             const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->\n`;
-
+            
             body = old_body.split(marker)[0] + marker + body;
             await github.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
               owner: owner,
@@ -34,14 +34,14 @@ jobs:
               }
             }) 
             }
-
+            
             const {owner, repo} = context.repo;
-            const run_id = context.run_id;
-
+            const run_id = context.runId;
+            
             const pull_head_sha = context.sha;
             const pull_user_id = context.payload.sender.id;
-
-
+            
+            
             const {issue_number, old_body} = await (async () => {
             const pulls = await github.rest.pulls.list({owner, repo});
             for await (const {data} of github.paginate.iterator(pulls)) {
@@ -57,17 +57,17 @@ jobs:
             } else {
             return core.error(`No matching pull request found`);
             }
-
+            
             const artifacts = await github.paginate(
             github.rest.actions.listWorkflowRunArtifacts, {owner, repo, run_id});
             if (!artifacts.length) {
             return core.error(`No artifacts found`);
             }
             const template = artifacts[0];
-          
+            
             let body = `## Download the template for this pull request: \n\n`;
             body += `> [!NOTE]  
-            > This is auto generated from [\`${context.workflow}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;  
+            > This is auto generated from [\`${context.workflow}\`](${ context.serverUrl }/${repo}/actions/runs/${run_id})\n`;  
             body += `- via manual download: [${template.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)\n`;
             body += `- via PROS Integrated Terminal: \n \`\`\`
             curl -o ${template.name}.zip https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip;
@@ -75,9 +75,9 @@ jobs:
             pros c apply ${template.name};
             rm ${template.name}.zip;
             \`\`\``;
-          
+            
             core.info(`Review thread message body: \n${body}`);
-
-
+            
+            
             await upsertComment(owner, repo, issue_number,
               "nightly-link", old_body, body);
