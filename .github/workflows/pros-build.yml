@@ -100,9 +100,4 @@ jobs:
           retention-days: 89
   comment-on-pr:
     needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2.3.4
-      - name: Run pr-comment
-        uses: ./.github/workflows/pr-comment.yml
+    uses: ./.github/workflows/pr-comment.yml
