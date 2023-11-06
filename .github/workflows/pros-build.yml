@@ -98,3 +98,9 @@ jobs:
           name: LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}
           path: 'template/*'
           retention-days: 89
+  comment-on-pr:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run pr-comment
+        uses: ./.github/workflows/pr-comment.yml
