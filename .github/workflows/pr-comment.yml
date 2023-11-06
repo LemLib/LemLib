@@ -1,8 +1,6 @@
 name: Add Template to Pull Request 
 on:
-  workflow_run:
-    workflows: ['Build Template']
-    types: [completed]
+  workflow_call:
 jobs:
   pr_comment:
     # if Build Template was successful and ran on a branch that is currently the head in a pull request
