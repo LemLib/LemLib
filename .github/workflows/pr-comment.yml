@@ -72,7 +72,7 @@ jobs:
             body += `pros c fetch ${templateName}.zip;\n`
             body += `pros c apply ${templateName};\n`
             body += `rm ${templateName}.zip;\n`
-            body += "```";
+            body += "```\n";
             body += "> [!NOTE] \n"
             body += `> This is auto generated from [\`${context.workflow}\`](${ context.serverUrl }/${repo}/actions/runs/${run_id})\n`;  
             
