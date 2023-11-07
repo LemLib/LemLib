@@ -43,7 +43,7 @@ jobs:
             const {owner, repo} = context.repo;
             const run_id = context.runId;
             
-            const pull_head_sha = context.sha;
+            const pull_head_sha = context.payload.after;
             const pull_user_id = context.payload.sender.id;
             
             
