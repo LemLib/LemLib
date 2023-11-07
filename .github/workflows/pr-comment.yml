@@ -57,6 +57,8 @@ jobs:
             } else {
             return core.error(`No matching pull request found`);
             }
+
+            console.log("run metadata:", {owner, repo, run_id})
             
             const artifacts = await github.paginate(
             github.rest.actions.listWorkflowRunArtifacts, {owner, repo, run_id});
