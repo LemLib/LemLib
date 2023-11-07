@@ -108,6 +108,6 @@ jobs:
     needs: build
     permissions: 
       pull-requests: write
-    uses: ./.github/workflows/pr-comment.yml
+    uses: ./.github/workflows/pr-comment.yml@master
     with: 
       artifact_name: ${{ needs.build.outputs.template-name}}
