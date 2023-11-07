@@ -104,7 +104,7 @@ jobs:
           name: ${{steps.get-template-name.outputs.name}}
           path: 'template/*'
           retention-days: 89
-  comment-on-pr:
+  pr-comment:
     needs: build
     uses: ./.github/workflows/pr-comment.yml
     with: 

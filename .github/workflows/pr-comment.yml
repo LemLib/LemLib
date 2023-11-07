@@ -62,13 +62,13 @@ jobs:
             } else {
             return core.error(`No matching pull request found`);
             }
-            let templateName = context.payload.inputs.template_name;
+            let templateName = ${{ inputs.templateName }};
             let templateLink = `https://nightly.link/${owner}/${repo}/actions/runs/${run_id}/${templateName}.zip`;
             let body = ""
             body += `## Download the template for this pull request: \n\n`;
-            body += `- via manual download: [${templateName}.zip](${templateLink}.zip)\n`;
+            body += `- via manual download: [${templateName}.zip](${templateLink})\n`;
             body += "- via PROS Integrated Terminal: \n ```\n"
-            body += `curl -o ${templateName}.zip ${templateLink}.zip;\n`
+            body += `curl -o ${templateName}.zip ${templateLink};\n`
             body += `pros c fetch ${templateName}.zip;\n`
             body += `pros c apply ${templateName};\n`
             body += `rm ${templateName}.zip;\n`
