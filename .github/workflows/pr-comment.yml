@@ -18,6 +18,7 @@ jobs:
           # This snippet is public-domain, taken from
           # https://github.com/oprypin/nightly.link/blob/master/.github/workflows/pr-comment.yml
           script: |
+            console.log(context);
             async function upsertComment(owner, repo, issue_number, purpose,old_body, body) {
               const {data: comments} = await github.rest.issues.listComments(
                 {owner, repo, issue_number});
