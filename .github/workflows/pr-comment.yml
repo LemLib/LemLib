@@ -62,7 +62,7 @@ jobs:
             } else {
             return core.error(`No matching pull request found`);
             }
-            let templateName = ${{ inputs.templateName }};
+            let templateName = ${{ inputs.artifact_name }};
             let templateLink = `https://nightly.link/${owner}/${repo}/actions/runs/${run_id}/${templateName}.zip`;
             let body = ""
             body += `## Download the template for this pull request: \n\n`;
