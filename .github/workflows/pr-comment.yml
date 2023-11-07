@@ -51,11 +51,13 @@ jobs:
             const pulls = await github.rest.pulls.list({owner, repo});
             for await (const {data} of github.paginate.iterator(pulls)) {
               for (const pull of data) {
+                console.log(pull)
                 if (pull.head.sha === pull_head_sha && pull.user.id === pull_user_id) {
                   return {issue_number: pull.number, old_body: pull.body};
                 }
               }
             }
+            return {};
             })();
             if (issue_number) {
             core.info(`Using pull request ${issue_number}`);
