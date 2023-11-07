@@ -106,6 +106,8 @@ jobs:
           retention-days: 89
   pr-comment:
     needs: build
+    permissions: 
+      pull-requests: write
     uses: ./.github/workflows/pr-comment.yml
     with: 
       artifact_name: ${{ needs.build.outputs.template-name}}
