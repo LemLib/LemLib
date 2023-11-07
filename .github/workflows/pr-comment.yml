@@ -1,6 +1,11 @@
 name: Add Template to Pull Request 
 on:
   workflow_call:
+    inputs:
+      artifact_name:
+        description: "Name of the artifact that was produced"
+        required: true
+        type: string
 jobs:
   pr_comment:
     # if Build Template was successful and ran on a branch that is currently the head in a pull request
@@ -57,26 +62,19 @@ jobs:
             } else {
             return core.error(`No matching pull request found`);
             }
-
-            console.log("run metadata:", {owner, repo, run_id})
-            
-            const artifacts = await github.paginate(
-            github.rest.actions.listWorkflowRunArtifacts, {owner, repo, run_id});
-            if (!artifacts.length) {
-            return core.error(`No artifacts found`);
-            }
-            const template = artifacts[0];
-            
-            let body = `## Download the template for this pull request: \n\n`;
-            body += `> [!NOTE]  
-            > This is auto generated from [\`${context.workflow}\`](${ context.serverUrl }/${repo}/actions/runs/${run_id})\n`;  
-            body += `- via manual download: [${template.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)\n`;
-            body += `- via PROS Integrated Terminal: \n \`\`\`
-            curl -o ${template.name}.zip https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip;
-            pros c fetch ${template.name}.zip;
-            pros c apply ${template.name};
-            rm ${template.name}.zip;
-            \`\`\``;
+            let templateName = context.payload.inputs.template_name;
+            let templateLink = `https://nightly.link/${owner}/${repo}/actions/runs/${run_id}/${templateName}.zip`;
+            let body = ""
+            body += `## Download the template for this pull request: \n\n`;
+            body += `- via manual download: [${templateName}.zip](${templateLink}.zip)\n`;
+            body += "- via PROS Integrated Terminal: \n ```\n"
+            body += `curl -o ${templateName}.zip ${templateLink}.zip;\n`
+            body += `pros c fetch ${templateName}.zip;\n`
+            body += `pros c apply ${templateName};\n`
+            body += `rm ${templateName}.zip;\n`
+            body += "```";
+            body += "> [!NOTE] \n"
+            body += `> This is auto generated from [\`${context.workflow}\`](${ context.serverUrl }/${repo}/actions/runs/${run_id})\n`;  
             
             core.info(`Review thread message body: \n${body}`);
             

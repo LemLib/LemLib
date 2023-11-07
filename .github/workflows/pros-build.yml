@@ -35,6 +35,8 @@ jobs:
     needs: skip-check
     if: needs.skip-check.outputs.should_skip != 'true'
     runs-on: ubuntu-latest
+    outputs:
+      template-name: ${{ steps.get-template-name.outputs.name }}
     steps:
       - name: Get short SHA
         uses: benjlevesque/short-sha@v2.2
@@ -85,18 +87,25 @@ jobs:
 
       - name: Create template folder
         run: mkdir template
-
+      
+      - name: Get template name
+        id: get-template-name
+        run: |
+          echo "name=LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}" >> "$GITHUB_OUTPUT"
+      
       - name: Unzip Template
         uses: montudor/action-zip@v1.0.0
         with:
-          args: unzip "LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}.zip" -d template
+          args: unzip "${{steps.get-template-name.outputs.name}}.zip" -d template
   
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}
+          name: ${{steps.get-template-name.outputs.name}}
           path: 'template/*'
           retention-days: 89
   comment-on-pr:
     needs: build
     uses: ./.github/workflows/pr-comment.yml
+    with: 
+      artifact_name: ${{ needs.build.outputs.template-name}}
