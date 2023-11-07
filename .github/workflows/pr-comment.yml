@@ -6,7 +6,7 @@ on:
 jobs:
   pr_comment:
     # if Build Template was successful and ran on a branch that is currently the head in a pull request
-    # if: github.event.workflow_run.conclusion == 'success' && contains(github.event.workflow_run.pull_requests.*.head.sha, github.event.workflow_run.head_sha)
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     permissions: 
