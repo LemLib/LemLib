@@ -62,7 +62,7 @@ jobs:
             const artifacts = await github.paginate(
               github.rest.actions.listWorkflowRunArtifacts, {owner, repo, run_id});
             if (!artifacts.length) {
-              return core.error(`No artifacts found`);
+              return core.error(`No artifacts found, perhaps Build Template was skipped`);
             }
             const template = artifacts[0];
 
