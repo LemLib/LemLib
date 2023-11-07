@@ -1,3 +1,4 @@
+#test
 name: Build Template
 
 on:
@@ -28,15 +29,13 @@ jobs:
           concurrent_skipping: 'same_content_newer'
           skip_after_successful_duplicate: 'true'
           cancel_others: 'true'
-          # paths: '["src/**", "include/**", "firmware/**", ".github/workflows/pros-build.yml", "**/*.mk", "**/project.pros", "**/Makefile"]'
+          paths: '["src/**", "include/**", "firmware/**", ".github/workflows/pros-build.yml", "**/*.mk", "**/project.pros", "**/Makefile"]'
           do_not_skip: '["workflow_dispatch", "schedule"]'
 
   build:
     needs: skip-check
     if: needs.skip-check.outputs.should_skip != 'true'
     runs-on: ubuntu-latest
-    outputs:
-      template-name: ${{ steps.get-template-name.outputs.name }}
     steps:
       - name: Get short SHA
         uses: benjlevesque/short-sha@v2.2
@@ -87,27 +86,15 @@ jobs:
 
       - name: Create template folder
         run: mkdir template
-      
-      - name: Get template name
-        id: get-template-name
-        run: |
-          echo "name=LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}" >> "$GITHUB_OUTPUT"
-      
+
       - name: Unzip Template
         uses: montudor/action-zip@v1.0.0
         with:
-          args: unzip "${{steps.get-template-name.outputs.name}}.zip" -d template
+          args: unzip "LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}.zip" -d template
   
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{steps.get-template-name.outputs.name}}
+          name: LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}
           path: 'template/*'
           retention-days: 89
-  pr-comment:
-    needs: build
-    permissions: 
-      pull-requests: write
-    uses: ./.github/workflows/pr-comment.yml@master
-    with: 
-      artifact_name: ${{ needs.build.outputs.template-name}}
