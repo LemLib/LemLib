@@ -27,7 +27,6 @@ jobs:
         with:
           # All of these options are optional, so you can remove them if you are happy with the defaults
           concurrent_skipping: 'same_content_newer'
-          skip_after_successful_duplicate: 'true'
           cancel_others: 'true'
           paths: '["src/**", "include/**", "firmware/**", ".github/workflows/pros-build.yml", "**/*.mk", "**/project.pros", "**/Makefile"]'
           do_not_skip: '["workflow_dispatch", "schedule"]'
