@@ -2,10 +2,10 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
-#include <iomanip>
+#include "pros/misc.h"
 
 // controller
-pros::Controller controller();
+pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drive motors
 pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
@@ -72,7 +72,7 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    chassis.initialize(); // calibrate sensors
+    chassis.calibrate(); // calibrate sensors
 
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
@@ -87,16 +87,14 @@ void initialize() {
     pros::Task screenTask([&]() {
         lemlib::Pose pose(0, 0, 0);
         while (true) {
-            pose = chassis.getPose();
-            // print to the brain screen
+            // print robot location to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
             // log position telemetry
-            // lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
-            std::cout << "x: " << pose.x << " y: " << pose.y << " theta: " << pose.theta << std::endl;
+            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources
-            pros::delay(10);
+            pros::delay(50);
         }
     });
 }
@@ -125,7 +123,7 @@ void autonomous() {
     chassis.moveTo(20, 15, 90, 4000);
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
-    chassis.turnToPose(45, -45, 1000, true, 60);
+    chassis.turnTo(45, -45, 1000, true, 60);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
     // see line 110 to see how to define a path
@@ -136,7 +134,7 @@ void autonomous() {
     chassis.waitUntil(10);
     pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
     // wait until the movement is done
-    chassis.waitUntilDone();
+    chassis.waitUntil(1000000);
     pros::lcd::print(4, "pure pursuit finished!");
 }
 
@@ -148,6 +146,10 @@ void opcontrol() {
     // loop to continuously update motors
     while (true) {
         // get joystick positions
+        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        // move the chassis with curvature drive
+        chassis.curvature(leftY, rightX);
         // delay to save resources
         pros::delay(10);
     }
