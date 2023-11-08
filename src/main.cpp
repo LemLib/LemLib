@@ -2,6 +2,9 @@
 #include "lemlib/api.hpp"
 #include "lemlib/logger/stdout.hpp"
 
+// controller
+pros::Controller controller();
+
 // drive motors
 pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
 pros::Motor lB(-21, pros::E_MOTOR_GEARSET_06); // left back motor. port 21, reversed
@@ -20,18 +23,49 @@ pros::Rotation horizontalEnc(7);
 // horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
 
-// drivetrain
-lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 360, 2};
+// drivetrain settings
+lemlib::Drivetrain_t drivetrain {
+    &leftMotors, // left motor group
+    &rightMotors, // right motor group
+    10, // 10 inch track width
+    lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
+    360, // drivetrain rpm is 360
+    2 // chase power is 2. If we had traction wheels, it would have been 8
+};
 
 // lateral motion controller
-lemlib::ChassisController_t lateralController {10, 30, 1, 100, 3, 500, 20};
+lemlib::ChassisController_t lateralController {
+    10, // proportional gain (kP)
+    30, // derivative gain (kD)
+    1, // small error range, in inches
+    100, // small error range timeout, in milliseconds
+    3, // large error range, in inches
+    500, // large error range timeout, in milliseconds
+    20 // maximum acceleration (slew)
+};
 
 // angular motion controller
-lemlib::ChassisController_t angularController {2, 10, 1, 100, 3, 500, 20};
+lemlib::ChassisController_t angularController {
+    2, // proportional gain (kP)
+    10, // derivative gain (kD)
+    1, // small error range, in degrees
+    100, // small error range timeout, in milliseconds
+    3, // large error range, in degrees
+    500, // large error range timeout, in milliseconds
+    20 // maximum acceleration (slew)
+};
 
 // sensors for odometry
-lemlib::OdomSensors_t sensors {nullptr, nullptr, &horizontal, nullptr, &imu};
+// note that in this example we use internal motor encoders, so we don't pass vertical tracking wheels
+lemlib::OdomSensors_t sensors {
+    nullptr, // vertical tracking wheel 1, set to nullptr as we don't have one
+    nullptr, // vertical tracking wheel 2, set to nullptr as we don't have one
+    &horizontal, // horizontal tracking wheel 1
+    nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+    &imu // inertial sensor
+};
 
+// create the chassis
 lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 
 /**
