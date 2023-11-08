@@ -4,10 +4,14 @@
 #include "lemlib/logger/stdout.hpp"
 #include <iomanip>
 
-// left drive motors on ports 8, 20, 18. Motors on ports 8 and 20 are reversed
-auto leftDrive = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
-// right drive motors on ports 2, 11, 13. Motor on port 13 is reversed
-auto rightDrive = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
+// controller
+pros::Controller controller();
+
+// drive motors
+pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
+pros::Motor lB(-21, pros::E_MOTOR_GEARSET_06); // left back motor. port 21, reversed
+pros::Motor rF(12, pros::E_MOTOR_GEARSET_06); // right front motor. port 12
+pros::Motor rB(16, pros::E_MOTOR_GEARSET_06); // right back motor. port 16
 
 // Inertial Sensor on port 12
 pros::Imu imu(12);
@@ -15,53 +19,50 @@ pros::Imu imu(12);
 // vertical tracking wheel. Port 4, not reversed, 2.75" diameter, 3.7" offset, left of the robot center
 lemlib::TrackingWheel vertical(4, lemlib::Omniwheel::NEW_275, -3.7);
 
-// drivetrain
+// drivetrain settings
 lemlib::Drivetrain_t drivetrain {
-    leftDrive, // left drivetrain motors
-    rightDrive, // right drivetrain motors
-    10, // track width of robot (distance from left wheels to distance of right)
-    lemlib::Omniwheel::NEW_4, // wheel diameter
-    300, // rpm of the drivetrain
-    8 // chase power. Higher values result in sharper turns
+    &leftMotors, // left motor group
+    &rightMotors, // right motor group
+    10, // 10 inch track width
+    lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
+    360, // drivetrain rpm is 360
+    2 // chase power is 2. If we had traction wheels, it would have been 8
 };
 
 // lateral motion controller
 lemlib::ChassisController_t lateralController {
-    10, // kP
-    30, // kD
-    1, // small exit range
-    100, // small exit timeout
-    3, // large error range
-    500, // large error timeout
-    20 // acceleration cap
+    10, // proportional gain (kP)
+    30, // derivative gain (kD)
+    1, // small error range, in inches
+    100, // small error range timeout, in milliseconds
+    3, // large error range, in inches
+    500, // large error range timeout, in milliseconds
+    20 // maximum acceleration (slew)
 };
 
 // angular motion controller
 lemlib::ChassisController_t angularController {
-    2, // kP
-    10, // kD
-    1, // small exit range
-    100, // small exit timeout
-    3, // large exit range
-    500, // large exit timeout
-    20 // acceleration cap
+    2, // proportional gain (kP)
+    10, // derivative gain (kD)
+    1, // small error range, in degrees
+    100, // small error range timeout, in milliseconds
+    3, // large error range, in degrees
+    500, // large error range timeout, in milliseconds
+    20 // maximum acceleration (slew)
 };
 
 // sensors for odometry
+// note that in this example we use internal motor encoders, so we don't pass vertical tracking wheels
 lemlib::OdomSensors_t sensors {
-    &vertical, // vertical tracking wheel
-    nullptr, // we don't have a second vertical tracking wheel
-    nullptr, // we don't have a horizontal tracking wheel
-    nullptr, // we don't have a horizontal tracking wheel
-    &imu // inertial sensor (AKA imu)
+    nullptr, // vertical tracking wheel 1, set to nullptr as we don't have one
+    nullptr, // vertical tracking wheel 2, set to nullptr as we don't have one
+    &horizontal, // horizontal tracking wheel 1
+    nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+    &imu // inertial sensor
 };
 
-// chassis
-lemlib::Differential chassis(drivetrain, // drivetrain struct
-                             lateralController, // forwards/backwards PID struct
-                             angularController, // turning PID struct
-                             sensors // sensors struct
-);
+// create the chassis
+lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
