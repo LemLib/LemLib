@@ -6,7 +6,7 @@ on:
 jobs:
   pr_comment:
     # if Build Template was successful and ran on a branch that is currently the head in a pull request
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     permissions: 
@@ -26,7 +26,7 @@ jobs:
                 {owner, repo, issue_number});
                 
               const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->\n`;
-
+            
               body = old_body.split(marker)[0] + marker + body;
               await github.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
                 owner: owner,
@@ -38,14 +38,14 @@ jobs:
                 }
               }) 
             }
-
+            
             const {owner, repo} = context.repo;
             const run_id = ${{github.event.workflow_run.id}};
-
+            
             const pull_head_sha = '${{github.event.workflow_run.head_sha}}';
             const pull_user_id = ${{github.event.sender.id}};
-
-
+            
+            /** @type {{old_body: string}} */
             const {issue_number, old_body} = await (async () => {
               const pulls = await github.rest.pulls.list({owner, repo});
               for await (const {data} of github.paginate.iterator(pulls)) {
@@ -55,21 +55,25 @@ jobs:
                   }
                 }
               }
-            })();
+            })();            
             if (issue_number) {
               core.info(`Using pull request ${issue_number}`);
             } else {
               return core.error(`No matching pull request found`);
             }
-
+            
+            let old_sha = /\<\!-- commit-sha: (?<sha>[a-z0-9]+) --\>/i.exec(old_body).groups?.sha
+            if (old_sha != undefined && pull_head_sha == old_sha) return core.error("Comment is already up-to-date!")
+            
             const artifacts = await github.paginate(
               github.rest.actions.listWorkflowRunArtifacts, {owner, repo, run_id});
             if (!artifacts.length) {
               return core.error(`No artifacts found, perhaps Build Template was skipped`);
             }
             const template = artifacts[0];
-
-            let body = `## Download the template for this pull request: \n\n`;
+            
+            let body = `<!-- commit-sha: ${pull_head_sha} -->\n`;
+            body +=`## Download the template for this pull request: \n\n`;
             body += `> [!NOTE]  
             > This is auto generated from [\`${{ github.workflow }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;  
             body += `- via manual download: [${template.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)\n`;
@@ -84,6 +88,7 @@ jobs:
             
             console.log(context.payload.workflow_run);
             console.log(context.payload.workflow_run.pull_requests);
-
+            
               await upsertComment(owner, repo, issue_number,
                 "nightly-link", old_body, body);
+          
