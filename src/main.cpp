@@ -1,9 +1,10 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/logger/stdout.hpp"
+#include "pros/misc.h"
 
 // controller
-pros::Controller controller();
+pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drive motors
 pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
@@ -75,70 +76,85 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    pros::lcd::initialize();
+    pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
 
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
     // lemlib::bufferedStdout().setRate(...);
+    // If you use bluetooth or a wired connection, you will want to have a rate of 10ms
 
     // for more information on how the formatting for the loggers
     // works, refer to the fmtlib docs
 
-    // print odom values to the brain
-    pros::Task screenTask([=]() {
+    // thread to for brain screen and position logging
+    pros::Task screenTask([&]() {
+        lemlib::Pose pose(0, 0, 0);
         while (true) {
-            pros::lcd::print(0, "X: %f", chassis.getPose().x);
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y);
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
+            // print robot location to the brain screen
+            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            // log position telemetry
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+            // delay to save resources
             pros::delay(50);
         }
     });
 }
 
 /**
- * Runs while the robot is in the disabled state of Field Management System or
- * the VEX Competition Switch, following either autonomous or opcontrol. When
- * the robot is enabled, this task will exit.
+ * Runs while the robot is disabled
  */
 void disabled() {}
 
 /**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
+ * runs after initialize if the robot is connected to field control
  */
 void competition_initialize() {}
 
-/**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
-void autonomous() {}
+// get a path used for pure pursuit
+// this needs to be put outside a function
+ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 
 /**
- * Runs the operator control code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the operator
- * control mode.
+ * Runs during auto
  *
- * If no competition control is connected, this function will run immediately
- * following initialize().
- *
- * If the robot is disabled or communications is lost, the
- * operator control task will be stopped. Re-enabling the robot will restart the
- * task, not resume it from where it left off.
+ * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
-void opcontrol() { chassis.moveTo(20, 15, 90, 4000); }
+void autonomous() {
+    // example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4000 ms
+    chassis.moveTo(20, 15, 90, 4000);
+    // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
+    // dont turn faster than 60 (out of a maximum of 127)
+    chassis.turnTo(45, -45, 1000, true, 60);
+    // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
+    // following the path with the back of the robot (forwards = false)
+    // see line 110 to see how to define a path
+    chassis.follow(example_txt, 15, 4000, false);
+    // wait until the chassis has travelled 10 inches. Otherwise the code directly after
+    // the movement will run immediately
+    // Unless its another movement, in which case it will wait
+    chassis.waitUntil(10);
+    pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
+    // wait until the movement is done
+    chassis.waitUntil(1000000);
+    pros::lcd::print(4, "pure pursuit finished!");
+}
+
+/**
+ * Runs in driver control
+ */
+void opcontrol() {
+    // controller
+    // loop to continuously update motors
+    while (true) {
+        // get joystick positions
+        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        // move the chassis with curvature drive
+        chassis.curvature(leftY, rightX);
+        // delay to save resources
+        pros::delay(10);
+    }
+}
