@@ -62,7 +62,7 @@ jobs:
               return core.error(`No matching pull request found`);
             }
             
-            let old_sha = /\<\!-- commit-sha: (?<sha>[a-z0-9]+) --\>/i.exec(old_body).groups?.sha
+            let old_sha = /\<\!-- commit-sha: (?<sha>[a-z0-9]+) --\>/i.exec(old_body)?.groups?.sha
             if (old_sha != undefined && pull_head_sha == old_sha) return core.error("Comment is already up-to-date!")
             
             const artifacts = await github.paginate(
