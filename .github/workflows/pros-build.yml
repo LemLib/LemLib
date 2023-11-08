@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Get short SHA
         uses: benjlevesque/short-sha@v2.2
