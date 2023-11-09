@@ -148,7 +148,7 @@ lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::
     // - made the starting index the one after lastLookahead's index,
     // as anything before would be discarded
     // - searched the path in reverse, as the first hit would be
-    // the garunteed farthest lookahead point
+    // the guaranteed farthest lookahead point
     for (int i = path.size() - 1; i > lastLookahead.theta; i--) {
         // since we are searching in reverse, instead of getting
         // the current pose and the next one, we should get the
@@ -193,23 +193,19 @@ float findLookaheadCurvature(lemlib::Pose pose, float heading, lemlib::Pose look
 /**
  * @brief Move the chassis along a path
  *
- * @param filePath the filename of the path to follow
- * @param timeout the maximum time the robot can spend moving
+ * @param path the path asset to follow
  * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
  * will follow the path less accurately
- * @param async whether the function should be run asynchronously. false by default
+ * @param timeout the maximum time the robot can spend moving
  * @param forwards whether the robot should follow the path going forwards. true by default
- * @param maxSpeed the maximum speed the robot can move at
- * @param log whether the chassis should log the path on a log file. false by default.
+ * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bool async, bool forwards, float maxSpeed,
-                             bool log) {
-    // try to take the mutex
-    // if its unsuccessful after 10ms, return
+void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bool forwards, bool async) {
+    // take the mutex
     if (!mutex.take(10)) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { follow(path, timeout, lookahead, false, forwards, maxSpeed, log); });
+        pros::Task task([&]() { follow(path, lookahead, timeout, forwards, false); });
         mutex.give();
         pros::delay(10); // delay to give the task time to start
         return;
@@ -262,7 +258,7 @@ void lemlib::Chassis::follow(const asset& path, int timeout, float lookahead, bo
         float targetRightVel = targetVel * (2 - curvature * drivetrain.trackWidth) / 2;
 
         // ratio the speeds to respect the max speed
-        float ratio = std::max(std::fabs(targetLeftVel), std::fabs(targetRightVel)) / maxSpeed;
+        float ratio = std::max(std::fabs(targetLeftVel), std::fabs(targetRightVel)) / 127;
         if (ratio > 1) {
             targetLeftVel /= ratio;
             targetRightVel /= ratio;
