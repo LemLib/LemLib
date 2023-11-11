@@ -18,6 +18,9 @@ jobs:
           # This snippet is public-domain, taken from
           # https://github.com/oprypin/nightly.link/blob/master/.github/workflows/pr-comment.yml
           script: |
+            console.log(context);
+            console.log(context.payload.workflow_run);
+            console.log(context.payload.workflow_run.pull_requests);
             async function upsertComment(owner, repo, issue_number, purpose,old_body, body) {
               const {data: comments} = await github.rest.issues.listComments(
                 {owner, repo, issue_number});
@@ -83,6 +86,9 @@ jobs:
             
             core.info(`Review thread message body: \n${body}`);
             
-            await upsertComment(owner, repo, issue_number,
-              "nightly-link", old_body, body);
+            console.log(context.payload.workflow_run);
+            console.log(context.payload.workflow_run.pull_requests);
+            
+              await upsertComment(owner, repo, issue_number,
+                "nightly-link", old_body, body);
           
