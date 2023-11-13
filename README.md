@@ -1,5 +1,4 @@
 # LemLib
-
 Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.
 
 LemLib only supports differential drivetrains.
@@ -9,7 +8,6 @@ The creation of this template was inspired by [EZ-Template](https://github.com/E
 Want a place to chat with the devs and other users? Join our [discord server](https://discord.gg/pCHr7XZUTj).
 
 ## License
-
 This project is licensed under the MIT license. Check [LICENSE](https://github.com/LemLib/LemLib/blob/master/LICENSE) for more details.
 
 ## Features
@@ -19,6 +17,9 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 - [Boomerang controller](https://www.desmos.com/calculator/sptjw5szex)
 - Pure Pursuit
 - [Path Generator](https://github.com/LemLib/Path-Gen) support
+
+## Example Project
+You can find a fully annotated example project [here](https://github.com/LemLib/LemLib/blob/master/src/main.cpp)
 
 ## Tutorials
 The tutorials provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to pure pursuit.
@@ -60,10 +61,10 @@ Per the recf student-centred policy, in the context of third-party libraries
 In other words, you need to know how LemLib works. You don't need to know the details like all the math, just more or less how the algorithm works. If you want to learn more about LemLib, you can look through the documentation and ask questions on our Discord server
 
 ## Documentation
-Check out the Doxygen documentation [here](https://lemlib.github.io/LemLib/index.html)
+Check out the [Doxygen documentation](https://lemlib.github.io/LemLib/index.html)
 
 ## Contributing
-Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/.github/CONTRIBUTING.md)
+Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/.github/CONTRIBUTING.md) and join our [discord server](https://discord.gg/pCHr7XZUTj)
 
 ## Code of Conduct
 See the [Code of Conduct](https://github.com/LemLib/LemLib/blob/master/.github/CODE_OF_CONDUCT.md) on how to behave like an adult.
