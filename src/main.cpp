@@ -23,9 +23,9 @@ pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 pros::Imu imu(12);
 
 // tracking wheels
-pros::Rotation verticalEnc(4);
+pros::Rotation horizontalEnc(4);
 // horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot
-lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -3.7);
+lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain
 lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_4, 300, 8};
