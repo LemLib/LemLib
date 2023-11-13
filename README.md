@@ -42,7 +42,7 @@ You should absolutely have a horizontal tracking wheel if you don't have tractio
 
 _**4. Do I need an inertial sensor?**_
 No, but it is highly recommended.
-The one exception to this would be if you well 2 parallel tracking wheels which are tuned well and are perfectly square. LemLib will work without it, but the accuracy of the odometry will be compromised. 
+The one exception to this would be if you have 2 parallel tracking wheels which are tuned well and are perfectly square. LemLib will work without it, but the accuracy will be compromised. 
 
 _**5. Do I need an SD card?**_
 Only if you use Pure Pursuit `chassis.follow()`.
