@@ -10,48 +10,56 @@ Pure Pursuit is a path following algorithm that allows the robot to follow a pat
 
 <img src="./assets/4_pure_pursuit/pursuit.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
-Tuning Pure Pursuit is very simple. If you want the robot to follow the path more closely, decrease the lookahead distance. If you want the robot to follow the path more loosely, but faster, then increase the lookahead distance. A good starting point is 10 inches, but this will vary depending on each motion.
+Tuning Pure Pursuit is very simple. If you want the robot to follow the path more closely, decrease the lookahead distance. If you want the robot to follow the path more loosely, but faster, then increase the lookahead distance. A good starting point is 10-15 inches, but this will vary depending on each motion.
 
 ## Creating Paths
 
-We have developed a Path Planner so you can quickly and easily generate paths for your robot to follow. You can find it [here](https://lemlib.github.io/Path-Gen/). Just like LemLib, it is [entirely open source](https://github.com/LemLib/Path-Gen), so you can see how it works and even contribute to it.
+You can use [path.jerryio.com](https://path.jerryio.com) to generate paths for the autonomous
 
 Using the Path Generator is simple:
- - Left Click Drag to move existing waypoints (big green circles)
+ - Select the LemLib format (top right)
+ - Left Click Drag to move existing waypoints (big purple circles)
  - Left Click to add a waypoint
  - Right Click to remove a waypoint
- - Right Click Drag to highlight path points (small circles)
 
-Another feature of the Path Generator is the ability to make the robot go faster or slower at certain points. The planner will automatically slow down the robot around sharp corners and decelerate as it approaches the end of the path. You can modify the speed of the robot at certain sections by highlighting the section (right click drag) and then changing the speed in the textbox that will appear. The units of the checkbox are a percentage. Editing the path will reset any user defined speeds. Below is an example of a path with a user defined speed:
+Another feature of the path.jerryio is the ability to make the robot go faster or slower at certain points. The planner will automatically slow down the robot around sharp corners and decelerate as it approaches the end of the path. You can view the velocity of the path at each waypoint on the speed graph at the bottom of the page. See the video below:
 
 <img src="./assets/4_pure_pursuit/custom_speed.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+<br>
 
-As you may have noticed, there are some sliders on the right. Unfortunately, the GIF shown is of a slightly older version of the Path Planner, and some sliders have been removed. Now, the only sliders on the Path Planner are the max speed, max deceleration, and turn speed multiplier. Max speed and max deceleration do exactly what you would expect. The turn speed multiplier determines how fast the robot will move around sharp corners. Higher values will make the robot move faster around corners, and lower values will make the robot move slower around corners.
+For further information on the path.jerryio, check out its [user guide](https://github.com/Jerrylum/path.jerryio/wiki)
 
 ## Files
 
-The Path Generator saves paths as .txt files. You can obtain the file by clicking the "Download Path" button. The file will be saved to your downloads folder. You can upload this file to the Path Generator later on and it will load the path again.
+path.jerryio saves paths as .txt files. You can upload this file to your robot, and reupload it again to path.jerryio for further modification later on.
 
-In order for the robot to read the file, we need to put it on a micro SD card. Simply drag the file onto the SD card and it will be copied over. You can then insert the SD card into the robot and it will be able to read the file.
+To upload the path, all you need to do is save the .txt file to the `static` folder in your project. To do this, click `ctrl + s` on windows, or `⌘ + s` on mac, then browse to the `static` folder and select it. Now if you hit save, it will automatically save to the file in your `static` folder.
 
 Almost there! Now we just need to tell the robot to follow the path. We can do this through the `lemlib::Chassis::follow` function. Below is an example of how to use it:
 ```cpp
+// path file name is "example.txt".
+// "." is replaced with "_" to overcome c++ limitations
+ASSET(example_txt);
+ASSET(example2_txt)
+
 void autonomous() {
-    // file name: path.txt
-    // timeout: 2000 ms
     // lookahead distance: 15 inches
-    chassis.follow("path.txt", 2000, 15);
+    // timeout: 2000 ms
+    chassis.follow(example_txt, 15, 2000);
     // follow the next path, but with the robot going backwards
-    chassis.follow("path2.txt", 2000, 15, true);
+    chassis.follow(example2_txt, 15, 2000, false);
 }
 ```
 
-In the above example, the robot reads the path in "path.txt", has a timeout of 2000 milliseconds, and a lookahead distance of 15 inches. After it finishes following the path, it will read the path in "path2.txt" and follow it. The robot will be going backwards this time, so the last parameter is set to true.
+In the above example, the robot reads the path in "example.txt", has a timeout of 2000 milliseconds, and a lookahead distance of 15 inches. After it finishes following the path, it will read the path in "example2.txt" and follow it. The robot will be going backwards this time, so the last parameter is set to false.
+
+> [!NOTE]  
+> The position of the robot when it starts following the path is critical. It does not need to be very close, but it is easy to accidentally make the robot start at the end of the path than at the start of the path. You can identify the end of the path with the checkered flag at the end of the path. If you do make this mistake, it will seem that the robot is barely moving, not moving where its supposed to, or even not moving at all. 
 
 ## Conclusion
 Thats it for the tutorials! I hope they were helpful. If you have any questions, feel free to ask me on Discord (SizzlinSeal#8682). You can also open issues and pull requests on the repos.
  - [LemLib](https://github.com/LemLib/LemLib)
- - [Path Generator](https://github.com/LemLib/Path-Gen)
+ - [path.jerryio](https://path.jerryio.com/)
 
 
 [Previous Tutorial](3_tuning_and_moving.md)
