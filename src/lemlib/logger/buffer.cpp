@@ -21,12 +21,6 @@ Buffer::~Buffer() {
     while (!buffersEmpty()) { pros::delay(10); }
 }
 
-void Buffer::pushToBuffer(const std::string& bufferData) {
-    mutex.take();
-    buffer.push_back(bufferData);
-    mutex.give();
-}
-
 void Buffer::setRate(uint32_t rate) { this->rate = rate; }
 
 void Buffer::taskLoop() {

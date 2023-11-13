@@ -11,7 +11,6 @@
 #include "lemlib/logger/telemetrySink.hpp"
 
 namespace lemlib {
-
 /**
  * @brief Get the info sink.
  * @return std::shared_ptr<InfoSink>

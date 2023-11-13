@@ -18,5 +18,7 @@ fmt::dynamic_format_arg_store<fmt::format_context> BaseSink::getExtraFormattingA
     return {};
 }
 
+bool BaseSink::isCombinedSink() { return !sinks.empty(); }
+
 void BaseSink::sendMessage(const Message& message) {}
 } // namespace lemlib

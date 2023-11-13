@@ -200,6 +200,14 @@ class BaseSink {
          * @return fmt::dynamic_format_arg_store<fmt::format_context>
          */
         virtual fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs(const Message& messageInfo);
+
+        /**
+         * @brief Checks to see if a sink is a combined sink or not.
+         *
+         * @return true
+         * @return false
+         */
+        bool isCombinedSink();
     private:
         Level lowestLevel = Level::DEBUG;
         std::string logFormat;

@@ -7,7 +7,7 @@ namespace lemlib {
  * @brief Level of the message
  *
  */
-enum class Level { INFO, DEBUG, WARN, ERROR, FATAL };
+enum class Level { INFO, DEBUG, WARN, ERROR, FATAL, TELEMETRY };
 
 /**
  * @brief A loggable message
