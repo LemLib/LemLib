@@ -68,6 +68,41 @@ void autonomous() {
 
 This function is very similar to the `chassis.turnTo()` function. The first 3 parameters are the x, y, and heading the robot should move to. The fourth parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fifth parameter is whether the robot should move backwards or forwards. The fifth parameter is the maximum speed the robot can move at. Only the first 4 parameters are required.
 
+## Understanding asynchronous movements
+By default all movements in lemlib run asynchronously. Put plainly, it runs in its own task. While the system is robust, it takes a little getting used to. Let's look at some examples:
+
+```c++
+pros::millis(); // returns 0000
+chassis.moveTo(0, 0, 0, 1000);
+pros::millis(); // returns 0000
+```
+
+As you can see, function calls after a movement function call are ran immediately afterwards. However, it will wait until the current movement is done before calling the next movement call. Lets look at the next example:
+
+```c++
+pros::millis(); // returns 0000
+chassis.moveTo(0, 0, 0, 1000);
+pros::millis(); // returns 0000
+chassis.moveTo(0, 0, 0, 1000);
+pros::millis(); // returns 1000
+```
+
+The program waits. But what if we want to wait until the robot has moved a certain distance? Well, there's a function for that
+```c++
+pros::millis(); // returns 0000
+chassis.moveTo(0, 20, 0, 1000);
+chassis.waitUntil(10); // wait until the chassis has travelled 10 inches
+pros::millis(); // outputs 500
+chassis.waitUntilDone(); // wait until the movement has been completed
+pros::millis(); // outputs 1000
+```
+
+> _**IMPORTANT NOTE**_
+<br>
+> `chassis::waitUntil` and `chassis.waitUntilDone` work for all movements. The only difference is when you are using `chassis.waitUntil`, where instead of inches the units are in degrees.
+
+This system will take a bit of getting used to, but it is very powerful. If you need additional examples, check out the [example project](https://github.com/LemLib/LemLib/blob/master/src/main.cpp), open a [discussion](https://github.com/LemLib/LemLib/discussions/new?category=q-a), or open a ticket in our [discord server](https://discord.gg/pCHr7XZUTj)
+
 
 ## Tuning the PIDs
 Now that we know how to move the robot, we can start tuning the PIDs. Let's start with the lateral PIDs.

@@ -1,11 +1,9 @@
 # LemLib
 Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.
 
-LemLib only supports differential drivetrains.
-
 The creation of this template was inspired by [EZ-Template](https://github.com/EZ-Robotics/EZ-Template) and [OkapiLib](https://github.com/OkapiLib/OkapiLib). We aim to develop a library that strikes a balance between ease-of-use, akin to that of EZ-Template, and comprehensive functionality, similar to that of OkapiLib.
 
-Want a place to chat with the devs and other users? Join our [discord server](https://discord.gg/pCHr7XZUTj).
+> Want a place to chat with the devs and other users? Join our [discord server](https://discord.gg/pCHr7XZUTj).
 
 ## License
 This project is licensed under the MIT license. Check [LICENSE](https://github.com/LemLib/LemLib/blob/master/LICENSE) for more details.

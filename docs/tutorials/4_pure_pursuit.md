@@ -54,10 +54,11 @@ void autonomous() {
 In the above example, the robot reads the path in "example.txt", has a timeout of 2000 milliseconds, and a lookahead distance of 15 inches. After it finishes following the path, it will read the path in "example2.txt" and follow it. The robot will be going backwards this time, so the last parameter is set to false.
 
 > _**IMPORTANT NOTE**_
+<br>
 > The position of the robot when it starts following the path is critical. It does not need to be very close, but it is easy to accidentally make the robot start at the end of the path than at the start of the path. You can identify the end of the path with the checkered flag at the end of the path. If you do make this mistake, it will seem that the robot is barely moving, not moving where its supposed to, or even not moving at all. 
 
 ## Conclusion
-Thats it for the tutorials! I hope they were helpful. If you have any questions, feel free to ask me on Discord (SizzlinSeal#8682). You can also open issues and pull requests on the repos.
+Thats it for the tutorials! I hope they were helpful. If you have any questions, feel free to ask me on Discord (sizzlinseal). You can also open issues and pull requests on the repos.
  - [LemLib](https://github.com/LemLib/LemLib)
  - [path.jerryio](https://path.jerryio.com/)
 
