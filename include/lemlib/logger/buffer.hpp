@@ -32,6 +32,13 @@ class Buffer {
         Buffer(const Buffer&) = delete;
         Buffer& operator=(const Buffer&) = delete;
 
+        /**
+         * @brief Push to the buffer
+         * 
+         * @tparam T 
+         * @param format 
+         * @param args 
+         */
         template <typename... T> void pushToBuffer(fmt::format_string<T...> format, T&&... args) {
             mutex.take();
             buffer.push_back(fmt::format(format, std::forward<T>(args)...));
