@@ -19,10 +19,10 @@ class BufferedStdout : public Buffer {
 
         /**
          * @brief Print a string (thread-safe)
-         * 
-         * @tparam T 
-         * @param format 
-         * @param args 
+         *
+         * @tparam T
+         * @param format
+         * @param args
          */
         template <typename... T> void print(fmt::format_string<T...> format, T&&... args) {
             pushToBuffer(format, std::forward<T>(args)...);

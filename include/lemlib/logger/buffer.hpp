@@ -34,10 +34,10 @@ class Buffer {
 
         /**
          * @brief Push to the buffer
-         * 
-         * @tparam T 
-         * @param format 
-         * @param args 
+         *
+         * @tparam T
+         * @param format
+         * @param args
          */
         template <typename... T> void pushToBuffer(fmt::format_string<T...> format, T&&... args) {
             mutex.take();

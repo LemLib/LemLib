@@ -31,9 +31,7 @@ class TelemetrySink : public BaseSink {
          * @param args
          */
         template <typename... T> void telemetry(fmt::format_string<T...> format, T&&... args) {
-            if (isCombinedSink()) {
-                return;
-            }
+            if (isCombinedSink()) { return; }
 
             log(Level::TELEMETRY, format, std::forward<T>(args)...);
         }
