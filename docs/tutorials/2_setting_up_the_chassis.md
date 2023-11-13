@@ -46,7 +46,7 @@ lemlib::Drivetrain drivetrain(&left_side_motors, // left motor group
 
 A crucial component of a consistent autonomous is position tracking, commonly known as odometry. Odometry allows the robot to know where it is on the field. LemLib has built in odometry, and is compatible with most tracking wheel / inertial sensor combinations. To set up odometry, we need to tell LemLib what sensors we are using. Lets start with the tracking wheels.
 
-Tracking Wheels are unpowered wheels that are used to track the movement of the robot. Below is a photo of a typical tracking wheel:
+Tracking Wheels are non-powered wheels that are used to track the movement of the robot. Below is a photo of a typical tracking wheel:
 
 <img src="./assets/2_setting_up_the_chassis/tracking_wheel.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
