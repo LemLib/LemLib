@@ -325,3 +325,106 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool fo
     // give the mutex back
     mutex.give();
 }
+
+/**
+ * @brief Move the chassis towards a target point
+ *
+ * @param x x location
+ * @param y y location
+ * @param timeout longest time the robot can spend moving
+ * @param async whether the function should be run asynchronously. false by default
+ * @param maxSpeed the maximum speed the robot can move at. 127 by default
+ */
+void lemlib::Chassis::moveToOld(float x, float y, int timeout, bool forwards, bool async, float maxSpeed) {
+    // try to take the mutex
+    // if its unsuccessful after 10ms, return
+    if (!mutex.take(10)) return;
+    // if the function is async, run it in a new task
+    if (async) {
+        pros::Task task([&]() { moveToOld(x, y, timeout, forwards, false, maxSpeed); });
+        mutex.give();
+        pros::delay(10); // delay to give the task time to start
+        return;
+    }
+
+    Pose pose(0, 0);
+    Pose lastPose = getPose();
+    float prevLateralPower = 0;
+    float prevAngularPower = 0;
+    bool close = false;
+    int start = pros::millis();
+    std::uint8_t compState = pros::competition::get_status();
+    distTravelled = 0;
+
+    // create a new PID controller
+    FAPID lateralPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "lateralPID");
+    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
+                       lateralSettings.smallErrorTimeout, timeout);
+
+    // main loop
+    while (pros::competition::get_status() == compState && (!lateralPID.settled() || pros::millis() - start < 300)) {
+        Pose target(x, y);
+        // get the current position
+        Pose pose = getPose(true);
+
+        // update completion vars
+        distTravelled += pose.distance(lastPose);
+        lastPose = pose;
+
+        // update error
+        float targetTheta = M_PI_2 - pose.angle(target);
+        float hypot = pose.distance(target);
+        float angularError =
+            (forwards) ? angleError(pose.theta, targetTheta, true) : angleError(pose.theta, targetTheta + M_PI, true);
+        float lateralError = hypot * cos(angleError(pose.theta, targetTheta));
+
+        // calculate speed
+        float lateralPower = lateralPID.update(lateralError, 0);
+        float angularPower = -angularPID.update(radToDeg(angularError), 0);
+
+        // if the robot is close to the target
+        if (pose.distance(target) < 7.5) {
+            close = true;
+            maxSpeed = (std::fabs(prevLateralPower) < 30) ? 30 : std::fabs(prevLateralPower);
+        }
+
+        // limit acceleration
+        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
+        if (std::fabs(angularError) > 25)
+            angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
+
+        // cap the speed
+        if (lateralPower > maxSpeed) lateralPower = maxSpeed;
+        else if (lateralPower < -maxSpeed) lateralPower = -maxSpeed;
+        if (close) angularPower = 0;
+
+        prevLateralPower = lateralPower;
+        prevAngularPower = angularPower;
+
+        float leftPower = lateralPower + angularPower;
+        float rightPower = lateralPower - angularPower;
+
+        // ratio the speeds to respect the max speed
+        float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+        if (ratio > 1) {
+            leftPower /= ratio;
+            rightPower /= ratio;
+        }
+
+        // move the motors
+        drivetrain.leftMotors->move(leftPower);
+        drivetrain.rightMotors->move(rightPower);
+
+        pros::delay(10);
+    }
+
+    // stop the drivetrain
+    drivetrain.leftMotors->move(0);
+    drivetrain.rightMotors->move(0);
+
+    // set distTraveled to -1 to indicate that the function has finished
+    distTravelled = -1;
+    // give the mutex back
+    mutex.give();
+}

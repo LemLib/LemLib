@@ -7,22 +7,24 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drive motors
-pros::Motor lF(-9, pros::E_MOTOR_GEARSET_06); // left front motor. port 9, reversed
-pros::Motor lB(-21, pros::E_MOTOR_GEARSET_06); // left back motor. port 21, reversed
-pros::Motor rF(12, pros::E_MOTOR_GEARSET_06); // right front motor. port 12
-pros::Motor rB(16, pros::E_MOTOR_GEARSET_06); // right back motor. port 16
+pros::Motor lF(-8, pros::E_MOTOR_GEARSET_06); // left front motor. port 8, reversed
+pros::Motor lM(-20, pros::E_MOTOR_GEARSET_06); // left middle motor. port 20, reversed
+pros::Motor lB(19, pros::E_MOTOR_GEARSET_06); // left back motor. port 19
+pros::Motor rF(2, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
+pros::Motor rM(11, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
+pros::Motor rB(-13, pros::E_MOTOR_GEARSET_06); // right back motor. port 13, reversed
 
 // motor groups
-pros::MotorGroup leftMotors({lF, lB}); // left motor group
-pros::MotorGroup rightMotors({rF, rB}); // right motor group
+pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
+pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
 // Inertial Sensor on port 11
-pros::Imu imu(11);
+pros::Imu imu(12);
 
 // tracking wheels
-pros::Rotation horizontalEnc(7);
+pros::Rotation verticalEnc(4);
 // horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
+lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain settings
 lemlib::Drivetrain_t drivetrain {
