@@ -20,22 +20,81 @@
 #include "pros/rtos.h"
 
 /**
+ * @brief The variables are pointers so that they can be set to nullptr if they are not used
+ * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
+ *
+ * @param vertical1 pointer to the first vertical tracking wheel
+ * @param vertical2 pointer to the second vertical tracking wheel
+ * @param horizontal1 pointer to the first horizontal tracking wheel
+ * @param horizontal2 pointer to the second horizontal tracking wheel
+ * @param imu pointer to the IMU
+ */
+lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
+                                 TrackingWheel* horizontal2, pros::Imu* imu)
+    : vertical1(vertical1),
+      vertical2(vertical2),
+      horizontal1(horizontal1),
+      horizontal2(horizontal2),
+      imu(imu) {}
+
+/**
+ * @brief The constants are stored in a struct so that they can be easily passed to the chassis class
+ * Set a constant to 0 and it will be ignored
+ *
+ * @param kP proportional constant for the chassis controller
+ * @param kD derivative constant for the chassis controller
+ * @param smallError the error at which the chassis controller will switch to a slower control loop
+ * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
+ * @param largeError the error at which the chassis controller will switch to a faster control loop
+ * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
+ * @param slew the maximum acceleration of the chassis controller
+ */
+lemlib::ControllerSettings::ControllerSettings(float kP, float kD, float smallError, float smallErrorTimeout,
+                                               float largeError, float largeErrorTimeout, float slew)
+    : kP(kP),
+      kD(kD),
+      smallError(smallError),
+      smallErrorTimeout(smallErrorTimeout),
+      largeError(largeError),
+      largeErrorTimeout(largeErrorTimeout),
+      slew(slew) {}
+
+/**
+ * @brief The constants are stored in a struct so that they can be easily passed to the chassis class
+ * Set a constant to 0 and it will be ignored
+ *
+ * @param leftMotors pointer to the left motors
+ * @param rightMotors pointer to the right motors
+ * @param trackWidth the track width of the robot
+ * @param wheelDiameter the diameter of the wheel used on the drivetrain
+ * @param rpm the rpm of the wheels
+ * @param chasePower higher values make the robot move faster but causes more overshoot on turns
+ */
+lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth,
+                               float wheelDiameter, float rpm, float chasePower)
+    : leftMotors(leftMotors),
+      rightMotors(rightMotors),
+      trackWidth(trackWidth),
+      wheelDiameter(wheelDiameter),
+      rpm(rpm),
+      chasePower(chasePower) {}
+
+/**
  * @brief Construct a new Chassis
  *
  * @param drivetrain drivetrain to be used for the chassis
- * @param lateralSettings settings for the lateral controller
+ * @param linearSettings settings for the linear controller
  * @param angularSettings settings for the angular controller
  * @param sensors sensors to be used for odometry
  * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
  */
-lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings,
-                         ChassisController_t angularSettings, OdomSensors_t sensors, DriveCurveFunction_t driveCurve) {
-    this->drivetrain = drivetrain;
-    this->lateralSettings = lateralSettings;
-    this->angularSettings = angularSettings;
-    this->odomSensors = sensors;
-    this->driveCurve = driveCurve;
-}
+lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
+                         OdomSensors sensors, DriveCurveFunction_t driveCurve)
+    : drivetrain(drivetrain),
+      linearSettings(linearSettings),
+      angularSettings(angularSettings),
+      sensors(sensors),
+      driveCurve(driveCurve) {}
 
 /**
  * @brief Calibrate the chassis sensors
@@ -44,29 +103,29 @@ lemlib::Chassis::Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSet
  */
 void lemlib::Chassis::calibrate(bool calibrateIMU) {
     // calibrate the IMU if it exists and the user doesn't specify otherwise
-    if (odomSensors.imu != nullptr && calibrateIMU) {
+    if (sensors.imu != nullptr && calibrateIMU) {
         int attempt = 1;
         // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
-        while (odomSensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
+        while (sensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
                attempt < 5) {
             pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
             pros::delay(10);
             attempt++;
         }
-        if (attempt == 5) odomSensors.imu = nullptr;
+        if (attempt == 5) sensors.imu = nullptr;
     }
     // initialize odom
-    if (odomSensors.vertical1 == nullptr)
-        odomSensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
-                                                          -(drivetrain.trackWidth / 2), drivetrain.rpm);
-    if (odomSensors.vertical2 == nullptr)
-        odomSensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
-                                                          drivetrain.trackWidth / 2, drivetrain.rpm);
-    odomSensors.vertical1->reset();
-    odomSensors.vertical2->reset();
-    if (odomSensors.horizontal1 != nullptr) odomSensors.horizontal1->reset();
-    if (odomSensors.horizontal2 != nullptr) odomSensors.horizontal2->reset();
-    lemlib::setSensors(odomSensors, drivetrain);
+    if (sensors.vertical1 == nullptr)
+        sensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
+                                                      -(drivetrain.trackWidth / 2), drivetrain.rpm);
+    if (sensors.vertical2 == nullptr)
+        sensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
+                                                      drivetrain.trackWidth / 2, drivetrain.rpm);
+    sensors.vertical1->reset();
+    sensors.vertical2->reset();
+    if (sensors.horizontal1 != nullptr) sensors.horizontal1->reset();
+    if (sensors.horizontal2 != nullptr) sensors.horizontal2->reset();
+    lemlib::setSensors(sensors, drivetrain);
     lemlib::init();
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
@@ -242,10 +301,10 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool fo
 
     Pose target(x, y, M_PI_2 - degToRad(theta)); // target pose in standard form
     Pose lastPose = getPose(); // last pose
-    FAPID linearPID = FAPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
+    FAPID linearPID = FAPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "linearPID");
     FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.smallErrorTimeout,
-                      lateralSettings.smallErrorTimeout, timeout); // exit conditions
+    linearPID.setExit(linearSettings.largeError, linearSettings.smallError, linearSettings.smallErrorTimeout,
+                      linearSettings.smallErrorTimeout, timeout); // exit conditions
     float prevLinearPower = 0; // previous linear power
     int compState = pros::competition::get_status();
     int start = pros::millis();
@@ -357,10 +416,10 @@ void lemlib::Chassis::moveToOld(float x, float y, int timeout, bool forwards, bo
     distTravelled = 0;
 
     // create a new PID controller
-    FAPID lateralPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "lateralPID");
+    FAPID lateralPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "lateralPID");
     FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    lateralPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
-                       lateralSettings.smallErrorTimeout, timeout);
+    lateralPID.setExit(linearSettings.largeError, linearSettings.smallError, linearSettings.largeErrorTimeout,
+                       linearSettings.smallErrorTimeout, timeout);
 
     // main loop
     while (pros::competition::get_status() == compState && (!lateralPID.settled() || pros::millis() - start < 300)) {
@@ -390,7 +449,7 @@ void lemlib::Chassis::moveToOld(float x, float y, int timeout, bool forwards, bo
         }
 
         // limit acceleration
-        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, lateralSettings.slew);
+        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, linearSettings.slew);
         if (std::fabs(angularError) > 25)
             angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
 

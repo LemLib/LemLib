@@ -27,49 +27,45 @@ pros::Rotation horizontalEnc(4);
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain settings
-lemlib::Drivetrain_t drivetrain {
-    &leftMotors, // left motor group
-    &rightMotors, // right motor group
-    10, // 10 inch track width
-    lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-    360, // drivetrain rpm is 360
-    2 // chase power is 2. If we had traction wheels, it would have been 8
-};
+lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
+                              &rightMotors, // right motor group
+                              10, // 10 inch track width
+                              lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
+                              360, // drivetrain rpm is 360
+                              2 // chase power is 2. If we had traction wheels, it would have been 8
+);
 
 // lateral motion controller
-lemlib::ChassisController_t lateralController {
-    10, // proportional gain (kP)
-    30, // derivative gain (kD)
-    1, // small error range, in inches
-    100, // small error range timeout, in milliseconds
-    3, // large error range, in inches
-    500, // large error range timeout, in milliseconds
-    20 // maximum acceleration (slew)
-};
+lemlib::ControllerSettings linearController(10, // proportional gain (kP)
+                                            30, // derivative gain (kD)
+                                            1, // small error range, in inches
+                                            100, // small error range timeout, in milliseconds
+                                            3, // large error range, in inches
+                                            500, // large error range timeout, in milliseconds
+                                            20 // maximum acceleration (slew)
+);
 
 // angular motion controller
-lemlib::ChassisController_t angularController {
-    2, // proportional gain (kP)
-    10, // derivative gain (kD)
-    1, // small error range, in degrees
-    100, // small error range timeout, in milliseconds
-    3, // large error range, in degrees
-    500, // large error range timeout, in milliseconds
-    20 // maximum acceleration (slew)
-};
+lemlib::ControllerSettings angularController(2, // proportional gain (kP)
+                                             10, // derivative gain (kD)
+                                             1, // small error range, in degrees
+                                             100, // small error range timeout, in milliseconds
+                                             3, // large error range, in degrees
+                                             500, // large error range timeout, in milliseconds
+                                             20 // maximum acceleration (slew)
+);
 
 // sensors for odometry
 // note that in this example we use internal motor encoders, so we don't pass vertical tracking wheels
-lemlib::OdomSensors_t sensors {
-    nullptr, // vertical tracking wheel 1, set to nullptr as we don't have one
-    nullptr, // vertical tracking wheel 2, set to nullptr as we don't have one
-    &horizontal, // horizontal tracking wheel 1
-    nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
-    &imu // inertial sensor
-};
+lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullptr as we don't have one
+                            nullptr, // vertical tracking wheel 2, set to nullptr as we don't have one
+                            &horizontal, // horizontal tracking wheel 1
+                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+                            &imu // inertial sensor
+);
 
 // create the chassis
-lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
+lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -132,7 +128,7 @@ void autonomous() {
     chassis.turnTo(45, -45, 1000, true, 60);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
-    // see line 110 to see how to define a path
+    // see line 116 to see how to define a path
     chassis.follow(example_txt, 15, 4000, false);
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately

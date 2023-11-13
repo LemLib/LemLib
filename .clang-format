@@ -63,6 +63,7 @@ IndentGotoLabels: true
 IndentWidth: 4
 IndentWrappedFunctionNames: false
 KeepEmptyLinesAtTheStartOfBlocks: false
+PackConstructorInitializers: Never
 PointerAlignment: Left
 ReferenceAlignment: Left
 ReflowComments: true
