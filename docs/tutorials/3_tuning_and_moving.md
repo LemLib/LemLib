@@ -17,13 +17,13 @@ Note that the chassis should be stationary when you call this function. It will 
 Pretty simple, right? Now, we can use the `chassis.getPose()` function to get the current position of the robot. It returns a `lemlib::Pose` object, which contains the x, y, and heading. The code below uses the `chassis.getPose()` function to print the current position of the robot to the brain screen:
 ```cpp
 void initialize() {
-    pros::lcd::initialize();
+    pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
 
     // print odom values to the brain
-    pros::Task screenTask([=]() {
+    pros::Task screenTask([&]() {
         while (true) {
-            Pose pose = chassis.getPose(); // get chassis position
+            lemlib::Pose pose = chassis.getPose(); // get chassis position
             pros::lcd::print(0, "X: %f", pose.x);
             pros::lcd::print(1, "Y: %f", pose.y);
             pros::lcd::print(2, "Theta: %f", pose.theta);
@@ -36,33 +36,39 @@ void initialize() {
 We can also set the position of the robot using the `chassis.setPose()` function. Below is an example of how to do this:
 ```cpp
 void autonomous() {
-    chassis.calibrate(); // calibrate the chassis
-    chassis.setPose(0, 0, 0); // X: 0, Y: 0, Heading: 0
-    chassis.setPose(5.2, 10.333, 87); // X: 5.2, Y: 10.333, Heading: 87
+    // this is where the robot start in auto
+    // X: 5.2, Y: 10.333, Heading: 87
+    chassis.setPose(5.2, 10.333, 87);
 }
 ```
 It is highly recommended you set the starting position of the robot for each autonomous. Otherwise you won't be able to take advantage of the visualization in the path generator
 
 ## Moving with turnTo and moveTo
-
 LemLib has 3 functions for moving the to. We will be covering the first 2 in this tutorial, and the third in the next tutorial.
 
-The first function is `lemlib::Chassis::turnTo`. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it:
+The first function is `chassis.turnTo()`. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
-    chassis.turnTo(53, 53, 1000); // turn to the point (53, 53) with a timeout of 1000 ms
-    chassis.turnTo(-20, 32, 1500, true); // turn to the point (-20, 32) with the back of the robot facing the point, and a timeout of 1500 ms
-    chassis.turnTo(10, 0, 1000, false, 50); // turn to the point (10, 0) with a timeout of 1000 ms, and a maximum speed of 50, with the front of the robot facing the point
+    // turn to the point (53, 53) with a timeout of 1000 ms
+    chassis.turnTo(53, 53, 1000);
+    // turn to the point (-20, 32) with the back of the robot facing the point, and a timeout of 1500 ms
+    chassis.turnTo(-20, 32, 1500, true);
+    // turn to the point (10, 0) with a timeout of 1000 ms, and a maximum speed
+    // of 50, with the front of the robot facing the point
+    chassis.turnTo(10, 0, 1000, false, 50);
 }
 ```
 
 As you can see, using this function is very easy. The first 2 parameters are the X and Y location the robot should be facing. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is whether the back of the robot should face the point (true) or the front of the robot should face the point (false). It defaults to false if not specified. The fifth parameter is the maximum speed the robot can turn at. If you don't specify a value for this parameter, the robot will turn at full speed.
 
-The second function is `lemlib::Chassis::moveTo`. This function moves the robot to the specified (x, y) point with a target heading in degrees. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
+The second function is `chassis.moveTo()`. This function moves the robot to the specified (x, y) point with a target heading in degrees. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
-    chassis.moveTo(53, 53, 90, 1000); // move to the point (53, 53) at heading 90 with a timeout of 1000 ms
-    chassis.moveTo(10, 0, 270, 1000, false); // move to the point (10, 0) at heading 270 with a timeout of 1000 ms. Move in reverse
+    // move to the point (53, 53) at heading 90 with a timeout of 1000 ms
+    chassis.moveTo(53, 53, 90, 1000);
+    // move to the point (10, 0) at heading 270 with a timeout of 1000 ms.
+    // Move in reverse
+    chassis.moveTo(10, 0, 270, 1000, false);
 }
 ```
 
@@ -99,7 +105,7 @@ pros::millis(); // outputs 1000
 
 > _**IMPORTANT NOTE**_
 <br>
-> `chassis::waitUntil` and `chassis.waitUntilDone` work for all movements. The only difference is when you are using `chassis.waitUntil`, where instead of inches the units are in degrees.
+> `chassis::waitUntil` and `chassis.waitUntilDone` work for all movements. The only difference is when you are using `chassis.turnTo`, where instead of inches the units are in degrees.
 
 This system will take a bit of getting used to, but it is very powerful. If you need additional examples, check out the [example project](https://github.com/LemLib/LemLib/blob/master/src/main.cpp), open a [discussion](https://github.com/LemLib/LemLib/discussions/new?category=q-a), or open a ticket in our [discord server](https://discord.gg/pCHr7XZUTj)
 
@@ -158,7 +164,7 @@ Here is the algorithm we will be using to tune these gains:
 
 ## Optional - Tuning Timeouts
 
-You may have noticed that there are 4 more values in the angularController and lateralController structs. These are values for the timeouts. Here is how they work:
+You may have noticed that there are 4 more values in the angularController and linearController structs. These are values for the timeouts. Here is how they work:
 
 - `smallErrorRange` is the range of error that is considered "small". If the error is within this range for `smallErrorTimeout` milliseconds, the robot will proceed to the next movement
 - `largeErrorRange` is the range of error that is considered "large". If the error is within this range for `largeErrorTimeout` milliseconds, the robot will proceed to the next movement
