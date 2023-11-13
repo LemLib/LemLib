@@ -23,10 +23,11 @@ void initialize() {
     // print odom values to the brain
     pros::Task screenTask([=]() {
         while (true) {
-            pros::lcd::print(0, "X: %f", chassis.getPose().x);
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y);
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
-            pros::delay(20);
+            Pose pose = chassis.getPose(); // get chassis position
+            pros::lcd::print(0, "X: %f", pose.x);
+            pros::lcd::print(1, "Y: %f", pose.y);
+            pros::lcd::print(2, "Theta: %f", pose.theta);
+            pros::delay(10);
         }
     });
 }
@@ -40,6 +41,7 @@ void autonomous() {
     chassis.setPose(5.2, 10.333, 87); // X: 5.2, Y: 10.333, Heading: 87
 }
 ```
+It is highly recommended you set the starting position of the robot for each autonomous. Otherwise you won't be able to take advantage of the visualization in the path generator
 
 ## Moving with turnTo and moveTo
 
@@ -49,22 +51,22 @@ The first function is `lemlib::Chassis::turnTo`. This function turns the robot s
 ```cpp
 void autonomous() {
     chassis.turnTo(53, 53, 1000); // turn to the point (53, 53) with a timeout of 1000 ms
-    chassis.turnTo(-20, 32, 1500, false, true); // turn to the point (-20, 32) with the back of the robot facing the point, and a timeout of 1500 ms
-    chassis.turnTo(10, 0, 1000, false, 50); // turn to the point (10, 0) with a timeout of 1000 ms, and a maximum speed of 50
+    chassis.turnTo(-20, 32, 1500, true); // turn to the point (-20, 32) with the back of the robot facing the point, and a timeout of 1500 ms
+    chassis.turnTo(10, 0, 1000, false, 50); // turn to the point (10, 0) with a timeout of 1000 ms, and a maximum speed of 50, with the front of the robot facing the point
 }
 ```
 
 As you can see, using this function is very easy. The first 2 parameters are the X and Y location the robot should be facing. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is whether the back of the robot should face the point (true) or the front of the robot should face the point (false). It defaults to false if not specified. The fifth parameter is the maximum speed the robot can turn at. If you don't specify a value for this parameter, the robot will turn at full speed.
 
-The second function is `lemlib::Chassis::moveTo`. This function moves the robot to the specified (x, y) point with a target heading in degrees using an algorithm called the [Boomerang Controller](https://www.desmos.com/calculator/sptjw5szex). It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
+The second function is `lemlib::Chassis::moveTo`. This function moves the robot to the specified (x, y) point with a target heading in degrees. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
     chassis.moveTo(53, 53, 90, 1000); // move to the point (53, 53) at heading 90 with a timeout of 1000 ms
-    chassis.moveTo(10, 0, 270, 1000, 50); // move to the point (10, 0) at heading 270 with a timeout of 1000 ms, and a maximum speed of 50
+    chassis.moveTo(10, 0, 270, 1000, false); // move to the point (10, 0) at heading 270 with a timeout of 1000 ms. Move in reverse
 }
 ```
 
-This function is very similar to the `chassis.turnTo()` function. The first 3 parameters are the x, y, and heading the robot should move to. The fourth parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fifth parameter is the maximum speed the robot can move at. If you don't specify a value for this parameter, the robot won't limit its speed.
+This function is very similar to the `chassis.turnTo()` function. The first 3 parameters are the x, y, and heading the robot should move to. The fourth parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fifth parameter is whether the robot should move backwards or forwards. The fifth parameter is the maximum speed the robot can move at. Only the first 4 parameters are required.
 
 
 ## Tuning the PIDs
@@ -79,11 +81,12 @@ lemlib::ChassisController_t lateralController {
 	1, // smallErrorRange
 	100, // smallErrorTimeout
 	3, // largeErrorRange
-	500 // largeErrorTimeout
+	500, // largeErrorTimeout,
+    20 // slew (maximum acceleration)
 };
 ```
 
-The first 2 parameters are the kP and kD gains. These are the ones we will be focusing on for now. When we tune them, we want kP as high as possible with minimal oscillation (the robot moving backwards/forwards repeatedly at the end). Here is the algorithm we will be using to tune these gains:
+The first 2 parameters are the kP and kD gains. These are the ones we will be focusing on for now. When we tune them, we want kP as high as possible with minimal oscillation (the robot moving backwards/forwards repeatedly at the end). Here is the method we will be using to tune these gains:
 
 1. Move the robot 10 inches forward using the `chassis.moveTo()` function
 2. increase kP until the robot starts oscillating
@@ -104,13 +107,15 @@ lemlib::ChassisController_t angularController {
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
-    500 // largeErrorTimeout
+    500, // largeErrorTimeout
+    80 // slew (maximum acceleration)
+
 };
 ```
 
 Here is the algorithm we will be using to tune these gains:
 
-1. Turn the robot to face (30, 0) using the `chassis.turnTo()` function
+1. Turn the robot to face (30, 0) using the `chassis.turnTo()` function with the robot starting at (0, 0)
 2. increase kP until the robot starts oscillating
 3. increase kD until the oscillation stops
 4. record kP and kD values
@@ -129,14 +134,12 @@ Advanced users may wish to alter these values to decrease the time it takes to e
 
 ## Using the Path Generator for Coordinates
 
-Another project we have been developing is the [Path Generator](https://lemlib.github.io/Path-Gen/). This web app allows you to create a path for the robot to follow using pure pursuit, which will be covered in the next tutorial. For now, we will be using it to view coordinates on the field. 
+You may be wondering how we know what coordinate the robot start at, and what the location is of a specific thing (e.g a goal). Thankfully, it is very easy. You can use [this software](https://lemlib.github.io/Path-Gen/). Just hover your mouse over a location on the field, and you will see the coordinates of the mouse on the field. Refer to the image below:
 
-When hovering your mouse over a location on the field, its coordinates will be displayed in the bottom left corner. You can then manually input these coordinates into the `chassis.moveTo()` and `chassis.turnTo()` functions. You can also view the starting position of the robot by simply hovering your mouse over where it would start. You can set the position of the robot by using the `chassis.setPose()` function, as documented in [tutorial 2](2_setting_up_the_chassis.md). Below is an image of the Path Generator:
+<img src="./assets/3_tuning_and_moving/path_coords.png">
 
-<img src="./assets/3_tuning_and_moving/path_generator.png">
-
+You can use these coordinates to set the starting position of the robot, and use them with the `chassis.turnTo()` and `chassis.moveTo()` functions.`
 Note that the origin of the field is in the middle, and the field coordinates are measured in inches. **0 degrees is facing up, and increases clockwise**.
-
 
 Thats it! You now know how to move the robot around the field using the `chassis.turnTo()` and `chassis.moveTo()` functions. In the next tutorial, we will be covering how to use the Path Generator to create a path for the robot to follow.
 
