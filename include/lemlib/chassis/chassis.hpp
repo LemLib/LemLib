@@ -196,6 +196,11 @@ class Chassis {
          */
         void waitUntil(float dist);
         /**
+         * @brief Wait until the robot has completed the path
+         *
+         */
+        void waitUntilDone();
+        /**
          * @brief Turn the chassis so it is facing the target point
          *
          * The PID logging id is "angularPID"
