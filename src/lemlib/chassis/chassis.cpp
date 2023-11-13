@@ -198,6 +198,15 @@ void lemlib::Chassis::waitUntil(float dist) {
 }
 
 /**
+ * @brief Wait until the robot has completed the path
+ *
+ */
+void lemlib::Chassis::waitUntilDone() {
+    do pros::delay(10);
+    while (distTravelled != -1);
+}
+
+/**
  * @brief Turn the chassis so it is facing the target point
  *
  * The PID logging id is "angularPID"
