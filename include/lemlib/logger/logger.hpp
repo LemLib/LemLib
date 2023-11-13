@@ -13,13 +13,13 @@
 namespace lemlib {
 /**
  * @brief Get the info sink.
- * @return std::shared_ptr<InfoSink>
+ * @return std::shared_ptr<InfoSink> A pointer to the info sink
  */
 std::shared_ptr<InfoSink> infoSink();
 
 /**
  * @brief Get the telemetry sink.
- * @return std::shared_ptr<TelemetrySink>
+ * @return std::shared_ptr<TelemetrySink> A pointer to the telemetry
  */
 std::shared_ptr<TelemetrySink> telemetrySink();
 } // namespace lemlib

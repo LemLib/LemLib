@@ -36,8 +36,8 @@ class Buffer {
          * @brief Push to the buffer
          *
          * @tparam T
-         * @param format
-         * @param args
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
          */
         template <typename... T> void pushToBuffer(fmt::format_string<T...> format, T&&... args) {
             mutex.take();
@@ -48,7 +48,7 @@ class Buffer {
         /**
          * @brief Set the rate of the sink
          *
-         * @param rate
+         * @param rate The new rate to log at (in mS)
          */
         void setRate(uint32_t rate);
 

@@ -32,7 +32,7 @@ class InfoSink : public BaseSink {
         /**
          * @brief Log the given message
          *
-         * @param message
+         * @param message The message to log
          */
         void sendMessage(const Message& message) override;
 };

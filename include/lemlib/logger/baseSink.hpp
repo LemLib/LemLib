@@ -38,7 +38,7 @@ class BaseSink {
          * @brief Set the lowest level.
          * If this is a combined sink, this operation will
          * apply for all the parent sinks.
-         * @param level
+         * @param level The lowest level to log the message at.
          *
          * If messages are logged that are below the lowest level, they will be ignored.
          * The hierarchy of the levels is as follows:
@@ -57,7 +57,7 @@ class BaseSink {
          *
          * @tparam T
          * @param level The level at which to send the message.
-         * @param format The format that the message will use. Use "{}" as placeholders.
+         * @param format The format that the string will use.
          * @param args The values that will be substituted into the placeholders in the format.
          *
          * <h3> Example Usage </h3>
@@ -96,8 +96,8 @@ class BaseSink {
          * If this is a combined sink, this operation will
          * apply for all the parent sinks.
          * @tparam T
-         * @param format
-         * @param args
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
          */
         template <typename... T> void debug(fmt::format_string<T...> format, T&&... args) {
             log(Level::DEBUG, format, std::forward<T>(args)...);
@@ -108,8 +108,8 @@ class BaseSink {
          * If this is a combined sink, this operation will
          * apply for all the parent sinks.
          * @tparam T
-         * @param format
-         * @param args
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
          */
         template <typename... T> void info(fmt::format_string<T...> format, T&&... args) {
             log(Level::INFO, format, std::forward<T>(args)...);
@@ -120,8 +120,8 @@ class BaseSink {
          * If this is a combined sink, this operation will
          * apply for all the parent sinks.
          * @tparam T
-         * @param format
-         * @param args
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
          */
         template <typename... T> void warn(fmt::format_string<T...> format, T&&... args) {
             log(Level::WARN, format, std::forward<T>(args)...);
@@ -132,8 +132,8 @@ class BaseSink {
          * If this is a combined sink, this operation will
          * apply for all the parent sinks.
          * @tparam T
-         * @param format
-         * @param args
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
          */
         template <typename... T> void error(fmt::format_string<T...> format, T&&... args) {
             log(Level::ERROR, format, std::forward<T>(args)...);
@@ -144,8 +144,8 @@ class BaseSink {
          * If this is a combined sink, this operation will
          * apply for all the parent sinks.
          * @tparam T
-         * @param format
-         * @param args
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
          */
         template <typename... T> void fatal(fmt::format_string<T...> format, T&&... args) {
             log(Level::FATAL, format, std::forward<T>(args)...);
@@ -154,14 +154,14 @@ class BaseSink {
         /**
          * @brief Log the given message
          *
-         * @param message
+         * @param message The message to send to the buffer
          */
         virtual void sendMessage(const Message& message);
 
         /**
          * @brief Set the format of messages that the sink sends
          *
-         * @param format
+         * @param format The format that the message will use.
          *
          * Changing the format of the sink changes the way each logged message looks. The following named formatting
          * specifiers can be used:
@@ -182,7 +182,7 @@ class BaseSink {
         /**
          * @brief Get the extra named arguments for formatting
          *
-         * Can be overridden to add extra named arguments to the sink's format.
+         * Can be overridden to add extra named arguments to the sink's format
          * <h3> Example Usage </h3>
          *
          * The following code would add a {zero} formatting argument which could be used in setFormat method of this
@@ -197,12 +197,12 @@ class BaseSink {
          * }
          * @endcode
          *
-         * @return fmt::dynamic_format_arg_store<fmt::format_context>
+         * @return fmt::dynamic_format_arg_store<fmt::format_context> The extra arguments to use
          */
         virtual fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs(const Message& messageInfo);
 
         /**
-         * @brief Checks to see if a sink is a combined sink or not.
+         * @brief Checks to see if a sink is a combined sink or not
          *
          * @return true
          * @return false

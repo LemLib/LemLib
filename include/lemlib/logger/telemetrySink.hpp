@@ -27,8 +27,8 @@ class TelemetrySink : public BaseSink {
         /**
          * @brief Log a message at the telemetry level
          * @tparam T
-         * @param format
-         * @param args
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
          */
         template <typename... T> void telemetry(fmt::format_string<T...> format, T&&... args) {
             if (isCombinedSink()) { return; }
@@ -39,7 +39,7 @@ class TelemetrySink : public BaseSink {
         /**
          * @brief Log the given message
          *
-         * @param message
+         * @param message The message to log
          */
         void sendMessage(const Message& message) override;
 };

@@ -27,8 +27,8 @@ struct Message {
 /**
  * @brief Format a level
  *
- * @param level
- * @return std::string
+ * @param level The level to format
+ * @return std::string The formatted level, in caps (ex. info -> INFO)
  */
 std::string format_as(Level level);
 } // namespace lemlib
