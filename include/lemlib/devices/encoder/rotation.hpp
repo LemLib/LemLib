@@ -20,7 +20,7 @@ class RotationEncoder : public Encoder {
          *
          * @return float angle rotated by the rotation sensor, in radians
          */
-        float getAngle() override;
+        Angle getAngle() override;
         /**
          * @brief Reset the rotation sensor
          *

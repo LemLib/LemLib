@@ -95,7 +95,7 @@ void Differential::initialize() {
  * done then is to pass the parameters to a new instance of Turn, and set the movement
  * pointer.
  */
-void Differential::turnToPose(float x, float y, int timeout, bool reversed, int maxSpeed) {
+void Differential::turnToPose(Length x, Length y, int timeout, bool reversed, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // set up the PID
@@ -118,11 +118,11 @@ void Differential::turnToPose(float x, float y, int timeout, bool reversed, int 
  * done then is to pass the parameters to a new instance of Turn, and set the movement
  * pointer.
  */
-void Differential::turnToHeading(float heading, int timeout, int maxSpeed) {
+void Differential::turnToHeading(Angle heading, int timeout, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // convert heading to radians and standard form
-    float newHeading = M_PI_2 - degToRad(heading);
+    Angle  newHeading = 90_deg - heading; 
     // set up the PID
     FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
@@ -143,12 +143,12 @@ void Differential::turnToHeading(float heading, int timeout, int maxSpeed) {
  * It also needs to decide what the chasePower should be. Usually this will be the value set in
  * the drivetrain struct, but it can be overridden by the user if needed.
  */
-void Differential::moveTo(float x, float y, float theta, int timeout, bool forwards, float chasePower, float lead,
+void Differential::moveTo(Length x, Length y, Angle theta, int timeout, bool forwards, float chasePower, float lead,
                           int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // convert target theta to radians and standard form
-    Pose target = Pose(x, y, M_PI_2 - degToRad(theta));
+    Pose target = Pose(x, y, 90_deg - theta);
     // set up PIDs
     FAPID linearPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
     linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
@@ -166,7 +166,7 @@ void Differential::moveTo(float x, float y, float theta, int timeout, bool forwa
  * Unlike the Differential::moveTo function, we can just pass the parameters directly to the
  * Pure Pursuit constructor
  */
-void Differential::follow(const asset& path, float lookahead, int timeout, bool forwards, int maxSpeed) {
+void Differential::follow(const asset& path, Length lookahead, int timeout, bool forwards, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // create the movement

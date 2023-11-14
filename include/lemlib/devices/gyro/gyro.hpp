@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cmath>
 #include <cstdint>
 #include <math.h>
+#include "lemlib/units.hpp"
 
 namespace lemlib {
 class Gyro {
@@ -42,7 +44,7 @@ class Gyro {
          *
          * @return float heading, in radians, locked from -pi to +pi
          */
-        virtual float getHeading() = 0;
+        virtual Angle getHeading() = 0;
         /**
          * @brief Get the rotation of the gyro
          *
@@ -50,7 +52,7 @@ class Gyro {
          *
          * @return float rotation, in radians
          */
-        virtual float getRotation() = 0;
+        virtual Angle getRotation() = 0;
         /**
          * @brief Set the rotation of the gyro
          *
@@ -58,7 +60,7 @@ class Gyro {
          *
          * @param rotation, rotation in radians
          */
-        virtual void setRotation(float rotation) const = 0;
+        virtual void setRotation(Angle rotation) const = 0;
         /**
          * @brief Get the change in rotation of the gyro
          *
@@ -67,7 +69,7 @@ class Gyro {
          * @param update whether to update the last angle measured by the gyro. True by default
          * @return change in angle rotated by the encoder, in radians
          */
-        float getRotationDelta(bool update = true);
+        Angle getRotationDelta(bool update = true);
         /**
          * @brief Get the port of the gyro
          *
@@ -75,6 +77,6 @@ class Gyro {
          */
         virtual std::uint8_t getPort() = 0;
     protected:
-        float lastAngle = M_PI_2;
+        Angle lastAngle = Angle(M_PI_2);
 };
 } // namespace lemlib

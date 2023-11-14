@@ -3,6 +3,7 @@
 #include "pros/rotation.hpp"
 #include "pros/adi.hpp"
 #include "pros/motors.hpp"
+#include "lemlib/units.hpp"
 
 namespace lemlib {
 class Encoder {
@@ -18,7 +19,7 @@ class Encoder {
          *
          * @return float angle rotated by the encoder, in radians
          */
-        virtual float getAngle() = 0;
+        virtual Angle getAngle() = 0;
 
         /**
          * @brief Get the angle rotated by the encoder since the last time it was checked, in radians
@@ -26,7 +27,7 @@ class Encoder {
          * @param update whether to update the last angle measured by the encoder. True by default
          * @return float angle rotated by the encoder, in radians
          */
-        float getAngleDelta(bool update = true);
+        Angle getAngleDelta(bool update = true);
 
         /**
          * @brief Reset the encoder
@@ -36,6 +37,6 @@ class Encoder {
          */
         virtual bool reset() = 0;
     protected:
-        float lastAngle = 0;
+        Angle lastAngle = 0_deg;
 };
 } // namespace lemlib

@@ -24,7 +24,7 @@ namespace lemlib {
  * @param y component
  * @param theta heading. Defaults to 0
  */
-Pose::Pose(float x, float y, float theta)
+Pose::Pose(Length x, Length y, Angle theta)
     : x(x),
       y(y),
       theta(theta) {}
@@ -73,7 +73,7 @@ void Pose::operator-=(const Pose& other) {
  * @param other other pose
  * @return Pose
  */
-float Pose::operator*(const Pose& other) { return x * other.x + y * other.y; }
+float Pose::operator*(const Pose& other) { return (x * other.x + y * other.y).raw(); } // todo
 
 /**
  * @brief Multiply a pose by a float
@@ -122,7 +122,7 @@ Pose Pose::lerp(Pose other, float t) { return Pose(x + (other.x - x) * t, y + (o
  * @param other the other pose
  * @return float
  */
-float Pose::distance(Pose other) { return std::hypot(x - other.x, y - other.y); }
+Length Pose::distance(Pose other) { return units::sqrt(units::square(x - other.x) + units::square(y - other.y)); }
 
 /**
  * @brief Get the angle between two poses
@@ -130,7 +130,7 @@ float Pose::distance(Pose other) { return std::hypot(x - other.x, y - other.y); 
  * @param other the other pose
  * @return float in radians
  */
-float Pose::angle(Pose other) { return std::atan2(other.y - y, other.x - x); }
+Angle Pose::angle(Pose other) { return units::atan2(other.y - y, other.x - x); }
 
 /**
  * @brief Rotate a pose by an angle
@@ -138,15 +138,16 @@ float Pose::angle(Pose other) { return std::atan2(other.y - y, other.x - x); }
  * @param angle angle in radians
  * @return Pose
  */
-Pose Pose::rotate(float angle) {
-    const float cosAngle = std::cos(angle);
-    const float sinAngle = std::sin(angle);
+Pose Pose::rotate(Angle angle) {
+    const Number cosAngle = units::cos(angle);
+    const Number sinAngle = units::sin(angle);
 
     return Pose(x * cosAngle - y * sinAngle, x * sinAngle + y * cosAngle, theta);
 }
 
 std::string format_as(const Pose& pose) {
     // the double brackets become single brackets
-    return fmt::format("lemlib::Pose {{ x: {}, y: {}, theta: {} }}", pose.x, pose.y, pose.theta);
+    return fmt::format("lemlib::Pose {{ x: {}, y: {}, theta: {} }}", pose.x.convert(m), pose.y.convert(m),
+                       pose.theta.convert(deg));
 }
 } // namespace lemlib

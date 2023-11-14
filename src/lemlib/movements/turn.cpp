@@ -16,7 +16,7 @@ namespace lemlib {
  * Here we just store the arguments in member variables, and store the
  * initial competition state.
  */
-Turn::Turn(FAPID angularPID, float target, int maxSpeed)
+Turn::Turn(FAPID angularPID, Angle target, int maxSpeed)
     : angularPID(angularPID),
       targetHeading(target),
       maxSpeed(maxSpeed) {
@@ -48,7 +48,7 @@ Turn::Turn(FAPID angularPID, Pose target, bool reversed, int maxSpeed)
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float Turn::getDist() { return dist; }
+float Turn::getDist() { return dist.convert(deg); }
 
 /**
  * The turning algorithm uses field-relative position of the robot to face a target heading
@@ -68,23 +68,23 @@ std::pair<int, int> Turn::update(Pose pose) {
     if (state == 1) return {128, 128};
 
     // reverse heading if doing movement in reverse
-    if (reversed) pose.theta = fmod(pose.theta - M_PI, 2 * M_PI);
+    if (reversed) pose.theta = units::mod(pose.theta - rot / 2, rot);
 
     // update completion vars
-    if (dist == 0) { // if dist is 0, this is the first time update() has been called
-        dist = 0.0001;
+    if (dist == 0_deg) { // if dist is 0, this is the first time update() has been called
+        dist = 0.0001_deg;
         startPose = pose;
     }
-    dist = fabs(radToDeg(angleError(pose.theta, startPose.theta)));
+    dist = angleError(pose.theta, startPose.theta);
 
     if (targetPose != std::nullopt) targetHeading = pose.angle(targetPose.value());
 
     // calculate error
-    float error = angleError(targetHeading, pose.theta);
+    Angle error = angleError(targetHeading, pose.theta);
 
     // calculate the speed
     // converts error to degrees to make PID tuning easier
-    float output = angularPID.update(0, radToDeg(error));
+    float output = angularPID.update(0, error.convert(deg));
     // cap the speed
     output = std::clamp(int(std::round(output)), -maxSpeed, maxSpeed);
     // return output

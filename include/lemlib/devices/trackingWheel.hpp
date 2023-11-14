@@ -17,6 +17,7 @@
 #include "pros/adi.hpp"
 #include "pros/rotation.hpp"
 #include "lemlib/devices/encoder/encoder.hpp"
+#include "lemlib/units.hpp"
 
 namespace lemlib {
 
@@ -24,18 +25,18 @@ namespace lemlib {
  * @brief A namespace representing the size of omniwheels.
  */
 namespace Omniwheel {
-constexpr float NEW_275 = 2.75;
-constexpr float OLD_275 = 2.75;
-constexpr float NEW_275_HALF = 2.744;
-constexpr float OLD_275_HALF = 2.74;
-constexpr float NEW_325 = 3.25;
-constexpr float OLD_325 = 3.25;
-constexpr float NEW_325_HALF = 3.246;
-constexpr float OLD_325_HALF = 3.246;
-constexpr float NEW_4 = 4;
-constexpr float OLD_4 = 4.18;
-constexpr float NEW_4_HALF = 3.995;
-constexpr float OLD_4_HALF = 4.175;
+constexpr Length NEW_275 = 2.75_in;
+constexpr Length OLD_275 = 2.75_in;
+constexpr Length NEW_275_HALF = 2.744_in;
+constexpr Length OLD_275_HALF = 2.74_in;
+constexpr Length NEW_325 = 3.25_in;
+constexpr Length OLD_325 = 3.25_in;
+constexpr Length NEW_325_HALF = 3.246_in;
+constexpr Length OLD_325_HALF = 3.246_in;
+constexpr Length NEW_4 = 4_in;
+constexpr Length OLD_4 = 4.18_in;
+constexpr Length NEW_4_HALF = 3.995_in;
+constexpr Length OLD_4_HALF = 4.175_in;
 } // namespace Omniwheel
 
 class TrackingWheel {
@@ -47,7 +48,7 @@ class TrackingWheel {
          * @param diameter the diameter of the wheel, in inches
          * @param offset distance between the wheel and the tracking center, in inches
          */
-        TrackingWheel(std::shared_ptr<Encoder> encoder, float diameter, float offset);
+        TrackingWheel(std::shared_ptr<Encoder> encoder, Length diameter, Length offset);
         /**
          * @brief Create a new motor-encoder tracking wheel
          *
@@ -56,7 +57,7 @@ class TrackingWheel {
          * @param offset distance between the wheel and the tracking center, in inches
          * @param rpm of the rpm of the wheels the motor group is driving
          */
-        TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, float diameter, float offset, float rpm);
+        TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, Length diameter, Length offset, AngularVelocity rpm);
         /**
          * @brief Create a new optical encoder tracking wheel
          *
@@ -67,7 +68,7 @@ class TrackingWheel {
          * @param offset distance between the wheel and the tracking center, in inches
          * @param ratio gear ratio of the tracking wheel, defaults to 1. Input / Output
          */
-        TrackingWheel(char topPort, char bottomPort, bool reversed, float diameter, float offset, float ratio = 1);
+        TrackingWheel(char topPort, char bottomPort, bool reversed, Length diameter, Length offset, float ratio = 1);
         /**
          * @brief Create a new rotation sensor tracking wheel
          *
@@ -77,7 +78,7 @@ class TrackingWheel {
          * @param offset distance between the wheel and the tracking center, in inches
          * @param ratio gear ratio of the tracking wheel, defaults to 1. Input / Output
          */
-        TrackingWheel(uint8_t port, bool reversed, float diameter, float offset, float ratio = 1);
+        TrackingWheel(uint8_t port, bool reversed, Length diameter, Length offset, float ratio = 1);
         /**
          * @brief Create a new rotation sensor tracking wheel
          *
@@ -87,7 +88,7 @@ class TrackingWheel {
          * @param offset distance between the wheel and the tracking center, in inches
          * @param ratio gear ratio of the tracking wheel, defaults to 1. Input / Output
          */
-        TrackingWheel(int port, float diameter, float offset, float ratio = 1);
+        TrackingWheel(int port, Length diameter, Length offset, float ratio = 1);
 
         /**
          * @brief Reset the tracking wheel position to 0
@@ -101,29 +102,29 @@ class TrackingWheel {
          *
          * @return float distance traveled in inches
          */
-        float getDistance();
+        Length getDistance();
         /**
          * @brief Get the difference between the current distance measured and the last distance measured
          *
          * @param update whether to update the last saved position. True by default
          * @return float difference in distance, in inches
          */
-        float getDistanceDelta(bool update = true);
+        Length getDistanceDelta(bool update = true);
         /**
          * @brief Get the offset of the tracking wheel from the center of rotation
          *
          * @return float offset in inches
          */
-        float getOffset() const;
+        Length getOffset() const;
         /**
          * @brief Get the diameter of the wheel
          *
          * @return float diameter, in inches
          */
-        float getDiameter() const;
+        Length getDiameter() const;
     private:
         std::shared_ptr<Encoder> encoder;
-        float diameter;
-        float offset;
+        Length diameter;
+        Length offset;
 };
 } // namespace lemlib

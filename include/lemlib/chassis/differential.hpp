@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 
+#include "lemlib/units.hpp"
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
@@ -84,9 +85,9 @@ typedef struct {
 typedef struct {
         std::shared_ptr<pros::MotorGroup> leftMotors;
         std::shared_ptr<pros::MotorGroup> rightMotors;
-        float trackWidth;
-        float wheelDiameter;
-        float rpm;
+        Length trackWidth;
+        Length wheelDiameter;
+        AngularVelocity rpm;
         float chasePower;
 } Drivetrain_t;
 
@@ -155,7 +156,7 @@ class Differential : public Chassis {
          * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
          * @param maxSpeed the maximum speed the robot can turn at. Default is 127
          */
-        void turnToPose(float x, float y, int timeout, bool reversed = false, int maxSpeed = 127);
+        void turnToPose(Length x, Length y, int timeout, bool reversed = false, int maxSpeed = 127);
 
         /**
          * @brief Turn the chassis so it is facing a heading
@@ -166,7 +167,7 @@ class Differential : public Chassis {
          * @param timeout longest time the robot can spend moving
          * @param maxSpeed the maximum speed the robot can turn at. Default is 127
          */
-        void turnToHeading(float heading, int timeout, int maxSpeed = 127);
+        void turnToHeading(Angle heading, int timeout, int maxSpeed = 127);
 
         /**
          * @brief Move the chassis towards the target pose
@@ -184,7 +185,7 @@ class Differential : public Chassis {
          * default to global value
          * @param maxSpeed the maximum speed the robot can move at. 127 at default
          */
-        void moveTo(float x, float y, float theta, int timeout, bool forwards = true, float chasePower = 0,
+        void moveTo(Length x, Length y, Angle theta, int timeout, bool forwards = true, float chasePower = 0,
                     float lead = 0.6, int maxSpeed = 127);
 
         /**
@@ -197,7 +198,7 @@ class Differential : public Chassis {
          * @param forwards whether the robot should follow the path going forwards. true by default
          * @param maxSpeed the maximum speed the robot can move at
          */
-        void follow(const asset& path, float lookahead, int timeout, bool forwards = true, int maxSpeed = 127);
+        void follow(const asset& path, Length lookahead, int timeout, bool forwards = true, int maxSpeed = 127);
 
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this

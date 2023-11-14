@@ -32,7 +32,7 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     // calibrate vertical tracking wheels
     for (auto it = verticals.begin(); it != verticals.end(); it++) {
         if (it->reset()) {
-            infoSink()->warn("Vertical tracker at offset {} failed calibration!", it->getOffset());
+            infoSink()->warn("Vertical tracker at offset {} failed calibration!", it->getOffset().convert(in));
             verticals.erase(it);
         }
     }
@@ -40,7 +40,7 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     // calibrate horizontal tracking wheels
     for (auto it = horizontals.begin(); it != horizontals.end(); it++) {
         if (it->reset()) {
-            infoSink()->warn("Horizontal tracker at offset {} failed calibration!", it->getOffset());
+            infoSink()->warn("Horizontal tracker at offset {} failed calibration!", it->getOffset().convert(in));
             horizontals.erase(it);
         }
     }
@@ -48,9 +48,9 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     // calibrate drivetrain motors
     for (auto it = drivetrain.begin(); it != drivetrain.end(); it++) {
         if (it->reset()) {
-            if (sgn(it->getOffset() == 1))
-                infoSink()->warn("Left drivetrain motor failed to calibrate!", it->getOffset());
-            else infoSink()->warn("Right drivetrain motor failed to calibrate!", it->getOffset());
+            if (units::sgn(it->getOffset()) == 1)
+                infoSink()->warn("Left drivetrain motor failed to calibrate!", it->getOffset().convert(in));
+            else infoSink()->warn("Right drivetrain motor failed to calibrate!", it->getOffset().convert(in));
             drivetrain.erase(it);
         }
     }
@@ -84,10 +84,10 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
  * @param tracker2 the second tracking wheel
  * @return float change in angle, in radians
  */
-float calcDeltaTheta(TrackingWheel& tracker1, TrackingWheel& tracker2) {
-    const float numerator = tracker1.getDistanceDelta(false) - tracker2.getDistanceDelta(false);
-    const float denominator = tracker1.getOffset() - tracker2.getOffset();
-    return numerator / denominator;
+Angle calcDeltaTheta(TrackingWheel& tracker1, TrackingWheel& tracker2) {
+    const Length numerator = tracker1.getDistanceDelta(false) - tracker2.getDistanceDelta(false);
+    const Length denominator = tracker1.getOffset() - tracker2.getOffset();
+    return rad * numerator / denominator;
 }
 
 /**
@@ -98,8 +98,8 @@ float calcDeltaTheta(TrackingWheel& tracker1, TrackingWheel& tracker2) {
  * @param gyros vector of Gyro shared pointers
  * @return float the average change in heading
  */
-float calcDeltaTheta(std::vector<std::shared_ptr<Gyro>>& gyros) {
-    float deltaTheta = 0;
+Angle calcDeltaTheta(std::vector<std::shared_ptr<Gyro>>& gyros) {
+    Angle deltaTheta = 0_deg;
     for (const auto& gyro : gyros) deltaTheta += gyro->getRotationDelta() / gyros.size();
     return deltaTheta;
 }
@@ -125,7 +125,7 @@ void DifferentialArc::update() {
     // 2. Horizontal tracking wheels
     // 3. Vertical tracking wheels
     // 4. Drivetrain motor encoders
-    float theta = pose.theta;
+    Angle theta = pose.theta;
     if (gyros.size() > 0) { // calculate heading with imus if we have enough
         theta += calcDeltaTheta(gyros);
     } else if (horizontals.size() > 1) { // calculate heading with horizontal tracking wheels if we have enough
@@ -138,33 +138,36 @@ void DifferentialArc::update() {
         infoSink()->error("Odom calculation failure! Not enough sensors to calculate heading");
         return;
     }
-    const float deltaTheta = theta - pose.theta;
-    const float avgTheta = pose.theta + deltaTheta / 2;
+    const Angle deltaTheta = theta - pose.theta;
+    const Angle avgTheta = pose.theta + deltaTheta / 2;
 
     // calculate local change in position
-    Pose local(0, 0, deltaTheta);
+    Pose local(0_in, 0_in, deltaTheta);
     // set sinDTheta2 to 1 if deltaTheta is 0. Simplifies local position calculations.
-    const float sinDTheta2 = (deltaTheta == 0) ? 1 : 2 * std::sin(deltaTheta / 2);
+    const float sinDTheta2 = (deltaTheta == 0_deg) ? 1 : 2 * units::sin(deltaTheta / 2).raw();
 
     // calculate local y position
     for (auto& tracker : horizontals) {
         // prevent divide by 0
-        const float radius = (deltaTheta == 0) ? tracker.getDistanceDelta()
-                                               : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
+        const Length radius = (deltaTheta == 0_deg) ? tracker.getDistanceDelta()
+                                                    : tracker.getDistanceDelta() / deltaTheta.convert(rad) +
+                                                          tracker.getOffset(); // todo test
         local.y += sinDTheta2 * radius / horizontals.size();
     }
 
     // calculate local x position
     if (verticals.size() > 0) { // use dedicated tracking wheels if we have any
         for (auto& tracker : verticals) {
-            const float radius = (deltaTheta == 0) ? tracker.getDistanceDelta()
-                                                   : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
+            const Length radius = (deltaTheta == 0_deg)
+                                     ? tracker.getDistanceDelta()
+                                     : tracker.getDistanceDelta() / deltaTheta.convert(rad) + tracker.getOffset();
             local.x += sinDTheta2 * radius / verticals.size();
         }
     } else if (drivetrain.size() > 0) { // use motor encoders if we have no dedicated tracking wheels
         for (auto& motor : drivetrain) {
-            const float radius = (deltaTheta == 0) ? motor.getDistanceDelta()
-                                                   : motor.getDistanceDelta() / deltaTheta + motor.getOffset();
+            const Length radius = (deltaTheta == 0_deg)
+                                     ? motor.getDistanceDelta()
+                                     : motor.getDistanceDelta() / deltaTheta.convert(rad) + motor.getOffset();
             local.x += sinDTheta2 * radius / drivetrain.size();
         }
     } else { // output a warning if there are no available sensors to calculate local x

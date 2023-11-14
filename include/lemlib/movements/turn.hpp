@@ -19,7 +19,7 @@ class Turn : public Movement {
          * @param target the target heading. Radians, 0 is right, increases counterclockwise
          * @param maxSpeed the maximum speed the robot can turn at
          */
-        Turn(FAPID angularPID, float target, int maxSpeed);
+        Turn(FAPID angularPID, Angle target, int maxSpeed);
 
         /**
          * @brief Construct a new Turn movement
@@ -52,13 +52,13 @@ class Turn : public Movement {
     private:
         FAPID angularPID;
         std::optional<Pose> targetPose = std::nullopt;
-        Pose startPose = Pose(0, 0, 0);
-        float targetHeading = 0;
+        Pose startPose = Pose(0_in, 0_in, 0_deg);
+        Angle targetHeading = 0_deg;
         bool reversed = false;
         int maxSpeed;
 
         int compState;
         int state = 0; // 0 = in progress, 1 = done
-        float dist = 0;
+        Angle dist = 0_deg;
 };
 }; // namespace lemlib

@@ -192,6 +192,10 @@ template <isQuantity Q> constexpr inline bool operator>(const Q& lhs, const Q& r
 namespace units {
 template <isQuantity Q> constexpr inline Q abs(const Q& lhs) { return Q(std::abs(lhs.raw())); }
 
+template <isQuantity Q> constexpr inline Q max(const Q& lhs, const Q& rhs) { return (lhs > rhs ? lhs : rhs); }
+
+template <isQuantity Q> constexpr inline Q min(const Q& lhs, const Q& rhs) { return (lhs < rhs ? lhs : rhs); }
+
 template <isQuantity R, isQuantity Q>
 constexpr inline Quantity<std::ratio_multiply<decltype(Q::dim.mass), R>,
                           std::ratio_multiply<decltype(Q::dim.length), R>,

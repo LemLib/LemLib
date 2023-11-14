@@ -38,7 +38,7 @@ class Chassis {
          * @param theta new theta value
          * @param radians true if theta is in radians, false if not. False by default
          */
-        void setPose(float x, float y, float theta, bool radians = false);
+        void setPose(Length x, Length y, Angle theta);
 
         /**
          * @brief Set the pose of the chassis
@@ -46,7 +46,7 @@ class Chassis {
          * @param pose the new pose
          * @param radians whether pose theta is in radians (true) or not (false). false by default
          */
-        void setPose(Pose pose, bool radians = false);
+        void setPose(Pose pose);
 
         /**
          * @brief Get the pose of the chassis
@@ -54,7 +54,7 @@ class Chassis {
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          */
-        Pose getPose(bool radians = false);
+        Pose getPose();
 
         /**
          * @brief Wait until the robot has traveled a certain distance, or angle, along the path
@@ -63,7 +63,7 @@ class Chassis {
          *
          * @param dist the distance the robot needs to travel before returning
          */
-        void waitUntil(float dist);
+        void waitUntil(float dist); //todo
 
         /**
          * @brief Wait until the current movement is done

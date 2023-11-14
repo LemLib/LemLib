@@ -23,7 +23,8 @@ class PurePursuit : public Movement {
          * @param forwards whether the chassis should move forwards or backwards. True by default
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
          */
-        PurePursuit(float trackWidth, const asset& path, float lookaheadDist, int timeout, bool forwards, int maxSpeed);
+        PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, int timeout, bool forwards,
+                    int maxSpeed);
 
         /**
          * @brief Get the distance travelled during the movement
@@ -45,17 +46,17 @@ class PurePursuit : public Movement {
         std::pair<int, int> update(Pose pose) override;
     private:
         std::vector<Waypoint> path;
-        Pose prevPose = Pose(0, 0, 0);
-        Waypoint prevLookahead = Waypoint(0, 0);
-        float trackWidth;
+        Pose prevPose = Pose(0_in, 0_in, 0_deg);
+        Waypoint prevLookahead = Waypoint(0_in, 0_in);
+        Length trackWidth;
         int startTime;
-        float lookaheadDist;
+        Length lookaheadDist;
         int timeout;
         bool forwards;
-        int maxSpeed;
+        AngularVelocity maxSpeed;
 
         int compState;
         int state = 0; // 0 = in progress, 1 = done
-        float dist = 0;
+        Length dist = 0_in;
 };
 }; // namespace lemlib

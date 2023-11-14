@@ -1,5 +1,6 @@
 #include <cmath>
 #include <numeric>
+#include "lemlib/units.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/devices/encoder/motor.hpp"
 
@@ -12,12 +13,12 @@ namespace lemlib {
  * a reference, due to limitations in PROS 3. This is fixed in PROS 4, but
  * we have to deal with this for now.
  */
-MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm)
+MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelocity rpm)
     : motors(std::move(motors)),
-      rpm(rpm) {}
+      speed(rpm) {}
 
 /**
- * Get the angle the motors rotated by, in radians
+ * Get the angle the motors rotated by
  *
  * Since the motors in the group may have different cartridges, we need some
  * extra logic to calculate the geared output. All we do is get a vector
@@ -25,24 +26,24 @@ MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm)
  * output rpm by the input rpm. Then we just multiply the output by 2 pi
  * to get angle in radians.
  */
-float MotorEncoder::getAngle() {
+Angle MotorEncoder::getAngle() {
     // get gearboxes and encoder position for each motor in the group
     std::vector<pros::MotorGears> gearsets = motors->get_gearing_all();
     std::vector<double> positions = motors->get_position_all();
-    std::vector<float> angles;
+    std::vector<Angle> angles;
     // calculate ratio'd output for each motor
     for (int i = 0; i < motors->size(); i++) {
-        float in;
+        AngularVelocity inp;
         switch (gearsets[i]) {
-            case pros::MotorGears::rpm_100: in = 100; break;
-            case pros::MotorGears::rpm_200: in = 200; break;
-            case pros::MotorGears::rpm_600: in = 600; break;
-            default: in = 200; break;
+            case pros::MotorGears::rpm_100: inp = 100_rpm; break;
+            case pros::MotorGears::rpm_200: inp = 200_rpm; break;
+            case pros::MotorGears::rpm_600: inp = 600_rpm; break;
+            default: inp = 200_rpm; break;
         }
-        angles.push_back(positions[i] * (rpm / in) * 2 * M_PI);
+        angles.push_back(positions[i] * (speed / inp) * 1_rot); // todo test
     }
     // calc average of the angles
-    float angle = avg(angles);
+    Angle angle = avg(angles);
     lastAngle = angle;
     return angle;
 }
@@ -51,7 +52,7 @@ float MotorEncoder::getAngle() {
  * Reset the motor encoders.
  */
 bool MotorEncoder::reset() {
-    lastAngle = 0;
+    lastAngle = 0_deg;
     return (motors->tare_position()) ? 0 : 1;
 }
 }; // namespace lemlib

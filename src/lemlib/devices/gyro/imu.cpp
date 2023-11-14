@@ -58,27 +58,27 @@ bool Imu::isCalibrated() { return isConnected() && !imu.is_calibrating() && !std
 bool Imu::isConnected() { return imu.is_installed(); }
 
 /**
- * return the heading of the imu in radians and in standard position
+ * return the heading of the imu in standard position
  */
-float Imu::getHeading() {
-    float heading = std::fmod(getRotation(), 2 * M_PI);
-    if (heading < 0) heading += 2 * M_PI;
+Angle Imu::getHeading() {
+    Angle heading = units::mod(getRotation(), 1_rot);
+    if (heading < 0_deg) heading += 1_rot;
     return heading;
 }
 
 /**
- * Get the rotation of the imu in radians and in standard position
+ * Get the rotation of the imu in standard position
  */
-float Imu::getRotation() {
-    const float rotation = M_PI_2 - degToRad(imu.get_rotation());
+Angle Imu::getRotation() {
+    const Angle rotation = (90 - imu.get_rotation()) * deg; // todo test
     lastAngle = rotation;
     return rotation;
 }
 
 /**
- * Set the rotation of the imu in radians and in standard position
+ * Set the rotation of the imu in standard position
  */
-void Imu::setRotation(float orientation) const { imu.set_rotation(radToDeg(M_PI - radToDeg(orientation))); }
+void Imu::setRotation(Angle orientation) const { imu.set_rotation(360 - orientation.convert(deg)); }
 
 /**
  * Wrapper function for pros::Imu.get_port()

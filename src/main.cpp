@@ -13,15 +13,15 @@ auto rightDrive = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blu
 pros::Imu imu(12);
 
 // vertical tracking wheel. Port 4, not reversed, 2.75" diameter, 3.7" offset, left of the robot center
-lemlib::TrackingWheel vertical(4, lemlib::Omniwheel::NEW_275, -3.7);
+lemlib::TrackingWheel vertical(4, lemlib::Omniwheel::NEW_275, -3.7_in);
 
 // drivetrain
 lemlib::Drivetrain_t drivetrain {
     leftDrive, // left drivetrain motors
     rightDrive, // right drivetrain motors
-    10, // track width of robot (distance from left wheels to distance of right)
+    10_in, // track width of robot (distance from left wheels to distance of right)
     lemlib::Omniwheel::NEW_4, // wheel diameter
-    300, // rpm of the drivetrain
+    300_rpm, // rpm of the drivetrain
     8 // chase power. Higher values result in sharper turns
 };
 
@@ -84,7 +84,7 @@ void initialize() {
 
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
-        lemlib::Pose pose(0, 0, 0);
+        lemlib::Pose pose(0_in, 0_in, 0_deg);
         while (true) {
             pose = chassis.getPose();
             // print to the brain screen
@@ -121,14 +121,14 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  */
 void autonomous() {
     // example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4000 ms
-    chassis.moveTo(20, 15, 90, 4000);
+    chassis.moveTo(20_in, 15_in, 90_deg, 4000);
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
-    chassis.turnToPose(45, -45, 1000, true, 60);
+    chassis.turnToPose(45_in, -45_in, 1000, true, 60);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
     // see line 110 to see how to define a path
-    chassis.follow(example_txt, 15, 4000, false);
+    chassis.follow(example_txt, 15_in, 4000, false);
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait

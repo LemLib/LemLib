@@ -18,9 +18,9 @@ namespace lemlib {
  *
  * This function is a wrapper for the Odometry::setPose() function
  */
-void Chassis::setPose(float x, float y, float theta, bool radians) {
+void Chassis::setPose(Length x, Length y, Angle theta) {
     Pose pose(x, y, theta);
-    setPose(pose, radians);
+    setPose(pose);
 }
 
 /**
@@ -29,9 +29,7 @@ void Chassis::setPose(float x, float y, float theta, bool radians) {
  * This function is a wrapper for the Odometry::setPose() function
  * but it also transforms the pose to the format needed by the user
  */
-void Chassis::setPose(Pose pose, bool radians) {
-    if (!radians) pose.theta = degToRad(pose.theta);
-    pose.theta = M_PI_2 - pose.theta;
+void Chassis::setPose(Pose pose) {
     odom->setPose(pose);
 }
 
@@ -41,11 +39,8 @@ void Chassis::setPose(Pose pose, bool radians) {
  * This function is a wrapper for the Odometry::getPose() function
  * but it also transforms the pose to the format needed by the user
  */
-Pose Chassis::getPose(bool radians) {
-    Pose pose = odom->getPose();
-    pose.theta = M_PI_2 - pose.theta;
-    if (!radians) pose.theta = radToDeg(pose.theta);
-    return pose;
+Pose Chassis::getPose() {
+    return odom->getPose();
 }
 
 /**

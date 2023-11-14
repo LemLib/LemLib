@@ -10,17 +10,18 @@
  */
 #pragma once
 
+#include "units.hpp"
 #include <string>
 
 namespace lemlib {
 class Pose {
     public:
         /** @brief x value*/
-        float x;
+        Length x;
         /** @brief y value*/
-        float y;
+        Length y;
         /** @brief theta value*/
-        float theta;
+        Angle theta;
         /**
          * @brief Create a new pose
          *
@@ -28,7 +29,7 @@ class Pose {
          * @param y component
          * @param theta heading. Defaults to 0
          */
-        Pose(float x, float y, float theta = 0);
+        Pose(Length x, Length y, Angle theta = 0_deg);
         /**
          * @brief Add a pose to this pose
          *
@@ -104,23 +105,23 @@ class Pose {
          * @param other the other pose
          * @return float
          */
-        float distance(Pose other);
+        Length distance(Pose other);
         /**
          * @brief Get the angle between two poses
          *
          * @param other the other pose
          * @return float in radians
          */
-        float angle(Pose other);
+        Angle angle(Pose other);
         /**
          * @brief Rotate a pose by an angle
          *
          * @note positive angle results in counterclockwise translation
          *
-         * @param angle angle in radians
+         * @param angle angle 
          * @return Pose
          */
-        Pose rotate(float angle);
+        Pose rotate(Angle angle);
 };
 
 /**
@@ -144,12 +145,12 @@ class Waypoint : public Pose {
          * @param theta
          * @param speed
          */
-        Waypoint(float x, float y, float theta = 0, float speed = 0, int index = 0)
+        Waypoint(Length x, Length y, Angle theta = 0_deg, AngularVelocity speed = 0_rpm, int index = 0)
             : Pose(x, y, theta),
               speed(speed),
               index(index) {}
 
-        float speed;
+        AngularVelocity speed;
         int index;
 };
 } // namespace lemlib

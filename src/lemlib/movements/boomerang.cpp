@@ -27,7 +27,7 @@ Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, bool forwar
     // get the current competition state. If this changes, the movement will stop
     compState = pros::competition::get_status();
     // flip target theta if moving backwards
-    if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI);
+    if (!forwards) target.theta = units::mod(target.theta + M_PI * rad, 1_rot);
 }
 
 /**
@@ -36,7 +36,7 @@ Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, bool forwar
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float Boomerang::getDist() { return dist; }
+float Boomerang::getDist() { return dist.convert(m); } // todo test
 
 /**
  * The boomerang controller is a motion algorithm inspired by adaptive PID seeking
@@ -61,46 +61,47 @@ float Boomerang::getDist() { return dist; }
  */
 std::pair<int, int> Boomerang::update(Pose pose) {
     // set state to 1 if in state 0 and close to the target
-    if (state == 0 && pose.distance(target) < 7.5) state = 1;
+    if (state == 0 && pose.distance(target) < 7.5_in) state = 1;
     // set state to 2 if in state 1 and the linear PID has settled
     if (state == 1 && linearPID.settled()) state = 2;
     // exit if movement is in state 2 (done)
     if (state == 2) return {128, 128};
 
     // if going in reverse, flip the heading of the pose
-    if (!forwards) pose.theta += M_PI;
+    if (!forwards) pose.theta += M_PI * rad;
 
     // update completion vars
-    if (dist == 0) { // if dist is 0, this is the first time update() has been called
-        dist = 0.0001;
+    if (dist == 0_in) { // if dist is 0, this is the first time update() has been called
+        dist = 0.0001_in;
         prevPose = pose;
     }
     dist += pose.distance(prevPose);
     prevPose = pose;
 
     // calculate the carrot point
-    Pose carrot = target - (Pose(cos(target.theta), sin(target.theta)) * lead * pose.distance(target));
+    Pose carrot = target - (Pose(units::cos(target.theta) * m, units::sin(target.theta) * m) *
+                            (float)(lead * pose.distance(target).convert(m)));
     if (state == 1) carrot = target; // settling behavior
 
     // calculate error
-    float angularError = angleError(pose.angle(carrot), pose.theta); // angular error
-    float linearError = pose.distance(carrot) * cos(angularError); // linear error
+    Angle angularError = angleError(pose.angle(carrot), pose.theta); // angular error
+    Length linearError = pose.distance(carrot) * units::cos(angularError); // linear error
     if (state == 1) angularError = angleError(target.theta, pose.theta); // settling behavior
     if (!forwards) linearError = -linearError;
 
     // get PID outputs
-    float angularPower = -angularPID.update(radToDeg(angularError), 0);
-    float linearPower = linearPID.update(linearError, 0);
+    float angularPower = -angularPID.update(angularError.convert(deg), 0);
+    float linearPower = linearPID.update(linearError.convert(in), 0);
 
     // calculate radius of turn
-    float curvature = fabs(getCurvature(pose, carrot));
-    if (curvature == 0) curvature = -1;
-    float radius = 1 / curvature;
+    Curvature curvature = units::abs(getCurvature(pose, carrot));
+    if (curvature == 0_radpm) curvature = -1_radpm;
+    Radius radius = 1 / curvature;
 
     // calculate the maximum speed at which the robot can turn
     // using the formula v = sqrt( u * r * g )
-    if (radius != -1) {
-        float maxTurnSpeed = sqrt(chasePower * radius * 9.8);
+    if (radius != -1_mprad) {
+        float maxTurnSpeed = sqrt(chasePower * radius.raw() * 9.8);
         // the new linear power is the minimum of the linear power and the max turn speed
         if (linearPower > maxTurnSpeed && state == 0) linearPower = maxTurnSpeed;
         else if (linearPower < -maxTurnSpeed && state == 0) linearPower = -maxTurnSpeed;

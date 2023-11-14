@@ -55,7 +55,7 @@ class Imu : public Gyro {
          *
          * @return float heading, in radians, locked from -pi to pi
          */
-        float getHeading() override;
+        Angle getHeading() override;
         /**
          * @brief Get the rotation of the IMU
          *
@@ -63,7 +63,7 @@ class Imu : public Gyro {
          *
          * @return float rotation, in radians
          */
-        float getRotation() override;
+        Angle getRotation() override;
         /**
          * @brief Set the rotation of the IMU
          *
@@ -71,7 +71,7 @@ class Imu : public Gyro {
          *
          * @param rotation, rotation in radians
          */
-        void setRotation(float rotation) const override;
+        void setRotation(Angle rotation) const override;
         /**
          * @brief Get the port of the IMU
          *

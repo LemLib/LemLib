@@ -55,14 +55,16 @@ int sgn(float x) {
 }
 
 /**
- * @brief Return the average of a vector of numbers
+ * @brief Return the mean value of a vector of quantities
  *
  * @param values
- * @return float
+ * @return the average
  */
-float avg(std::vector<float> values) {
-    float sum = 0;
-    for (float value : values) { sum += value; }
+template <isQuantity Q> Q avg(std::vector<Q> values);
+
+template <isQuantity Q> Q avg(std::vector<Q> values) {
+    Q sum = Q(0);
+    for (Q value : values) { sum += value; }
     return sum / values.size();
 }
 
@@ -74,24 +76,26 @@ float avg(std::vector<float> values) {
  * @param smooth smoothing factor (0-1). 1 means no smoothing, 0 means no change
  * @return float - the smoothed output
  */
-float ema(float current, float previous, float smooth) { return (current * smooth) + (previous * (1 - smooth)); }
+template <isQuantity Q> Q ema(Q current, Q previous, float smooth) {
+    return (current * smooth) + (previous * (1 - smooth));
+}
 
 /**
  * Finds the curvature of a circle which intersects 2 points, and is tangent to the first point
  *
  * Inspired by: https://www.chiefdelphi.com/t/paper-implementation-of-the-adaptive-pure-pursuit-controller/166552
  */
-float getCurvature(Pose p1, Pose p2) {
+Curvature getCurvature(Pose p1, Pose p2) {
     // calculate whether the pose is on the left or right side of the circle
-    float side = sgn(std::sin(p1.theta) * (p2.x - p1.x) - std::cos(p1.theta) * (p2.y - p1.y));
+    uint8_t side = units::sgn(units::sin(p1.theta) * (p2.x - p1.x) - units::cos(p1.theta) * (p2.y - p1.y));
     // calculate center point and radius
-    float a = -std::tan(p1.theta);
-    float c = std::tan(p1.theta) * p1.x - p1.y;
-    float x = std::fabs(a * p2.x + p2.y + c) / std::sqrt((a * a) + 1);
-    float d = p1.distance(p2);
+    Number a = -units::tan(p1.theta);
+    Length c = units::tan(p1.theta) * p1.x - p1.y;
+    Length x = units::abs(a * p2.x + p2.y + c) / units::sqrt((a * a) + Number(1));
+    Length d = p1.distance(p2);
 
     // return curvature
-    return side * ((2 * x) / (d * d));
+    return side * rad * ((2 * x) / (d * d)); // todo needs testing
 }
 
 /**
@@ -132,11 +136,11 @@ std::vector<std::string> splitString(const std::string& input, const std::string
  */
 Waypoint closestWaypoint(const std::vector<Waypoint>& waypoints, const Pose& target) {
     Waypoint closest = waypoints[0];
-    float dist = pow(target.x - closest.x, 2) + pow(target.y - closest.y, 2);
+    Area dist = units::square(target.x - closest.x) + units::square(target.y - closest.y);
 
     // loop through all path points
     for (const Waypoint& wp : waypoints) {
-        const float dist2 = pow(target.x - wp.x, 2) + pow(target.y - wp.y, 2);
+        const Area dist2 = units::square(target.x - wp.x) + units::square(target.y - wp.y);
         if (dist2 < dist) {
             closest = wp;
             dist = dist2;
@@ -155,20 +159,20 @@ Waypoint closestWaypoint(const std::vector<Waypoint>& waypoints, const Pose& tar
  * If there are no intersections, it returns the center of the circle.
  * If there are multiple intersections, it returns the first one.
  */
-Pose circleLineIntersect(Pose p1, Pose p2, Pose center, float radius) {
+Pose circleLineIntersect(Pose p1, Pose p2, Pose center, Length radius) { // todo: test
     // uses the quadratic formula to calculate intersection points
     Pose d = p2 - p1;
     Pose f = p1 - center;
-    float a = d * d;
-    float b = 2 * (f * d);
-    float c = (f * f) - pow(radius, 2);
-    float discriminant = pow(b, 2) - 4 * a * c;
+    Area a = units::square(d.x) + units::square(d.y);
+    Area b = 2 * (f.x * d.x + f.y * d.y);
+    Area c = units::square(f.x) + units::square(f.y) - units::square(radius);
+    Quantity<std::ratio<0>, std::ratio<4>, std::ratio<0>, std::ratio<0>> discriminant = units::square(b) - (4 * a * c);
 
     // if a possible intersection was found
-    if (discriminant >= 0) {
-        discriminant = sqrt(discriminant);
-        float t1 = (-b - discriminant) / (2 * a);
-        float t2 = (-b + discriminant) / (2 * a);
+    if (discriminant.raw() >= 0) {
+        Area discriminant1 = units::sqrt(discriminant);
+        float t1 = ((-b - discriminant1) / (2 * a)).raw();
+        float t2 = ((-b + discriminant1) / (2 * a)).raw();
 
         // prioritize first intersection
         float t = -1;

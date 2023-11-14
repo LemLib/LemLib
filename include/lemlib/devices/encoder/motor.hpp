@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "lemlib/units.hpp"
 #include "pros/motor_group.hpp"
 #include "lemlib/devices/encoder/encoder.hpp"
 
@@ -15,14 +16,14 @@ class MotorEncoder : public Encoder {
          * @param motors pointer to the motor group to be used
          * @param rpm output rpm
          */
-        MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm);
+        MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelocity rpm);
 
         /**
          * @brief Get the angle rotated by the motor encoders, in radians
          *
          * @return float angle rotated by the motor encoders, in radians
          */
-        float getAngle() override;
+        Angle getAngle() override;
         /**
          * @brief Reset the motor encoder
          *
@@ -32,6 +33,6 @@ class MotorEncoder : public Encoder {
         bool reset() override;
     private:
         std::shared_ptr<pros::MotorGroup> motors;
-        const float rpm;
+        const AngularVelocity speed;
 };
 } // namespace lemlib

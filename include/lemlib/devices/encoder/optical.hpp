@@ -21,7 +21,7 @@ class OpticalEncoder : public Encoder {
          *
          * @return float angle rotated by the optical encoder, in radians
          */
-        float getAngle() override;
+        Angle getAngle() override;
         /**
          * @brief Reset the optical encoder
          *

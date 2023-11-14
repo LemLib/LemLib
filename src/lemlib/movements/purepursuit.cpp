@@ -17,7 +17,7 @@ namespace lemlib {
  * it into a vector of strings. We then convert each of these strings into
  * floats, and then push back a new waypoint to the path vector
  */
-PurePursuit::PurePursuit(float trackWidth, const asset& path, float lookaheadDist, int timeout, bool forwards,
+PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, int timeout, bool forwards,
                          int maxSpeed)
     : Movement(),
       trackWidth(trackWidth),
@@ -35,11 +35,12 @@ PurePursuit::PurePursuit(float trackWidth, const asset& path, float lookaheadDis
     std::vector<std::string> lines = splitString(input, "\n");
     for (const std::string& line : lines) { // loop through all lines
         if (line == "endData" || line == "endData\r") break;
+        // todo make sure these units are correct
         std::vector<std::string> pointInput = splitString(line, ", "); // parse line
-        const float x = std::stof(pointInput.at(0)); // x position
-        const float y = std::stof(pointInput.at(1)); // y position
-        const float speed = std::stof(pointInput.at(2)); // speed
-        this->path.push_back({x, y, 0, speed}); // save data
+        const Length x = std::stof(pointInput.at(0)) * in; // x position
+        const Length y = std::stof(pointInput.at(1)) * in; // y position
+        const AngularVelocity speed = std::stof(pointInput.at(2)) * rpm; // speed
+        this->path.push_back({x, y, 0_deg, speed}); // save data
     }
 }
 
@@ -49,7 +50,7 @@ PurePursuit::PurePursuit(float trackWidth, const asset& path, float lookaheadDis
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float PurePursuit::getDist() { return dist; }
+float PurePursuit::getDist() { return dist.convert(in); }
 
 /**
  * Pure Pursuit is a motion algorithm published by R. Craig Coulter in 1992
@@ -74,11 +75,11 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     if (state == 1) return {128, 128};
 
     // add pi to theta if the robot is moving backwards
-    if (!forwards) pose.theta = std::fmod(pose.theta + M_PI, 2 * M_PI);
+    if (!forwards) pose.theta = units::mod(pose.theta + rot / 2, rot);
 
     // update completion vars
-    if (dist == 0) { // if dist is 0, this is the first time update() has been called
-        dist = 0.0001;
+    if (dist == 0_in) { // if dist is 0, this is the first time update() has been called
+        dist = 0.0001_in;
         prevPose = pose;
     }
     dist += pose.distance(prevPose);
@@ -87,7 +88,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     // find the closest waypoint on the path
     Waypoint closest = closestWaypoint(path, pose);
     // if the robot is at the end of the path, then stop
-    if (closest.speed == 0) {
+    if (closest.speed == 0_rpm) {
         state = 1;
         return {128, 128};
     }
@@ -101,22 +102,22 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
         Pose intersect = circleLineIntersect(last, cur, pose, lookaheadDist);
         // if the intersection is not the robot's current position, then we have found the lookahead point
         if (intersect != pose) {
-            lookahead = {intersect.x, intersect.y, 0, 0, i};
+            lookahead = {intersect.x, intersect.y, 0_deg, 0_rpm, i};
             break;
         }
     }
     prevLookahead = lookahead; // update previous lookahead position
 
     // get the curvature of the arc between the robot and the lookahead point
-    float curvature = getCurvature(pose, lookahead);
+    Curvature curvature = getCurvature(pose, lookahead);
 
     // get the target velocity of the robot
-    float targetVel = closest.speed;
+    AngularVelocity targetVel = closest.speed;
     // calculate target left and right velocities
-    float leftVel = targetVel * (2 + curvature * trackWidth) / 2;
-    float rightVel = targetVel * (2 - curvature * trackWidth) / 2;
+    AngularVelocity leftVel = targetVel * (2_rad + curvature * trackWidth) / 2_rad;
+    AngularVelocity rightVel = targetVel * (2_rad - curvature * trackWidth) / 2_rad;
     // ratio the speeds to respect the max speed
-    float ratio = std::max(std::fabs(leftVel), std::fabs(rightVel)) / maxSpeed;
+    float ratio = (units::max(units::abs(leftVel), units::abs(rightVel)) / maxSpeed).raw();
     if (ratio > 1) {
         leftVel /= ratio;
         rightVel /= ratio;
@@ -128,6 +129,6 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
         rightVel *= -1;
     }
 
-    return {std::round(leftVel), std::round(rightVel)};
+    return {std::round(leftVel.convert(rpm)), std::round(rightVel.convert(rpm))}; // todo test
 }
 }; // namespace lemlib
