@@ -65,7 +65,7 @@ void FAPID::setGains(float kF, float kA, float kP, float kI, float kD) {
  * @param smallTime
  * @param maxTime
  */
-void FAPID::setExit(float largeError, float smallError, int largeTime, int smallTime, int maxTime) {
+void FAPID::setExit(float largeError, float smallError, Time largeTime, Time smallTime, Time maxTime) {
     this->largeError = largeError;
     this->smallError = smallError;
     this->largeTime = largeTime;
@@ -115,18 +115,18 @@ void FAPID::reset() {
  * @return false - the FAPID has not settled
  */
 bool FAPID::settled() {
-    if (startTime == 0) { // if maxTime has not been set
-        startTime = pros::c::millis();
+    if (startTime == 0_sec) { // if maxTime has not been set
+        startTime = pros::millis() * ms;
         return false;
     } else { // check if the FAPID has settled
-        if (pros::c::millis() - startTime > maxTime) return true; // maxTime has been exceeded
+        if (pros::millis() * ms - startTime > maxTime) return true; // maxTime has been exceeded
         if (std::fabs(prevError) < largeError) { // largeError within range
-            if (!largeTimeCounter) largeTimeCounter = pros::c::millis(); // largeTimeCounter has not been set
-            else if (pros::c::millis() - largeTimeCounter > largeTime) return true; // largeTime has been exceeded
+            if (largeTimeCounter == 0_sec) largeTimeCounter = pros::millis() * ms; // largeTimeCounter has not been set
+            else if (pros::millis() * ms - largeTimeCounter > largeTime) return true; // largeTime has been exceeded
         }
         if (std::fabs(prevError) < smallError) { // smallError within range
-            if (!smallTimeCounter) smallTimeCounter = pros::c::millis(); // smallTimeCounter has not been set
-            else if (pros::c::millis() - smallTimeCounter > smallTime) return true; // smallTime has been exceeded
+            if (smallTimeCounter == 0_sec) smallTimeCounter = pros::millis() * ms; // smallTimeCounter has not been set
+            else if (pros::millis() * ms - smallTimeCounter > smallTime) return true; // smallTime has been exceeded
         }
         // if none of the exit conditions have been met
         return false;

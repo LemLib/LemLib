@@ -23,7 +23,7 @@ class PurePursuit : public Movement {
          * @param forwards whether the chassis should move forwards or backwards. True by default
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
          */
-        PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, int timeout, bool forwards,
+        PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, Time timeout, bool forwards,
                     int maxSpeed);
 
         /**
@@ -49,11 +49,11 @@ class PurePursuit : public Movement {
         Pose prevPose = Pose(0_in, 0_in, 0_deg);
         Waypoint prevLookahead = Waypoint(0_in, 0_in);
         Length trackWidth;
-        int startTime;
+        Time startTime;
         Length lookaheadDist;
-        int timeout;
+        Time timeout;
         bool forwards;
-        AngularVelocity maxSpeed;
+        int maxSpeed;
 
         int compState;
         int state = 0; // 0 = in progress, 1 = done

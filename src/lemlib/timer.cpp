@@ -8,16 +8,16 @@ namespace lemlib {
  * A timer is a useful thing, used throughout LemLib. This abstraction
  * makes the code more readable, and easier to develop.
  */
-Timer::Timer(uint32_t time)
+Timer::Timer(Time time)
     : period(time) {
-    lastTime = pros::millis();
+    lastTime = pros::millis() * ms;
 }
 
 /**
  * Get the amount of time the timer is set to wait
  */
-uint32_t Timer::getTimeSet() {
-    const uint32_t time = pros::millis(); // get time from RTOS
+Time Timer::getTimeSet() {
+    const Time time = pros::millis() * ms; // get time from RTOS
     if (!paused) timeWaited += time - lastTime; // don't update if paused
     lastTime = time; // update last time
     return period;
@@ -26,19 +26,19 @@ uint32_t Timer::getTimeSet() {
 /**
  * Get the amount of time left on the timer
  */
-uint32_t Timer::getTimeLeft() {
-    const uint32_t time = pros::millis(); // get time from RTOS
+Time Timer::getTimeLeft() {
+    const Time time = pros::millis() * ms; // get time from RTOS
     if (!paused) timeWaited += time - lastTime; // don't update is paused
     lastTime = time; // update last time
-    const int delta = period - timeWaited; // calculate how much time is left
-    return (delta > 0) ? delta : 0; // return 0 if timer is done
+    const Time delta = period - timeWaited; // calculate how much time is left
+    return (delta > 0_sec) ? delta : 0_sec; // return 0 if timer is done
 }
 
 /**
  * Get the amount of time passed on the timer
  */
-uint32_t Timer::getTimePassed() {
-    const uint32_t time = pros::millis(); // get time from RTOS
+Time Timer::getTimePassed() {
+    const Time time = pros::millis() * ms; // get time from RTOS
     if (!paused) timeWaited += time - lastTime; // don't update is paused
     lastTime = time; // update last time;
     return timeWaited;
@@ -48,17 +48,17 @@ uint32_t Timer::getTimePassed() {
  * Whether the timer is done or not
  */
 bool Timer::isDone() {
-    const uint32_t time = pros::millis(); // get time from RTOS
+    const Time time = pros::millis() * ms; // get time from RTOS
     if (!paused) timeWaited += time - lastTime; // don't update is paused
     lastTime = time; // update last time
-    const int delta = period - timeWaited; // calculate how much time is left
-    return delta <= 0;
+    const Time delta = period - timeWaited; // calculate how much time is left
+    return delta <= 0_sec;
 }
 
 /**
  * Set how long the timer should wait. Resets the timer.
  */
-void Timer::set(uint32_t time) {
+void Timer::set(Time time) {
     period = time; // set how long to wait
     reset();
 }
@@ -67,15 +67,15 @@ void Timer::set(uint32_t time) {
  * Reset the timer
  */
 void Timer::reset() {
-    timeWaited = 0;
-    lastTime = pros::millis();
+    timeWaited = 0_sec;
+    lastTime = pros::millis() * ms;
 }
 
 /**
  * Pause the timer
  */
 void Timer::pause() {
-    if (!paused) lastTime = pros::millis();
+    if (!paused) lastTime = pros::millis() * ms;
     paused = true;
 }
 
@@ -83,7 +83,7 @@ void Timer::pause() {
  * Resume the timer
  */
 void Timer::resume() {
-    if (paused) lastTime = pros::millis();
+    if (paused) lastTime = pros::millis() * ms;
     paused = false;
 }
 

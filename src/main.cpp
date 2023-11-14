@@ -30,9 +30,9 @@ lemlib::ChassisController_t lateralController {
     10, // kP
     30, // kD
     1, // small exit range
-    100, // small exit timeout
+    100_ms, // small exit timeout
     3, // large error range
-    500, // large error timeout
+    500_ms, // large error timeout
     20 // acceleration cap
 };
 
@@ -41,9 +41,9 @@ lemlib::ChassisController_t angularController {
     2, // kP
     10, // kD
     1, // small exit range
-    100, // small exit timeout
+    100_ms, // small exit timeout
     3, // large exit range
-    500, // large exit timeout
+    500_ms, // large exit timeout
     20 // acceleration cap
 };
 
@@ -120,15 +120,15 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
 void autonomous() {
-    // example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4000 ms
-    chassis.moveTo(20_in, 15_in, 90_deg, 4000);
-    // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
+    // example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4 seconds
+    chassis.moveTo(20_in, 15_in, 90_deg, 4_sec);
+    // example movement: Turn to face the point x:45, y:-45. Timeout set to 1 second
     // dont turn faster than 60 (out of a maximum of 127)
-    chassis.turnToPose(45_in, -45_in, 1000, true, 60);
-    // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
+    chassis.turnToPose(45_in, -45_in, 1_sec, true, 60);
+    // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4 seconds
     // following the path with the back of the robot (forwards = false)
     // see line 110 to see how to define a path
-    chassis.follow(example_txt, 15_in, 4000, false);
+    chassis.follow(example_txt, 15_in, 4_sec, false);
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait

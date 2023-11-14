@@ -17,7 +17,7 @@ namespace lemlib {
  * it into a vector of strings. We then convert each of these strings into
  * floats, and then push back a new waypoint to the path vector
  */
-PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, int timeout, bool forwards,
+PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, Time timeout, bool forwards,
                          int maxSpeed)
     : Movement(),
       trackWidth(trackWidth),
@@ -28,7 +28,7 @@ PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadD
     // get the current competition state. If this changes, the movement will stop
     compState = pros::competition::get_status();
     // get the starting time
-    startTime = pros::millis();
+    startTime = pros::millis() * ms;
     // decode the asset
     // TODO: be able to pass in a buffer directly instead of covert to string
     std::string input(reinterpret_cast<char*>(path.buf), path.size);
@@ -70,7 +70,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     // exit if the competition state has changed
     if (pros::competition::get_status() != compState) state = 1;
     // exit if the timeout has been reached
-    if (pros::millis() - startTime > timeout) state = 1;
+    if (pros::millis()*ms - startTime > timeout) state = 1;
     // exit if the movement is done
     if (state == 1) return {128, 128};
 

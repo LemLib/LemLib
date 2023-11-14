@@ -43,7 +43,9 @@ Angle MotorEncoder::getAngle() {
         angles.push_back(positions[i] * (speed / inp) * 1_rot); // todo test
     }
     // calc average of the angles
-    Angle angle = avg(angles);
+    Angle angle = 0_deg;
+    for (Angle value : angles) { angle += value; }
+    angle /= angles.size();
     lastAngle = angle;
     return angle;
 }

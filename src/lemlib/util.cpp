@@ -39,8 +39,8 @@ float slew(float target, float current, float maxChange) {
  * @param radians true if angle is in radians, false if not. False by default
  * @return float wrapped angle
  */
-float angleError(float angle1, float angle2, bool radians) {
-    return std::remainder(angle1 - angle2, radians ? 2 * M_PI : 360);
+Angle angleError(Angle angle1, Angle angle2) {
+    return angle2 - angle1; //todo test
 }
 
 /**
@@ -52,20 +52,6 @@ float angleError(float angle1, float angle2, bool radians) {
 int sgn(float x) {
     if (x < 0) return -1;
     else return 1;
-}
-
-/**
- * @brief Return the mean value of a vector of quantities
- *
- * @param values
- * @return the average
- */
-template <isQuantity Q> Q avg(std::vector<Q> values);
-
-template <isQuantity Q> Q avg(std::vector<Q> values) {
-    Q sum = Q(0);
-    for (Q value : values) { sum += value; }
-    return sum / values.size();
 }
 
 /**

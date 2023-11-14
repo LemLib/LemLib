@@ -11,6 +11,7 @@
 #pragma once
 #include <string>
 #include "pros/rtos.hpp"
+#include "lemlib/units.hpp"
 
 namespace lemlib {
 /**
@@ -52,7 +53,7 @@ class FAPID {
          * @param smallTime
          * @param maxTime
          */
-        void setExit(float largeError, float smallError, int largeTime, int smallTime, int maxTime);
+        void setExit(float largeError, float smallError, Time largeTime, Time smallTime, Time maxTime);
         /**
          * @brief Update the FAPID
          *
@@ -104,13 +105,13 @@ class FAPID {
 
         float largeError;
         float smallError;
-        int largeTime = 0;
-        int smallTime = 0;
-        int maxTime = -1; // -1 means no max time set, run forever
+        Time largeTime = 0_sec;
+        Time smallTime = 0_sec;
+        Time maxTime = FOREVER;
 
-        int largeTimeCounter = 0;
-        int smallTimeCounter = 0;
-        int startTime = 0;
+        Time largeTimeCounter = 0_sec;
+        Time smallTimeCounter = 0_sec;
+        Time startTime = 0_sec;
 
         float prevError = 0;
         float totalError = 0;

@@ -95,7 +95,7 @@ void Differential::initialize() {
  * done then is to pass the parameters to a new instance of Turn, and set the movement
  * pointer.
  */
-void Differential::turnToPose(Length x, Length y, int timeout, bool reversed, int maxSpeed) {
+void Differential::turnToPose(Length x, Length y, Time timeout, bool reversed, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // set up the PID
@@ -118,7 +118,7 @@ void Differential::turnToPose(Length x, Length y, int timeout, bool reversed, in
  * done then is to pass the parameters to a new instance of Turn, and set the movement
  * pointer.
  */
-void Differential::turnToHeading(Angle heading, int timeout, int maxSpeed) {
+void Differential::turnToHeading(Angle heading, Time timeout, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // convert heading to radians and standard form
@@ -143,7 +143,7 @@ void Differential::turnToHeading(Angle heading, int timeout, int maxSpeed) {
  * It also needs to decide what the chasePower should be. Usually this will be the value set in
  * the drivetrain struct, but it can be overridden by the user if needed.
  */
-void Differential::moveTo(Length x, Length y, Angle theta, int timeout, bool forwards, float chasePower, float lead,
+void Differential::moveTo(Length x, Length y, Angle theta, Time timeout, bool forwards, float chasePower, float lead,
                           int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
@@ -166,7 +166,7 @@ void Differential::moveTo(Length x, Length y, Angle theta, int timeout, bool for
  * Unlike the Differential::moveTo function, we can just pass the parameters directly to the
  * Pure Pursuit constructor
  */
-void Differential::follow(const asset& path, Length lookahead, int timeout, bool forwards, int maxSpeed) {
+void Differential::follow(const asset& path, Length lookahead, Time timeout, bool forwards, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // create the movement

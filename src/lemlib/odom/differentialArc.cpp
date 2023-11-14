@@ -58,7 +58,7 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     if (!calibrateGyros) return; // return if we don't need to calibrate gyros
     // calibrate gyros
     for (auto& it : gyros) it->calibrate();
-    Timer timer(3000); // try calibrating gyros for 3000 ms
+    Timer timer(3_sec); // try calibrating gyros for 3000 ms
     while (!timer.isDone()) {
         for (auto& gyro : gyros) { // continuously calibrate in case of failure
             if (!gyro->isCalibrating() && !gyro->isCalibrated()) gyro->calibrate();
@@ -159,15 +159,15 @@ void DifferentialArc::update() {
     if (verticals.size() > 0) { // use dedicated tracking wheels if we have any
         for (auto& tracker : verticals) {
             const Length radius = (deltaTheta == 0_deg)
-                                     ? tracker.getDistanceDelta()
-                                     : tracker.getDistanceDelta() / deltaTheta.convert(rad) + tracker.getOffset();
+                                      ? tracker.getDistanceDelta()
+                                      : tracker.getDistanceDelta() / deltaTheta.convert(rad) + tracker.getOffset();
             local.x += sinDTheta2 * radius / verticals.size();
         }
     } else if (drivetrain.size() > 0) { // use motor encoders if we have no dedicated tracking wheels
         for (auto& motor : drivetrain) {
             const Length radius = (deltaTheta == 0_deg)
-                                     ? motor.getDistanceDelta()
-                                     : motor.getDistanceDelta() / deltaTheta.convert(rad) + motor.getOffset();
+                                      ? motor.getDistanceDelta()
+                                      : motor.getDistanceDelta() / deltaTheta.convert(rad) + motor.getOffset();
             local.x += sinDTheta2 * radius / drivetrain.size();
         }
     } else { // output a warning if there are no available sensors to calculate local x
