@@ -13,6 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Get short SHA 2
+        id: short-sha2
+        run: |
+          echo $SHA | head -c 6
+        env:
+          SHA: ${{ github.sha }}
+          
       - name: Get short SHA
         uses: benjlevesque/short-sha@v2.2
         id: short-sha
