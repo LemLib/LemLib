@@ -74,16 +74,11 @@ template <typename Mass, typename Length, typename Time, typename Angle, typenam
         constexpr inline double raw() const { return value; }
 };
 
-// isRquantity & isAngle concepts make everything much more readable
+// isQuantity make everything much more readable
 template <typename... args> void QuantityChecker(Quantity<args...>) {}
 
 template <typename T>
-concept isRQuantity = requires { QuantityChecker(std::declval<T>()); };
-
-constexpr void AngleChecker(Quantity<Zero, Zero, Zero, One>) {}
-
-template <typename T>
-concept isAngle = requires { AngleChecker(std::declval<T>()); };
+concept isQuantity = requires { QuantityChecker(std::declval<T>()); };
 
 template <typename Q1, typename Q2> constexpr inline Q1 unit_cast(Q2 quantity) { return Q1(quantity.raw()); }
 
@@ -135,11 +130,11 @@ template <typename Q1, typename Q2> using Division =
 QUANTITY_NEW(Number, num, 0, 0, 0, 0)
 
 // Aritmetic operators
-template <isRQuantity Q> constexpr inline Q operator+(const Q& lhs, const Q& rhs) { return Q(lhs.raw() + rhs.raw()); }
+template <isQuantity Q> constexpr inline Q operator+(const Q& lhs, const Q& rhs) { return Q(lhs.raw() + rhs.raw()); }
 
-template <isRQuantity Q> constexpr inline Q operator-(const Q& lhs, const Q& rhs) { return Q(lhs.raw() - rhs.raw()); }
+template <isQuantity Q> constexpr inline Q operator-(const Q& lhs, const Q& rhs) { return Q(lhs.raw() - rhs.raw()); }
 
-template <isRQuantity Q1, isRQuantity Q2>
+template <isQuantity Q1, isQuantity Q2>
 constexpr inline Multiplication<Q1, Q2> operator*(const Q1& lhs, const Q2& rhs) {
     return Multiplication<Q1, Q2>(lhs.raw() * rhs.raw());
 }
@@ -174,30 +169,30 @@ constexpr inline Q operator/(const Q& rhs, const double& x) {
 }
 
 // Comparison operators
-template <isRQuantity Q> constexpr inline bool operator==(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline bool operator==(const Q& lhs, const Q& rhs) {
     return (lhs.raw() == rhs.raw());
 }
 
-template <isRQuantity Q> constexpr inline bool operator!=(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline bool operator!=(const Q& lhs, const Q& rhs) {
     return (lhs.raw() != rhs.raw());
 }
 
-template <isRQuantity Q> constexpr inline bool operator<=(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline bool operator<=(const Q& lhs, const Q& rhs) {
     return (lhs.raw() <= rhs.raw());
 }
 
-template <isRQuantity Q> constexpr inline bool operator>=(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline bool operator>=(const Q& lhs, const Q& rhs) {
     return (lhs.raw() >= rhs.raw());
 }
 
-template <isRQuantity Q> constexpr inline bool operator<(const Q& lhs, const Q& rhs) { return (lhs.raw() < rhs.raw()); }
+template <isQuantity Q> constexpr inline bool operator<(const Q& lhs, const Q& rhs) { return (lhs.raw() < rhs.raw()); }
 
-template <isRQuantity Q> constexpr inline bool operator>(const Q& lhs, const Q& rhs) { return (lhs.raw() > rhs.raw()); }
+template <isQuantity Q> constexpr inline bool operator>(const Q& lhs, const Q& rhs) { return (lhs.raw() > rhs.raw()); }
 
 namespace units {
-template <isRQuantity Q> constexpr inline Q abs(const Q& lhs) { return Q(std::abs(lhs.raw())); }
+template <isQuantity Q> constexpr inline Q abs(const Q& lhs) { return Q(std::abs(lhs.raw())); }
 
-template <isRQuantity R, isRQuantity Q>
+template <isQuantity R, isQuantity Q>
 constexpr inline Quantity<std::ratio_multiply<decltype(Q::dim.mass), R>,
                           std::ratio_multiply<decltype(Q::dim.length), R>,
                           std::ratio_multiply<decltype(Q::dim.time), R>, std::ratio_multiply<decltype(Q::dim.angle), R>>
@@ -207,10 +202,10 @@ pow(const Q& lhs) {
         std::pow(lhs.raw(), double(R::num) / R::den));
 }
 
-template <int R, isRQuantity Q> constexpr inline Quantity<std::ratio_multiply<decltype(Q::dim.mass), std::ratio<R>>,
-                                                          std::ratio_multiply<decltype(Q::dim.length), std::ratio<R>>,
-                                                          std::ratio_multiply<decltype(Q::dim.time), std::ratio<R>>,
-                                                          std::ratio_multiply<decltype(Q::dim.angle), std::ratio<R>>>
+template <int R, isQuantity Q> constexpr inline Quantity<std::ratio_multiply<decltype(Q::dim.mass), std::ratio<R>>,
+                                                         std::ratio_multiply<decltype(Q::dim.length), std::ratio<R>>,
+                                                         std::ratio_multiply<decltype(Q::dim.time), std::ratio<R>>,
+                                                         std::ratio_multiply<decltype(Q::dim.angle), std::ratio<R>>>
 pow(const Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::dim.time), decltype(Q::dim.angle)>&
         lhs) {
     return Quantity<std::ratio_multiply<decltype(Q::dim.mass), std::ratio<R>>,
@@ -219,7 +214,7 @@ pow(const Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::d
                     std::ratio_multiply<decltype(Q::dim.angle), std::ratio<R>>>(std::pow(lhs.raw(), R));
 }
 
-template <int R, isRQuantity Q> constexpr inline Quantity<
+template <int R, isQuantity Q> constexpr inline Quantity<
     std::ratio_divide<decltype(Q::dim.mass), std::ratio<R>>, std::ratio_divide<decltype(Q::dim.length), std::ratio<R>>,
     std::ratio_divide<decltype(Q::dim.time), std::ratio<R>>, std::ratio_divide<decltype(Q::dim.angle), std::ratio<R>>>
 root(const Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::dim.time), decltype(Q::dim.angle)>&
@@ -230,112 +225,112 @@ root(const Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::
                     std::ratio_divide<decltype(Q::dim.angle), std::ratio<R>>>(std::pow(lhs.raw(), 1.0 / R));
 }
 
-template <isRQuantity Q> constexpr inline Quantity<
+template <isQuantity Q> constexpr inline Quantity<
     std::ratio_divide<decltype(Q::dim.mass), std::ratio<2>>, std::ratio_divide<decltype(Q::dim.length), std::ratio<2>>,
     std::ratio_divide<decltype(Q::dim.time), std::ratio<2>>, std::ratio_divide<decltype(Q::dim.angle), std::ratio<2>>>
-sqrt(const Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::dim.time), decltype(Q::dim.angle)>&
-         rhs) {
+sqrt(const Q& rhs) {
     return Quantity<std::ratio_divide<decltype(Q::dim.mass), std::ratio<2>>,
                     std::ratio_divide<decltype(Q::dim.length), std::ratio<2>>,
                     std::ratio_divide<decltype(Q::dim.time), std::ratio<2>>,
                     std::ratio_divide<decltype(Q::dim.angle), std::ratio<2>>>(std::sqrt(rhs.raw()));
 }
 
-template <isRQuantity Q> constexpr inline Quantity<
+template <isQuantity Q> constexpr inline Quantity<
     std::ratio_divide<decltype(Q::dim.mass), std::ratio<3>>, std::ratio_divide<decltype(Q::dim.length), std::ratio<3>>,
     std::ratio_divide<decltype(Q::dim.time), std::ratio<3>>, std::ratio_divide<decltype(Q::dim.angle), std::ratio<3>>>
-cbrt(const Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::dim.time), decltype(Q::dim.angle)>&
-         rhs) {
+cbrt(const Q& rhs) {
     return Quantity<std::ratio_divide<decltype(Q::dim.mass), std::ratio<3>>,
                     std::ratio_divide<decltype(Q::dim.length), std::ratio<3>>,
                     std::ratio_divide<decltype(Q::dim.time), std::ratio<3>>,
                     std::ratio_divide<decltype(Q::dim.angle), std::ratio<3>>>(std::cbrt(rhs.raw()));
 }
 
-template <isRQuantity Q> constexpr inline Quantity<std::ratio_multiply<decltype(Q::dim.mass), std::ratio<2>>,
-                                                   std::ratio_multiply<decltype(Q::dim.length), std::ratio<2>>,
-                                                   std::ratio_multiply<decltype(Q::dim.time), std::ratio<2>>,
-                                                   std::ratio_multiply<decltype(Q::dim.angle), std::ratio<2>>>
-square(const Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::dim.time), decltype(Q::dim.angle)>&
-           rhs) {
+template <isQuantity Q> constexpr inline Quantity<std::ratio_multiply<decltype(Q::dim.mass), std::ratio<2>>,
+                                                  std::ratio_multiply<decltype(Q::dim.length), std::ratio<2>>,
+                                                  std::ratio_multiply<decltype(Q::dim.time), std::ratio<2>>,
+                                                  std::ratio_multiply<decltype(Q::dim.angle), std::ratio<2>>>
+square(const Q& rhs) {
     return Quantity<std::ratio_multiply<decltype(Q::dim.mass), std::ratio<2>>,
                     std::ratio_multiply<decltype(Q::dim.length), std::ratio<2>>,
                     std::ratio_multiply<decltype(Q::dim.time), std::ratio<2>>,
                     std::ratio_multiply<decltype(Q::dim.angle), std::ratio<2>>>(std::pow(rhs.raw(), 2));
 }
 
-template <isRQuantity Q> constexpr inline Quantity<std::ratio_multiply<decltype(Q::dim.mass), std::ratio<3>>,
-                                                   std::ratio_multiply<decltype(Q::dim.length), std::ratio<3>>,
-                                                   std::ratio_multiply<decltype(Q::dim.time), std::ratio<3>>,
-                                                   std::ratio_multiply<decltype(Q::dim.angle), std::ratio<3>>>
-cube(const Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::dim.time), decltype(Q::dim.angle)>&
-         rhs) {
+template <isQuantity Q> constexpr inline Quantity<std::ratio_multiply<decltype(Q::dim.mass), std::ratio<3>>,
+                                                  std::ratio_multiply<decltype(Q::dim.length), std::ratio<3>>,
+                                                  std::ratio_multiply<decltype(Q::dim.time), std::ratio<3>>,
+                                                  std::ratio_multiply<decltype(Q::dim.angle), std::ratio<3>>>
+cube(const Q& rhs) {
     return Quantity<std::ratio_multiply<decltype(Q::dim.mass), std::ratio<3>>,
                     std::ratio_multiply<decltype(Q::dim.length), std::ratio<3>>,
                     std::ratio_multiply<decltype(Q::dim.time), std::ratio<3>>,
                     std::ratio_multiply<decltype(Q::dim.angle), std::ratio<3>>>(std::pow(rhs.raw(), 3));
 }
 
-template <isRQuantity Q> constexpr inline Q hypot(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline Q hypot(const Q& lhs, const Q& rhs) {
     return Q(std::hypot(lhs.raw(), rhs.raw()));
 }
 
-template <isRQuantity Q> constexpr inline Q mod(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline Q mod(const Q& lhs, const Q& rhs) {
     return Q(std::fmod(lhs.raw(), rhs.raw()));
 }
 
-template <isRQuantity Q1, isRQuantity Q2> constexpr inline Q1 copysign(const Q1& lhs, const Q2& rhs) {
+template <isQuantity Q1, isQuantity Q2> constexpr inline Q1 copysign(const Q1& lhs, const Q2& rhs) {
     return Q1(std::copysign(lhs.raw(), rhs.raw()));
 }
 
-template <isRQuantity Q> constexpr inline bool signbit(const Q& lhs) { return std::signbit(lhs.raw()); }
+template <isQuantity Q> constexpr inline int sgn(const Q& lhs) { return lhs.raw() < 0 ? -1 : 1; }
 
-template <isRQuantity Q> constexpr inline Q clamp(const Q& lhs, const Q& lo, Q& hi) {
+template <isQuantity Q> constexpr inline bool signbit(const Q& lhs) { return std::signbit(lhs.raw()); }
+
+template <isQuantity Q> constexpr inline Q clamp(const Q& lhs, const Q& lo, Q& hi) {
     return Q(std::clamp(lhs.raw(), lo.raw(), hi.raw()));
 }
 
-template <isRQuantity Q> constexpr inline Q ceil(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline Q ceil(const Q& lhs, const Q& rhs) {
     return Q(std::ceil(lhs.raw() / rhs.raw()) * rhs.raw());
 }
 
-template <isRQuantity Q> constexpr inline Q floor(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline Q floor(const Q& lhs, const Q& rhs) {
     return Q(std::floor(lhs.raw() / rhs.raw()) * rhs.raw());
 }
 
-template <isRQuantity Q> constexpr inline Q trunc(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline Q trunc(const Q& lhs, const Q& rhs) {
     return Q(std::trunc(lhs.raw() / rhs.raw()) * rhs.raw());
 }
 
-template <isRQuantity Q> constexpr inline Q round(const Q& lhs, const Q& rhs) {
+template <isQuantity Q> constexpr inline Q round(const Q& lhs, const Q& rhs) {
     return Q(std::round(lhs.raw() / rhs.raw()) * rhs.raw());
 }
 
-template <isAngle Q> constexpr inline Number sin(const Q& rhs) { return Number(std::sin(rhs.raw())); }
+using isAngle = Quantity<Zero, Zero, Zero, One>;
 
-template <isAngle Q> constexpr inline Number cos(Q& rhs) { return Number(std::cos(rhs.raw())); }
+constexpr inline Number sin(const isAngle& rhs) { return Number(std::sin(rhs.raw())); }
 
-template <isAngle Q> constexpr inline Number tan(Q& rhs) { return Number(std::tan(rhs.raw())); }
+constexpr inline Number cos(isAngle& rhs) { return Number(std::cos(rhs.raw())); }
 
-template <isRQuantity Q, isAngle R> constexpr inline R asin(const Q& rhs) { return R(std::asin(rhs.raw())); }
+constexpr inline Number tan(isAngle& rhs) { return Number(std::tan(rhs.raw())); }
 
-template <isRQuantity Q, isAngle R> constexpr inline R acos(const Q& rhs) { return R(std::acos(rhs.raw())); }
+template <isQuantity Q> constexpr inline isAngle asin(const Q& rhs) { return isAngle(std::asin(rhs.raw())); }
 
-template <isRQuantity Q, isAngle R> constexpr inline R atan(const Q& rhs) { return R(std::atan(rhs.raw())); }
+template <isQuantity Q> constexpr inline isAngle acos(const Q& rhs) { return isAngle(std::acos(rhs.raw())); }
 
-template <isAngle Q> constexpr inline Number sinh(Q rhs) { return Number(std::sinh(rhs.raw())); }
+template <isQuantity Q> constexpr inline isAngle atan(const Q& rhs) { return isAngle(std::atan(rhs.raw())); }
 
-template <isAngle Q> constexpr inline Number cosh(Q rhs) { return Number(std::cosh(rhs.raw())); }
+constexpr inline Number sinh(isAngle rhs) { return Number(std::sinh(rhs.raw())); }
 
-template <isAngle Q> constexpr inline Number tanh(Q rhs) { return Number(std::tanh(rhs.raw())); }
+constexpr inline Number cosh(isAngle rhs) { return Number(std::cosh(rhs.raw())); }
 
-template <isRQuantity Q, isAngle R> constexpr inline R asinh(const Q& rhs) { return R(std::asinh(rhs.raw())); }
+constexpr inline Number tanh(isAngle rhs) { return Number(std::tanh(rhs.raw())); }
 
-template <isRQuantity Q, isAngle R> constexpr inline R acosh(const Q& rhs) { return R(std::acosh(rhs.raw())); }
+template <isQuantity Q> constexpr inline isAngle asinh(const Q& rhs) { return isAngle(std::asinh(rhs.raw())); }
 
-template <isRQuantity Q, isAngle R> constexpr inline R atanh(const Q& rhs) { return R(std::atanh(rhs.raw())); }
+template <isQuantity Q> constexpr inline isAngle acosh(const Q& rhs) { return isAngle(std::acosh(rhs.raw())); }
 
-template <isRQuantity Q, isAngle R> constexpr inline R atan2(const Q& lhs, const Q& rhs) {
-    return R(std::atan2(lhs.raw(), rhs.raw()));
+template <isQuantity Q> constexpr inline isAngle atanh(const Q& rhs) { return isAngle(std::atanh(rhs.raw())); }
+
+template <isQuantity Q> constexpr inline isAngle atan2(const Q& lhs, const Q& rhs) {
+    return isAngle(std::atan2(lhs.raw(), rhs.raw()));
 }
 
 } // namespace units
@@ -355,6 +350,8 @@ QUANTITY_LIT(Length, ft, in * 12)
 QUANTITY_LIT(Length, yd, ft * 3)
 QUANTITY_LIT(Length, mi, ft * 5280)
 QUANTITY_LIT(Length, tiles, 600 * mm)
+
+QUANTITY_NEW(Area, m2, 0, 2, 0, 0)
 
 QUANTITY_NEW(Angle, rad, 0, 0, 0, 1)
 QUANTITY_LIT(Angle, deg, (M_PI / 180) * rad)
@@ -392,10 +389,15 @@ QUANTITY_NEW(AngularJerk, radps3, 0, 0, -3, 1)
 QUANTITY_LIT(AngularJerk, rps3, rot / sec / sec / sec)
 QUANTITY_LIT(AngularJerk, rpm3, rot / min / min / min)
 
+QUANTITY_NEW(Curvature, radpm, 0, -1, 0, 1);
+
+QUANTITY_NEW(Radius, mprad, 0, 1, 0, -1);
+
 QUANTITY_NEW_TAGGED(Temperature, celcius, 0, 0, 0, 0, 0)
 
 QUANTITY_NEW_TAGGED(Voltage, volts, 0, 0, 0, 0, 1)
 QUANTITY_LIT(Voltage, mvolts, volts / 1000)
+QUANTITY_LIT(Voltage, conunits, (volts / 12000) * 127)
 
 template <typename Q>
 Quantity<decltype(Q::dim.mass), decltype(Q::dim.angle), decltype(Q::dim.time), decltype(Q::dim.length)> to_linear(
