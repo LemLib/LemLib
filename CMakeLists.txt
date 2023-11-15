@@ -44,6 +44,7 @@ add_executable(LemLib
   src/lemlib/pose.cpp
 
   test/pose.cpp
+  src/test.cpp
 )
 
 # Link against gtest
