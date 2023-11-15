@@ -23,8 +23,9 @@ You can find a fully annotated example project [here](https://github.com/LemLib/
 The tutorials provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to pure pursuit.
  - 1: [Getting Started](https://lemlib.github.io/LemLib/md_docs_tutorials_1_getting_started.html)
  - 2: [Setting up the Chassis](https://lemlib.github.io/LemLib/md_docs_tutorials_2_setting_up_the_chassis.html)
- - 3: [Tuning and Moving](https://lemlib.github.io/LemLib/md_docs_tutorials_3_tuning_and_moving.html)
- - 4: [Pure Pursuit](https://lemlib.github.io/LemLib/md_docs_tutorials_4_pure_pursuit.html)
+ - 3: [Driver Control](https://lemlib.github.io/LemLib/md_docs_tutorials_3_driver_control.html)
+ - 4: [Tuning and Moving](https://lemlib.github.io/LemLib/md_docs_tutorials_4_auto_and_tuning.html)
+ - 5: [Pure Pursuit](https://lemlib.github.io/LemLib/md_docs_tutorials_5_pure_pursuit.html)
 
 ## FAQ
 _**1. Help! why is my controller vibrating?**_

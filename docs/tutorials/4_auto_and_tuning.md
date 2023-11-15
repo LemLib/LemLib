@@ -1,7 +1,7 @@
-# 03 - Tuning and Moving
+# 04 - Tuning and Moving
 
 ## Introduction
-Welcome to the third LemLib tutorial! In this tutorial, we will be learning how to tune the PIDs, move the robot, and use odometry.
+In this tutorial, we will be learning how to tune the PIDs, move the robot autonomously, and use odometry.
 
 ## Odometry
 As mentioned in the previous tutorial, LemLib uses odometry to track the position of the robot. However, we need to calibrate it at the start of each match. To do this, we need to call the `chassis.calibrate()` function in `initialize()` Below is an example of how to do this:
@@ -177,7 +177,7 @@ Advanced users may wish to alter these values to decrease the time it takes to e
 
 You may be wondering how we know what coordinate the robot start at, and what the location is of a specific thing (e.g a goal). Thankfully, it is very easy. You can use [this software](https://lemlib.github.io/Path-Gen/). Just hover your mouse over a location on the field, and you will see the coordinates of the mouse on the field. Refer to the image below:
 
-<img src="./assets/3_tuning_and_moving/path_coords.png">
+<img src="./assets/4_auto_and_tuning/path_coords.png">
 
 You can use these coordinates to set the starting position of the robot, and use them with the `chassis.turnTo()` and `chassis.moveTo()` functions.`
 Note that the origin of the field is in the middle, and the field coordinates are measured in inches. **0 degrees is facing up, and increases clockwise**.
@@ -185,5 +185,5 @@ Note that the origin of the field is in the middle, and the field coordinates ar
 Thats it! You now know how to move the robot around the field using the `chassis.turnTo()` and `chassis.moveTo()` functions. In the next tutorial, we will be covering how to use the Path Generator to create a path for the robot to follow.
 
 
-[Previous Tutorial](2_setting_up_the_chassis.md) <br>
-[Next Tutorial](4_pure_pursuit.md)
+[Previous Tutorial](3_driver_control.md) <br>
+[Next Tutorial](5_pure_pursuit.md)
