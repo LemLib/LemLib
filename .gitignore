@@ -22,5 +22,10 @@ temp.errors
 # Doxygen
 latex
 
+<<<<<<< HEAD
 # MacOS
 .DS_Store
+=======
+# unit testing
+build/
+>>>>>>> 6f7a3bb (Get gtest working)
