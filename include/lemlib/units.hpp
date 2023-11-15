@@ -78,7 +78,9 @@ template <typename Mass, typename Length, typename Time, typename Angle, typenam
 template <typename... args> void QuantityChecker(Quantity<args...>) {}
 
 template <typename T>
-concept isQuantity = requires { QuantityChecker(std::declval<T>()); };
+concept isQuantity = requires {
+    QuantityChecker(std::declval<T>());
+};
 
 template <typename Q1, typename Q2> constexpr inline Q1 unit_cast(Q2 quantity) { return Q1(quantity.raw()); }
 
