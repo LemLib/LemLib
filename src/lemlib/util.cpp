@@ -81,7 +81,7 @@ Curvature getCurvature(Pose p1, Pose p2) {
     Length d = p1.distance(p2);
 
     // return curvature
-    return side * rad * ((2 * x) / (d * d)); // todo needs testing
+    return side * ((2 * x) / (d * d)); // todo needs testing
 }
 
 /**

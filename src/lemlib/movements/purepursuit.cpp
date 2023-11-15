@@ -114,8 +114,8 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     // get the target velocity of the robot
     AngularVelocity targetVel = closest.speed;
     // calculate target left and right velocities
-    AngularVelocity leftVel = targetVel * (2_rad + curvature * trackWidth) / 2_rad;
-    AngularVelocity rightVel = targetVel * (2_rad - curvature * trackWidth) / 2_rad;
+    AngularVelocity leftVel = targetVel * (Number(2) + curvature * trackWidth) * 0.5;
+    AngularVelocity rightVel = targetVel * (Number(2) - curvature * trackWidth) * 0.5; // todo: test
     // ratio the speeds to respect the max speed
     float ratio = (units::max(units::abs(leftVel), units::abs(rightVel)) / maxSpeed).raw();
     if (ratio > 1) {

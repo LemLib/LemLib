@@ -96,11 +96,11 @@ std::pair<int, int> Boomerang::update(Pose pose) {
     // calculate radius of turn
     Curvature curvature = units::abs(getCurvature(pose, carrot));
     if (curvature == 0_radpm) curvature = -1_radpm;
-    Radius radius = 1 / curvature;
+    Length radius = 1 / curvature;
 
     // calculate the maximum speed at which the robot can turn
     // using the formula v = sqrt( u * r * g )
-    if (radius != -1_mprad) {
+    if (radius != -1_m) {
         float maxTurnSpeed = sqrt(chasePower * radius.raw() * 9.8);
         // the new linear power is the minimum of the linear power and the max turn speed
         if (linearPower > maxTurnSpeed && state == 0) linearPower = maxTurnSpeed;
@@ -116,6 +116,6 @@ std::pair<int, int> Boomerang::update(Pose pose) {
     float rightPower = linearPower - angularPower;
 
     // return motor output
-    return {linearPower + angularPower, linearPower - angularPower};
+    return {leftPower, rightPower};
 }
 }; // namespace lemlib

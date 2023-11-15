@@ -29,7 +29,7 @@ template <typename Mass, typename Length, typename Time, typename Angle> struct 
 // Seconds for Time
 // Radians for Angle
 
-template <typename Mass, typename Length, typename Time, typename Angle, typename Rep = double> class Quantity {
+template <typename Mass, typename Length, typename Time, typename Angle> class Quantity {
         double value;
     public:
         // A proxy to be able to extract dimension units with decltype
@@ -382,8 +382,6 @@ QUANTITY_NEW(AngularJerk, radps3, 0, 0, -3, 1)
 QUANTITY_LIT(AngularJerk, rps3, rot / sec / sec / sec)
 QUANTITY_LIT(AngularJerk, rpm3, rot / min / min / min)
 
-QUANTITY_NEW(Curvature, radpm, 0, -1, 0, 1);
-
-QUANTITY_NEW(Radius, mprad, 0, 1, 0, -1);
+QUANTITY_NEW(Curvature, radpm, 0, -1, 0, 0);
 
 constexpr Time FOREVER = Time(std::numeric_limits<double>::infinity());
