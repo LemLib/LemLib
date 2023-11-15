@@ -16,15 +16,14 @@
 using Zero = std::ratio<0>;
 using One = std::ratio<1>;
 
-template <typename Mass, typename Length, typename Time, typename Angle, typename Tag = Zero> struct Dimensions {
+template <typename Mass, typename Length, typename Time, typename Angle> struct Dimensions {
         Mass mass;
         Length length;
         Time time;
         Angle angle;
-        Tag tag;
 };
 
-// The units used internally are:
+// The base units are:
 // Kilograms for Mass
 // Meters for Length
 // Seconds for Time
@@ -98,18 +97,6 @@ template <typename Q1, typename Q2> using Division =
 
 #define QUANTITY_NEW(Name, base, Mass, Length, Time, Angle)                                                            \
     using Name = Quantity<std::ratio<Mass>, std::ratio<Length>, std::ratio<Time>, std::ratio<Angle>>;                  \
-    constexpr inline Name base = Name(1);                                                                              \
-    constexpr inline Name operator""_##base(long double value) { return Name(static_cast<double>(value)); }            \
-    constexpr inline Name operator""_##base(unsigned long long value) { return Name(static_cast<double>(value)); }     \
-    constexpr inline Name from_##base(double value) { return Name(value); }                                            \
-    constexpr inline double to_##base(Name quantity) { return quantity.raw(); }                                        \
-    inline std::ostream& operator<<(std::ostream& os, const Name& quantity) {                                          \
-        os << quantity.raw() << "_" << #base;                                                                          \
-        return os;                                                                                                     \
-    }
-
-#define QUANTITY_NEW_TAGGED(Name, base, Mass, Length, Time, Angle, Tag)                                                \
-    using Name = Quantity<std::ratio<Mass>, std::ratio<Length>, std::ratio<Time>, std::ratio<Angle>, std::ratio<Tag>>; \
     constexpr inline Name base = Name(1);                                                                              \
     constexpr inline Name operator""_##base(long double value) { return Name(static_cast<double>(value)); }            \
     constexpr inline Name operator""_##base(unsigned long long value) { return Name(static_cast<double>(value)); }     \
@@ -398,29 +385,5 @@ QUANTITY_LIT(AngularJerk, rpm3, rot / min / min / min)
 QUANTITY_NEW(Curvature, radpm, 0, -1, 0, 1);
 
 QUANTITY_NEW(Radius, mprad, 0, 1, 0, -1);
-
-QUANTITY_NEW_TAGGED(Temperature, celcius, 0, 0, 0, 0, 0)
-
-QUANTITY_NEW_TAGGED(Voltage, volts, 0, 0, 0, 0, 1)
-QUANTITY_LIT(Voltage, mvolts, volts / 1000)
-QUANTITY_LIT(Voltage, conunits, (volts / 12000) * 127)
-
-template <typename Q>
-Quantity<decltype(Q::dim.mass), decltype(Q::dim.angle), decltype(Q::dim.time), decltype(Q::dim.length)> to_linear(
-    Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::dim.time), decltype(Q::dim.angle)> angular,
-    Length diameter) {
-    return unit_cast<
-        Quantity<decltype(Q::dim.mass), decltype(Q::dim.angle), decltype(Q::dim.time), decltype(Q::dim.length)>>(
-        angular * (diameter / 2.0));
-}
-
-template <typename Q>
-Quantity<decltype(Q::dim.mass), decltype(Q::dim.angle), decltype(Q::dim.time), decltype(Q::dim.length)> to_angular(
-    Quantity<decltype(Q::dim.mass), decltype(Q::dim.length), decltype(Q::dim.time), decltype(Q::dim.angle)> linear,
-    Length diameter) {
-    return unit_cast<
-        Quantity<decltype(Q::dim.mass), decltype(Q::dim.angle), decltype(Q::dim.time), decltype(Q::dim.length)>>(
-        linear / (diameter / 2.0));
-}
 
 constexpr Time FOREVER = Time(std::numeric_limits<double>::infinity());
