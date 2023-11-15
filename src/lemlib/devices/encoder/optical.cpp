@@ -20,7 +20,7 @@ OpticalEncoder::OpticalEncoder(char topPort, char bottomPort, bool reversed, flo
  * which gets converted to radians
  */
 Angle OpticalEncoder::getAngle() {
-    Angle  angle = (float(optical.get_value()) * 1_deg) / ratio;
+    Angle angle = (float(optical.get_value()) * 1_deg) / ratio;
     lastAngle = angle;
     return angle;
 }
