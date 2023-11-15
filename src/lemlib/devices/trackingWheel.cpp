@@ -36,7 +36,8 @@ TrackingWheel::TrackingWheel(std::shared_ptr<Encoder> encoder, Length diameter, 
  * We pass a pointer to a motor group instead of a reference motor group due to a
  * limitation of PROS 3. This is fixed in PROS 4, but its not ready for release yet
  */
-TrackingWheel::TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, Length diameter, Length offset, AngularVelocity rpm)
+TrackingWheel::TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, Length diameter, Length offset,
+                             AngularVelocity rpm)
     : encoder(std::make_shared<MotorEncoder>(MotorEncoder(motors, rpm))),
       diameter(diameter),
       offset(offset) {}

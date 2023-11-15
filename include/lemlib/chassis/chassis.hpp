@@ -63,7 +63,7 @@ class Chassis {
          *
          * @param dist the distance the robot needs to travel before returning
          */
-        void waitUntil(float dist); //todo
+        void waitUntil(float dist); // todo
 
         /**
          * @brief Wait until the current movement is done

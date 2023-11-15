@@ -122,7 +122,7 @@ void Differential::turnToHeading(Angle heading, Time timeout, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // convert heading to radians and standard form
-    Angle  newHeading = 90_deg - heading; 
+    Angle newHeading = 90_deg - heading;
     // set up the PID
     FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,

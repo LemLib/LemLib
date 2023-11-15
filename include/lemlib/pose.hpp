@@ -118,7 +118,7 @@ class Pose {
          *
          * @note positive angle results in counterclockwise translation
          *
-         * @param angle angle 
+         * @param angle angle
          * @return Pose
          */
         Pose rotate(Angle angle);

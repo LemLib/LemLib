@@ -29,9 +29,7 @@ void Chassis::setPose(Length x, Length y, Angle theta) {
  * This function is a wrapper for the Odometry::setPose() function
  * but it also transforms the pose to the format needed by the user
  */
-void Chassis::setPose(Pose pose) {
-    odom->setPose(pose);
-}
+void Chassis::setPose(Pose pose) { odom->setPose(pose); }
 
 /**
  * Get the pose of the chassis
@@ -39,9 +37,7 @@ void Chassis::setPose(Pose pose) {
  * This function is a wrapper for the Odometry::getPose() function
  * but it also transforms the pose to the format needed by the user
  */
-Pose Chassis::getPose() {
-    return odom->getPose();
-}
+Pose Chassis::getPose() { return odom->getPose(); }
 
 /**
  * Wait until the robot has traveled a certain distance, or angle

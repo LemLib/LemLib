@@ -40,7 +40,7 @@ float slew(float target, float current, float maxChange) {
  * @return float wrapped angle
  */
 Angle angleError(Angle angle1, Angle angle2) {
-    return angle2 - angle1; //todo test
+    return angle2 - angle1; // todo test
 }
 
 /**

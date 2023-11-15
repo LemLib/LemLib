@@ -70,7 +70,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     // exit if the competition state has changed
     if (pros::competition::get_status() != compState) state = 1;
     // exit if the timeout has been reached
-    if (pros::millis()*ms - startTime > timeout) state = 1;
+    if (pros::millis() * ms - startTime > timeout) state = 1;
     // exit if the movement is done
     if (state == 1) return {128, 128};
 
