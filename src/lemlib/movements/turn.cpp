@@ -84,7 +84,7 @@ std::pair<int, int> Turn::update(Pose pose) {
 
     // calculate the speed
     // converts error to degrees to make PID tuning easier
-    float output = angularPID.update(0_deg, error); //todo: test
+    float output = angularPID.update(0_deg, error); // todo: test
     // cap the speed
     output = std::clamp(int(std::round(output)), -maxSpeed, maxSpeed);
     // return output

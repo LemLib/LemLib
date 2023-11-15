@@ -99,7 +99,7 @@ void Differential::turnToPose(Length x, Length y, Time timeout, bool reversed, i
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // set up the PID
-    FAPID<Angle> angularPID(0, 0_deg, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
                        angularSettings.smallErrorTimeout, timeout);
     // create the movement
@@ -124,7 +124,7 @@ void Differential::turnToHeading(Angle heading, Time timeout, int maxSpeed) {
     // convert heading to radians and standard form
     Angle newHeading = 90_deg - heading;
     // set up the PID
-    FAPID<Angle> angularPID(0, 0_deg, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
                        angularSettings.smallErrorTimeout, timeout);
     // create the movement
@@ -150,10 +150,10 @@ void Differential::moveTo(Length x, Length y, Angle theta, Time timeout, bool fo
     // convert target theta to radians and standard form
     Pose target = Pose(x, y, 90_deg - theta);
     // set up PIDs
-    FAPID<Length> linearPID(0, 0_m, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
+    FAPID<Length> linearPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
     linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
                       lateralSettings.smallErrorTimeout, timeout);
-    FAPID<Angle> angularPID(0, 0_deg, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = drivetrain.chasePower;
     // create the movement

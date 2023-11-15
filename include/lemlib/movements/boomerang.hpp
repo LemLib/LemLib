@@ -24,8 +24,8 @@ class Boomerang : public Movement {
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          * @param maxSpeed the maximum speed the robot can move at
          */
-        Boomerang(FAPID<Length> linearPID, FAPID<Angle> angularPID, Pose target, bool forwards, float chasePower, float lead,
-                  int maxSpeed);
+        Boomerang(FAPID<Length> linearPID, FAPID<Angle> angularPID, Pose target, bool forwards, float chasePower,
+                  float lead, int maxSpeed);
 
         /**
          * @brief Get the distance travelled during the movement

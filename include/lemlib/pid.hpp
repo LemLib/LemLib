@@ -34,7 +34,7 @@ template <isQuantity Q> class FAPID {
          * @param kD derivative gain, multiplied by change in error and added to output
          * @param name name of the FAPID. Used for logging
          */
-        FAPID(float kF, Q kA, float kP, float kI, float kD, std::string name) {
+        FAPID(float kF, float kA, float kP, float kI, float kD, std::string name) {
             this->kF = kF;
             this->kA = kA;
             this->kP = kP;
@@ -52,7 +52,7 @@ template <isQuantity Q> class FAPID {
          * @param kI integral gain, multiplied by total error and added to output
          * @param kD derivative gain, multiplied by change in error and added to output
          */
-        void setGains(float kF, Q kA, float kP, float kI, float kD) {
+        void setGains(float kF, float kA, float kP, float kI, float kD) {
             this->kF = kF;
             this->kA = kA;
             this->kP = kP;
@@ -105,8 +105,8 @@ template <isQuantity Q> class FAPID {
          * @brief Reset the FAPID
          */
         void reset() {
-            prevError = 0;
-            totalError = 0;
+            prevError = Q(0);
+            totalError = Q(0);
             prevOutput = 0;
         }
 
@@ -124,13 +124,13 @@ template <isQuantity Q> class FAPID {
                 return false;
             } else { // check if the FAPID has settled
                 if (pros::millis() * ms - startTime > maxTime) return true; // maxTime has been exceeded
-                if (std::fabs(prevError) < largeError) { // largeError within range
+                if (units::abs(prevError) < largeError) { // largeError within range
                     if (largeTimeCounter == 0_sec)
                         largeTimeCounter = pros::millis() * ms; // largeTimeCounter has not been set
                     else if (pros::millis() * ms - largeTimeCounter > largeTime)
                         return true; // largeTime has been exceeded
                 }
-                if (std::fabs(prevError) < smallError) { // smallError within range
+                if (units::abs(prevError) < smallError) { // smallError within range
                     if (smallTimeCounter == 0_sec)
                         smallTimeCounter = pros::millis() * ms; // smallTimeCounter has not been set
                     else if (pros::millis() * ms - smallTimeCounter > smallTime)
@@ -175,7 +175,7 @@ template <isQuantity Q> class FAPID {
         float kP;
         float kI;
         float kD;
-        Q kA;
+        float kA;
 
         Q largeError;
         Q smallError;
@@ -187,8 +187,8 @@ template <isQuantity Q> class FAPID {
         Time smallTimeCounter = 0_sec;
         Time startTime = 0_sec;
 
-        Q prevError = 0;
-        Q totalError = 0;
+        Q prevError = Q(0);
+        Q totalError = Q(0);
         float prevOutput = 0;
 
         void log() {
@@ -212,7 +212,7 @@ template <isQuantity Q> class FAPID {
                     } else if (input == "kD") {
                         std::cout << kD << std::endl;
                     } else if (input == "totalError") {
-                        std::cout << totalError << std::endl;
+                        std::cout << totalError.raw() << std::endl;
                     } else if (input.find("kF_") == 0) {
                         input.erase(0, 3);
                         kF = std::stof(input);

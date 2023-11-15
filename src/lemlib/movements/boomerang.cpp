@@ -14,8 +14,8 @@ namespace lemlib {
  * initial competition state, and manipulate the target heading based on
  * whether the robot is going to be moving forwards or backwards
  */
-Boomerang::Boomerang(FAPID<Length> linearPID, FAPID<Angle> angularPID, Pose target, bool forwards, float chasePower, float lead,
-                     int maxSpeed)
+Boomerang::Boomerang(FAPID<Length> linearPID, FAPID<Angle> angularPID, Pose target, bool forwards, float chasePower,
+                     float lead, int maxSpeed)
     : Movement(),
       linearPID(linearPID),
       angularPID(angularPID),
@@ -90,7 +90,7 @@ std::pair<int, int> Boomerang::update(Pose pose) {
     if (!forwards) linearError = -linearError;
 
     // get PID outputs
-    float angularPower = -angularPID.update(angularError, 0_deg); //todo: test
+    float angularPower = -angularPID.update(angularError, 0_deg); // todo: test
     float linearPower = linearPID.update(linearError, 0_m);
 
     // calculate radius of turn

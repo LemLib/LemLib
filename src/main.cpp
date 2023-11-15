@@ -26,23 +26,23 @@ lemlib::Drivetrain_t drivetrain {
 };
 
 // lateral motion controller
-lemlib::ChassisController_t lateralController {
+lemlib::ChassisController_t<Length> lateralController {
     10, // kP
     30, // kD
-    1, // small exit range
+    1_in, // small exit range
     100_ms, // small exit timeout
-    3, // large error range
+    3_in, // large error range
     500_ms, // large error timeout
     20 // acceleration cap
 };
 
 // angular motion controller
-lemlib::ChassisController_t angularController {
+lemlib::ChassisController_t<Angle> angularController {
     2, // kP
     10, // kD
-    1, // small exit range
+    1_deg, // small exit range
     100_ms, // small exit timeout
-    3, // large exit range
+    3_deg, // large exit range
     500_ms, // large exit timeout
     20 // acceleration cap
 };

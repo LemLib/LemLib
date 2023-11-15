@@ -59,7 +59,7 @@ typedef struct {
  * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
  * @param slew the maximum acceleration of the chassis controller
  */
-template<isQuantity Q> struct ChassisController_t {
+template <isQuantity Q> struct ChassisController_t {
         float kP;
         float kD;
         Q smallError;
@@ -136,8 +136,8 @@ class Differential : public Chassis {
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          */
-        Differential(Drivetrain_t drivetrain, ChassisController_t<Length> lateralSettings, ChassisController_t<Angle> angularSettings,
-                     OdomSensors_t sensors);
+        Differential(Drivetrain_t drivetrain, ChassisController_t<Length> lateralSettings,
+                     ChassisController_t<Angle> angularSettings, OdomSensors_t sensors);
 
         /**
          * @brief Initialize the chassis
