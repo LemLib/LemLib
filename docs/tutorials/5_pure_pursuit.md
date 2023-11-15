@@ -1,4 +1,4 @@
-# 04 - Pure Pursuit
+# 05 - Pure Pursuit
 
 ## Introduction
 
@@ -8,7 +8,7 @@ In this tutorial, we will be be using Pure Pursuit. Pure Pursuit is a path follo
 
 Pure Pursuit is a path following algorithm that allows the robot to follow a path quickly. It works by drawing an imaginary circle around the robot, and then finding the intersection of the circle and the path. The robot will then drive towards the intersection. This is shown in the GIF below:
 
-<img src="./assets/4_pure_pursuit/pursuit.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+<img src="./assets/5_pure_pursuit/pursuit.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
 Tuning Pure Pursuit is very simple. If you want the robot to follow the path more closely, decrease the lookahead distance. If you want the robot to follow the path more loosely, but faster, then increase the lookahead distance. A good starting point is 10-15 inches, but this will vary depending on each motion.
 
@@ -24,7 +24,7 @@ Using the Path Generator is simple:
 
 Another feature of the path.jerryio is the ability to make the robot go faster or slower at certain points. The planner will automatically slow down the robot around sharp corners and decelerate as it approaches the end of the path. You can view the velocity of the path at each waypoint on the speed graph at the bottom of the page. See the video below:
 
-<img src="./assets/4_pure_pursuit/custom_speed.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+<img src="./assets/5_pure_pursuit/custom_speed.gif" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 <br>
 
 For further information on the path.jerryio, check out its [user guide](https://github.com/Jerrylum/path.jerryio/wiki)
@@ -63,4 +63,4 @@ Thats it for the tutorials! I hope they were helpful. If you have any questions,
  - [path.jerryio](https://path.jerryio.com/)
 
 
-[Previous Tutorial](3_tuning_and_moving.md)
+[Previous Tutorial](4_auto_and_moving.md)
