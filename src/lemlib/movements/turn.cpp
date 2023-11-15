@@ -16,7 +16,7 @@ namespace lemlib {
  * Here we just store the arguments in member variables, and store the
  * initial competition state.
  */
-Turn::Turn(FAPID angularPID, Angle target, int maxSpeed)
+Turn::Turn(FAPID<Angle> angularPID, Angle target, int maxSpeed)
     : angularPID(angularPID),
       targetHeading(target),
       maxSpeed(maxSpeed) {
@@ -33,7 +33,7 @@ Turn::Turn(FAPID angularPID, Angle target, int maxSpeed)
  * Here we just store the arguments in member variables, and store the
  * initial competition state.
  */
-Turn::Turn(FAPID angularPID, Pose target, bool reversed, int maxSpeed)
+Turn::Turn(FAPID<Angle> angularPID, Pose target, bool reversed, int maxSpeed)
     : angularPID(angularPID),
       targetPose(target),
       reversed(reversed),
@@ -84,7 +84,7 @@ std::pair<int, int> Turn::update(Pose pose) {
 
     // calculate the speed
     // converts error to degrees to make PID tuning easier
-    float output = angularPID.update(0, error.convert(deg));
+    float output = angularPID.update(0_deg, error); //todo: test
     // cap the speed
     output = std::clamp(int(std::round(output)), -maxSpeed, maxSpeed);
     // return output

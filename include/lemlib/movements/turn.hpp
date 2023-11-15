@@ -19,7 +19,7 @@ class Turn : public Movement {
          * @param target the target heading. Radians, 0 is right, increases counterclockwise
          * @param maxSpeed the maximum speed the robot can turn at
          */
-        Turn(FAPID angularPID, Angle target, int maxSpeed);
+        Turn(FAPID<Angle> angularPID, Angle target, int maxSpeed);
 
         /**
          * @brief Construct a new Turn movement
@@ -29,7 +29,7 @@ class Turn : public Movement {
          * @param reversed whether the robot should face the point with its back or front
          * @param maxSpeed the maximum speed the robot can turn at
          */
-        Turn(FAPID angularPID, Pose target, bool reversed, int maxSpeed);
+        Turn(FAPID<Angle> angularPID, Pose target, bool reversed, int maxSpeed);
 
         /**
          * @brief Update the movement
@@ -50,7 +50,7 @@ class Turn : public Movement {
          */
         float getDist() override;
     private:
-        FAPID angularPID;
+        FAPID<Angle> angularPID;
         std::optional<Pose> targetPose = std::nullopt;
         Pose startPose = Pose(0_in, 0_in, 0_deg);
         Angle targetHeading = 0_deg;

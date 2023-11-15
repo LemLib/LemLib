@@ -59,15 +59,15 @@ typedef struct {
  * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
  * @param slew the maximum acceleration of the chassis controller
  */
-typedef struct {
+template<isQuantity Q> struct ChassisController_t {
         float kP;
         float kD;
-        float smallError;
+        Q smallError;
         Time smallErrorTimeout;
-        float largeError;
+        Q largeError;
         Time largeErrorTimeout;
         float slew;
-} ChassisController_t;
+};
 
 /**
  * @brief Struct containing constants for a drivetrain
@@ -136,7 +136,7 @@ class Differential : public Chassis {
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          */
-        Differential(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
+        Differential(Drivetrain_t drivetrain, ChassisController_t<Length> lateralSettings, ChassisController_t<Angle> angularSettings,
                      OdomSensors_t sensors);
 
         /**
@@ -240,8 +240,8 @@ class Differential : public Chassis {
          */
         void update() override;
 
-        ChassisController_t lateralSettings;
-        ChassisController_t angularSettings;
+        struct ChassisController_t<Length> lateralSettings;
+        struct ChassisController_t<Angle> angularSettings;
         Drivetrain_t drivetrain;
 };
 } // namespace lemlib

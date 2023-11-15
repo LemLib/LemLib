@@ -24,7 +24,7 @@ class Boomerang : public Movement {
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          * @param maxSpeed the maximum speed the robot can move at
          */
-        Boomerang(FAPID linearPID, FAPID angularPID, Pose target, bool forwards, float chasePower, float lead,
+        Boomerang(FAPID<Length> linearPID, FAPID<Angle> angularPID, Pose target, bool forwards, float chasePower, float lead,
                   int maxSpeed);
 
         /**
@@ -46,8 +46,8 @@ class Boomerang : public Movement {
          */
         std::pair<int, int> update(Pose pose) override;
     private:
-        FAPID angularPID;
-        FAPID linearPID;
+        FAPID<Angle> angularPID;
+        FAPID<Length> linearPID;
         Pose target;
         Pose prevPose = Pose(0_in, 0_in, 0_deg);
         bool forwards;
