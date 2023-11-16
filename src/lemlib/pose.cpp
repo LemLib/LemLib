@@ -163,9 +163,11 @@ bool lemlib::Pose::operator==(const lemlib::Pose& other) const {
  */
 bool lemlib::Pose::operator!=(const lemlib::Pose& other) const { return !(*this == other); }
 
-std::ostream& operator<<(std::ostream& os, const lemlib::Pose& pose) { return os << lemlib::format_as(pose).c_str(); }
+std::ostream& lemlib::operator<<(std::ostream& os, const lemlib::Pose& pose) {
+    return os << lemlib::format_as(pose).c_str();
+}
 
-std::string format_as(const lemlib::Pose& pose) {
+std::string lemlib::format_as(const lemlib::Pose& pose) {
     // the double brackets become single brackets
     return fmt::format("lemlib::Pose {{ x: {}, y: {}, theta: {} }}", pose.x, pose.y, pose.theta);
 }

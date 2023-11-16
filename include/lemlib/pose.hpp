@@ -121,7 +121,21 @@ class Pose {
          * @param angle angle in radians
          * @return Pose
          */
-        Pose rotate(float angle) const;
+        Pose rotate(float angle);
+        /**
+         * @brief Check that x, y, and theta are equal between two poses
+         *
+         * @param other the other pose
+         * @return bool
+         */
+        bool operator==(const Pose& other) const;
+        /**
+         * @brief Check that x, y, and theta are NOT equal between two poses
+         *
+         * @param other the other pose
+         * @return bool
+         */
+        bool operator!=(const Pose& other) const;
 };
 
 /**
