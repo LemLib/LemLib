@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <ostream>
 
 namespace lemlib {
 class Pose {
@@ -120,6 +121,14 @@ class Pose {
          */
         Pose rotate(float angle) const;
 };
+
+/**
+ * @brief output and format pose into a stream
+ *
+ * @param pose
+ * @return std::ostream
+ */
+std::ostream& operator<<(std::ostream& os, const lemlib::Pose& pose);
 
 /**
  * @brief Format a pose
