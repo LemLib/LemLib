@@ -367,6 +367,13 @@ void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool fo
         // prioritize turning over moving
         float overturn = fabs(angularPower) + fabs(linearPower) - maxSpeed;
         if (overturn > 0) linearPower -= linearPower > 0 ? overturn : -overturn;
+
+        // cap acceleration
+        if (forwards && !close && linearPower > prevLinearPower)
+            linearPower = slew(linearPower, prevLinearPower, linearSettings.slew);
+        else if (!forwards && !close && linearPower < prevLinearPower)
+            linearPower = slew(linearPower, prevLinearPower, linearSettings.slew);
+
         prevLinearPower = linearPower;
 
         // calculate motor powers
