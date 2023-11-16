@@ -1,23 +1,79 @@
 #include <gtest/gtest.h>
 #include "lemlib/pose.hpp"
 
-TEST(PoseTest, Assignment) {
-  lemlib::Pose a {12,64};
+TEST(PoseTest, BasicConstructor) {
+    lemlib::Pose pose {1, 2};
 
-  EXPECT_EQ(a.x, 12);
-  EXPECT_EQ(a.y, 64);
-  EXPECT_EQ(a.theta, 0);
-  // // Expect two strings not to be equal.
-  // EXPECT_STRNE("hello", "world");
-  // // Expect equality.
-  // EXPECT_EQ(7 * 6, 42);
+    EXPECT_EQ(pose.x, 1);
+    EXPECT_EQ(pose.y, 2);
+    EXPECT_EQ(pose.theta, 0);
+}
+TEST(PoseTest, ConstructorWithTheta) {
+    lemlib::Pose pose {1, 2, 30};
+
+    EXPECT_EQ(pose.x, 1);
+    EXPECT_EQ(pose.y, 2);
+    EXPECT_EQ(pose.theta, 30);
 }
 
-TEST(PoseTest, Rotation) {
-  lemlib::Pose a {12,64};
-  lemlib::Pose rotateByZero = a.rotate(0);
+TEST(PoseTest, CopyConstructor) {
+  lemlib::Pose startPose {1, 2, 30};
+  lemlib::Pose pose(startPose);
 
-  EXPECT_EQ(a.x, rotateByZero.x);
-  EXPECT_EQ(a.y, rotateByZero.y);
-  EXPECT_EQ(a.theta, rotateByZero.theta);
+  EXPECT_EQ(pose.x, 1);
+  EXPECT_EQ(pose.y, 2);
+  EXPECT_EQ(pose.theta, 30);
+}
+
+TEST(PoseTest, Addition) {
+  lemlib::Pose pose1 {-8, 2, 90};
+  lemlib::Pose pose2 {9, -4, 30};
+
+  lemlib::Pose sum = pose1+pose2;
+
+  EXPECT_EQ(sum.x, 1);
+  EXPECT_EQ(sum.y, -2);
+  EXPECT_EQ(sum.theta, 90);
+}
+
+TEST(PoseTest, Subtraction) {
+  lemlib::Pose pose1 {-8, 2, 90};
+  lemlib::Pose pose2 {9, -4, 30};
+
+  lemlib::Pose diff = pose1-pose2;
+
+  EXPECT_EQ(diff.x, -17);
+  EXPECT_EQ(diff.y, 6);
+  EXPECT_EQ(diff.theta, 90);
+}
+
+TEST(PoseTest, ScalarMultiplication) {
+  lemlib::Pose pose1 {-8, 2, 90};
+  float scalar = 2;
+
+  lemlib::Pose product = pose1*scalar;
+
+  EXPECT_EQ(product.x, -16);
+  EXPECT_EQ(product.y, 4);
+  EXPECT_EQ(product.theta, 90);
+}
+
+TEST(PoseTest, ScalarDivision) {
+  lemlib::Pose pose1 {-8, 2, 90};
+  float scalar = 2;
+
+  lemlib::Pose quotient = pose1/scalar;
+
+  EXPECT_EQ(quotient.x, -4);
+  EXPECT_EQ(quotient.y, 1);
+  EXPECT_EQ(quotient.theta, 90);
+}
+
+TEST(PoseTest, MatrixMultiplication) {
+  lemlib::Pose pose1 {-8, 2, 90};
+  lemlib::Pose pose2 {9, -4, 30};
+
+  float product = pose1*pose2;
+
+  EXPECT_EQ(product,-8*9 + 2*-4);
 }
