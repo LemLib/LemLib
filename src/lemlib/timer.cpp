@@ -9,7 +9,10 @@ using namespace lemlib;
  * A timer is a useful thing, used throughout LemLib. This abstraction
  * makes the code more readable, and easier to develop.
  */
-Timer::Timer(uint32_t time) : period(time) { lastTime = pros::millis(); }
+Timer::Timer(uint32_t time)
+    : period(time) {
+    lastTime = pros::millis();
+}
 
 /**
  * Get the amount of time the timer is set to wait
