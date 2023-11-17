@@ -296,13 +296,13 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
  * @param maxSpeed the maximum speed the robot can move at. 127 at default
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::moveTo(float x, float y, float theta, int timeout, bool forwards, float chasePower, float lead,
-                             float maxSpeed, bool async) {
+void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, bool forwards, float chasePower,
+                                 float lead, float maxSpeed, bool async) {
     // take the mutex
     mutex.take(TIMEOUT_MAX);
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveTo(x, y, theta, timeout, forwards, chasePower, lead, maxSpeed, false); });
+        pros::Task task([&]() { moveToPose(x, y, theta, timeout, forwards, chasePower, lead, maxSpeed, false); });
         mutex.give();
         pros::delay(10); // delay to give the task time to start
         return;
