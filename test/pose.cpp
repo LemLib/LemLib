@@ -1,5 +1,9 @@
 #include <gtest/gtest.h>
 #include "lemlib/pose.hpp"
+#include <cmath>
+#include <vector>
+
+class PoseTest : public testing::TestWithParam<float> {};
 
 TEST(PoseTest, BasicConstructor) {
     lemlib::Pose pose {1, 2};
@@ -85,4 +89,62 @@ TEST(PoseTest, MatrixMultiplication) {
     float product = pose1 * pose2;
 
     EXPECT_EQ(product, -8 * 9 + 2 * -4);
+}
+
+TEST(PoseTest, Lerp) {
+    lemlib::Pose pose1 {-3, 8, 90};
+    lemlib::Pose pose2 {9, -8, 30};
+    lemlib::Pose pose2WithPose1Theta {pose2.x, pose2.y, pose1.theta};
+
+    lemlib::Pose lerpStart = pose1.lerp(pose2, 0);
+    lemlib::Pose lerpEnd = pose1.lerp(pose2, 1);
+    lemlib::Pose lerpHalf = pose1.lerp(pose2, 0.5);
+
+    EXPECT_EQ(lerpStart, pose1);
+    EXPECT_EQ(lerpEnd, pose2WithPose1Theta);
+    EXPECT_EQ(lerpHalf, lemlib::Pose(3, 0, 90));
+}
+
+TEST(PoseTest, Distance) {
+    lemlib::Pose pose1 {-1, 3, 90};
+    lemlib::Pose pose2 {2, -1, 30};
+
+    float distance = pose1.distance(pose2);
+
+    EXPECT_EQ(distance, 5);
+}
+
+TEST(PoseTest, Angle) {
+    lemlib::Pose origin {0, 0};
+
+    lemlib::Pose east {1, 0};
+    lemlib::Pose west {-1, 0};
+    lemlib::Pose north {0, 1};
+    lemlib::Pose south {0, -1};
+    lemlib::Pose nEast {1, 1};
+    lemlib::Pose sEast {1, -1};
+    lemlib::Pose nWest {-1, 1};
+    lemlib::Pose sWest {-1, -1};
+
+    EXPECT_NEAR(origin.angle(east), 0, FLT_EPSILON);
+    EXPECT_NEAR(origin.angle(nEast), M_PI / 4, FLT_EPSILON);
+    EXPECT_NEAR(origin.angle(north), M_PI / 2, FLT_EPSILON);
+    EXPECT_NEAR(origin.angle(nWest), 3 * M_PI / 4, FLT_EPSILON);
+    EXPECT_NEAR(origin.angle(west), M_PI, FLT_EPSILON);
+    EXPECT_NEAR(origin.angle(sWest), -3 * M_PI / 4, FLT_EPSILON);
+    EXPECT_NEAR(origin.angle(south), -M_PI / 2, FLT_EPSILON);
+    EXPECT_NEAR(origin.angle(sEast), -M_PI / 4, FLT_EPSILON);
+}
+
+TEST(PoseTest, Rotate) {
+    lemlib::Pose origin {0, 0};
+    lemlib::Pose pose {1, 0,0};
+
+    for (auto angle : std::vector<float>({0, 1 / 6, 1 / 4, 1 / 3, 1 / 2, 2 / 3, 3 / 4, 5 / 6})) {
+        lemlib::Pose rotated = pose.rotate(angle*M_PI);
+        lemlib::Pose rotatedNegative = pose.rotate(-angle*M_PI);
+
+        EXPECT_NEAR(origin.angle(rotated), angle * M_PI, FLT_EPSILON);
+        EXPECT_NEAR(origin.angle(rotatedNegative), -angle * M_PI, FLT_EPSILON);
+    }
 }
