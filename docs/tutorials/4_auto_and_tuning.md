@@ -43,7 +43,7 @@ void autonomous() {
 ```
 It is highly recommended you set the starting position of the robot for each autonomous. Otherwise you won't be able to take advantage of the visualization in the path generator
 
-## Moving with turnTo and moveTo
+## Moving with turnTo and moveToPose
 LemLib has 3 functions for moving the to. We will be covering the first 2 in this tutorial, and the third in the next tutorial.
 
 The first function is `chassis.turnTo()`. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it:
@@ -61,14 +61,14 @@ void autonomous() {
 
 As you can see, using this function is very easy. The first 2 parameters are the X and Y location the robot should be facing. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is whether the back of the robot should face the point (true) or the front of the robot should face the point (false). It defaults to false if not specified. The fifth parameter is the maximum speed the robot can turn at. If you don't specify a value for this parameter, the robot will turn at full speed.
 
-The second function is `chassis.moveTo()`. This function moves the robot to the specified (x, y) point with a target heading in degrees. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
+The second function is `chassis.moveToPose()`. This function moves the robot to the specified (x, y) point with a target heading in degrees. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
     // move to the point (53, 53) at heading 90 with a timeout of 1000 ms
-    chassis.moveTo(53, 53, 90, 1000);
+    chassis.moveToPose(53, 53, 90, 1000);
     // move to the point (10, 0) at heading 270 with a timeout of 1000 ms.
     // Move in reverse
-    chassis.moveTo(10, 0, 270, 1000, false);
+    chassis.moveToPose(10, 0, 270, 1000, false);
 }
 ```
 
@@ -79,7 +79,7 @@ By default all movements in lemlib run asynchronously. Put plainly, it runs in i
 
 ```c++
 pros::millis(); // returns 0000
-chassis.moveTo(0, 0, 0, 1000);
+chassis.moveToPose(0, 0, 0, 1000);
 pros::millis(); // returns 0000
 ```
 
@@ -87,16 +87,16 @@ As you can see, function calls after a movement function call are ran immediatel
 
 ```c++
 pros::millis(); // returns 0000
-chassis.moveTo(0, 0, 0, 1000);
+chassis.moveToPose(0, 0, 0, 1000);
 pros::millis(); // returns 0000
-chassis.moveTo(0, 0, 0, 1000);
+chassis.moveToPose(0, 0, 0, 1000);
 pros::millis(); // returns 1000
 ```
 
 The program waits. But what if we want to wait until the robot has moved a certain distance? Well, there's a function for that
 ```c++
 pros::millis(); // returns 0000
-chassis.moveTo(0, 20, 0, 1000);
+chassis.moveToPose(0, 20, 0, 1000);
 chassis.waitUntil(10); // wait until the chassis has travelled 10 inches
 pros::millis(); // outputs 500
 chassis.waitUntilDone(); // wait until the movement has been completed
@@ -129,7 +129,7 @@ lemlib::ChassisController_t lateralController {
 
 The first 2 parameters are the kP and kD gains. These are the ones we will be focusing on for now. When we tune them, we want kP as high as possible with minimal oscillation (the robot moving backwards/forwards repeatedly at the end). Here is the method we will be using to tune these gains:
 
-1. Move the robot 10 inches forward using the `chassis.moveTo()` function
+1. Move the robot 10 inches forward using the `chassis.moveToPose()` function
 2. increase kP until the robot starts oscillating
 3. increase kD until the oscillation stops
 4. record kP and kD values
@@ -169,7 +169,7 @@ You may have noticed that there are 4 more values in the angularController and l
 - `smallErrorRange` is the range of error that is considered "small". If the error is within this range for `smallErrorTimeout` milliseconds, the robot will proceed to the next movement
 - `largeErrorRange` is the range of error that is considered "large". If the error is within this range for `largeErrorTimeout` milliseconds, the robot will proceed to the next movement
 
-The units for error in the `chassis.moveTo()` function are inches, and degrees for the `chassis.turnTo()` function. The units for time are milliseconds.
+The units for error in the `chassis.moveToPose()` function are inches, and degrees for the `chassis.turnTo()` function. The units for time are milliseconds.
 
 Advanced users may wish to alter these values to decrease the time it takes to execute the next command. However, the default values should be fine for most users.
 
@@ -179,10 +179,10 @@ You may be wondering how we know what coordinate the robot start at, and what th
 
 <img src="./assets/4_auto_and_tuning/path_coords.png">
 
-You can use these coordinates to set the starting position of the robot, and use them with the `chassis.turnTo()` and `chassis.moveTo()` functions.`
+You can use these coordinates to set the starting position of the robot, and use them with the `chassis.turnTo()` and `chassis.moveToPose()` functions.`
 Note that the origin of the field is in the middle, and the field coordinates are measured in inches. **0 degrees is facing up, and increases clockwise**.
 
-Thats it! You now know how to move the robot around the field using the `chassis.turnTo()` and `chassis.moveTo()` functions. In the next tutorial, we will be covering how to use the Path Generator to create a path for the robot to follow.
+Thats it! You now know how to move the robot around the field using the `chassis.turnTo()` and `chassis.moveToPose()` functions. In the next tutorial, we will be covering how to use the Path Generator to create a path for the robot to follow.
 
 
 [Previous Tutorial](3_driver_control.md) <br>
