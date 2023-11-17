@@ -138,11 +138,11 @@ TEST(PoseTest, Angle) {
 
 TEST(PoseTest, Rotate) {
     lemlib::Pose origin {0, 0};
-    lemlib::Pose pose {1, 0,0};
+    lemlib::Pose pose {1, 0, 0};
 
     for (auto angle : std::vector<float>({0, 1 / 6, 1 / 4, 1 / 3, 1 / 2, 2 / 3, 3 / 4, 5 / 6})) {
-        lemlib::Pose rotated = pose.rotate(angle*M_PI);
-        lemlib::Pose rotatedNegative = pose.rotate(-angle*M_PI);
+        lemlib::Pose rotated = pose.rotate(angle * M_PI);
+        lemlib::Pose rotatedNegative = pose.rotate(-angle * M_PI);
 
         EXPECT_NEAR(origin.angle(rotated), angle * M_PI, FLT_EPSILON);
         EXPECT_NEAR(origin.angle(rotatedNegative), -angle * M_PI, FLT_EPSILON);
