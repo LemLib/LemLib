@@ -55,7 +55,7 @@ jobs:
         run: sed -i "s/^VERSION:=.*\$/VERSION:=${{ steps.get-version.outputs.version }}-c${{ env.SHA }}/" Makefile
 
       - name: Build PROS Project  
-        run: pros make clean all
+        run: make clean quick -j
 
       - name: Create LemLib template
         run: pros make template
