@@ -66,13 +66,25 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
         pros::delay(10);
     }
 
+    // create new vector for gyros that calibrate
+    std::vector<std::shared_ptr<Gyro>> newGyros = {};
+
     // if a gyro failed to calibrate, output an error and erase the gyro
     for (auto it = gyros.begin(); it != gyros.end(); it++) {
         if (!(**it).isCalibrated()) {
-            infoSink()->warn("IMU on port {} failed to calibrate! Removing", (**it).getPort());
-            gyros.erase(it);
+            infoSink()->warn("IMU on port {} failed to calibrate! Removing...", (**it).getPort());
+            // original gyros.erase(it);
+            // doesnt work gyros.erase(std::next(gyros.begin(), std::distance(gyros.begin(), it)));
+        } else {
+            // if the gyro successfully calibrates, add it to the new vector
+            newGyros.push_back(*it);
         }
     }
+
+    // update the gyro vector
+    gyros = newGyros;
+
+    infoSink()->debug("Post-calibration Gyro vector size: {}", gyros.size());
 }
 
 /**
