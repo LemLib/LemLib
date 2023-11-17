@@ -407,16 +407,15 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
- * @param async whether the function should be run asynchronously. false by default
  * @param maxSpeed the maximum speed the robot can move at. 127 by default
+ * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::moveToOld(float x, float y, int timeout, bool forwards, bool async, float maxSpeed) {
-    // try to take the mutex
-    // if its unsuccessful after 10ms, return
-    if (!mutex.take(10)) return;
+void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
+    // take the mutex
+    mutex.take(TIMEOUT_MAX);
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveToOld(x, y, timeout, forwards, false, maxSpeed); });
+        pros::Task task([&]() { moveToPoint(x, y, timeout, forwards, maxSpeed, false); });
         mutex.give();
         pros::delay(10); // delay to give the task time to start
         return;
