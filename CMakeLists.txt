@@ -40,11 +40,13 @@ include_directories(include)
 
 add_executable(LemLib
   include/lemlib/pose.hpp
+  include/lemlib/util.hpp
 
   src/lemlib/pose.cpp
+  src/lemlib/util.cpp
 
   test/pose.cpp
-  src/test.cpp
+  test/util.cpp
 )
 
 # Link against gtest
