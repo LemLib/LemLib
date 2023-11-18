@@ -45,16 +45,16 @@ class TrackingWheel {
          * @brief Create a tracking wheel with a custom encoder
          *
          * @param encoder unique ptr to the custom encoder to be used
-         * @param diameter the diameter of the wheel, in inches
-         * @param offset distance between the wheel and the tracking center, in inches
+         * @param diameter the diameter of the wheel
+         * @param offset distance between the wheel and the tracking center
          */
         TrackingWheel(std::shared_ptr<Encoder> encoder, Length diameter, Length offset);
         /**
          * @brief Create a new motor-encoder tracking wheel
          *
          * @param motors pointer to the motor group to be used for the tracking wheel
-         * @param diameter the diameter of the wheel, in inches
-         * @param offset distance between the wheel and the tracking center, in inches
+         * @param diameter the diameter of the wheel
+         * @param offset distance between the wheel and the tracking center
          * @param rpm of the rpm of the wheels the motor group is driving
          */
         TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, Length diameter, Length offset, AngularVelocity rpm);
@@ -64,8 +64,8 @@ class TrackingWheel {
          * @param topPort the top port of the optical shaft encoder. 'a' - 'h'
          * @param bottomPort the bottom port of the optical shaft encoder 'a' - 'h'
          * @param reversed whether the optical shaft encoder should be reversed or not
-         * @param diameter the diameter of the wheel, in inches
-         * @param offset distance between the wheel and the tracking center, in inches
+         * @param diameter the diameter of the wheel
+         * @param offset distance between the wheel and the tracking center
          * @param ratio gear ratio of the tracking wheel, defaults to 1. Input / Output
          */
         TrackingWheel(char topPort, char bottomPort, bool reversed, Length diameter, Length offset, float ratio = 1);
@@ -74,8 +74,8 @@ class TrackingWheel {
          *
          * @param port the port the rotation sensor is connected to. 1-21
          * @param reversed whether the rotation sensor should be reversed or not
-         * @param diameter the diameter of the wheel, in inches
-         * @param offset distance between the wheel and the tracking center, in inches
+         * @param diameter the diameter of the wheel
+         * @param offset distance between the wheel and the tracking center
          * @param ratio gear ratio of the tracking wheel, defaults to 1. Input / Output
          */
         TrackingWheel(uint8_t port, bool reversed, Length diameter, Length offset, float ratio = 1);
@@ -84,8 +84,8 @@ class TrackingWheel {
          *
          * @param port the signed port the rotation sensor is connected to. Positive is not reversed, negative is
          * reversed. 1-21
-         * @param diameter the diameter of the wheel, in inches
-         * @param offset distance between the wheel and the tracking center, in inches
+         * @param diameter the diameter of the wheel
+         * @param offset distance between the wheel and the tracking center
          * @param ratio gear ratio of the tracking wheel, defaults to 1. Input / Output
          */
         TrackingWheel(int port, Length diameter, Length offset, float ratio = 1);
@@ -100,26 +100,26 @@ class TrackingWheel {
         /**
          * @brief Get the distance traveled by the tracking wheel
          *
-         * @return float distance traveled in inches
+         * @return Length distance traveled
          */
         Length getDistance();
         /**
          * @brief Get the difference between the current distance measured and the last distance measured
          *
          * @param update whether to update the last saved position. True by default
-         * @return float difference in distance, in inches
+         * @return Length difference in distance
          */
         Length getDistanceDelta(bool update = true);
         /**
          * @brief Get the offset of the tracking wheel from the center of rotation
          *
-         * @return float offset in inches
+         * @return Length offset
          */
         Length getOffset() const;
         /**
          * @brief Get the diameter of the wheel
          *
-         * @return float diameter, in inches
+         * @return Length diameter
          */
         Length getDiameter() const;
     private:

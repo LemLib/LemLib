@@ -18,7 +18,7 @@ RotationEncoder::RotationEncoder(int port, bool reversed, float ratio)
       ratio(ratio) {}
 
 /**
- * Get the angle the rotation sensor rotated by, in radians
+ * Get the angle the rotation sensor rotated by
  *
  * Pretty straightforward, raw value from the rotation sensor gets converted to rotations
  * which gets converted to radians

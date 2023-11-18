@@ -33,7 +33,7 @@ float slew(float target, float current, float maxChange);
  *
  * @param angle1
  * @param angle2
- * @return float wrapped angle
+ * @return Angle wrapped angle
  */
 Angle angleError(Angle angle1, Angle angle2);
 
@@ -59,7 +59,7 @@ template <isQuantity Q> Q avg(std::vector<Q> values);
  * @param current current measurement
  * @param previous previous output
  * @param smooth smoothing factor (0-1). 1 means no smoothing, 0 means no change
- * @return float - the smoothed output
+ * @return the smoothed output
  */
 template <isQuantity Q> Q ema(Q current, Q previous, float smooth);
 
@@ -69,11 +69,11 @@ template <isQuantity Q> Q ema(Q current, Q previous, float smooth);
  * @note The circle will be tangent to the theta value of the first pose
  * @note The curvature is signed. Positive curvature means the circle is going clockwise, negative means
  * counter-clockwise
- * @note Theta has to be in radians and in standard form. That means 0 is right and increases counter-clockwise
+ * @note Theta has to be in standard form. That means 0 is right and increases counter-clockwise
  *
  * @param pose the first pose
  * @param other the second pose
- * @return float curvature
+ * @return Curvature curvature
  */
 Curvature getCurvature(Pose pose, Pose other);
 

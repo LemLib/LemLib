@@ -16,9 +16,9 @@ class RotationEncoder : public Encoder {
         RotationEncoder(int port, bool reversed, float ratio);
 
         /**
-         * @brief Get the angle rotated by the rotation sensor, in radians
+         * @brief Get the angle rotated by the rotation sensor
          *
-         * @return float angle rotated by the rotation sensor, in radians
+         * @return Angle angle rotated by the rotation sensor
          */
         Angle getAngle() override;
         /**

@@ -42,7 +42,7 @@ class Gyro {
          *
          * @note 0 is in the positive x direction, and heading increases counterclockwise
          *
-         * @return float heading, in radians, locked from -pi to +pi
+         * @return Angle heading, locked from -pi to +pi
          */
         virtual Angle getHeading() = 0;
         /**
@@ -50,7 +50,7 @@ class Gyro {
          *
          * @note 0 is in the positive x direction, and heading increases counterclockwise
          *
-         * @return float rotation, in radians
+         * @return Angle rotation
          */
         virtual Angle getRotation() = 0;
         /**
@@ -58,7 +58,7 @@ class Gyro {
          *
          * @note 0 is in the positive x direction, and heading increases counterclockwise
          *
-         * @param rotation, rotation in radians
+         * @param rotation, rotation
          */
         virtual void setRotation(Angle rotation) const = 0;
         /**
@@ -67,7 +67,7 @@ class Gyro {
          * @note positive change is counterclockwise, negative change is clockwise
          *
          * @param update whether to update the last angle measured by the gyro. True by default
-         * @return change in angle rotated by the encoder, in radians
+         * @return change in angle rotated by the encoder
          */
         Angle getRotationDelta(bool update = true);
         /**

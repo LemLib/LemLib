@@ -24,7 +24,7 @@ MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelo
  * extra logic to calculate the geared output. All we do is get a vector
  * of all the gearboxes, and calculate the appropriate ratio by diving the
  * output rpm by the input rpm. Then we just multiply the output by 2 pi
- * to get angle in radians.
+ * to get the angle.
  */
 Angle MotorEncoder::getAngle() {
     // get gearboxes and encoder position for each motor in the group

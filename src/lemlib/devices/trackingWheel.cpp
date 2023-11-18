@@ -22,8 +22,8 @@ namespace lemlib {
  * @brief Create a tracking wheel with a custom encoder
  *
  * @param encoder unique ptr to the custom encoder to be used
- * @param diameter the diameter of the wheel, in inches
- * @param offset distance between the wheel and the tracking center, in inches
+ * @param diameter the diameter of the wheel
+ * @param offset distance between the wheel and the tracking center
  */
 TrackingWheel::TrackingWheel(std::shared_ptr<Encoder> encoder, Length diameter, Length offset)
     : encoder(encoder),
@@ -78,9 +78,9 @@ TrackingWheel::TrackingWheel(int port, Length diameter, Length offset, float rat
 bool TrackingWheel::reset() { return encoder->reset(); }
 
 /**
- * Get the distance travelled by the tracking wheel, in inches
+ * Get the distance travelled by the tracking wheel
  *
- * Since we get angle in radians, but need to convert to inches, we can simplify
+ * Since we get angle, but need to convert to length, we can simplify
  * the calculation. So, instead of writing
  * (angle / (2 * pi)) * pi * diameter
  * we do
@@ -89,9 +89,9 @@ bool TrackingWheel::reset() { return encoder->reset(); }
 Length TrackingWheel::getDistance() { return encoder->getAngle() / 2_rad * diameter; }
 
 /**
- * Get the difference in distance travelled by the tracking wheel, in inches
+ * Get the difference in distance travelled by the tracking wheel
  *
- * Since we get angle in radians, but need to convert to inches, we can simplify
+ * Since we get angle, but need to convert to length, we can simplify
  * the calculation. So, instead of writing
  * (angle / (2 * pi)) * pi * diameter
  * we do
@@ -105,7 +105,7 @@ Length TrackingWheel::getDistanceDelta(bool update) { return encoder->getAngleDe
 Length TrackingWheel::getOffset() const { return this->offset; }
 
 /**
- * Get the diameter of the wheel, in inches
+ * Get the diameter of the wheel
  */
 Length TrackingWheel::getDiameter() const { return this->diameter; }
 }; // namespace lemlib

@@ -82,7 +82,7 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
  *
  * @param tracker1 the first tracking wheel
  * @param tracker2 the second tracking wheel
- * @return float change in angle, in radians
+ * @return change in angle
  */
 Angle calcDeltaTheta(TrackingWheel& tracker1, TrackingWheel& tracker2) {
     const Length numerator = tracker1.getDistanceDelta(false) - tracker2.getDistanceDelta(false);
@@ -96,7 +96,7 @@ Angle calcDeltaTheta(TrackingWheel& tracker1, TrackingWheel& tracker2) {
  * @note positive change in counterclockwise
  *
  * @param gyros vector of Gyro shared pointers
- * @return float the average change in heading
+ * @return Angle the average change in heading
  */
 Angle calcDeltaTheta(std::vector<std::shared_ptr<Gyro>>& gyros) {
     Angle deltaTheta = 0_deg;

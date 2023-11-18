@@ -19,9 +19,9 @@ class MotorEncoder : public Encoder {
         MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelocity rpm);
 
         /**
-         * @brief Get the angle rotated by the motor encoders, in radians
+         * @brief Get the angle rotated by the motor encoders
          *
-         * @return float angle rotated by the motor encoders, in radians
+         * @return Angle angle rotated by the motor encoders
          */
         Angle getAngle() override;
         /**

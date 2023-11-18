@@ -15,17 +15,17 @@ class Encoder {
         Encoder() {}
 
         /**
-         * @brief Get the angle rotated by the encoder, in radians
+         * @brief Get the angle rotated by the encoder
          *
-         * @return float angle rotated by the encoder, in radians
+         * @return Angle angle rotated by the encoder
          */
         virtual Angle getAngle() = 0;
 
         /**
-         * @brief Get the angle rotated by the encoder since the last time it was checked, in radians
+         * @brief Get the angle rotated by the encoder since the last time it was checked
          *
          * @param update whether to update the last angle measured by the encoder. True by default
-         * @return float angle rotated by the encoder, in radians
+         * @return Angle angle rotated by the encoder
          */
         Angle getAngleDelta(bool update = true);
 

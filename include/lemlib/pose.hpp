@@ -103,14 +103,14 @@ class Pose {
          * @brief Get the distance between two poses
          *
          * @param other the other pose
-         * @return float
+         * @return Length
          */
         Length distance(Pose other);
         /**
          * @brief Get the angle between two poses
          *
          * @param other the other pose
-         * @return float in radians
+         * @return Angle
          */
         Angle angle(Pose other);
         /**

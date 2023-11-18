@@ -35,7 +35,7 @@ class Turn : public Movement {
          * @brief Update the movement
          *
          * @note This function should be called in a loop
-         * @note Units are in inches and radians. Angle 0 is right, and increases counterclockwise
+         * @note Angle 0 is right, and increases counterclockwise
          *
          * @param pose the position of the chassis
          *

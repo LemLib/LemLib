@@ -120,7 +120,7 @@ Pose Pose::lerp(Pose other, float t) { return Pose(x + (other.x - x) * t, y + (o
  * @brief Get the distance between two poses
  *
  * @param other the other pose
- * @return float
+ * @return Length
  */
 Length Pose::distance(Pose other) { return units::sqrt(units::square(x - other.x) + units::square(y - other.y)); }
 
@@ -128,14 +128,14 @@ Length Pose::distance(Pose other) { return units::sqrt(units::square(x - other.x
  * @brief Get the angle between two poses
  *
  * @param other the other pose
- * @return float in radians
+ * @return Angle
  */
 Angle Pose::angle(Pose other) { return units::atan2(other.y - y, other.x - x); }
 
 /**
  * @brief Rotate a pose by an angle
  *
- * @param angle angle in radians
+ * @param angle angle
  * @return Pose
  */
 Pose Pose::rotate(Angle angle) {

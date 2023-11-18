@@ -36,8 +36,7 @@ float slew(float target, float current, float maxChange) {
  *
  * @param angle1
  * @param angle2
- * @param radians true if angle is in radians, false if not. False by default
- * @return float wrapped angle
+ * @return Angle wrapped angle
  */
 Angle angleError(Angle angle1, Angle angle2) {
     return angle2 - angle1; // todo test
@@ -60,7 +59,7 @@ int sgn(float x) {
  * @param current current measurement
  * @param previous previous output
  * @param smooth smoothing factor (0-1). 1 means no smoothing, 0 means no change
- * @return float - the smoothed output
+ * @return the smoothed output
  */
 template <isQuantity Q> Q ema(Q current, Q previous, float smooth) {
     return (current * smooth) + (previous * (1 - smooth));

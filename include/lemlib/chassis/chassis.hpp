@@ -43,14 +43,12 @@ class Chassis {
          * @brief Set the pose of the chassis
          *
          * @param pose the new pose
-         * @param radians whether pose theta is in radians (true) or not (false). false by default
          */
         void setPose(Pose pose);
 
         /**
          * @brief Get the pose of the chassis
          *
-         * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          */
         Pose getPose();

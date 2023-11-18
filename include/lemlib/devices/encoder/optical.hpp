@@ -17,9 +17,9 @@ class OpticalEncoder : public Encoder {
         OpticalEncoder(char topPort, char bottomPort, bool reversed, float ratio);
 
         /**
-         * @brief Get the angle rotated by the optical encoder, in radians
+         * @brief Get the angle rotated by the optical encoder
          *
-         * @return float angle rotated by the optical encoder, in radians
+         * @return Angle angle rotated by the optical encoder
          */
         Angle getAngle() override;
         /**

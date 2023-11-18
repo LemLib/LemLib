@@ -163,7 +163,7 @@ class Differential : public Chassis {
          *
          * The PID logging id is "angularPID"
          *
-         * @param heading the heading the robot should face. Units are in degrees
+         * @param heading the heading the robot should face
          * @param timeout longest time the robot can spend moving
          * @param maxSpeed the maximum speed the robot can turn at. Default is 127
          */
@@ -176,7 +176,7 @@ class Differential : public Chassis {
          *
          * @param x x location
          * @param y y location
-         * @param theta theta (in degrees). Target angle
+         * @param theta target angle
          * @param timeout longest time the robot can spend moving
          * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
          * backwards
@@ -192,8 +192,8 @@ class Differential : public Chassis {
          * @brief Move the chassis along a path
          *
          * @param filePath the filename of the path to follow
-         * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
-         * will follow the path less accurately
+         * @param lookahead the lookahead distance. Larger values will make the robot move faster but will follow the
+         * path less accurately
          * @param timeout the maximum time the robot can spend moving
          * @param forwards whether the robot should follow the path going forwards. true by default
          * @param maxSpeed the maximum speed the robot can move at

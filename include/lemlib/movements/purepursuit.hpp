@@ -15,10 +15,9 @@ class PurePursuit : public Movement {
         /**
          * @brief Construct a new Pure Pursuit movement
          *
-         * @param trackWidth the width of the chassis. Units in inches
+         * @param trackWidth the width of the chassis.
          * @param path const reference to the asset containing the path
-         * @param lookaheadDist the lookahead distance. Units in inches. Recommended value is 15, but can be changed if
-         * needed
+         * @param lookaheadDist the lookahead distance. Recommended value is 15, but can be changed if needed
          * @param timeout the maximum time the robot can spend moving
          * @param forwards whether the chassis should move forwards or backwards. True by default
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
@@ -37,7 +36,7 @@ class PurePursuit : public Movement {
          * @brief Update the movement
          *
          * @note This function should be called in a loop
-         * @note Units are in inches and radians. Angle 0 is right, and increases counterclockwise
+         * @note Angle 0 is right, and increases counterclockwise
          *
          * @param pose the position of the chassis
          *
