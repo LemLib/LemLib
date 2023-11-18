@@ -41,12 +41,14 @@ void Chassis::tank(int left, int right, float curveGain) {
  * controls  the robot's turning
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
- * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+ * @param throttleCurveGain the scale inputted into the drive curve function for linear velocity.
+ * @param turnCurveGain the scale inputted into the drive curve function for turn velocity.If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
+ * 
  */
-void Chassis::arcade(int throttle, int turn, float curveGain) {
-    int leftPower = driveCurve(throttle + turn, curveGain);
-    int rightPower = driveCurve(throttle - turn, curveGain);
+void Chassis::arcade(int throttle, int turn, float throttleCurveGain, float turnCurveGain) {
+    int leftPower = driveCurve(throttle, throttleCurveGain) + driveCurve(turn, turnCurveGain);
+    int rightPower = driveCurve(throttle, throttleCurveGain) - driveCurve(turn, turnCurveGain);
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
 }
@@ -58,18 +60,22 @@ void Chassis::arcade(int throttle, int turn, float curveGain) {
  * the radius of that turn. This control scheme defaults to arcade when forward is zero.
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
- * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+ * @param throttleCurveGain the scale inputted into the drive curve function for linear velocity.
+ * @param turnCurveGain the scale inputted into the drive curve function for turn velocity.If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
 void Chassis::curvature(int throttle, int turn, float curveGain) {
     // If we're not moving forwards change to arcade drive
     if (throttle == 0) {
-        arcade(throttle, turn, curveGain);
+        arcade(throttle, turn, throttleCurveGain, turnCurveGain);
         return;
     }
 
-    float leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
-    float rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
+    float curvedThrottle = driveCurve(throttle, throttleCurveGain);
+    float curvedTurn = driveCurve(turn, turnCurveGain);
+
+    float leftPower = curvedThrottle + (std::abs(curvedThrottle) * curvedTurn) / 127.0;
+    float rightPower = curvedThrottle - (std::abs(curvedThrottle) * curvedTurn) / 127.0;
 
     leftPower = driveCurve(leftPower, curveGain);
     rightPower = driveCurve(rightPower, curveGain);
