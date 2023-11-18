@@ -36,7 +36,6 @@ class Chassis {
          * @param x new x value
          * @param y new y value
          * @param theta new theta value
-         * @param radians true if theta is in radians, false if not. False by default
          */
         void setPose(Length x, Length y, Angle theta);
 
