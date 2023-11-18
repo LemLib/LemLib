@@ -40,9 +40,9 @@ void autonomous() {
     // file name: path.txt
     // timeout: 2000 ms
     // lookahead distance: 15 inches
-    chassis.follow("path.txt", 2000, 15);
+    chassis.follow("path.txt", 2000_ms, 15_in);
     // follow the next path, but with the robot going backwards
-    chassis.follow("path2.txt", 2000, 15, true);
+    chassis.follow("path2.txt", 2000_ms, 15_in, true);
 }
 ```
 

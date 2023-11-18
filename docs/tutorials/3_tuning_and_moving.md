@@ -57,7 +57,7 @@ void autonomous() {
 
 As you can see, using this function is very easy. The first 2 parameters are the X and Y location the robot should be facing. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is whether the back of the robot should face the point (true) or the front of the robot should face the point (false). It defaults to false if not specified. The fifth parameter is the maximum speed the robot can turn at. If you don't specify a value for this parameter, the robot will turn at full speed.
 
-The second function is `lemlib::Chassis::moveTo`. This function moves the robot to the specified (x, y) point with a target heading in degrees using an algorithm called the [Boomerang Controller](https://www.desmos.com/calculator/sptjw5szex). It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
+The second function is `lemlib::Chassis::moveTo`. This function moves the robot to the specified (x, y) point with a target heading using an algorithm called the [Boomerang Controller](https://www.desmos.com/calculator/sptjw5szex). It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
     chassis.moveTo(53, 53, 90, 1000); // move to the point (53, 53) at heading 90 with a timeout of 1000 ms
@@ -121,10 +121,8 @@ Here is the algorithm we will be using to tune these gains:
 
 You may have noticed that there are 4 more values in the angularController and lateralController structs. These are values for the timeouts. Here is how they work:
 
-- `smallErrorRange` is the range of error that is considered "small". If the error is within this range for `smallErrorTimeout` milliseconds, the robot will proceed to the next movement
-- `largeErrorRange` is the range of error that is considered "large". If the error is within this range for `largeErrorTimeout` milliseconds, the robot will proceed to the next movement
-
-The units for error in the `chassis.moveTo()` function are inches, and degrees for the `chassis.turnTo()` function. The units for time are milliseconds.
+- `smallErrorRange` is the range of error that is considered "small". If the error is within this range for `smallErrorTimeout`, the robot will proceed to the next movement
+- `largeErrorRange` is the range of error that is considered "large". If the error is within this range for `largeErrorTimeout`, the robot will proceed to the next movement
 
 Advanced users may wish to alter these values to decrease the time it takes to execute the next command. However, the default values should be fine for most users.
 
@@ -136,7 +134,7 @@ When hovering your mouse over a location on the field, its coordinates will be d
 
 <img src="./assets/3_tuning_and_moving/path_generator.png">
 
-Note that the origin of the field is in the middle, and the field coordinates are measured in inches. **0 degrees is facing up, and increases clockwise**.
+Note that the origin of the field is in the middle. **0 degrees is facing up, and increases clockwise**.
 
 
 Thats it! You now know how to move the robot around the field using the `chassis.turnTo()` and `chassis.moveTo()` functions. In the next tutorial, we will be covering how to use the Path Generator to create a path for the robot to follow.
