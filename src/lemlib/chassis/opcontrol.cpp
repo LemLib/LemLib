@@ -65,14 +65,14 @@ void Chassis::arcade(int throttle, int turn, float throttleCurveGain, float turn
  * curve, refer to the `defaultDriveCurve` documentation.
  */
 void Chassis::curvature(int throttle, int turn, float curveGain) {
+    float curvedThrottle = driveCurve(throttle, throttleCurveGain);
+    float curvedTurn = driveCurve(turn, turnCurveGain);
+    
     // If we're not moving forwards change to arcade drive
     if (throttle == 0) {
         arcade(throttle, turn, throttleCurveGain, turnCurveGain);
         return;
     }
-
-    float curvedThrottle = driveCurve(throttle, throttleCurveGain);
-    float curvedTurn = driveCurve(turn, turnCurveGain);
 
     float leftPower = curvedThrottle + (std::abs(curvedThrottle) * curvedTurn) / 127.0;
     float rightPower = curvedThrottle - (std::abs(curvedThrottle) * curvedTurn) / 127.0;
