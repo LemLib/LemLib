@@ -273,7 +273,7 @@ class Chassis {
          * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void arcade(int throttle, int turn, float curveGain = 0.0);
+        void arcade(int throttle, int turn, float throttleCurveGain = 0.0, float turnCurveGain = 0);
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control
          * scheme is very similar to arcade drive, except the second joystick axis controls the radius of the
@@ -285,7 +285,7 @@ class Chassis {
          * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void curvature(int throttle, int turn, float cureGain = 0.0);
+        void curvature(int throttle, int turn, float throttleCurveGain = 0.0, float turnCurveGain = 0);
     private:
         pros::Mutex mutex;
         float distTravelled = 0;
