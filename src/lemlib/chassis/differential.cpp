@@ -54,9 +54,9 @@ Differential::Differential(Drivetrain_t drivetrain, ChassisController_t<Length> 
 
     // configure drivetrain
     drive.push_back(
-        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.rpm));
+        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.speed));
     drive.push_back(
-        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
+        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.speed));
 
     // configure imu
     if (sensors.imu != nullptr) imus.push_back(std::make_shared<Imu>(*sensors.imu));

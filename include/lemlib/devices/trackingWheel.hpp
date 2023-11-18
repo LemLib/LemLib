@@ -55,9 +55,9 @@ class TrackingWheel {
          * @param motors pointer to the motor group to be used for the tracking wheel
          * @param diameter the diameter of the wheel
          * @param offset distance between the wheel and the tracking center
-         * @param rpm of the rpm of the wheels the motor group is driving
+         * @param speed the rpm of the wheels the motor group is driving
          */
-        TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, Length diameter, Length offset, AngularVelocity rpm);
+        TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, Length diameter, Length offset, AngularVelocity speed);
         /**
          * @brief Create a new optical encoder tracking wheel
          *

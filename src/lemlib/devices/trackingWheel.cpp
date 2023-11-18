@@ -37,7 +37,7 @@ TrackingWheel::TrackingWheel(std::shared_ptr<Encoder> encoder, Length diameter, 
  * limitation of PROS 3. This is fixed in PROS 4, but its not ready for release yet
  */
 TrackingWheel::TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, Length diameter, Length offset,
-                             AngularVelocity rpm)
+                             AngularVelocity speed)
     : encoder(std::make_shared<MotorEncoder>(MotorEncoder(motors, rpm))),
       diameter(diameter),
       offset(offset) {}

@@ -14,9 +14,9 @@ class MotorEncoder : public Encoder {
          * @note change to reference instead of pointer when PROS 4 releases
          *
          * @param motors pointer to the motor group to be used
-         * @param rpm output rpm
+         * @param speed output rpm
          */
-        MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelocity rpm);
+        MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelocity speed);
 
         /**
          * @brief Get the angle rotated by the motor encoders

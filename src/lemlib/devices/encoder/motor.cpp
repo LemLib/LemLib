@@ -13,7 +13,7 @@ namespace lemlib {
  * a reference, due to limitations in PROS 3. This is fixed in PROS 4, but
  * we have to deal with this for now.
  */
-MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelocity rpm)
+MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelocity speed)
     : motors(std::move(motors)),
       speed(rpm) {}
 

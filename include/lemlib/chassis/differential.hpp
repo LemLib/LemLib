@@ -87,7 +87,7 @@ typedef struct {
         std::shared_ptr<pros::MotorGroup> rightMotors;
         Length trackWidth;
         Length wheelDiameter;
-        AngularVelocity rpm;
+        AngularVelocity speed;
         float chasePower;
 } Drivetrain_t;
 
