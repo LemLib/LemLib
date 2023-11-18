@@ -54,13 +54,22 @@ class Chassis {
         Pose getPose();
 
         /**
-         * @brief Wait until the robot has traveled a certain distance, or angle, along the path
+         * Wait until the robot has reached a certain level of progress
          *
-         * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
-         *
-         * @param dist the distance the robot needs to travel before returning
+         * Just uses a while loop and exits when the distance traveled is greater than the specified distance
+         * or if the motion has finished
          */
-        void waitUntil(float dist); // todo
+        template <isQuantity Q> void waitUntil(Q dist) {
+            // give the movement time to start
+            pros::delay(10);
+            // wait until the robot has travelled a certain distance
+            while (movement != nullptr && movement->getDist() < dist.raw() && movement->getDist() >= prevDist) {
+                prevDist = movement->getDist(); // update previous distance
+                pros::delay(10);
+            }
+            // set prevDist to 0
+            prevDist = 0;
+        }
 
         /**
          * @brief Wait until the current movement is done

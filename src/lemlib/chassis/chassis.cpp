@@ -40,26 +40,6 @@ void Chassis::setPose(Pose pose) { odom->setPose(pose); }
 Pose Chassis::getPose() { return odom->getPose(); }
 
 /**
- * Wait until the robot has traveled a certain distance, or angle
- *
- * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
- *
- * Just uses a while loop and exits when the distance traveled is greater than the specified distance
- * or if the motion has finished
- */
-void Chassis::waitUntil(float dist) {
-    // give the movement time to start
-    pros::delay(10);
-    // wait until the robot has travelled a certain distance
-    while (movement != nullptr && movement->getDist() < dist && movement->getDist() >= prevDist) {
-        prevDist = movement->getDist(); // update previous distance
-        pros::delay(10);
-    }
-    // set prevDist to 0
-    prevDist = 0;
-}
-
-/**
  * Wait until the robot has completed the current movement
  */
 void Chassis::waitUntilDone() {

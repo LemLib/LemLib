@@ -132,7 +132,7 @@ void autonomous() {
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait
-    chassis.waitUntil(10);
+    chassis.waitUntil(10_in);
     pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
     // wait until the movement is done
     chassis.waitUntilDone();
