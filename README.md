@@ -49,8 +49,7 @@ Only if you use Pure Pursuit `chassis.follow()`.
 This will change in the next major release however. In fact you could try it right now in our latest beta
 
 _**6. What are the units?**_
-The units are inches and degrees.
-In a future release, Qunits will be used so you can use whatever units you like.
+Lemlib uses a custom units system that lets you can specify or read any quantity in any units you want, and does the conversion automatically.
 
 _**7. Is LemLib VRC legal?**_
 Yes.
