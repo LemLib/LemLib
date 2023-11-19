@@ -53,7 +53,13 @@ struct OdomSensors {
          * @param imu pointer to the IMU
          */
         OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
-                    TrackingWheel* horizontal2, pros::Imu* imu);
+                    TrackingWheel* horizontal2, pros::Imu* imu)
+            : vertical1(vertical1),
+              vertical2(vertical2),
+              horizontal1(horizontal1),
+              horizontal2(horizontal2),
+              imu(imu) {}
+
         TrackingWheel* vertical1;
         TrackingWheel* vertical2;
         TrackingWheel* horizontal1;
@@ -79,7 +85,15 @@ struct ControllerSettings {
          * @param slew the maximum acceleration of the chassis controller
          */
         ControllerSettings(float kP, float kD, float smallError, float smallErrorTimeout, float largeError,
-                           float largeErrorTimeout, float slew);
+                           float largeErrorTimeout, float slew)
+            : kP(kP),
+              kD(kD),
+              smallError(smallError),
+              smallErrorTimeout(smallErrorTimeout),
+              largeError(largeError),
+              largeErrorTimeout(largeErrorTimeout),
+              slew(slew) {}
+
         float kP;
         float kD;
         float smallError;
@@ -114,8 +128,15 @@ struct Drivetrain {
          * @param rpm the rpm of the wheels
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          */
-        Drivetrain(std::shared_ptr<pros::MotorGroup> leftMotors, std::shared_ptr<pros::MotorGroup>, float trackWidth,
-                   float wheelDiameter, float rpm, float chasePower);
+        Drivetrain(std::shared_ptr<pros::MotorGroup> leftMotors, std::shared_ptr<pros::MotorGroup> rightMotors,
+                   float trackWidth, float wheelDiameter, float rpm, float chasePower)
+            : leftMotors(leftMotors),
+              rightMotors(rightMotors),
+              trackWidth(trackWidth),
+              wheelDiameter(wheelDiameter),
+              rpm(rpm),
+              chasePower(chasePower) {}
+
         std::shared_ptr<pros::MotorGroup> leftMotors;
         std::shared_ptr<pros::MotorGroup> rightMotors;
         float trackWidth;
