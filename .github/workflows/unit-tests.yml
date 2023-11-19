@@ -20,3 +20,15 @@ jobs:
       - name: Test
         working-directory: build
         run: ./LemLib
+      - name: Collect Coverage
+        working-directory: build
+        run: |
+          lcov --directory . --capture --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info
+          lcov --remove coverage.info '*/LemLib/build/*' --output-file coverage.info 
+          lcov --list coverage.info
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        env:
+          fail_ci_if_error: true
+          files: ./build/coverage.info
