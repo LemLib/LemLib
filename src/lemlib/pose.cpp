@@ -54,7 +54,7 @@ void Pose::operator+=(const Pose& other) {
  * @param other other pose
  * @return Pose
  */
-Pose Pose::operator-(const Pose& other) const  { return Pose(x - other.x, y - other.y, theta); }
+Pose Pose::operator-(const Pose& other) const { return Pose(x - other.x, y - other.y, theta); }
 
 /**
  * @brief Set the value of this pose to its value - the value of another pose
@@ -81,7 +81,7 @@ float Pose::operator*(const Pose& other) const { return x * other.x + y * other.
  * @param other float
  * @return Pose
  */
-Pose Pose::operator*(const float& other)const  { return Pose(x * other, y * other, theta); }
+Pose Pose::operator*(const float& other) const { return Pose(x * other, y * other, theta); }
 
 /**
  * @brief Divide a pose by a float
@@ -138,7 +138,7 @@ float Pose::angle(Pose other) const { return std::atan2(other.y - y, other.x - x
  * @param angle angle in radians
  * @return Pose
  */
-Pose Pose::rotate(float angle) const  {
+Pose Pose::rotate(float angle) const {
     const float cosAngle = std::cos(angle);
     const float sinAngle = std::sin(angle);
 
