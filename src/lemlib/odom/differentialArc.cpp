@@ -1,4 +1,3 @@
-#include "lemlib/devices/trackingWheel.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/timer.hpp"
 #include "lemlib/logger/logger.hpp"
@@ -39,7 +38,6 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     for (auto it = verticals.begin(); it != verticals.end(); it++) {
         if (it->reset()) {
             infoSink()->warn("Vertical tracker at offset {} failed calibration!", it->getOffset());
-            verticals.erase(it);
         } else newVerticals.push_back(*it);
     }
 
@@ -47,7 +45,6 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     for (auto it = horizontals.begin(); it != horizontals.end(); it++) {
         if (it->reset()) {
             infoSink()->warn("Horizontal tracker at offset {} failed calibration!", it->getOffset());
-            horizontals.erase(it);
         } else newHorizontals.push_back(*it);
     }
 
