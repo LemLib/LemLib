@@ -8,17 +8,17 @@ class PoseTest : public testing::TestWithParam<float> {};
 TEST(PoseTest, BasicConstructor) {
     lemlib::Pose pose {1, 2};
 
-    EXPECT_EQ(pose.x, 1);
-    EXPECT_EQ(pose.y, 2);
-    EXPECT_EQ(pose.theta, 0);
+    EXPECT_FLOAT_EQ(pose.x, 1);
+    EXPECT_FLOAT_EQ(pose.y, 2);
+    EXPECT_FLOAT_EQ(pose.theta, 0);
 }
 
 TEST(PoseTest, ConstructorWithTheta) {
     lemlib::Pose pose {1, 2, 30};
 
-    EXPECT_EQ(pose.x, 1);
-    EXPECT_EQ(pose.y, 2);
-    EXPECT_EQ(pose.theta, 30);
+    EXPECT_FLOAT_EQ(pose.x, 1);
+    EXPECT_FLOAT_EQ(pose.y, 2);
+    EXPECT_FLOAT_EQ(pose.theta, 30);
 }
 
 TEST(PoseTest, EqualityOperator) {
@@ -44,9 +44,9 @@ TEST(PoseTest, Addition) {
 
     lemlib::Pose sum = pose1 + pose2;
 
-    EXPECT_EQ(sum.x, 1);
-    EXPECT_EQ(sum.y, -2);
-    EXPECT_EQ(sum.theta, 90);
+    EXPECT_FLOAT_EQ(sum.x, 1);
+    EXPECT_FLOAT_EQ(sum.y, -2);
+    EXPECT_FLOAT_EQ(sum.theta, 90);
 }
 
 TEST(PoseTest, Subtraction) {
@@ -55,9 +55,9 @@ TEST(PoseTest, Subtraction) {
 
     lemlib::Pose diff = pose1 - pose2;
 
-    EXPECT_EQ(diff.x, -17);
-    EXPECT_EQ(diff.y, 6);
-    EXPECT_EQ(diff.theta, 90);
+    EXPECT_FLOAT_EQ(diff.x, -17);
+    EXPECT_FLOAT_EQ(diff.y, 6);
+    EXPECT_FLOAT_EQ(diff.theta, 90);
 }
 
 TEST(PoseTest, ScalarMultiplication) {
@@ -66,9 +66,9 @@ TEST(PoseTest, ScalarMultiplication) {
 
     lemlib::Pose product = pose1 * scalar;
 
-    EXPECT_EQ(product.x, -16);
-    EXPECT_EQ(product.y, 4);
-    EXPECT_EQ(product.theta, 90);
+    EXPECT_FLOAT_EQ(product.x, -16);
+    EXPECT_FLOAT_EQ(product.y, 4);
+    EXPECT_FLOAT_EQ(product.theta, 90);
 }
 
 TEST(PoseTest, ScalarDivision) {
@@ -77,9 +77,9 @@ TEST(PoseTest, ScalarDivision) {
 
     lemlib::Pose quotient = pose1 / scalar;
 
-    EXPECT_EQ(quotient.x, -4);
-    EXPECT_EQ(quotient.y, 1);
-    EXPECT_EQ(quotient.theta, 90);
+    EXPECT_FLOAT_EQ(quotient.x, -4);
+    EXPECT_FLOAT_EQ(quotient.y, 1);
+    EXPECT_FLOAT_EQ(quotient.theta, 90);
 }
 
 TEST(PoseTest, MatrixMultiplication) {
@@ -88,7 +88,7 @@ TEST(PoseTest, MatrixMultiplication) {
 
     float product = pose1 * pose2;
 
-    EXPECT_EQ(product, -8 * 9 + 2 * -4);
+    EXPECT_FLOAT_EQ(product, -8 * 9 + 2 * -4);
 }
 
 TEST(PoseTest, Lerp) {
