@@ -18,6 +18,5 @@ jobs:
           cmake ..
           cmake --build .
       - name: Test
-        run: |
         working-directory: build
         run: ./LemLib
