@@ -56,8 +56,8 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     for (auto it = drivetrain.begin(); it != drivetrain.end(); it++) {
         if (it->reset()) {
             if (sgn(it->getOffset() == 1))
-                infoSink()->warn("Left drivetrain motor failed to calibrate!", it->getOffset());
-            else infoSink()->warn("Right drivetrain motor failed to calibrate!", it->getOffset());
+                infoSink()->warn("Left drivetrain motor failed to calibrate!");
+            else infoSink()->warn("Right drivetrain motor failed to calibrate!");
         } else newDrivetrain.push_back(*it);
     }
 
