@@ -34,7 +34,6 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     std::vector<TrackingWheel> newHorizontals = {};
     std::vector<TrackingWheel> newDrivetrain = {};
     std::vector<std::shared_ptr<Gyro>> newGyros = {};
-    
 
     // calibrate vertical tracking wheels
     for (auto it = verticals.begin(); it != verticals.end(); it++) {
@@ -55,8 +54,7 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     // calibrate drivetrain motors
     for (auto it = drivetrain.begin(); it != drivetrain.end(); it++) {
         if (it->reset()) {
-            if (sgn(it->getOffset() == 1))
-                infoSink()->warn("Left drivetrain motor failed to calibrate!");
+            if (sgn(it->getOffset() == 1)) infoSink()->warn("Left drivetrain motor failed to calibrate!");
             else infoSink()->warn("Right drivetrain motor failed to calibrate!");
         } else newDrivetrain.push_back(*it);
     }
