@@ -11,6 +11,7 @@ jobs:
         run: |
           sudo apt install build-essential
           sudo apt install cmake
+          sudo apt install lcov
       - name: Build
         run: |
           mkdir build
