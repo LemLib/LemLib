@@ -16,11 +16,11 @@
 
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
-#include "pros/imu.hpp"
 
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/asset.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
+#include "lemlib/devices/gyro/imu.hpp"
 
 namespace lemlib {
 /**
@@ -54,14 +54,33 @@ struct OdomSensors {
               vertical2(vertical2),
               horizontal1(horizontal1),
               horizontal2(horizontal2),
-              imu(imu) {}
+              gyro(std::make_shared<lemlib::Imu>(*imu)) {}
+
+        /**
+         * The sensors are stored in a struct so that they can be easily passed to the chassis class
+         * The variables are pointers so that they can be set to nullptr if they are not used
+         * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
+         *
+         * @param vertical1 pointer to the first vertical tracking wheel
+         * @param vertical2 pointer to the second vertical tracking wheel
+         * @param horizontal1 pointer to the first horizontal tracking wheel
+         * @param horizontal2 pointer to the second horizontal tracking wheel
+         * @param gyro shared pointer to a gyro
+         */
+        OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
+                    TrackingWheel* horizontal2, std::shared_ptr<Gyro> gyro)
+            : vertical1(vertical1),
+              vertical2(vertical2),
+              horizontal1(horizontal1),
+              horizontal2(horizontal2),
+              gyro(gyro) {}
 
         TrackingWheel* vertical1;
         TrackingWheel* vertical2;
         TrackingWheel* horizontal1;
         TrackingWheel* horizontal2;
-        pros::Imu* imu;
-} OdomSensors_t;
+        std::shared_ptr<Gyro> gyro;
+};
 
 /**
  * @brief Struct containing constants for a chassis controller

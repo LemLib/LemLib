@@ -59,7 +59,7 @@ Differential::Differential(Drivetrain_t drivetrain, ChassisController_t lateralS
         TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
 
     // configure imu
-    if (sensors.imu != nullptr) imus.push_back(std::make_shared<Imu>(*sensors.imu));
+    if (sensors.gyro != nullptr) imus.push_back(sensors.gyro);
 
     // create odom instance
     odom = std::make_unique<DifferentialArc>(DifferentialArc(verticals, horizontals, drive, imus));
