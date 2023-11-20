@@ -55,7 +55,7 @@ jobs:
       - name: Get Template Postfix
         id: template-postfix
         run: | 
-          echo postfix="$VER.$SHA" >> "$GITHUB_OUTPUT"
+          echo postfix="$VER-$SHA" >> "$GITHUB_OUTPUT"
         env:
           SHA: ${{ steps.short-sha.outputs.sha }}
           VER: ${{ steps.version.outputs.version }}
