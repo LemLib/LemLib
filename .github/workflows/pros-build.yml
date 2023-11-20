@@ -18,18 +18,12 @@ jobs:
         with:
           script: |
             console.log(context);
-      - name: Get short SHA 2
-        id: short-sha2
+      - name: Get short SHA
+        id: short-sha
         run: |
-          echo $SHA | head -c 6
+          echo "sha=$((echo $SHA | head -c 6))" >> $GITHUB_OUTPUT
         env:
           SHA: ${{ github.event.after }}
-          
-      - name: Get short SHA
-        uses: benjlevesque/short-sha@v2.2
-        id: short-sha
-        with:
-          length: 6
       
       - name: Set short SHA
         run: echo $SHA
