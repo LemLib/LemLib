@@ -10,7 +10,7 @@ namespace lemlib {
  * in an initializer list
  */
 Imu::Imu(uint8_t port)
-    : imu(pros::Imu(port)) {}
+    : Gyro((int)Gyro::POLL_FREQUENCY::V5_INERTIAL), imu(pros::Imu(port)) {}
 
 /**
  * Construct a new Imu
@@ -19,7 +19,7 @@ Imu::Imu(uint8_t port)
  * initializer list
  */
 Imu::Imu(pros::Imu& imu)
-    : imu(imu) {}
+    :Gyro((int)Gyro::POLL_FREQUENCY::V5_INERTIAL), imu(imu) {}
 
 /**
  * Calibrate the Imu

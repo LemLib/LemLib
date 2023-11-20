@@ -121,6 +121,8 @@ class TrackingWheel {
          * @return float diameter, in inches
          */
         float getDiameter() const;
+
+        int getPollRate() const;
     private:
         std::shared_ptr<Encoder> encoder;
         float diameter;

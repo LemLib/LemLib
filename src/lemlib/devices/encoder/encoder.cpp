@@ -10,4 +10,8 @@ float Encoder::getAngleDelta(bool update) {
     if (!update) lastAngle = prevAngle;
     return (angle - prevAngle);
 }
+
+int Encoder::getpollRate() const {
+    return pollRate;
+}
 }; // namespace lemlib

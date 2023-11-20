@@ -2,10 +2,16 @@
 
 #include <cstdint>
 #include <math.h>
+#include "lemlib/odom/odom.hpp"
 
 namespace lemlib {
 class Gyro {
     public:
+        enum class POLL_FREQUENCY {
+            V5_INERTIAL = 10,
+        };
+
+        Gyro(const int pollRate) : pollRate(pollRate) {}
         /**
          * @brief Calibrate the gyro
          *
@@ -74,7 +80,11 @@ class Gyro {
          * @return std::uint8_t unsigned port of the gyro
          */
         virtual std::uint8_t getPort() = 0;
+        int getPollRate() const;
     protected:
         float lastAngle = M_PI_2;
+        const int pollRate;
+
+        friend Odom;
 };
 } // namespace lemlib

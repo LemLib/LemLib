@@ -31,10 +31,12 @@ class DifferentialArc : public Odom {
          *
          */
         void update() override;
+        int getPollRate() const override;
     private:
         std::vector<TrackingWheel> verticals;
         std::vector<TrackingWheel> horizontals;
         std::vector<TrackingWheel> drivetrain;
         std::vector<std::shared_ptr<Gyro>> gyros;
+
 };
 } // namespace lemlib

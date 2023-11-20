@@ -106,4 +106,6 @@ float TrackingWheel::getOffset() const { return this->offset; }
  * Get the diameter of the wheel, in inches
  */
 float TrackingWheel::getDiameter() const { return this->diameter; }
+
+int TrackingWheel::getPollRate() const { return this->encoder->getPollRate(); }
 }; // namespace lemlib

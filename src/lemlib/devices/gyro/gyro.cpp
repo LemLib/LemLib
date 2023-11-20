@@ -11,4 +11,8 @@ float Gyro::getRotationDelta(bool update) {
     if (!update) lastAngle = prevAngle;
     return (angle - prevAngle);
 }
+
+int Gyro::getPollRate() const {
+    return pollRate;
+}
 }; // namespace lemlib

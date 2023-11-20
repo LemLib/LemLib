@@ -30,6 +30,8 @@ class Odom {
          * @param pose the new pose
          */
         void setPose(Pose pose);
+        
+        virtual int getPollRate() const = 0;
     protected:
         // heading set to M_PI_2 because odom should default to IMU 0 angle
         Pose pose = Pose(0, 0, M_PI_2);

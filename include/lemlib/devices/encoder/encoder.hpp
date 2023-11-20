@@ -4,14 +4,21 @@
 #include "pros/adi.hpp"
 #include "pros/motors.hpp"
 
+#include "trackingWheel.hpp"
+
 namespace lemlib {
 class Encoder {
     public:
+        enum class POLL_FREQUENCY {
+            V5_MOTOR = 10,
+            V5_ROTATION = 10,
+            V5_OPTICAL = 10
+        };
         /**
          * @brief Construct a new Encoder
          *
          */
-        Encoder() {}
+        Encoder(const int pollRate) : pollRate(pollRate) {}
 
         /**
          * @brief Get the angle rotated by the encoder, in radians
@@ -35,7 +42,10 @@ class Encoder {
          * @return false encoder calibration succeeded
          */
         virtual bool reset() = 0;
+
+        int getPollRate() const;
     protected:
         float lastAngle = 0;
+        const int pollRate;
 };
 } // namespace lemlib
