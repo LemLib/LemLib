@@ -13,11 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Print Context
-        uses: actions/github-script@v6
-        with:
-          script: |
-            console.log(context);
       - name: Get short SHA
         id: short-sha
         run: |
