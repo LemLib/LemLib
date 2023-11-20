@@ -21,7 +21,8 @@ jobs:
       - name: Get short SHA
         id: short-sha
         run: |
-          echo "sha=$((echo $SHA | head -c 6))" >> $GITHUB_OUTPUT
+          echo $SHA | head -c 6 >> $SHORT_SHA
+          echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
         env:
           SHA: ${{ github.event.after }}
       
