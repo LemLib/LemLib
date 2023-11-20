@@ -1,5 +1,5 @@
 #include "lemlib/path/path.hpp"
-#include "util.hpp"
+#include "lemlib/util.hpp"
 
 std::vector<lemlib::Waypoint> lemlib::Path::getPath() { return this->path; }
 

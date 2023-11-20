@@ -1,5 +1,5 @@
 #include "lemlib/path/assetPath.hpp"
-#include "util.hpp"
+#include "lemlib/util.hpp"
 
 lemlib::AssetPath::AssetPath(const asset& asset) {
     this->path = {};
