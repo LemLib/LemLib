@@ -7,11 +7,6 @@
 namespace lemlib {
 class Encoder {
     public:
-        enum class POLL_FREQUENCY {
-            V5_MOTOR = 10,
-            V5_ROTATION = 10,
-            V5_OPTICAL = 10
-        };
         /**
          * @brief Construct a new Encoder
          *

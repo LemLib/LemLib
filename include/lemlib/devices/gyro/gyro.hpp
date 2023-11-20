@@ -7,10 +7,6 @@
 namespace lemlib {
 class Gyro {
     public:
-        enum class POLL_FREQUENCY {
-            V5_INERTIAL = 10,
-        };
-
         Gyro(const int pollRate) : pollRate(pollRate) {}
         /**
          * @brief Calibrate the gyro

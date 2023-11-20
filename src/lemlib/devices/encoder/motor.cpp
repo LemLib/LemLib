@@ -13,7 +13,7 @@ namespace lemlib {
  * we have to deal with this for now.
  */
 MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm)
-    : Encoder((int)Encoder::POLL_FREQUENCY::V5_MOTOR), motors(std::move(motors)),
+    : Encoder(10), motors(std::move(motors)),
       rpm(rpm) {}
 
 /**

@@ -10,7 +10,7 @@ namespace lemlib {
  * checked.
  */
 OpticalEncoder::OpticalEncoder(char topPort, char bottomPort, bool reversed, float ratio)
-    : Encoder((int)Encoder::POLL_FREQUENCY::V5_OPTICAL), optical(pros::adi::Encoder(topPort, bottomPort, reversed)),
+    : Encoder(10), optical(pros::adi::Encoder(topPort, bottomPort, reversed)),
       ratio(ratio) {}
 
 /**
