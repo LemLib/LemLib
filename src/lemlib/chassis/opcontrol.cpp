@@ -64,7 +64,7 @@ void Chassis::arcade(int throttle, int turn, float throttleCurveGain, float turn
  * @param turnCurveGain the scale inputted into the drive curve function for turn velocity.If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Chassis::curvature(int throttle, int turn, float curveGain) {
+void Chassis::curvature(int throttle, int turn, float throttleCurveGain, float turnCurveGain) {
     float curvedThrottle = driveCurve(throttle, throttleCurveGain);
     float curvedTurn = driveCurve(turn, turnCurveGain);
     
