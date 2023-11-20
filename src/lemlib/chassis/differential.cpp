@@ -167,7 +167,7 @@ void Differential::moveTo(float x, float y, float theta, int timeout, bool rever
  * Unlike the Differential::moveTo function, we can just pass the parameters directly to the
  * Pure Pursuit constructor
  */
-void Differential::follow(Path path, float lookahead, int timeout, bool forwards, int maxSpeed) {
+void Differential::follow(Path path, float lookahead, int timeout, bool reversed, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // create the movement

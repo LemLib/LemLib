@@ -17,7 +17,7 @@ namespace lemlib {
  * it into a vector of strings. We then convert each of these strings into
  * floats, and then push back a new waypoint to the path vector
  */
-PurePursuit::PurePursuit(float trackWidth, Path asset, float lookaheadDist, int timeout, bool forwards, int maxSpeed)
+PurePursuit::PurePursuit(float trackWidth, Path asset, float lookaheadDist, int timeout, bool reversed, int maxSpeed)
     : Movement(),
       trackWidth(trackWidth),
       lookaheadDist(lookaheadDist),

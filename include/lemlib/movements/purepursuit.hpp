@@ -25,7 +25,7 @@ class PurePursuit : public Movement {
          * @param reversed whether the chassis should move forwards (false) or backwards (true)
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
          */
-        PurePursuit(float trackWidth, Path path, float lookaheadDist, int timeout, bool forwards, int maxSpeed);
+        PurePursuit(float trackWidth, Path path, float lookaheadDist, int timeout, bool reversed, int maxSpeed);
 
         /**
          * @brief Get the distance travelled during the movement
