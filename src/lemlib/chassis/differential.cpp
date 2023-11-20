@@ -143,7 +143,7 @@ void Differential::turnToHeading(float heading, int timeout, int maxSpeed) {
  * It also needs to decide what the chasePower should be. Usually this will be the value set in
  * the drivetrain struct, but it can be overridden by the user if needed.
  */
-void Differential::moveTo(float x, float y, float theta, int timeout, bool forwards, float chasePower, float lead,
+void Differential::moveTo(float x, float y, float theta, int timeout, bool reversed, float chasePower, float lead,
                           int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
@@ -157,7 +157,7 @@ void Differential::moveTo(float x, float y, float theta, int timeout, bool forwa
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = drivetrain.chasePower;
     // create the movement
-    movement = std::make_unique<Boomerang>(linearPID, angularPID, target, forwards, chasePower, lead, maxSpeed);
+    movement = std::make_unique<Boomerang>(linearPID, angularPID, target, reversed, chasePower, lead, maxSpeed);
 }
 
 /**
@@ -166,11 +166,11 @@ void Differential::moveTo(float x, float y, float theta, int timeout, bool forwa
  * Unlike the Differential::moveTo function, we can just pass the parameters directly to the
  * Pure Pursuit constructor
  */
-void Differential::follow(const asset& path, float lookahead, int timeout, bool forwards, int maxSpeed) {
+void Differential::follow(const asset& path, float lookahead, int timeout, bool reversed, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // create the movement
-    movement = std::make_unique<PurePursuit>(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
+    movement = std::make_unique<PurePursuit>(drivetrain.trackWidth, path, lookahead, timeout, reversed, maxSpeed);
 }
 
 /**
