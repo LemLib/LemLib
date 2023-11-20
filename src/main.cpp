@@ -2,16 +2,18 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
-#include <iomanip>
+#include "pros/misc.h"
 
-// left drive motors on ports 8, 20, 18. Motors on ports 8 and 20 are reversed
-auto leftDrive = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
-// right drive motors on ports 2, 11, 13. Motor on port 13 is reversed
-auto rightDrive = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
+// controller
+pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-// Inertial Sensor on port 12
-pros::Imu imu(12);
+// motor groups
+// left motors on ports 8, 20, and 19. Motors on ports 8 and 20 are reversed. Using blue gearbox
+auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
+// right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
+auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
+<<<<<<< HEAD
 // vertical tracking wheel. Port 4, not reversed, 2.75" diameter, 3.7" offset, left of the robot center
 lemlib::TrackingWheel vertical(4, lemlib::Omniwheel::NEW_275, -3.7_in);
 
@@ -46,22 +48,54 @@ lemlib::ChassisController_t<Angle> angularController {
     500_ms, // large exit timeout
     20 // acceleration cap
 };
+=======
+// Inertial Sensor on port 11
+pros::Imu imu(11);
+
+// horizontal tracking wheel. Port 4, 2.75" diameter, 3.7" offset, back of the robot
+lemlib::TrackingWheel horizontal(4, lemlib::Omniwheel::NEW_275, -3.7);
+
+// drivetrain settings
+lemlib::Drivetrain drivetrain(leftMotors, // left motor group
+                              rightMotors, // right motor group
+                              10, // 10 inch track width
+                              lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
+                              360, // drivetrain rpm is 360
+                              2 // chase power is 2. If we had traction wheels, it would have been 8
+);
+
+// linear motion controller
+lemlib::ControllerSettings linearController(10, // proportional gain (kP)
+                                            30, // derivative gain (kD)
+                                            1, // small error range, in inches
+                                            100, // small error range timeout, in milliseconds
+                                            3, // large error range, in inches
+                                            500, // large error range timeout, in milliseconds
+                                            20 // maximum acceleration (slew)
+);
+
+// angular motion controller
+lemlib::ControllerSettings angularController(2, // proportional gain (kP)
+                                             10, // derivative gain (kD)
+                                             1, // small error range, in degrees
+                                             100, // small error range timeout, in milliseconds
+                                             3, // large error range, in degrees
+                                             500, // large error range timeout, in milliseconds
+                                             20 // maximum acceleration (slew)
+);
+>>>>>>> remote/refactor
 
 // sensors for odometry
-lemlib::OdomSensors_t sensors {
-    &vertical, // vertical tracking wheel
-    nullptr, // we don't have a second vertical tracking wheel
-    nullptr, // we don't have a horizontal tracking wheel
-    nullptr, // we don't have a horizontal tracking wheel
-    &imu // inertial sensor (AKA imu)
-};
-
-// chassis
-lemlib::Differential chassis(drivetrain, // drivetrain struct
-                             lateralController, // forwards/backwards PID struct
-                             angularController, // turning PID struct
-                             sensors // sensors struct
+// note that in this example we use internal motor encoders, so we don't pass vertical tracking wheels
+lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullptr as we don't have one
+                            nullptr, // vertical tracking wheel 2, set to nullptr as we don't have one
+                            &horizontal, // horizontal tracking wheel 1
+                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+                            &imu // inertial sensor
 );
+
+// create the chassis
+lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -73,27 +107,14 @@ void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.initialize(); // calibrate sensors
 
-    // the default rate is 50. however, if you need to change the rate, you
-    // can do the following.
-    // lemlib::bufferedStdout().setRate(...);
-    // If you use bluetooth or a wired connection, you will want to have a rate of 10ms
-
-    // for more information on how the formatting for the loggers
-    // works, refer to the fmtlib docs
-    std::cout << std::setprecision(5);
-
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
         lemlib::Pose pose(0_in,0_m , 0_rad);
         while (true) {
             pose = chassis.getPose();
-            // print to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            // log position telemetry
-            // lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
-            std::cout << "x: " << pose.x << " y: " << pose.y << " theta: " << pose.theta << std::endl;
             // delay to save resources
             pros::delay(10);
         }
@@ -127,8 +148,13 @@ void autonomous() {
     chassis.turnToPose(45_in, -45_in, 1_sec, true, 60);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4 seconds
     // following the path with the back of the robot (forwards = false)
+<<<<<<< HEAD
     // see line 110 to see how to define a path
     chassis.follow(example_txt, 15_in, 4_sec, false);
+=======
+    // see line 116 to see how to define a path
+    chassis.follow(example_txt, 15, 4000, false);
+>>>>>>> remote/refactor
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait
@@ -147,6 +173,10 @@ void opcontrol() {
     // loop to continuously update motors
     while (true) {
         // get joystick positions
+        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        // move the chassis with curvature drive
+        chassis.curvature(leftY, rightX);
         // delay to save resources
         pros::delay(10);
     }

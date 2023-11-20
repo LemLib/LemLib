@@ -31,6 +31,13 @@ class Chassis {
         virtual void initialize() = 0;
 
         /**
+         * @brief Calibrate the chassis sensors
+         *
+         * @param calibrateIMU whether the IMU should be calibrated. true by default
+         */
+        void calibrate(bool calibrateIMU = true);
+
+        /**
          * @brief Set the pose of the chassis
          *
          * @param x new x value
@@ -54,7 +61,7 @@ class Chassis {
         Pose getPose();
 
         /**
-         * Wait until the robot has reached a certain level of progress
+         * @brief Wait until the robot has traveled a certain distance along the path
          *
          * Just uses a while loop and exits when the distance traveled is greater than the specified distance
          * or if the motion has finished

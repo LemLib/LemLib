@@ -33,10 +33,15 @@ std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int
  * A notable exception is the odometry, which at the moment is too complex to
  * construct in the initializer list
  */
+<<<<<<< HEAD
 Differential::Differential(Drivetrain_t drivetrain, ChassisController_t<Length> lateralSettings,
                            ChassisController_t<Angle> angularSettings, OdomSensors_t sensors)
+=======
+Differential::Differential(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
+                           OdomSensors sensors)
+>>>>>>> remote/refactor
     : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
+      linearSettings(linearSettings),
       angularSettings(angularSettings) {
     // create sensor vectors
     std::vector<TrackingWheel> verticals;
@@ -59,7 +64,7 @@ Differential::Differential(Drivetrain_t drivetrain, ChassisController_t<Length> 
         TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.speed));
 
     // configure imu
-    if (sensors.imu != nullptr) imus.push_back(std::make_shared<Imu>(*sensors.imu));
+    if (sensors.gyro != nullptr) imus.push_back(sensors.gyro);
 
     // create odom instance
     odom = std::make_unique<DifferentialArc>(DifferentialArc(verticals, horizontals, drive, imus));
@@ -150,10 +155,17 @@ void Differential::moveTo(Length x, Length y, Angle theta, Time timeout, bool fo
     // convert target theta to radians and standard form
     Pose target = Pose(x, y, 90_rad - theta);
     // set up PIDs
+<<<<<<< HEAD
     FAPID<Length> linearPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
     linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
                       lateralSettings.smallErrorTimeout, timeout);
     FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+=======
+    FAPID linearPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "linearPID");
+    linearPID.setExit(linearSettings.largeError, linearSettings.smallError, linearSettings.largeErrorTimeout,
+                      linearSettings.smallErrorTimeout, timeout);
+    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+>>>>>>> remote/refactor
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = drivetrain.chasePower;
     // create the movement
