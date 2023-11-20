@@ -84,7 +84,5 @@ class Gyro {
     protected:
         float lastAngle = M_PI_2;
         const int pollRate;
-
-        friend Odom;
 };
 } // namespace lemlib
