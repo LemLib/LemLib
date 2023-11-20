@@ -4,8 +4,6 @@
 #include "pros/adi.hpp"
 #include "pros/motors.hpp"
 
-#include "trackingWheel.hpp"
-
 namespace lemlib {
 class Encoder {
     public:
