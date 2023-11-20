@@ -33,10 +33,10 @@ std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int
  * A notable exception is the odometry, which at the moment is too complex to
  * construct in the initializer list
  */
-Differential::Differential(Drivetrain_t drivetrain, ChassisController_t lateralSettings,
-                           ChassisController_t angularSettings, OdomSensors_t sensors)
+Differential::Differential(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
+                           OdomSensors sensors)
     : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
+      linearSettings(linearSettings),
       angularSettings(angularSettings) {
     // create sensor vectors
     std::vector<TrackingWheel> verticals;
@@ -150,9 +150,9 @@ void Differential::moveTo(float x, float y, float theta, int timeout, bool rever
     // convert target theta to radians and standard form
     Pose target = Pose(x, y, M_PI_2 - degToRad(theta));
     // set up PIDs
-    FAPID linearPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
-    linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
-                      lateralSettings.smallErrorTimeout, timeout);
+    FAPID linearPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "linearPID");
+    linearPID.setExit(linearSettings.largeError, linearSettings.smallError, linearSettings.largeErrorTimeout,
+                      linearSettings.smallErrorTimeout, timeout);
     FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = drivetrain.chasePower;

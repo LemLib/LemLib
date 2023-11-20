@@ -24,17 +24,21 @@
 
 namespace lemlib {
 /**
+ * @brief Construct a shared pointer to a tracking wheel.
+ *
+ * This function exists to reduce complexity for the client. The client could make their own
+ * shared pointer to a motor group, but this function makes it easy
+ *
+ * @param ports array of signed ports. Negative ports mean the motor should be reversed
+ * @param gears the gearbox used by the motors
+ * @return std::shared_ptr<pros::MotorGroup> a shared pointer to the motor group
+ */
+std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t> ports,
+                                                 const pros::v5::MotorGears gears);
+
+/**
  * @brief Struct containing all the sensors used for odometry
  *
- * The sensors are stored in a struct so that they can be easily passed to the chassis class
- * The variables are pointers so that they can be set to nullptr if they are not used
- * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
- *
- * @param vertical1 pointer to the first vertical tracking wheel
- * @param vertical2 pointer to the second vertical tracking wheel
- * @param horizontal1 pointer to the first horizontal tracking wheel
- * @param horizontal2 pointer to the second horizontal tracking wheel
- * @param imu pointer to the IMU
  */
 struct OdomSensors {
         /**
@@ -85,16 +89,6 @@ struct OdomSensors {
 /**
  * @brief Struct containing constants for a chassis controller
  *
- * The constants are stored in a struct so that they can be easily passed to the chassis class
- * Set a constant to 0 and it will be ignored
- *
- * @param kP proportional constant for the chassis controller
- * @param kD derivative constant for the chassis controller
- * @param smallError the error at which the chassis controller will switch to a slower control loop
- * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
- * @param largeError the error at which the chassis controller will switch to a faster control loop
- * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
- * @param slew the maximum acceleration of the chassis controller
  */
 struct ControllerSettings {
         /**
@@ -126,7 +120,7 @@ struct ControllerSettings {
         float largeError;
         float largeErrorTimeout;
         float slew;
-} ChassisController_t;
+};
 
 /**
  * @brief Struct containing constants for a drivetrain
@@ -168,23 +162,11 @@ struct Drivetrain {
         float wheelDiameter;
         float rpm;
         float chasePower;
-} Drivetrain_t;
-
-/**
- * @brief Construct a shared pointer to a tracking wheel.
- *
- * This function exists to reduce complexity for the client. The client could make their own
- * shared pointer to a motor group, but this function makes it easy
- *
- * @param ports array of signed ports. Negative ports mean the motor should be reversed
- * @param gears the gearbox used by the motors
- * @return std::shared_ptr<pros::MotorGroup> a shared pointer to the motor group
- */
-std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t> ports,
-                                                 const pros::v5::MotorGears gears);
+};
 
 /**
  * @brief Function pointer type for drive curve functions.
+ *
  * @param input The control input in the range [-127, 127].
  * @param scale The scaling factor, which can be optionally ignored.
  * @return The new value to be used.
@@ -195,6 +177,7 @@ typedef std::function<float(float, float)> DriveCurveFunction_t;
  * @brief  Default drive curve. Modifies  the input with an exponential curve. If the input is 127, the function
  * will always output 127, no matter the value of scale, likewise for -127. This curve was inspired by team 5225, the
  * Pilons. A Desmos graph of this curve can be found here: https://www.desmos.com/calculator/rcfjjg83zx
+ *
  * @param input value from -127 to 127
  * @param scale how steep the curve should be.
  * @return The new value to be used.
@@ -211,12 +194,12 @@ class Differential : public Chassis {
          * @brief Construct a new Chassis
          *
          * @param drivetrain drivetrain to be used for the chassis
-         * @param lateralSettings settings for the lateral controller
+         * @param linearSettings settings for the linear controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          */
-        Differential(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
-                     OdomSensors_t sensors);
+        Differential(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
+                     OdomSensors sensors);
 
         /**
          * @brief Initialize the chassis
@@ -319,8 +302,8 @@ class Differential : public Chassis {
          */
         void update() override;
 
-        ChassisController_t lateralSettings;
-        ChassisController_t angularSettings;
-        Drivetrain_t drivetrain;
+        ControllerSettings linearSettings;
+        ControllerSettings angularSettings;
+        Drivetrain drivetrain;
 };
 } // namespace lemlib

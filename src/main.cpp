@@ -7,36 +7,29 @@
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-// drive motors
-pros::Motor lF(-8, pros::E_MOTOR_GEARSET_06); // left front motor. port 8, reversed
-pros::Motor lM(-20, pros::E_MOTOR_GEARSET_06); // left middle motor. port 20, reversed
-pros::Motor lB(19, pros::E_MOTOR_GEARSET_06); // left back motor. port 19
-pros::Motor rF(2, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
-pros::Motor rM(11, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
-pros::Motor rB(-13, pros::E_MOTOR_GEARSET_06); // right back motor. port 13, reversed
-
 // motor groups
-pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
-pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
+// left motors on ports 8, 20, and 19. Motors on ports 8 and 20 are reversed. Using blue gearbox
+auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
+// right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
+auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
 // Inertial Sensor on port 11
-pros::Imu imu(12);
+pros::Imu imu(11);
 
-// tracking wheels
-pros::Rotation horizontalEnc(4);
-// horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
+// horizontal tracking wheel. Port 4, 2.75" diameter, 3.7" offset, back of the robot
+lemlib::TrackingWheel horizontal(4, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain settings
-lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
-                              &rightMotors, // right motor group
+lemlib::Drivetrain drivetrain(leftMotors, // left motor group
+                              rightMotors, // right motor group
                               10, // 10 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
                               360, // drivetrain rpm is 360
                               2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
-// lateral motion controller
+
+// linear motion controller
 lemlib::ControllerSettings linearController(10, // proportional gain (kP)
                                             30, // derivative gain (kD)
                                             1, // small error range, in inches
@@ -66,7 +59,8 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 );
 
 // create the chassis
-lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors);
+lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -78,15 +72,6 @@ void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
 
-    // the default rate is 50. however, if you need to change the rate, you
-    // can do the following.
-    // lemlib::bufferedStdout().setRate(...);
-    // If you use bluetooth or a wired connection, you will want to have a rate of 10ms
-
-    // for more information on how the formatting for the loggers
-    // works, refer to the fmtlib docs
-    std::cout << std::setprecision(5);
-
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
         lemlib::Pose pose(0, 0, 0);
@@ -97,6 +82,7 @@ void initialize() {
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
             // log position telemetry
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+
             // delay to save resources
             pros::delay(50);
         }

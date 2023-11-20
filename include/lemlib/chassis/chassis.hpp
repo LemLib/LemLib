@@ -140,6 +140,13 @@ class Chassis {
          */
         void calibrate(bool calibrateIMU = true);
         /**
+         * @brief Calibrate the chassis sensors
+         *
+         * @param calibrateIMU whether the IMU should be calibrated. true by default
+         */
+        void calibrate(bool calibrateIMU = true);
+
+        /**
          * @brief Set the pose of the chassis
          *
          * @param x new x value
@@ -166,7 +173,7 @@ class Chassis {
         Pose getPose(bool radians = false);
 
         /**
-         * @brief Wait until the robot has traveled a certain distance, or angle, along the path
+         * @brief Wait until the robot has traveled a certain distance along the path
          *
          * @param radians true for theta in radians, false for degrees. False by default
          * @return lemlib::Pose

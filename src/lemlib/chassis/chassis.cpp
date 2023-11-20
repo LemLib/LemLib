@@ -497,3 +497,5 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     // give the mutex back
     mutex.give();
 }
+
+}; // namespace lemlib
