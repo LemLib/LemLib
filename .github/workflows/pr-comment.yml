@@ -82,7 +82,7 @@ jobs:
             rm ${template.name}.zip;
             \`\`\``;
             
-            core.info(`Review thread message body: \n${body}`)
+            core.info(`Review thread message body: \n${body}`);
             
             await upsertComment(owner, repo, issue_number,
               "nightly-link", old_body, body);
