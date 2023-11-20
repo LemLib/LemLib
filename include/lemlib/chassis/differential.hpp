@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 
+#include "lemlib/path/path.hpp"
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 
@@ -260,7 +261,7 @@ class Differential : public Chassis {
          * @param forwards whether the robot should follow the path going forwards. true by default
          * @param maxSpeed the maximum speed the robot can move at
          */
-        void follow(const asset& path, float lookahead, int timeout, bool forwards = true, int maxSpeed = 127);
+        void follow(Path path, float lookahead, int timeout, bool forwards = true, int maxSpeed = 127);
 
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this
