@@ -31,8 +31,8 @@ float defaultDriveCurve(float input, float scale) {
  * curve, refer to the `defaultDriveCurve` documentation.
  */
 void Chassis::tank(int left, int right, float curveGain) {
-    drivetrain.leftMotors->move(driveCurve(left, curveGain));
-    drivetrain.rightMotors->move(driveCurve(right, curveGain));
+    drivetrain.leftMotors->move(driveCurve(left, curveGain, 0));
+    drivetrain.rightMotors->move(driveCurve(right, curveGain, 0));
 }
 
 /**
