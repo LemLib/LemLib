@@ -2,9 +2,11 @@
 
 #include <utility>
 #include <vector>
+#include "lemlib/path/path.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/asset.hpp"
 #include "lemlib/movements/movement.hpp"
+#include "lemlib/path/path.hpp"
 
 namespace lemlib {
 /**
@@ -23,7 +25,7 @@ class PurePursuit : public Movement {
          * @param forwards whether the chassis should move forwards or backwards. True by default
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
          */
-        PurePursuit(float trackWidth, const asset& path, float lookaheadDist, int timeout, bool forwards, int maxSpeed);
+        PurePursuit(float trackWidth, Path path, float lookaheadDist, int timeout, bool forwards, int maxSpeed);
 
         /**
          * @brief Get the distance travelled during the movement

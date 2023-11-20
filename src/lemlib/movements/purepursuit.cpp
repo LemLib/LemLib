@@ -17,8 +17,7 @@ namespace lemlib {
  * it into a vector of strings. We then convert each of these strings into
  * floats, and then push back a new waypoint to the path vector
  */
-PurePursuit::PurePursuit(float trackWidth, const asset& path, float lookaheadDist, int timeout, bool forwards,
-                         int maxSpeed)
+PurePursuit::PurePursuit(float trackWidth, Path asset, float lookaheadDist, int timeout, bool forwards, int maxSpeed)
     : Movement(),
       trackWidth(trackWidth),
       lookaheadDist(lookaheadDist),
@@ -30,17 +29,7 @@ PurePursuit::PurePursuit(float trackWidth, const asset& path, float lookaheadDis
     // get the starting time
     startTime = pros::millis();
     // decode the asset
-    // TODO: be able to pass in a buffer directly instead of covert to string
-    std::string input(reinterpret_cast<char*>(path.buf), path.size);
-    std::vector<std::string> lines = splitString(input, "\n");
-    for (const std::string& line : lines) { // loop through all lines
-        if (line == "endData" || line == "endData\r") break;
-        std::vector<std::string> pointInput = splitString(line, ", "); // parse line
-        const float x = std::stof(pointInput.at(0)); // x position
-        const float y = std::stof(pointInput.at(1)); // y position
-        const float speed = std::stof(pointInput.at(2)); // speed
-        this->path.push_back({x, y, 0, speed}); // save data
-    }
+    this->path = asset.getPath();
 }
 
 /**
