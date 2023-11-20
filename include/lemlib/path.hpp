@@ -1,5 +1,5 @@
 /**
- * @file include/lemlib/chassis/path.hpp
+ * @file include/lemlib/path.hpp
  * @author LemLib Team
  * @brief 
  * @version 0.6.0
