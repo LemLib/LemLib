@@ -23,7 +23,7 @@ jobs:
         run: |
           echo $SHA | head -c 6
         env:
-          SHA: ${{ github.head_sha }}
+          SHA: ${{ github.event.head_sha }}
           
       - name: Get short SHA
         uses: benjlevesque/short-sha@v2.2
