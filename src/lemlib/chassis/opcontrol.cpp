@@ -31,8 +31,8 @@ float defaultDriveCurve(float input, float scale) {
  * curve, refer to the `defaultDriveCurve` documentation.
  */
 void Chassis::tank(int left, int right, float curveGain) {
-    drivetrain.leftMotors->move(driveCurve(left, curveGain, 0));
-    drivetrain.rightMotors->move(driveCurve(right, curveGain, 0));
+    drivetrain.leftMotors->move(driveCurve(left, curveGain));
+    drivetrain.rightMotors->move(driveCurve(right, curveGain));
 }
 
 /**
@@ -77,8 +77,8 @@ void Chassis::curvature(int throttle, int turn, float throttleCurveGain, float t
     float leftPower = curvedThrottle + (std::abs(curvedThrottle) * curvedTurn) / 127.0;
     float rightPower = curvedThrottle - (std::abs(curvedThrottle) * curvedTurn) / 127.0;
 
-    leftPower = driveCurve(leftPower, curveGain);
-    rightPower = driveCurve(rightPower, curveGain);
+    leftPower = driveCurve(leftPower, throttleCurveGain);
+    rightPower = driveCurve(rightPower, turnCurveGain);
 
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
