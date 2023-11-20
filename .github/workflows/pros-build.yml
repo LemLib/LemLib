@@ -52,8 +52,26 @@ jobs:
           version=$(awk -F'=' '/^VERSION:=/{print $2}' Makefile)
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
+      - name: Get Template Postfix
+        id: get-template-postfix
+        run: | 
+          echo postfix="$VER.$SHA" >> "$GITHUB_OUTPUT"
+        env:
+          SHA: ${{ steps.get-short-sha.outputs.sha }}
+          VER: ${{ steps.get-version.outputs.version }}
+
+      - name: Get Template Name
+        id: get-template-name
+        run: | 
+          echo name=$TEMPLATE_NAME@$POSTFIX >> "$GITHUB_OUTPUT"
+        env:
+          POSTFIX: ${{ steps.get-template-postfix.outputs.postfix }}
+          TEMPLATE_NAME: ${{ github.event.repository.name }}
+      
       - name: Update version in Makefile
-        run: sed -i "s/^VERSION:=.*\$/VERSION:=${{ steps.get-version.outputs.version }}-c${{ env.SHA }}/" Makefile
+        run: sed -i "s/^VERSION:=.*\$/VERSION:=$POSTFIX/" Makefile
+        env:
+          POSTFIX: ${{ steps.get-template-postfix.outputs.postfix }}
 
       - name: Build PROS Project  
         run: pros make clean all
@@ -67,11 +85,11 @@ jobs:
       - name: Unzip Template
         uses: montudor/action-zip@v1.0.0
         with:
-          args: unzip "LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}.zip" -d template
+          args: unzip "${{steps.get-template-name.outputs.name}}.zip" -d template
   
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}
+          name: ${{ steps.get-template-name.outputs.name }}
           path: 'template/*'
           retention-days: 89
