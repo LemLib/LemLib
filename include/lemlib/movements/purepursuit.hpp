@@ -22,7 +22,7 @@ class PurePursuit : public Movement {
          * @param lookaheadDist the lookahead distance. Units in inches. Recommended value is 15, but can be changed if
          * needed
          * @param timeout the maximum time the robot can spend moving
-         * @param forwards whether the chassis should move forwards or backwards. True by default
+         * @param reversed whether the chassis should move forwards (false) or backwards (true)
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
          */
         PurePursuit(float trackWidth, Path path, float lookaheadDist, int timeout, bool forwards, int maxSpeed);
@@ -53,7 +53,7 @@ class PurePursuit : public Movement {
         int startTime;
         float lookaheadDist;
         int timeout;
-        bool forwards;
+        bool reversed;
         int maxSpeed;
 
         int compState;

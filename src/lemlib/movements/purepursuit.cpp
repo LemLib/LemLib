@@ -22,7 +22,7 @@ PurePursuit::PurePursuit(float trackWidth, Path asset, float lookaheadDist, int 
       trackWidth(trackWidth),
       lookaheadDist(lookaheadDist),
       timeout(timeout),
-      forwards(forwards),
+      reversed(reversed),
       maxSpeed(maxSpeed) {
     // get the current competition state. If this changes, the movement will stop
     compState = pros::competition::get_status();
@@ -63,7 +63,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     if (state == 1) return {128, 128};
 
     // add pi to theta if the robot is moving backwards
-    if (!forwards) pose.theta = std::fmod(pose.theta + M_PI, 2 * M_PI);
+    if (reversed) pose.theta = std::fmod(pose.theta + M_PI, 2 * M_PI);
 
     // update completion vars
     if (dist == 0) { // if dist is 0, this is the first time update() has been called
@@ -111,7 +111,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
         rightVel /= ratio;
     }
     // swap and reverse velocities if the robot is moving backwards
-    if (!forwards) {
+    if (reversed) {
         std::swap(leftVel, rightVel);
         leftVel *= -1;
         rightVel *= -1;

@@ -14,20 +14,20 @@ namespace lemlib {
  * initial competition state, and manipulate the target heading based on
  * whether the robot is going to be moving forwards or backwards
  */
-Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, bool forwards, float chasePower, float lead,
+Boomerang::Boomerang(FAPID linearPID, FAPID angularPID, Pose target, bool reversed, float chasePower, float lead,
                      int maxSpeed)
     : Movement(),
       linearPID(linearPID),
       angularPID(angularPID),
       target(target),
-      forwards(forwards),
+      reversed(reversed),
       chasePower(chasePower),
       lead(lead),
       maxSpeed(maxSpeed) {
     // get the current competition state. If this changes, the movement will stop
     compState = pros::competition::get_status();
     // flip target theta if moving backwards
-    if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI);
+    if (reversed) target.theta = fmod(target.theta + M_PI, 2 * M_PI);
 }
 
 /**
@@ -68,7 +68,7 @@ std::pair<int, int> Boomerang::update(Pose pose) {
     if (state == 2) return {128, 128};
 
     // if going in reverse, flip the heading of the pose
-    if (!forwards) pose.theta += M_PI;
+    if (reversed) pose.theta += M_PI;
 
     // update completion vars
     if (dist == 0) { // if dist is 0, this is the first time update() has been called
@@ -86,7 +86,7 @@ std::pair<int, int> Boomerang::update(Pose pose) {
     float angularError = angleError(pose.angle(carrot), pose.theta); // angular error
     float linearError = pose.distance(carrot) * cos(angularError); // linear error
     if (state == 1) angularError = angleError(target.theta, pose.theta); // settling behavior
-    if (!forwards) linearError = -linearError;
+    if (reversed) linearError = -linearError;
 
     // get PID outputs
     float angularPower = -angularPID.update(radToDeg(angularError), 0);
