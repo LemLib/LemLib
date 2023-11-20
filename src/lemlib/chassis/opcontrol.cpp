@@ -41,8 +41,8 @@ void Chassis::tank(int left, int right, float curveGain) {
  * controls  the robot's turning
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
- * @param throttleCurveGain the scale inputted into the drive curve function for linear velocity.
- * @param turnCurveGain the scale inputted into the drive curve function for turn velocity.If you are using the default drive
+ * @param the scale inputted into the drive curve function for linear velocity.
+ * @param the scale inputted into the drive curve function for turn velocity.If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  * 
  */
