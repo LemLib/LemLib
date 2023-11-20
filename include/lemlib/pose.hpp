@@ -29,7 +29,7 @@ class Pose {
          * @param y component
          * @param theta heading. Defaults to 0
          */
-        Pose(Length x, Length y, Angle theta = 0_deg);
+        Pose(Length x, Length y, Angle theta = 0_rad);
         /**
          * @brief Add a pose to this pose
          *
@@ -145,7 +145,7 @@ class Waypoint : public Pose {
          * @param theta
          * @param speed
          */
-        Waypoint(Length x, Length y, Angle theta = 0_deg, AngularVelocity speed = 0_rpm, int index = 0)
+        Waypoint(Length x, Length y, Angle theta = 0_rad, AngularVelocity speed = 0_rpm, int index = 0)
             : Pose(x, y, theta),
               speed(speed),
               index(index) {}

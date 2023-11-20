@@ -84,7 +84,7 @@ void initialize() {
 
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
-        lemlib::Pose pose(0_in, 0_in, 0_deg);
+        lemlib::Pose pose(0_in,0_m , 0_rad);
         while (true) {
             pose = chassis.getPose();
             // print to the brain screen
@@ -121,7 +121,7 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  */
 void autonomous() {
     // example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4 seconds
-    chassis.moveTo(20_in, 15_in, 90_deg, 4_sec);
+    chassis.moveTo(20_in, 15_in, 90_rad, 4_sec);
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1 second
     // dont turn faster than 60 (out of a maximum of 127)
     chassis.turnToPose(45_in, -45_in, 1_sec, true, 60);

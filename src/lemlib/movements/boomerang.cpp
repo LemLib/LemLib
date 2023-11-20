@@ -71,7 +71,7 @@ std::pair<int, int> Boomerang::update(Pose pose) {
     if (!forwards) pose.theta += M_PI * rad;
 
     // update completion vars
-    if (dist == 0_in) { // if dist is 0, this is the first time update() has been called
+    if (dist ==0_m ) { // if dist is 0, this is the first time update() has been called
         dist = 0.0001_in;
         prevPose = pose;
     }
@@ -90,7 +90,7 @@ std::pair<int, int> Boomerang::update(Pose pose) {
     if (!forwards) linearError = -linearError;
 
     // get PID outputs
-    float angularPower = -angularPID.update(angularError, 0_deg); // todo: test
+    float angularPower = -angularPID.update(angularError, 0_rad); // todo: test
     float linearPower = linearPID.update(linearError, 0_m);
 
     // calculate radius of turn

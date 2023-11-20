@@ -33,7 +33,7 @@ Angle RotationEncoder::getAngle() {
  * Reset/calibrate the optical encoder
  */
 bool RotationEncoder::reset() {
-    lastAngle = 0_deg;
+    lastAngle = 0_rad;
     return (rotation.reset_position()) ? 0 : 1;
 }
 }; // namespace lemlib

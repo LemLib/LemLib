@@ -37,6 +37,6 @@ class Encoder {
          */
         virtual bool reset() = 0;
     protected:
-        Angle lastAngle = 0_deg;
+        Angle lastAngle = 0_rad;
 };
 } // namespace lemlib

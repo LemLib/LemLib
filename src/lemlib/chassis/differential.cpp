@@ -122,7 +122,7 @@ void Differential::turnToHeading(Angle heading, Time timeout, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // convert heading to radians and standard form
-    Angle newHeading = 90_deg - heading;
+    Angle newHeading = 90_rad - heading;
     // set up the PID
     FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
@@ -148,7 +148,7 @@ void Differential::moveTo(Length x, Length y, Angle theta, Time timeout, bool fo
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // convert target theta to radians and standard form
-    Pose target = Pose(x, y, 90_deg - theta);
+    Pose target = Pose(x, y, 90_rad - theta);
     // set up PIDs
     FAPID<Length> linearPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
     linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,

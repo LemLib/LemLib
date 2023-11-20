@@ -52,13 +52,13 @@ class Turn : public Movement {
     private:
         FAPID<Angle> angularPID;
         std::optional<Pose> targetPose = std::nullopt;
-        Pose startPose = Pose(0_in, 0_in, 0_deg);
-        Angle targetHeading = 0_deg;
+        Pose startPose = Pose(0_in,0_m , 0_rad);
+        Angle targetHeading = 0_rad;
         bool reversed = false;
         int maxSpeed;
 
         int compState;
         int state = 0; // 0 = in progress, 1 = done
-        Angle dist = 0_deg;
+        Angle dist = 0_rad;
 };
 }; // namespace lemlib

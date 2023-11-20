@@ -43,7 +43,7 @@ Angle MotorEncoder::getAngle() {
         angles.push_back(positions[i] * (speed / inp) * 1_rot); // todo test
     }
     // calc average of the angles
-    Angle angle = 0_deg;
+    Angle angle = 0_rad;
     for (Angle value : angles) { angle += value; }
     angle /= angles.size();
     lastAngle = angle;
@@ -54,7 +54,7 @@ Angle MotorEncoder::getAngle() {
  * Reset the motor encoders.
  */
 bool MotorEncoder::reset() {
-    lastAngle = 0_deg;
+    lastAngle = 0_rad;
     return (motors->tare_position()) ? 0 : 1;
 }
 }; // namespace lemlib

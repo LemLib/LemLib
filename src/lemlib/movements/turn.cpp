@@ -71,7 +71,7 @@ std::pair<int, int> Turn::update(Pose pose) {
     if (reversed) pose.theta = units::mod(pose.theta - rot / 2, rot);
 
     // update completion vars
-    if (dist == 0_deg) { // if dist is 0, this is the first time update() has been called
+    if (dist == 0_rad) { // if dist is 0, this is the first time update() has been called
         dist = 0.0001_deg;
         startPose = pose;
     }
@@ -83,7 +83,7 @@ std::pair<int, int> Turn::update(Pose pose) {
     Angle error = angleError(targetHeading, pose.theta);
 
     // calculate the speed
-    float output = angularPID.update(0_deg, error); // todo: test
+    float output = angularPID.update(0_rad, error); // todo: test
     // cap the speed
     output = std::clamp(int(std::round(output)), -maxSpeed, maxSpeed);
     // return output

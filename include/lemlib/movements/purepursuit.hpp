@@ -45,8 +45,8 @@ class PurePursuit : public Movement {
         std::pair<int, int> update(Pose pose) override;
     private:
         std::vector<Waypoint> path;
-        Pose prevPose = Pose(0_in, 0_in, 0_deg);
-        Waypoint prevLookahead = Waypoint(0_in, 0_in);
+        Pose prevPose = Pose(0_in,0_m , 0_rad);
+        Waypoint prevLookahead = Waypoint(0_in,0_m );
         Length trackWidth;
         Time startTime;
         Length lookaheadDist;
@@ -56,6 +56,6 @@ class PurePursuit : public Movement {
 
         int compState;
         int state = 0; // 0 = in progress, 1 = done
-        Length dist = 0_in;
+        Length dist =0_m ;
 };
 }; // namespace lemlib

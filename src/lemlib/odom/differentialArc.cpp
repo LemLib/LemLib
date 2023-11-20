@@ -58,7 +58,7 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     if (!calibrateGyros) return; // return if we don't need to calibrate gyros
     // calibrate gyros
     for (auto& it : gyros) it->calibrate();
-    Timer timer(3_sec); // try calibrating gyros for 3000 ms
+    Timer timer(3_sec); // try calibrating gyros for 3 seconds
     while (!timer.isDone()) {
         for (auto& gyro : gyros) { // continuously calibrate in case of failure
             if (!gyro->isCalibrating() && !gyro->isCalibrated()) gyro->calibrate();
@@ -99,7 +99,7 @@ Angle calcDeltaTheta(TrackingWheel& tracker1, TrackingWheel& tracker2) {
  * @return Angle the average change in heading
  */
 Angle calcDeltaTheta(std::vector<std::shared_ptr<Gyro>>& gyros) {
-    Angle deltaTheta = 0_deg;
+    Angle deltaTheta = 0_rad;
     for (const auto& gyro : gyros) deltaTheta += gyro->getRotationDelta() / gyros.size();
     return deltaTheta;
 }
@@ -142,14 +142,14 @@ void DifferentialArc::update() {
     const Angle avgTheta = pose.theta + deltaTheta / 2;
 
     // calculate local change in position
-    Pose local(0_in, 0_in, deltaTheta);
+    Pose local(0_in,0_m , deltaTheta);
     // set sinDTheta2 to 1 if deltaTheta is 0. Simplifies local position calculations.
-    const float sinDTheta2 = (deltaTheta == 0_deg) ? 1 : 2 * units::sin(deltaTheta / 2).raw();
+    const float sinDTheta2 = (deltaTheta == 0_rad) ? 1 : 2 * units::sin(deltaTheta / 2).raw();
 
     // calculate local y position
     for (auto& tracker : horizontals) {
         // prevent divide by 0
-        const Length radius = (deltaTheta == 0_deg) ? tracker.getDistanceDelta()
+        const Length radius = (deltaTheta == 0_rad) ? tracker.getDistanceDelta()
                                                     : tracker.getDistanceDelta() / deltaTheta.convert(rad) +
                                                           tracker.getOffset(); // todo test
         local.y += sinDTheta2 * radius / horizontals.size();
@@ -158,14 +158,14 @@ void DifferentialArc::update() {
     // calculate local x position
     if (verticals.size() > 0) { // use dedicated tracking wheels if we have any
         for (auto& tracker : verticals) {
-            const Length radius = (deltaTheta == 0_deg)
+            const Length radius = (deltaTheta == 0_rad)
                                       ? tracker.getDistanceDelta()
                                       : tracker.getDistanceDelta() / deltaTheta.convert(rad) + tracker.getOffset();
             local.x += sinDTheta2 * radius / verticals.size();
         }
     } else if (drivetrain.size() > 0) { // use motor encoders if we have no dedicated tracking wheels
         for (auto& motor : drivetrain) {
-            const Length radius = (deltaTheta == 0_deg)
+            const Length radius = (deltaTheta == 0_rad)
                                       ? motor.getDistanceDelta()
                                       : motor.getDistanceDelta() / deltaTheta.convert(rad) + motor.getOffset();
             local.x += sinDTheta2 * radius / drivetrain.size();

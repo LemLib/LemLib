@@ -40,7 +40,7 @@ PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadD
         const Length x = std::stof(pointInput.at(0)) * in; // x position
         const Length y = std::stof(pointInput.at(1)) * in; // y position
         const AngularVelocity speed = std::stof(pointInput.at(2)) * rpm; // speed
-        this->path.push_back({x, y, 0_deg, speed}); // save data
+        this->path.push_back({x, y, 0_rad, speed}); // save data
     }
 }
 
@@ -78,7 +78,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     if (!forwards) pose.theta = units::mod(pose.theta + rot / 2, rot);
 
     // update completion vars
-    if (dist == 0_in) { // if dist is 0, this is the first time update() has been called
+    if (dist ==0_m ) { // if dist is 0, this is the first time update() has been called
         dist = 0.0001_in;
         prevPose = pose;
     }
@@ -102,7 +102,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
         Pose intersect = circleLineIntersect(last, cur, pose, lookaheadDist);
         // if the intersection is not the robot's current position, then we have found the lookahead point
         if (intersect != pose) {
-            lookahead = {intersect.x, intersect.y, 0_deg, 0_rpm, i};
+            lookahead = {intersect.x, intersect.y, 0_rad, 0_rpm, i};
             break;
         }
     }

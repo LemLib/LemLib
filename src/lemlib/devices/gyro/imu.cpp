@@ -62,7 +62,7 @@ bool Imu::isConnected() { return imu.is_installed(); }
  */
 Angle Imu::getHeading() {
     Angle heading = units::mod(getRotation(), 1_rot);
-    if (heading < 0_deg) heading += 1_rot;
+    if (heading < 0_rad) heading += 1_rot;
     return heading;
 }
 
