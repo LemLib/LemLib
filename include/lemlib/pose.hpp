@@ -105,14 +105,14 @@ class Pose {
          * @param other the other pose
          * @return Length
          */
-        Length distance(Pose other);
+        Length distance(Pose other) const;
         /**
          * @brief Get the angle between two poses
          *
          * @param other the other pose
          * @return Angle
          */
-        Angle angle(Pose other);
+        Angle angle(Pose other) const;
         /**
          * @brief Rotate a pose by an angle
          *
@@ -121,7 +121,7 @@ class Pose {
          * @param angle angle
          * @return Pose
          */
-        Pose rotate(Angle angle);
+        Pose rotate(Angle angle) const;
 };
 
 /**

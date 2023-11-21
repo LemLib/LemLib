@@ -122,7 +122,7 @@ Pose Pose::lerp(Pose other, float t) const { return Pose(x + (other.x - x) * t, 
  * @param other the other pose
  * @return Length
  */
-Length Pose::distance(Pose other) { return units::sqrt(units::square(x - other.x) + units::square(y - other.y)); }
+Length Pose::distance(Pose other) const { return units::sqrt(units::square(x - other.x) + units::square(y - other.y)); }
 
 /**
  * @brief Get the angle between two poses
@@ -130,7 +130,7 @@ Length Pose::distance(Pose other) { return units::sqrt(units::square(x - other.x
  * @param other the other pose
  * @return Angle
  */
-Angle Pose::angle(Pose other) { return units::atan2(other.y - y, other.x - x); }
+Angle Pose::angle(Pose other) const { return units::atan2(other.y - y, other.x - x); }
 
 /**
  * @brief Rotate a pose by an angle
@@ -138,7 +138,7 @@ Angle Pose::angle(Pose other) { return units::atan2(other.y - y, other.x - x); }
  * @param angle angle
  * @return Pose
  */
-Pose Pose::rotate(Angle angle) {
+Pose Pose::rotate(Angle angle) const {
     const Number cosAngle = units::cos(angle);
     const Number sinAngle = units::sin(angle);
 
