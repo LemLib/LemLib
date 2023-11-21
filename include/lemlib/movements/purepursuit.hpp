@@ -19,10 +19,10 @@ class PurePursuit : public Movement {
          * @param path const reference to the asset containing the path
          * @param lookaheadDist the lookahead distance. Recommended value is 15, but can be changed if needed
          * @param timeout the maximum time the robot can spend moving
-         * @param forwards whether the chassis should move forwards or backwards. True by default
+         * @param reversed whether the chassis should move forwards (false) or backwards (true)
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
          */
-        PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, Time timeout, bool forwards,
+        PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, Time timeout, bool reversed,
                     int maxSpeed);
 
         /**
@@ -51,7 +51,7 @@ class PurePursuit : public Movement {
         Time startTime;
         Length lookaheadDist;
         Time timeout;
-        bool forwards;
+        bool reversed;
         int maxSpeed;
 
         int compState;

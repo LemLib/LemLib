@@ -17,13 +17,13 @@ namespace lemlib {
  * it into a vector of strings. We then convert each of these strings into
  * floats, and then push back a new waypoint to the path vector
  */
-PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, Time timeout, bool forwards,
+PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadDist, Time timeout, bool reversed,
                          int maxSpeed)
     : Movement(),
       trackWidth(trackWidth),
       lookaheadDist(lookaheadDist),
       timeout(timeout),
-      forwards(forwards),
+      reversed(reversed),
       maxSpeed(maxSpeed) {
     // get the current competition state. If this changes, the movement will stop
     compState = pros::competition::get_status();
@@ -75,7 +75,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     if (state == 1) return {128, 128};
 
     // add pi to theta if the robot is moving backwards
-    if (!forwards) pose.theta = units::mod(pose.theta + rot / 2, rot);
+    if (reversed) pose.theta = units::mod(pose.theta + rot / 2, rot);
 
     // update completion vars
     if (dist == 0_m) { // if dist is 0, this is the first time update() has been called
@@ -123,7 +123,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
         rightVel /= ratio;
     }
     // swap and reverse velocities if the robot is moving backwards
-    if (!forwards) {
+    if (reversed) {
         std::swap(leftVel, rightVel);
         leftVel *= -1;
         rightVel *= -1;

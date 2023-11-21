@@ -242,14 +242,14 @@ class Differential : public Chassis {
          * @param y y location
          * @param theta target angle
          * @param timeout longest time the robot can spend moving
-         * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
-         * backwards
+         * @param reversed whether the robot should move forwards or backwards. true for backwards, false for
+         * forwards (default)
          * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
          * default to global value
          * @param maxSpeed the maximum speed the robot can move at. 127 at default
          */
-        void moveTo(Length x, Length y, Angle theta, Time timeout, bool forwards = true, float chasePower = 0,
+        void moveTo(Length x, Length y, Angle theta, Time timeout, bool reversed = true, float chasePower = 0,
                     float lead = 0.6, int maxSpeed = 127);
 
         /**
@@ -259,10 +259,10 @@ class Differential : public Chassis {
          * @param lookahead the lookahead distance. Larger values will make the robot move faster but will follow the
          * path less accurately
          * @param timeout the maximum time the robot can spend moving
-         * @param forwards whether the robot should follow the path going forwards. true by default
+         * @param reversed whether the robot should follow the path in reverse. false by default
          * @param maxSpeed the maximum speed the robot can move at
          */
-        void follow(const asset& path, Length lookahead, Time timeout, bool forwards = true, int maxSpeed = 127);
+        void follow(const asset& path, Length lookahead, Time timeout, bool reversed = true, int maxSpeed = 127);
 
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this

@@ -36,7 +36,7 @@ class Pose {
          * @param other other pose
          * @return Pose
          */
-        Pose operator+(const Pose& other);
+        Pose operator+(const Pose& other) const;
         /**
          * @brief Set the value of this pose to its value + the value of another pose
          *
@@ -49,7 +49,7 @@ class Pose {
          * @param other other pose
          * @return Pose
          */
-        Pose operator-(const Pose& other);
+        Pose operator-(const Pose& other) const;
         /**
          * @brief Set the value of this pose to its value - the value of another pose
          *
@@ -62,35 +62,35 @@ class Pose {
          * @param other other pose
          * @return Pose
          */
-        float operator*(const Pose& other);
+        float operator*(const Pose& other) const;
         /**
          * @brief Multiply a pose by a float
          *
          * @param other float
          * @return Pose
          */
-        Pose operator*(const float& other);
+        Pose operator*(const float& other) const;
         /**
          * @brief Divide a pose by a float
          *
          * @param other float
          * @return Pose
          */
-        Pose operator/(const float& other);
+        Pose operator/(const float& other) const;
         /**
          * @brief Check if two poses are equal
          *
          * @param other the other pose
          * @return bool
          */
-        bool operator==(const Pose& other);
+        bool operator==(const Pose& other) const;
         /**
          * @brief Check if two poses are not equal
          *
          * @param other the other pose
          * @return bool
          */
-        bool operator!=(const Pose& other);
+        bool operator!=(const Pose& other) const;
         /**
          * @brief Linearly interpolate between two poses
          *
@@ -98,7 +98,7 @@ class Pose {
          * @param t t value
          * @return Pose
          */
-        Pose lerp(Pose other, float t);
+        Pose lerp(const Pose other, float t) const;
         /**
          * @brief Get the distance between two poses
          *

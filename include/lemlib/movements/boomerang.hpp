@@ -18,13 +18,13 @@ class Boomerang : public Movement {
          * @param linearPID the linear PID to use
          * @param angularPID the angular PID to use
          * @param target the target pose
-         * @param forwards whether the robot should move forwards or backwards. true for forwards, false for
+         * @param reversed whether the robot should move forwards or backwards. false for forwards, true for
          * backwards
          * @param lead the lead parameter. Determines how curved the robot will move. (0 < lead < 1)
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          * @param maxSpeed the maximum speed the robot can move at
          */
-        Boomerang(FAPID<Length> linearPID, FAPID<Angle> angularPID, Pose target, bool forwards, float chasePower,
+        Boomerang(FAPID<Length> linearPID, FAPID<Angle> angularPID, Pose target, bool reversed, float chasePower,
                   float lead, int maxSpeed);
 
         /**
@@ -50,7 +50,7 @@ class Boomerang : public Movement {
         FAPID<Length> linearPID;
         Pose target;
         Pose prevPose = Pose(0_in, 0_m, 0_rad);
-        bool forwards;
+        bool reversed;
         float chasePower;
         float lead;
         int maxSpeed;

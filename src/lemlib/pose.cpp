@@ -35,7 +35,7 @@ Pose::Pose(Length x, Length y, Angle theta)
  * @param other other pose
  * @return Pose
  */
-Pose Pose::operator+(const Pose& other) { return Pose(x + other.x, y + other.y, theta); }
+Pose Pose::operator+(const Pose& other) const { return Pose(x + other.x, y + other.y, theta); }
 
 /**
  * @brief Set the value of this pose to its value + the value of another pose
@@ -54,7 +54,7 @@ void Pose::operator+=(const Pose& other) {
  * @param other other pose
  * @return Pose
  */
-Pose Pose::operator-(const Pose& other) { return Pose(x - other.x, y - other.y, theta); }
+Pose Pose::operator-(const Pose& other) const { return Pose(x - other.x, y - other.y, theta); }
 
 /**
  * @brief Set the value of this pose to its value - the value of another pose
@@ -73,7 +73,7 @@ void Pose::operator-=(const Pose& other) {
  * @param other other pose
  * @return Pose
  */
-float Pose::operator*(const Pose& other) { return (x * other.x + y * other.y).raw(); } // todo
+float Pose::operator*(const Pose& other) const { return (x * other.x + y * other.y).raw(); } // todo
 
 /**
  * @brief Multiply a pose by a float
@@ -81,7 +81,7 @@ float Pose::operator*(const Pose& other) { return (x * other.x + y * other.y).ra
  * @param other float
  * @return Pose
  */
-Pose Pose::operator*(const float& other) { return Pose(x * other, y * other, theta); }
+Pose Pose::operator*(const float& other) const { return Pose(x * other, y * other, theta); }
 
 /**
  * @brief Divide a pose by a float
@@ -89,7 +89,7 @@ Pose Pose::operator*(const float& other) { return Pose(x * other, y * other, the
  * @param other float
  * @return Pose
  */
-Pose Pose::operator/(const float& other) { return Pose(x / other, y / other, theta); }
+Pose Pose::operator/(const float& other) const { return Pose(x / other, y / other, theta); }
 
 /**
  * @brief Check if two poses are equal
@@ -97,7 +97,7 @@ Pose Pose::operator/(const float& other) { return Pose(x / other, y / other, the
  * @param other the other pose
  * @return bool
  */
-bool Pose::operator==(const Pose& other) { return x == other.x && y == other.y && theta == other.theta; }
+bool Pose::operator==(const Pose& other) const { return x == other.x && y == other.y && theta == other.theta; }
 
 /**
  * @brief Check if two poses are not equal
@@ -105,7 +105,7 @@ bool Pose::operator==(const Pose& other) { return x == other.x && y == other.y &
  * @param other the other pose
  * @return bool
  */
-bool Pose::operator!=(const Pose& other) { return x != other.x || y != other.y || theta != other.theta; }
+bool Pose::operator!=(const Pose& other) const { return x != other.x || y != other.y || theta != other.theta; }
 
 /**
  * @brief Linearly interpolate between two poses
@@ -114,7 +114,7 @@ bool Pose::operator!=(const Pose& other) { return x != other.x || y != other.y |
  * @param t t value
  * @return Pose
  */
-Pose Pose::lerp(Pose other, float t) { return Pose(x + (other.x - x) * t, y + (other.y - y) * t, theta); }
+Pose Pose::lerp(Pose other, float t) const { return Pose(x + (other.x - x) * t, y + (other.y - y) * t, theta); }
 
 /**
  * @brief Get the distance between two poses
