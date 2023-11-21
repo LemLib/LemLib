@@ -265,24 +265,26 @@ class Chassis {
          */
         void tank(int left, int right, float curveGain = 0.0);
         /**
-         * @brief Control the robot during the driver using the arcade drive control scheme. In this control
-         * scheme one joystick axis controls the forwards and backwards movement of the robot, while the other
-         * joystick axis controls  the robot's turning
+         * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
+         * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
+         * controls  the robot's turning
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
-         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+         * @param the scale inputted into the drive curve function for linear velocity.
+         * @param the scale inputted into the drive curve function for turn velocity.If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
+         * 
          */
         void arcade(int throttle, int turn, float throttleCurveGain = 0.0, float turnCurveGain = 0);
         /**
-         * @brief Control the robot during the driver using the curvature drive control scheme. This control
-         * scheme is very similar to arcade drive, except the second joystick axis controls the radius of the
-         * curve that the drivetrain makes, rather than the speed. This means that the driver can accelerate in
-         * a turn without changing the radius of that turn. This control scheme defaults to arcade when forward
-         * is zero.
+         * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
+         * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
+         * drivetrain makes, rather than the speed. This means that the driver can accelerate in a turn without changing
+         * the radius of that turn. This control scheme defaults to arcade when forward is zero.
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
-         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
+         * @param the scale inputted into the drive curve function for linear velocity.
+         * @param the scale inputted into the drive curve function for turn velocity. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void curvature(int throttle, int turn, float throttleCurveGain = 0.0, float turnCurveGain = 0);
