@@ -14,10 +14,11 @@ jobs:
     
     steps:
       - name: Get short SHA
-        uses: benjlevesque/short-sha@v2.2
         id: short-sha
-        with:
-          length: 6
+        run: |
+          echo "sha=$(echo $SHA | head -c 6)" >> $GITHUB_OUTPUT
+        env:
+          SHA: ${{ github.event.after }}
       
       - name: Set short SHA
         run: echo $SHA
@@ -46,13 +47,31 @@ jobs:
         uses: actions/checkout@v2.3.4
       
       - name: Get version number
-        id: get-version
+        id: version
         run: |
           version=$(awk -F'=' '/^VERSION:=/{print $2}' Makefile)
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
+      - name: Get Template Postfix
+        id: template-postfix
+        run: | 
+          echo postfix="$VER+$SHA" >> "$GITHUB_OUTPUT"
+        env:
+          SHA: ${{ steps.short-sha.outputs.sha }}
+          VER: ${{ steps.version.outputs.version }}
+
+      - name: Get Template Name
+        id: template-name
+        run: | 
+          echo name=$TEMPLATE_NAME@$POSTFIX >> "$GITHUB_OUTPUT"
+        env:
+          POSTFIX: ${{ steps.template-postfix.outputs.postfix }}
+          TEMPLATE_NAME: ${{ github.event.repository.name }}
+      
       - name: Update version in Makefile
-        run: sed -i "s/^VERSION:=.*\$/VERSION:=${{ steps.get-version.outputs.version }}-c${{ env.SHA }}/" Makefile
+        run: sed -i "s/^VERSION:=.*\$/VERSION:=$POSTFIX/" Makefile
+        env:
+          POSTFIX: ${{ steps.template-postfix.outputs.postfix }}
 
       - name: Build PROS Project  
         run: make clean quick -j
@@ -66,11 +85,11 @@ jobs:
       - name: Unzip Template
         uses: montudor/action-zip@v1.0.0
         with:
-          args: unzip "LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}.zip" -d template
+          args: unzip "${{steps.template-name.outputs.name}}.zip" -d template
   
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: LemLib@${{ steps.get-version.outputs.version }}-c${{ env.SHA }}
+          name: ${{ steps.template-name.outputs.name }}
           path: 'template/*'
           retention-days: 89
