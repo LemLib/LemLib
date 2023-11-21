@@ -30,7 +30,13 @@ class Odom {
          * @param pose the new pose
          */
         void setPose(Pose pose);
-        
+        /**
+         * @brief Describes how often the sensors are updated, and therefore how often odometry should be updated
+         * 
+         * @warning should not be used by ordinary users
+         * 
+         * @return time, in ms, between sensor data updates
+         */
         virtual int getPollRate() const = 0;
     protected:
         // heading set to M_PI_2 because odom should default to IMU 0 angle
