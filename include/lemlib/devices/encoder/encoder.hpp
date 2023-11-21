@@ -12,7 +12,8 @@ class Encoder {
          * 
          * @param pollRate int ms describing how often the sensor's data is updated (for v5 it should 10ms)
          */
-        Encoder(const int pollRate) : pollRate(pollRate) {}
+        Encoder(const int pollRate)
+            : pollRate(pollRate) {}
 
         /**
          * @brief Get the angle rotated by the encoder, in radians

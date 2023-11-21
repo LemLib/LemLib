@@ -123,9 +123,9 @@ class TrackingWheel {
         float getDiameter() const;
         /**
          * @brief Informs the Odometry task how often this sensor should be read
-         * 
+         *
          * @warning should not be used by ordinary users
-         * 
+         *
          * @return time, in ms, between sensor data updates
          */
         int getPollRate() const;

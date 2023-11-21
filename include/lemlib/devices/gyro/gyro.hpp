@@ -12,7 +12,9 @@ class Gyro {
          * 
          * @param pollRate int ms describing how often the sensor's data is updated (for v5 it should 10ms)
          */
-        Gyro(const int pollRate) : pollRate(pollRate) {}
+        Gyro(const int pollRate)
+            : pollRate(pollRate) {}
+
         /**
          * @brief Calibrate the gyro
          *

@@ -14,7 +14,8 @@ namespace lemlib {
  * some wacky stuff in the constructor so our users still have the choice of a flag
  */
 RotationEncoder::RotationEncoder(int port, bool reversed, float ratio)
-    : Encoder(10), rotation(pros::Rotation(int(port) * sgn(float(!reversed) - 0.1))),
+    : Encoder(10),
+      rotation(pros::Rotation(int(port) * sgn(float(!reversed) - 0.1))),
       ratio(ratio) {}
 
 /**

@@ -44,6 +44,5 @@ class DifferentialArc : public Odom {
         std::vector<TrackingWheel> horizontals;
         std::vector<TrackingWheel> drivetrain;
         std::vector<std::shared_ptr<Gyro>> gyros;
-
 };
 } // namespace lemlib

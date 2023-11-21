@@ -11,7 +11,5 @@ float Encoder::getAngleDelta(bool update) {
     return (angle - prevAngle);
 }
 
-int Encoder::getPollRate() const {
-    return pollRate;
-}
+int Encoder::getPollRate() const { return pollRate; }
 }; // namespace lemlib
