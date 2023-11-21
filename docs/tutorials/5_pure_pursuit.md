@@ -44,10 +44,10 @@ ASSET(example2_txt)
 
 void autonomous() {
     // lookahead distance: 15 inches
-    // timeout: 2000 ms
-    chassis.follow(example_txt, 15, 2000);
+    // timeout: 2 seconds
+    chassis.follow(example_txt, 15_in, 2_sec);
     // follow the next path, but with the robot going backwards
-    chassis.follow(example2_txt, 15, 2000, false);
+    chassis.follow(example2_txt, 15_in, 2_sec, false);
 }
 ```
 

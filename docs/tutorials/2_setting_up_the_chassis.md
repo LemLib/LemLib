@@ -115,22 +115,22 @@ You don't need all these sensors though. Even if you don't have any, you can sti
 Lemlib uses 2 PIDs to control the motion of the robot (except for pure pursuit). Every chassis will have different constants however, so you will need to tune them. More about that in the next tutorial. For now, just copy and paste the following code into your `main.cpp` file:
 ```cpp
 // forward/backward PID
-lemlib::ControllerSettings linearController(10, // proportional gain (kP)
+lemlib::ControllerSettings<Length> linearController(10, // proportional gain (kP)
                                             30, // derivative gain (kD)
-                                            1, // small error range, in inches
-                                            100, // small error range timeout, in milliseconds
-                                            3, // large error range, in inches
-                                            500, // large error range timeout, in milliseconds
+                                            1_in, // small error range
+                                            100_ms, // small error range timeout
+                                            3_in, // large error range
+                                            500_ms, // large error range timeout
                                             20 // maximum acceleration (slew)
 );
 
 // turning PID
-lemlib::ControllerSettings angularController(2, // proportional gain (kP)
+lemlib::ControllerSettings<Angle> angularController(2, // proportional gain (kP)
                                              10, // derivative gain (kD)
-                                             1, // small error range, in degrees
-                                             100, // small error range timeout, in milliseconds
-                                             3, // large error range, in degrees
-                                             500, // large error range timeout, in milliseconds
+                                             1_deg, // small error range
+                                             100_ms, // small error range timeout
+                                             3_deg, // large error range
+                                             500_ms, // large error range timeout
                                              0 // maximum acceleration (slew). 0 means no limit
 );
 ```
@@ -184,22 +184,22 @@ lemlib::OdomSensors sensors(&left_tracking_wheel, // vertical tracking wheel 1
 );
 
 // forward/backward PID
-lemlib::ControllerSettings linearController(10, // proportional gain (kP)
+lemlib::ControllerSettings<Length> linearController(10, // proportional gain (kP)
                                             30, // derivative gain (kD)
-                                            1, // small error range, in inches
-                                            100_ms, // small error range timeout, in milliseconds
-                                            3, // large error range, in inches
-                                            500_ms, // large error range timeout, in milliseconds
+                                            1_in, // small error range
+                                            100_ms, // small error range timeout
+                                            3_in, // large error range
+                                            500_ms, // large error range timeout
                                             20 // maximum acceleration (slew)
 );
 
 // turning PID
-lemlib::ControllerSettings angularController(2, // proportional gain (kP)
+lemlib::ControllerSettings<Angle> angularController(2, // proportional gain (kP)
                                              10, // derivative gain (kD)
-                                             1, // small error range, in degrees
-                                             100, // small error range timeout, in milliseconds
-                                             3, // large error range, in degrees
-                                             500, // large error range timeout, in milliseconds
+                                             1_deg, // small error range
+                                             100_ms, // small error range timeout
+                                             3_deg, // large error range
+                                             500_ms, // large error range timeout
                                              0 // maximum acceleration (slew). 0 means no limit
 );
 
