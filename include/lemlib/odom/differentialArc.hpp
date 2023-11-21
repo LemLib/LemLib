@@ -33,9 +33,9 @@ class DifferentialArc : public Odom {
         void update() override;
         /**
          * @brief Describes how often the sensors are updated, and therefore how often odometry should be updated
-         * 
+         *
          * @warning should not be used by ordinary users
-         * 
+         *
          * @return time, in ms, between sensor data updates
          */
         int getPollRate() const override;

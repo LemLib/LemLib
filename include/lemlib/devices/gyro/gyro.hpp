@@ -9,7 +9,7 @@ class Gyro {
     public:
         /**
          * @brief Construct a new Gyro
-         * 
+         *
          * @param pollRate int ms describing how often the sensor's data is updated (for v5 it should 10ms)
          */
         Gyro(const int pollRate)
@@ -85,9 +85,9 @@ class Gyro {
         virtual std::uint8_t getPort() = 0;
         /**
          * @brief Informs the Odometry task how often this sensor should be read
-         * 
+         *
          * @warning should not be used by ordinary users
-         * 
+         *
          * @return time, in ms, between sensor data updates
          */
         int getPollRate() const;
