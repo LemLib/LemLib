@@ -24,77 +24,8 @@
 #include "lemlib/devices/gyro/imu.hpp"
 
 namespace lemlib {
-/**
-<<<<<<< HEAD
- * @brief Struct containing all the sensors used for odometry
- *
- * The sensors are stored in a struct so that they can be easily passed to the chassis class
- * The variables are pointers so that they can be set to nullptr if they are not used
- * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
- *
- * @param vertical1 pointer to the first vertical tracking wheel
- * @param vertical2 pointer to the second vertical tracking wheel
- * @param horizontal1 pointer to the first horizontal tracking wheel
- * @param horizontal2 pointer to the second horizontal tracking wheel
- * @param imu pointer to the IMU
- */
-typedef struct {
-        TrackingWheel* vertical1;
-        TrackingWheel* vertical2;
-        TrackingWheel* horizontal1;
-        TrackingWheel* horizontal2;
-        pros::Imu* imu;
-} OdomSensors_t;
 
 /**
- * @brief Struct containing constants for a chassis controller
- *
- * The constants are stored in a struct so that they can be easily passed to the chassis class
- * Set a constant to 0 and it will be ignored
- *
- * @param kP proportional constant for the chassis controller
- * @param kD derivative constant for the chassis controller
- * @param smallError the error at which the chassis controller will switch to a slower control loop
- * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
- * @param largeError the error at which the chassis controller will switch to a faster control loop
- * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
- * @param slew the maximum acceleration of the chassis controller
- */
-template <isQuantity Q> struct ChassisController_t {
-        float kP;
-        float kD;
-        Q smallError;
-        Time smallErrorTimeout;
-        Q largeError;
-        Time largeErrorTimeout;
-        float slew;
-};
-
-/**
- * @brief Struct containing constants for a drivetrain
- *
- * The constants are stored in a struct so that they can be easily passed to the chassis class
- * Set a constant to 0 and it will be ignored
- *
- * @param leftMotors pointer to the left motors
- * @param rightMotors pointer to the right motors
- * @param trackWidth the track width of the robot
- * @param wheelDiameter the diameter of the wheel used on the drivetrain
- * @param rpm the rpm of the wheels
- * @param chasePower higher values make the robot move faster but causes more overshoot on turns
- */
-typedef struct {
-        std::shared_ptr<pros::MotorGroup> leftMotors;
-        std::shared_ptr<pros::MotorGroup> rightMotors;
-        Length trackWidth;
-        Length wheelDiameter;
-        AngularVelocity speed;
-        float chasePower;
-} Drivetrain_t;
-
-/**
-=======
->>>>>>> remote/refactor
  * @brief Construct a shared pointer to a tracking wheel.
  *
  * This function exists to reduce complexity for the client. The client could make their own
@@ -161,7 +92,7 @@ struct OdomSensors {
  * @brief Struct containing constants for a chassis controller
  *
  */
-struct ControllerSettings {
+template <isQuantity Q> struct ControllerSettings {
         /**
          * The constants are stored in a struct so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
@@ -174,8 +105,8 @@ struct ControllerSettings {
          * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
          * @param slew the maximum acceleration of the chassis controller
          */
-        ControllerSettings(float kP, float kD, float smallError, float smallErrorTimeout, float largeError,
-                           float largeErrorTimeout, float slew)
+        ControllerSettings(float kP, float kD, Q smallError, Time smallErrorTimeout, Q largeError,
+                           Time largeErrorTimeout, float slew)
             : kP(kP),
               kD(kD),
               smallError(smallError),
@@ -186,10 +117,10 @@ struct ControllerSettings {
 
         float kP;
         float kD;
-        float smallError;
-        float smallErrorTimeout;
-        float largeError;
-        float largeErrorTimeout;
+        Q smallError;
+        Time smallErrorTimeout;
+        Q largeError;
+        Time largeErrorTimeout;
         float slew;
 };
 
@@ -203,7 +134,7 @@ struct ControllerSettings {
  * @param rightMotors pointer to the right motors
  * @param trackWidth the track width of the robot
  * @param wheelDiameter the diameter of the wheel used on the drivetrain
- * @param rpm the rpm of the wheels
+ * @param speed the rpm of the wheels
  * @param chasePower higher values make the robot move faster but causes more overshoot on turns
  */
 struct Drivetrain {
@@ -219,19 +150,19 @@ struct Drivetrain {
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          */
         Drivetrain(std::shared_ptr<pros::MotorGroup> leftMotors, std::shared_ptr<pros::MotorGroup> rightMotors,
-                   float trackWidth, float wheelDiameter, float rpm, float chasePower)
+                   Length trackWidth, Length wheelDiameter, AngularVelocity speed, float chasePower)
             : leftMotors(leftMotors),
               rightMotors(rightMotors),
               trackWidth(trackWidth),
               wheelDiameter(wheelDiameter),
-              rpm(rpm),
+              speed(speed),
               chasePower(chasePower) {}
 
         std::shared_ptr<pros::MotorGroup> leftMotors;
         std::shared_ptr<pros::MotorGroup> rightMotors;
-        float trackWidth;
-        float wheelDiameter;
-        float rpm;
+        Length trackWidth;
+        Length wheelDiameter;
+        AngularVelocity speed;
         float chasePower;
 };
 
@@ -269,8 +200,8 @@ class Differential : public Chassis {
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          */
-        Differential(Drivetrain_t drivetrain, ChassisController_t<Length> lateralSettings,
-                     ChassisController_t<Angle> angularSettings, OdomSensors_t sensors);
+        Differential(Drivetrain drivetrain, ControllerSettings<Length> lateralSettings,
+                     ControllerSettings<Angle> angularSettings, OdomSensors sensors);
 
         /**
          * @brief Initialize the chassis
@@ -373,8 +304,8 @@ class Differential : public Chassis {
          */
         void update() override;
 
-        struct ChassisController_t<Length> lateralSettings;
-        struct ChassisController_t<Angle> angularSettings;
-        Drivetrain_t drivetrain;
+        struct ControllerSettings<Length> lateralSettings;
+        struct ControllerSettings<Angle> angularSettings;
+        Drivetrain drivetrain;
 };
 } // namespace lemlib

@@ -13,77 +13,40 @@ auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::bl
 // right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
 auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
-<<<<<<< HEAD
-// vertical tracking wheel. Port 4, not reversed, 2.75" diameter, 3.7" offset, left of the robot center
-lemlib::TrackingWheel vertical(4, lemlib::Omniwheel::NEW_275, -3.7_in);
-
-// drivetrain
-lemlib::Drivetrain_t drivetrain {
-    leftDrive, // left drivetrain motors
-    rightDrive, // right drivetrain motors
-    10_in, // track width of robot (distance from left wheels to distance of right)
-    lemlib::Omniwheel::NEW_4, // wheel diameter
-    300_rpm, // rpm of the drivetrain
-    8 // chase power. Higher values result in sharper turns
-};
-
-// lateral motion controller
-lemlib::ChassisController_t<Length> lateralController {
-    10, // kP
-    30, // kD
-    1_in, // small exit range
-    100_ms, // small exit timeout
-    3_in, // large error range
-    500_ms, // large error timeout
-    20 // acceleration cap
-};
-
-// angular motion controller
-lemlib::ChassisController_t<Angle> angularController {
-    2, // kP
-    10, // kD
-    1_deg, // small exit range
-    100_ms, // small exit timeout
-    3_deg, // large exit range
-    500_ms, // large exit timeout
-    20 // acceleration cap
-};
-=======
 // Inertial Sensor on port 11
 pros::Imu imu(11);
 
 // horizontal tracking wheel. Port 4, 2.75" diameter, 3.7" offset, back of the robot
-lemlib::TrackingWheel horizontal(4, lemlib::Omniwheel::NEW_275, -3.7);
+lemlib::TrackingWheel horizontal(4, lemlib::Omniwheel::NEW_275, -3.7_in);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(leftMotors, // left motor group
                               rightMotors, // right motor group
-                              10, // 10 inch track width
+                              10_in, // 10 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-                              360, // drivetrain rpm is 360
+                              360_rpm, // drivetrain rpm is 360
                               2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 // linear motion controller
-lemlib::ControllerSettings linearController(10, // proportional gain (kP)
-                                            30, // derivative gain (kD)
-                                            1, // small error range, in inches
-                                            100, // small error range timeout, in milliseconds
-                                            3, // large error range, in inches
-                                            500, // large error range timeout, in milliseconds
-                                            20 // maximum acceleration (slew)
+lemlib::ControllerSettings<Length> linearController(10, // proportional gain (kP)
+                                                    30, // derivative gain (kD)
+                                                    1_in, // small error range, in inches
+                                                    100_ms, // small error range timeout, in milliseconds
+                                                    3_in, // large error range, in inches
+                                                    500_ms, // large error range timeout, in milliseconds
+                                                    20 // maximum acceleration (slew)
 );
 
 // angular motion controller
-lemlib::ControllerSettings angularController(2, // proportional gain (kP)
-                                             10, // derivative gain (kD)
-                                             1, // small error range, in degrees
-                                             100, // small error range timeout, in milliseconds
-                                             3, // large error range, in degrees
-                                             500, // large error range timeout, in milliseconds
-                                             20 // maximum acceleration (slew)
+lemlib::ControllerSettings<Angle> angularController(2, // proportional gain (kP)
+                                                    10, // derivative gain (kD)
+                                                    1_deg, // small error range, in degrees
+                                                    100_ms, // small error range timeout, in milliseconds
+                                                    3_deg, // large error range, in degrees
+                                                    500_ms, // large error range timeout, in milliseconds
+                                                    20 // maximum acceleration (slew)
 );
->>>>>>> remote/refactor
 
 // sensors for odometry
 // note that in this example we use internal motor encoders, so we don't pass vertical tracking wheels
@@ -109,7 +72,7 @@ void initialize() {
 
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
-        lemlib::Pose pose(0_in,0_m , 0_rad);
+        lemlib::Pose pose(0_in, 0_m, 0_rad);
         while (true) {
             pose = chassis.getPose();
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
@@ -148,13 +111,8 @@ void autonomous() {
     chassis.turnToPose(45_in, -45_in, 1_sec, true, 60);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4 seconds
     // following the path with the back of the robot (forwards = false)
-<<<<<<< HEAD
-    // see line 110 to see how to define a path
-    chassis.follow(example_txt, 15_in, 4_sec, false);
-=======
     // see line 116 to see how to define a path
-    chassis.follow(example_txt, 15, 4000, false);
->>>>>>> remote/refactor
+    chassis.follow(example_txt, 15_in, 4_sec, false);
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait

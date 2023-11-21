@@ -35,9 +35,9 @@ Now that we have all the information we need, we can create a `lemlib::Drivetrai
 ```cpp
 lemlib::Drivetrain drivetrain(&left_side_motors, // left motor group
                               &right_side_motors, // right motor group
-                              10, // 10 inch track width
+                              10_in, // 10 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-                              360, // drivetrain rpm is 360
+                              360_rpm, // drivetrain rpm is 360
                               2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 ``` 
@@ -67,11 +67,11 @@ pros::ADIEncoder back_enc('C', 'D', false); // ports C and D, not reversed
 Next, we have to create a `lemlib::TrackingWheel` object. This contains information about the tracking wheel, such as the diameter and its offset from the tracking center. Below is an example of how to do this:
 ```cpp
 // uses "left_enc" as the encoder. Old 2.75" wheel, 4.3" left of the tracking center, 2:1 gear ratio
-lemlib::TrackingWheel left_tracking_wheel(&left_enc, lemlib::Omniwheel::OLD_275, -4.3, 2);
+lemlib::TrackingWheel left_tracking_wheel(&left_enc, lemlib::Omniwheel::OLD_275, -4.3_in, 2);
 // uses "right_rot" as the encoder. New half-cut 2.75" wheel, 1.7" right of the tracking center, 1:1 gear ratio (default)
-lemlib::TrackingWheel right_tracking_wheel(&right_rot, lemlib::Omniwheel::NEW_275_HALF, 1.7);
+lemlib::TrackingWheel right_tracking_wheel(&right_rot, lemlib::Omniwheel::NEW_275_HALF, 1.7_in);
 // uses "back_enc" as the encoder. Old 2.75" wheel, 4.5" back of the tracking center, 1:1 gear ratio (default)
-lemlib::TrackingWheel back_tracking_wheel(&back_enc, lemlib::Omniwheel::OLD_275, -4.5);
+lemlib::TrackingWheel back_tracking_wheel(&back_enc, lemlib::Omniwheel::OLD_275, -4.5_in);
 ```
 
 Hold on, how far away from the tracking center is the tracking wheel? Turns out, its not the straight distance to the center of the robot, but only one component of it. Below is a diagram which shows the relationship between the tracking center and the tracking wheel:
@@ -90,11 +90,11 @@ pros::Rotation right_rot(1, false); // port 1, not reversed
 pros::ADIEncoder back_enc('C', 'D', false); // ports C and D, not reversed
 
 // uses "left_enc" as the encoder. Old 2.75" wheel, 4.3" left of the tracking center, 2:1 gear ratio
-lemlib::TrackingWheel left_tracking_wheel(&left_enc, lemlib::Omniwheel::OLD_275, -4.3, 2);
+lemlib::TrackingWheel left_tracking_wheel(&left_enc, lemlib::Omniwheel::OLD_275, -4.3_in, 2);
 // uses "right_rot" as the encoder. New half-cut 2.75" wheel, 1.7" right of the tracking center, 1:1 gear ratio (default)
-lemlib::TrackingWheel right_tracking_wheel(&right_rot, lemlib::Omniwheel::NEW_275_HALF, 1.7);
+lemlib::TrackingWheel right_tracking_wheel(&right_rot, lemlib::Omniwheel::NEW_275_HALF, 1.7_in);
 // uses "back_enc" as the encoder. Old 2.75" wheel, 4.5" back of the tracking center, 1:1 gear ratio (default)
-lemlib::TrackingWheel back_tracking_wheel(&back_enc, lemlib::Omniwheel::OLD_275, -4.5);
+lemlib::TrackingWheel back_tracking_wheel(&back_enc, lemlib::Omniwheel::OLD_275, -4.5_in);
 
 // inertial sensor
 pros::Imu inertial_sensor(2); // port 2
@@ -152,9 +152,9 @@ pros::MotorGroup right_side_motors({right_front_motor, right_back_motor});
 // drivetrain struct
 lemlib::Drivetrain drivetrain(&left_side_motors, // left motor group
                               &right_side_motors, // right motor group
-                              10, // 10 inch track width
+                              10_in, // 10 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-                              360, // drivetrain rpm is 360
+                              360_rpm, // drivetrain rpm is 360
                               2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
@@ -166,11 +166,11 @@ pros::Rotation right_rot(1, false); // port 1, not reversed
 pros::ADIEncoder back_enc('C', 'D', false); // ports C and D, not reversed
 
 // uses "left_enc" as the encoder. Old 2.75" wheel, 4.3" left of the tracking center, 2:1 gear ratio
-lemlib::TrackingWheel left_tracking_wheel(&left_enc, lemlib::Omniwheel::OLD_275, -4.3, 2);
+lemlib::TrackingWheel left_tracking_wheel(&left_enc, lemlib::Omniwheel::OLD_275, -4.3_in, 2);
 // uses "right_rot" as the encoder. New half-cut 2.75" wheel, 1.7" right of the tracking center, 1:1 gear ratio (default)
-lemlib::TrackingWheel right_tracking_wheel(&right_rot, lemlib::Omniwheel::NEW_275_HALF, 1.7);
+lemlib::TrackingWheel right_tracking_wheel(&right_rot, lemlib::Omniwheel::NEW_275_HALF, 1.7_in);
 // uses "back_enc" as the encoder. Old 2.75" wheel, 4.5" back of the tracking center, 1:1 gear ratio (default)
-lemlib::TrackingWheel back_tracking_wheel(&back_enc, lemlib::Omniwheel::OLD_275, -4.5);
+lemlib::TrackingWheel back_tracking_wheel(&back_enc, lemlib::Omniwheel::OLD_275, -4.5_in);
 
 // inertial sensor
 pros::Imu inertial_sensor(2); // port 2
@@ -187,9 +187,9 @@ lemlib::OdomSensors sensors(&left_tracking_wheel, // vertical tracking wheel 1
 lemlib::ControllerSettings linearController(10, // proportional gain (kP)
                                             30, // derivative gain (kD)
                                             1, // small error range, in inches
-                                            100, // small error range timeout, in milliseconds
+                                            100_ms, // small error range timeout, in milliseconds
                                             3, // large error range, in inches
-                                            500, // large error range timeout, in milliseconds
+                                            500_ms, // large error range timeout, in milliseconds
                                             20 // maximum acceleration (slew)
 );
 

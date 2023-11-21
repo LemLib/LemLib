@@ -52,7 +52,7 @@ class Turn : public Movement {
     private:
         FAPID<Angle> angularPID;
         std::optional<Pose> targetPose = std::nullopt;
-        Pose startPose = Pose(0_in,0_m , 0_rad);
+        Pose startPose = Pose(0_in, 0_m, 0_rad);
         Angle targetHeading = 0_rad;
         bool reversed = false;
         int maxSpeed;

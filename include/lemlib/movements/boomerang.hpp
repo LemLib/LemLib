@@ -49,7 +49,7 @@ class Boomerang : public Movement {
         FAPID<Angle> angularPID;
         FAPID<Length> linearPID;
         Pose target;
-        Pose prevPose = Pose(0_in,0_m , 0_rad);
+        Pose prevPose = Pose(0_in, 0_m, 0_rad);
         bool forwards;
         float chasePower;
         float lead;
@@ -57,6 +57,6 @@ class Boomerang : public Movement {
 
         int compState;
         int state = 0; // 0 = in progress, 1 = settling, 2 = done
-        Length dist =0_m ;
+        Length dist = 0_m;
 };
 }; // namespace lemlib

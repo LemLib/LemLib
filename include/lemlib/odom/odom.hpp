@@ -32,6 +32,6 @@ class Odom {
         void setPose(Pose pose);
     protected:
         // heading set to 90 degrees because odom should default to IMU 0 angle
-        Pose pose = Pose(0_in,0_m , 90_rad);
+        Pose pose = Pose(0_in, 0_m, 90_rad);
 };
 } // namespace lemlib

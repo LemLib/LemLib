@@ -78,7 +78,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     if (!forwards) pose.theta = units::mod(pose.theta + rot / 2, rot);
 
     // update completion vars
-    if (dist ==0_m ) { // if dist is 0, this is the first time update() has been called
+    if (dist == 0_m) { // if dist is 0, this is the first time update() has been called
         dist = 0.0001_in;
         prevPose = pose;
     }
