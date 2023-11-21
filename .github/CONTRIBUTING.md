@@ -25,6 +25,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
   - [Suggesting Enhancements](#suggesting-enhancements)
   - [Your First Code Contribution](#your-first-code-contribution)
   - [Improving The Documentation](#improving-the-documentation)
+  - [Writing Unit Tests](#writing-unit-tests)
 - [Styleguides](#styleguides)
   - [C++ Coding Style](#c-coding-style)
   - [Commit Messages](#commit-messages)
@@ -162,7 +163,21 @@ You can improve the documentation by:
 Changes should be requested via a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](PULL_REQUEST_TEMPLATE.md) to structure your pull request. Additionally, you should verify that the documentation builds correctly on your machine. You can do so by running `doxygen` in the root directory of the project. The documentation will be generated in the `docs` folder. You can then open the `index.html` file in your browser to view the documentation.
 
 
+### Writing Unit Tests
 
+Unit tests are an essential part of ensuring that your code is correct. LemLib supports unit testing with the [GoogleTest](https://google.github.io/googletest/) testing framework. The existing tests can be found in the `test` folder.
+
+<!--TODO: write file structure guidelines-->
+
+Unit tests should test major functionality of the features you add and should also test the coverage of as many edge cases as possible. This helps guarantee that your changes will continue to function in the future.
+
+You can run the unit tests with the following commands:
+```sh
+cmake -S . -B build # Generates the cmake configuration
+cmake --build build && ./build/LemLib # Compile and run the tests
+```
+
+Unit tests will also be run as a GitHub workflow on each commit you run to ensure that everything is in order.
 
 ## Styleguides
 
