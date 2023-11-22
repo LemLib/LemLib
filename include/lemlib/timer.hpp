@@ -27,7 +27,7 @@ class Timer {
         /**
          * @brief Get the amount of time passed on the timer
          *
-         * @return Time time 
+         * @return Time time
          */
         Time getTimePassed();
         /**
@@ -40,7 +40,7 @@ class Timer {
         /**
          * @brief Set the amount of time the timer should count down. Resets the timer
          *
-         * @param time time 
+         * @param time time
          */
         void set(Time time);
         /**
