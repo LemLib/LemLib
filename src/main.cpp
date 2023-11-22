@@ -2,6 +2,7 @@
 #include "lemlib/api.hpp"
 #include "lemlib/logger/stdout.hpp"
 #include "pros/misc.h"
+#include "pros/rtos.h"
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -152,6 +153,19 @@ void opcontrol() {
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         // move the chassis with curvature drive
         chassis.curvature(leftY, rightX);
+
+        // testing moveAtSpeed and turnAtSpeed
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+            chassis.moveAtSpeed(10);
+            pros::c::delay(1000);
+            chassis.moveAtSpeed(0);
+        }
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+            chassis.turnAtSpeed(2);
+            pros::c::delay(1000);
+            chassis.moveAtSpeed(0);
+        }
+
         // delay to save resources
         pros::delay(10);
     }

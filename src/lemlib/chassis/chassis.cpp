@@ -502,3 +502,88 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     // give the mutex back
     mutex.give();
 }
+
+/**
+ * @brief Move the chassis at a specific speed
+ *
+ * @param speed speed to move at in in/s
+ * @param forwards whether to move forwards or backwards, true by default
+ */
+void lemlib::Chassis::moveAtSpeed(float speed, bool forwards) { 
+    // find gearing 
+    std::vector<pros::motor_gearset_e_t> gearsets = drivetrain.leftMotors->get_gearing();
+    float maxRPM;
+    float motorOutput;
+
+    switch (gearsets[1]) {
+        case pros::E_MOTOR_GEARSET_36: maxRPM = 100; break;
+        case pros::E_MOTOR_GEARSET_18: maxRPM = 200; break;
+        case pros::E_MOTOR_GEARSET_06: maxRPM = 600; break;
+        default: maxRPM = 600; break;
+    }
+
+    // calculate the necessary RPM
+    motorOutput = speed * (maxRPM/drivetrain.rpm) * 60 * (1 / (M_PI * drivetrain.wheelDiameter));
+
+    // apply motorOutput
+    if (forwards) {
+        drivetrain.leftMotors->move_velocity(motorOutput);
+        drivetrain.rightMotors->move_velocity(motorOutput);
+    }
+    else {
+        drivetrain.leftMotors->move_velocity(-motorOutput);
+        drivetrain.rightMotors->move_velocity(-motorOutput);
+    }
+}
+
+/**
+ * @brief Turn the chassis at a specific speed
+ *
+ * @param speed speed to move at in rad/s or in/s
+ * @param clockwise whether to move cw or ccw, true by default
+ * @param radians if the speed is in rad/s, true by default
+ */
+void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) { 
+    float maxRPM;
+    float motorOutput;
+
+    // left side motors loop
+    std::vector<pros::motor_gearset_e_t> gearsets = drivetrain.leftMotors->get_gearing();
+    for (int i = 0; i < drivetrain.leftMotors->size(); i++) {
+
+        switch (gearsets[i]) {
+            case pros::E_MOTOR_GEARSET_36: maxRPM = 100; break;
+            case pros::E_MOTOR_GEARSET_18: maxRPM = 200; break;
+            case pros::E_MOTOR_GEARSET_06: maxRPM = 600; break;
+            default: maxRPM = 600; break;
+        }
+
+        // calculate the necessary RPM
+        if (radians) motorOutput = speed * 1.0/2 * 60.0 * maxRPM / drivetrain.rpm;
+        else motorOutput = speed * 1.0/2 * 60.0 * maxRPM / drivetrain.rpm * 360;
+
+        // apply motorOutput
+        if (clockwise) drivetrain.leftMotors[i].move_velocity(motorOutput);
+        else drivetrain.leftMotors[i].move_velocity(-motorOutput);
+    }
+
+    // right side motors loop
+    gearsets = drivetrain.rightMotors->get_gearing();
+    for (int i = 0; i < drivetrain.rightMotors->size(); i++) {
+
+        switch (gearsets[i]) {
+            case pros::E_MOTOR_GEARSET_36: maxRPM = 100; break;
+            case pros::E_MOTOR_GEARSET_18: maxRPM = 200; break;
+            case pros::E_MOTOR_GEARSET_06: maxRPM = 600; break;
+            default: maxRPM = 600; break;
+        }
+
+        // calculate the necessary RPM
+        if (radians) motorOutput = speed * 1.0/2 * 60.0 * maxRPM / drivetrain.rpm;
+        else motorOutput = speed * 1.0/2 * 60.0 * maxRPM / drivetrain.rpm * 360;
+
+        // apply motorOutput
+        if (clockwise) drivetrain.leftMotors[i].move_velocity(motorOutput);
+        else drivetrain.leftMotors[i].move_velocity(-motorOutput);
+    }
+}
