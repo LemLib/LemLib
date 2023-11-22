@@ -1,4 +1,3 @@
-# test
 name: Add Template to Pull Request 
 on:
   workflow_run:
