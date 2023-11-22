@@ -523,7 +523,7 @@ void lemlib::Chassis::moveAtSpeed(float speed, bool forwards) {
     }
 
     // calculate the necessary RPM
-    motorOutput = speed * (maxRPM/drivetrain.rpm) * 60 * (1 / (M_PI * drivetrain.wheelDiameter));
+    motorOutput = speed * (maxRPM / drivetrain.rpm) * 60 * (1 / (M_PI * drivetrain.wheelDiameter));
 
     // apply motorOutput
     if (forwards) {
@@ -559,8 +559,8 @@ void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) {
         }
 
         // calculate the necessary RPM
-        if (radians) motorOutput = speed * 1.0/2 * 60.0 * maxRPM / drivetrain.rpm;
-        else motorOutput = speed * 1.0/2 * 60.0 * maxRPM / drivetrain.rpm * 360;
+        if (radians) motorOutput = speed * (1.0/2) * 60 * (maxRPM / drivetrain.rpm);
+        else motorOutput = speed * (1.0/2) * 60.0 * (maxRPM / drivetrain.rpm) * 360;
 
         // apply motorOutput
         if (clockwise) drivetrain.leftMotors[i].move_velocity(motorOutput);
@@ -579,8 +579,8 @@ void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) {
         }
 
         // calculate the necessary RPM
-        if (radians) motorOutput = speed * 1.0/2 * 60.0 * maxRPM / drivetrain.rpm;
-        else motorOutput = speed * 1.0/2 * 60.0 * maxRPM / drivetrain.rpm * 360;
+        if (radians) motorOutput = speed * (1.0/2) * 60 * (maxRPM / drivetrain.rpm);
+        else motorOutput = speed * (1.0/2) * 60.0 * (maxRPM / drivetrain.rpm) * 360;
 
         // apply motorOutput
         if (clockwise) drivetrain.leftMotors[i].move_velocity(motorOutput);
