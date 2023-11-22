@@ -39,7 +39,7 @@ PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadD
         std::vector<std::string> pointInput = splitString(line, ", "); // parse line
         const Length x = std::stof(pointInput.at(0)) * in; // x position
         const Length y = std::stof(pointInput.at(1)) * in; // y position
-        const AngularVelocity speed = std::stof(pointInput.at(2)) * rpm; // speed
+        const double speed = std::stof(pointInput.at(2)); // speed
         this->path.push_back({x, y, 0_rad, speed}); // save data
     }
 }
@@ -88,7 +88,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     // find the closest waypoint on the path
     Waypoint closest = closestWaypoint(path, pose);
     // if the robot is at the end of the path, then stop
-    if (closest.speed == 0_rpm) {
+    if (closest.speed == 0) {
         state = 1;
         return {128, 128};
     }
@@ -102,7 +102,7 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
         Pose intersect = circleLineIntersect(last, cur, pose, lookaheadDist);
         // if the intersection is not the robot's current position, then we have found the lookahead point
         if (intersect != pose) {
-            lookahead = {intersect.x, intersect.y, 0_rad, 0_rpm, i};
+            lookahead = {intersect.x, intersect.y, 0_rad, 0, i};
             break;
         }
     }
@@ -112,12 +112,12 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
     Curvature curvature = getCurvature(pose, lookahead);
 
     // get the target velocity of the robot
-    AngularVelocity targetVel = closest.speed;
+    double targetVel = closest.speed;
     // calculate target left and right velocities
-    AngularVelocity leftVel = targetVel * (Number(2) + curvature * trackWidth) * 0.5;
-    AngularVelocity rightVel = targetVel * (Number(2) - curvature * trackWidth) * 0.5; // todo: test
+    double leftVel = targetVel * ((Number(2) + curvature * trackWidth) / 2).raw();
+    double rightVel = targetVel * ((Number(2) - curvature * trackWidth) / 2).raw(); // todo: test
     // ratio the speeds to respect the max speed
-    float ratio = (units::max(units::abs(leftVel), units::abs(rightVel)) / maxSpeed).raw();
+    float ratio = std::max(std::abs(leftVel), std::abs(rightVel)) / maxSpeed;
     if (ratio > 1) {
         leftVel /= ratio;
         rightVel /= ratio;
@@ -129,6 +129,6 @@ std::pair<int, int> PurePursuit::update(Pose pose) {
         rightVel *= -1;
     }
 
-    return {std::round(leftVel.convert(rpm)), std::round(rightVel.convert(rpm))}; // todo test
+    return {std::round(leftVel), std::round(rightVel)}; // todo test
 }
 }; // namespace lemlib

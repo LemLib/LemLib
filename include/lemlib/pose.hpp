@@ -145,12 +145,12 @@ class Waypoint : public Pose {
          * @param theta
          * @param speed
          */
-        Waypoint(Length x, Length y, Angle theta = 0_rad, AngularVelocity speed = 0_rpm, int index = 0)
+        Waypoint(Length x, Length y, Angle theta = 0_rad, double speed = 0, int index = 0)
             : Pose(x, y, theta),
               speed(speed),
               index(index) {}
 
-        AngularVelocity speed;
+        double speed;
         int index;
 };
 } // namespace lemlib
