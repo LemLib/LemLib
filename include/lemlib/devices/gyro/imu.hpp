@@ -53,7 +53,7 @@ class Imu : public Gyro {
          *
          * @note 0 is in the positive x direction, and heading increases counterclockwise
          *
-         * @return Angle heading, locked from -pi to pi
+         * @return Angle heading, locked from west to east
          */
         Angle getHeading() override;
         /**

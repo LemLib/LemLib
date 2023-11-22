@@ -21,7 +21,6 @@ RotationEncoder::RotationEncoder(int port, bool reversed, float ratio)
  * Get the angle the rotation sensor rotated by
  *
  * Pretty straightforward, raw value from the rotation sensor gets converted to rotations
- * which gets converted to radians
  */
 Angle RotationEncoder::getAngle() {
     const Angle angle = (float(rotation.get_position()) / 36000) * 1_rot / ratio;

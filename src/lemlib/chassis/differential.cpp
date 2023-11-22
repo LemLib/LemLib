@@ -33,10 +33,10 @@ std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int
  * A notable exception is the odometry, which at the moment is too complex to
  * construct in the initializer list
  */
-Differential::Differential(Drivetrain drivetrain, ControllerSettings<Length> lateralSettings,
+Differential::Differential(Drivetrain drivetrain, ControllerSettings<Length> linearSettings,
                            ControllerSettings<Angle> angularSettings, OdomSensors sensors)
     : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
+      linearSettings(linearSettings),
       angularSettings(angularSettings) {
     // create sensor vectors
     std::vector<TrackingWheel> verticals;
@@ -114,15 +114,15 @@ void Differential::turnToPose(Length x, Length y, Time timeout, bool reversed, i
  *
  * There are some things that need to be done before instantiating the movement however.
  * It needs to set up a PID which the movement will use to turn the robot. We also need to
- * convert the heading passed by the user to radians and standard position. All that needs to be
+ * convert the heading passed by the user to standard position. All that needs to be
  * done then is to pass the parameters to a new instance of Turn, and set the movement
  * pointer.
  */
 void Differential::turnToHeading(Angle heading, Time timeout, int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
-    // convert heading to radians and standard form
-    Angle newHeading = 90_rad - heading;
+    // convert heading to standard form
+    Angle newHeading = M_PI_2 * rad - heading;
     // set up the PID
     FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
@@ -139,7 +139,7 @@ void Differential::turnToHeading(Angle heading, Time timeout, int maxSpeed) {
  *
  * There are some things that need to be done before instantiating the movement however.
  * Two PIDs need to be set up to be passed to the Boomerang constructor, and the target heading
- * needs to be converted to radians and standard form.
+ * needs to be converted to standard form.
  * It also needs to decide what the chasePower should be. Usually this will be the value set in
  * the drivetrain struct, but it can be overridden by the user if needed.
  */
@@ -147,12 +147,12 @@ void Differential::moveTo(Length x, Length y, Angle theta, Time timeout, bool re
                           int maxSpeed) {
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
-    // convert target theta to radians and standard form
-    Pose target = Pose(x, y, 90_rad - theta);
+    // convert target theta to standard form
+    Pose target = Pose(x, y, M_PI_2 * rad - theta);
     // set up PIDs
-    FAPID<Length> linearPID(0, 0, lateralSettings.kP, 0, lateralSettings.kD, "linearPID");
-    linearPID.setExit(lateralSettings.largeError, lateralSettings.smallError, lateralSettings.largeErrorTimeout,
-                      lateralSettings.smallErrorTimeout, timeout);
+    FAPID<Length> linearPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "linearPID");
+    linearPID.setExit(linearSettings.largeError, linearSettings.smallError, linearSettings.largeErrorTimeout,
+                      linearSettings.smallErrorTimeout, timeout);
     FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = drivetrain.chasePower;

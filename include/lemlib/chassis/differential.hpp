@@ -134,7 +134,7 @@ template <isQuantity Q> struct ControllerSettings {
  * @param rightMotors pointer to the right motors
  * @param trackWidth the track width of the robot
  * @param wheelDiameter the diameter of the wheel used on the drivetrain
- * @param speed the rpm of the wheels
+ * @param speed the angular velocity of the wheels
  * @param chasePower higher values make the robot move faster but causes more overshoot on turns
  */
 struct Drivetrain {
@@ -146,7 +146,7 @@ struct Drivetrain {
          * @param rightMotors shared pointer to the right motors
          * @param trackWidth the track width of the robot
          * @param wheelDiameter the diameter of the wheel used on the drivetrain
-         * @param rpm the rpm of the wheels
+         * @param speed the angular velocity of the wheels
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          */
         Drivetrain(std::shared_ptr<pros::MotorGroup> leftMotors, std::shared_ptr<pros::MotorGroup> rightMotors,
@@ -200,7 +200,7 @@ class Differential : public Chassis {
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          */
-        Differential(Drivetrain drivetrain, ControllerSettings<Length> lateralSettings,
+        Differential(Drivetrain drivetrain, ControllerSettings<Length> linearSettings,
                      ControllerSettings<Angle> angularSettings, OdomSensors sensors);
 
         /**
@@ -249,7 +249,7 @@ class Differential : public Chassis {
          * default to global value
          * @param maxSpeed the maximum speed the robot can move at. 127 at default
          */
-        void moveTo(Length x, Length y, Angle theta, Time timeout, bool reversed = true, float chasePower = 0,
+        void moveTo(Length x, Length y, Angle theta, Time timeout, bool reversed = false, float chasePower = 0,
                     float lead = 0.6, int maxSpeed = 127);
 
         /**
@@ -262,7 +262,7 @@ class Differential : public Chassis {
          * @param reversed whether the robot should follow the path in reverse. false by default
          * @param maxSpeed the maximum speed the robot can move at
          */
-        void follow(const asset& path, Length lookahead, Time timeout, bool reversed = true, int maxSpeed = 127);
+        void follow(const asset& path, Length lookahead, Time timeout, bool reversed = false, int maxSpeed = 127);
 
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this
@@ -304,7 +304,7 @@ class Differential : public Chassis {
          */
         void update() override;
 
-        struct ControllerSettings<Length> lateralSettings;
+        struct ControllerSettings<Length> linearSettings;
         struct ControllerSettings<Angle> angularSettings;
         Drivetrain drivetrain;
 };

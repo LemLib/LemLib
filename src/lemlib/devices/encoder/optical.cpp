@@ -17,7 +17,6 @@ OpticalEncoder::OpticalEncoder(char topPort, char bottomPort, bool reversed, flo
  * Get the angle the optical encoder rotated by
  *
  * Pretty straightforward, raw value from the encoder gets converted to rotations
- * which gets converted to radians
  */
 Angle OpticalEncoder::getAngle() {
     Angle angle = (float(optical.get_value()) * 1_deg) / ratio;

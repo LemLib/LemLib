@@ -55,7 +55,7 @@ class TrackingWheel {
          * @param motors pointer to the motor group to be used for the tracking wheel
          * @param diameter the diameter of the wheel
          * @param offset distance between the wheel and the tracking center
-         * @param speed the rpm of the wheels the motor group is driving
+         * @param speed the angular velocity of the wheels the motor group is driving (e.g 200_rpm)
          */
         TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, Length diameter, Length offset, AngularVelocity speed);
         /**

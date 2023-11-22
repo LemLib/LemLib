@@ -49,7 +49,7 @@ class Boomerang : public Movement {
         FAPID<Angle> angularPID;
         FAPID<Length> linearPID;
         Pose target;
-        Pose prevPose = Pose(0_in, 0_m, 0_rad);
+        Pose prevPose = Pose(0_m, 0_m, 0_rad);
         bool reversed;
         float chasePower;
         float lead;

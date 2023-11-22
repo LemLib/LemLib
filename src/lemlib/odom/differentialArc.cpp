@@ -148,7 +148,7 @@ void DifferentialArc::update() {
     const Angle avgTheta = pose.theta + deltaTheta / 2;
 
     // calculate local change in position
-    Pose local(0_in, 0_m, deltaTheta);
+    Pose local(0_m, 0_m, deltaTheta);
     // set sinDTheta2 to 1 if deltaTheta is 0. Simplifies local position calculations.
     const float sinDTheta2 = (deltaTheta == 0_rad) ? 1 : 2 * units::sin(deltaTheta / 2).raw();
 

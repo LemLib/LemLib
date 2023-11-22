@@ -17,7 +17,7 @@ class PurePursuit : public Movement {
          *
          * @param trackWidth the width of the chassis.
          * @param path const reference to the asset containing the path
-         * @param lookaheadDist the lookahead distance. Recommended value is 15, but can be changed if needed
+         * @param lookaheadDist the lookahead distance. Recommended value is 15_in, but can be changed if needed
          * @param timeout the maximum time the robot can spend moving
          * @param reversed whether the chassis should move forwards (false) or backwards (true)
          * @param maxSpeed the maximum speed the robot can move at. 127 by default
@@ -45,8 +45,8 @@ class PurePursuit : public Movement {
         std::pair<int, int> update(Pose pose) override;
     private:
         std::vector<Waypoint> path;
-        Pose prevPose = Pose(0_in, 0_m, 0_rad);
-        Waypoint prevLookahead = Waypoint(0_in, 0_m);
+        Pose prevPose = Pose(0_m, 0_m, 0_rad);
+        Waypoint prevLookahead = Waypoint(0_m, 0_m);
         Length trackWidth;
         Time startTime;
         Length lookaheadDist;

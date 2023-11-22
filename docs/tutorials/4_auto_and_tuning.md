@@ -46,21 +46,21 @@ It is highly recommended you set the starting position of the robot for each aut
 ## Moving with turnTo and moveToPose
 LemLib has 3 functions for moving the to. We will be covering the first 2 in this tutorial, and the third in the next tutorial.
 
-The first function is `chassis.turnTo()`. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the lateralController struct. Below is an example of how to use it:
+The first function is `chassis.turnTo()`. This function turns the robot so that it is facing the specified (x, y) point. It takes between 3 and 5 arguments. It uses the PID gains specified in the linearController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
     // turn towards the point (53 inches, 53 inches) with a timeout of 1 second
     chassis.turnTo(53_in, 53_in, 1_sec);
     // turn towards the point (-20 inches, 32 inches) with the back of the robot facing the point, and a timeout of 1.5 seconds
-    chassis.turnTo(-20_in, 32_in, 1500_in, true);
+    chassis.turnTo(-20_in, 32_in, 1.5_sec, true);
     // turn towards the point (10 inches, 0 inches) with a timeout of 1 second, and a maximum speed of 50, with the front of the robot facing the point
-    chassis.turnTo(10_in, 0_in, 1_second, false, 50);
+    chassis.turnTo(10_in, 0_in, 1_sec, false, 50);
 }
 ```
 
 As you can see, using this function is very easy. The first 2 parameters are the X and Y location the robot should be facing. The third parameter is the timeout, which is the maximum time the robot can spend turning before giving up. The fourth parameter is whether the back of the robot should face the point (true) or the front of the robot should face the point (false). It defaults to false if not specified. The fifth parameter is the maximum speed the robot can turn at. If you don't specify a value for this parameter, the robot will turn at full speed.
 
-The second function is `chassis.moveToPose()`. This function moves the robot to the specified (x, y) point with a target heading in degrees. It uses the PID gains specified in the lateralController and angularController struct. Below is an example of how to use it:
+The second function is `chassis.moveToPose()`. This function moves the robot to the specified (x, y) point with a target heading in degrees. It uses the PID gains specified in the linearController and angularController struct. Below is an example of how to use it:
 ```cpp
 void autonomous() {
     // move to the point (53 inches, 53 inches) at heading 90 degrees with a timeout of 1 second
@@ -110,12 +110,12 @@ This system will take a bit of getting used to, but it is very powerful. If you 
 
 
 ## Tuning the PIDs
-Now that we know how to move the robot, we can start tuning the PIDs. Let's start with the lateral PIDs.
+Now that we know how to move the robot, we can start tuning the PIDs. Let's start with the linear PIDs.
 
-The lateral PID is just a simple PD controller, with some minor optimizations. When we tune the lateral PD, we want the kP as high as possible with minimal oscillation. But how do we change these gains? The answer is the `lateralController` struct we created in the previous tutorial. Here is a reminder of what it looks like:
+The linear PID is just a simple PD controller, with some minor optimizations. When we tune the linear PD, we want the kP as high as possible with minimal oscillation. But how do we change these gains? The answer is the `linearController` struct we created in the previous tutorial. Here is a reminder of what it looks like:
 ```cpp
 // forward/backward PID
-lemlib::ControllerSettings<Length> lateralController {
+lemlib::ControllerSettings<Length> linearController {
 	10, // kP
 	30, // kD
 	1_in, // smallErrorRange

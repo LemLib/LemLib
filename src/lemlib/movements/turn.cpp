@@ -48,7 +48,7 @@ Turn::Turn(FAPID<Angle> angularPID, Pose target, bool reversed, int maxSpeed)
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float Turn::getDist() { return dist.convert(deg); }
+float Turn::getDist() { return dist.raw(); }
 
 /**
  * The turning algorithm uses field-relative position of the robot to face a target heading

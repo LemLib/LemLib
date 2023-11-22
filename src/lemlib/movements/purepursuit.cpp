@@ -50,7 +50,7 @@ PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadD
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float PurePursuit::getDist() { return dist.convert(in); }
+float PurePursuit::getDist() { return dist.convert(m); }
 
 /**
  * Pure Pursuit is a motion algorithm published by R. Craig Coulter in 1992
