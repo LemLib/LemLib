@@ -9,25 +9,25 @@ class Timer {
         /**
          * @brief Construct a new Timer
          *
-         * @param time how long to wait, in milliseconds
+         * @param time how long to wait
          */
         Timer(Time time);
         /**
          * @brief Get the amount of time the timer was set to
          *
-         * @return Time time, in milliseconds
+         * @return Time time
          */
         Time getTimeSet();
         /**
          * @brief Get the amount of time left on the timer
          *
-         * @return Time time in milliseconds
+         * @return Time time
          */
         Time getTimeLeft();
         /**
          * @brief Get the amount of time passed on the timer
          *
-         * @return Time time in milliseconds
+         * @return Time time 
          */
         Time getTimePassed();
         /**
@@ -40,7 +40,7 @@ class Timer {
         /**
          * @brief Set the amount of time the timer should count down. Resets the timer
          *
-         * @param time time in milliseconds
+         * @param time time 
          */
         void set(Time time);
         /**

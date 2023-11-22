@@ -36,7 +36,7 @@ class PurePursuit : public Movement {
          * @brief Update the movement
          *
          * @note This function should be called in a loop
-         * @note Angle 0 is right, and increases counterclockwise
+         * @note Angle 0 is east, and increases counterclockwise
          *
          * @param pose the position of the chassis
          *

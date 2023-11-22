@@ -15,7 +15,7 @@ namespace lemlib {
  */
 MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelocity speed)
     : motors(std::move(motors)),
-      speed(rpm) {}
+      speed(speed) {}
 
 /**
  * Get the angle the motors rotated by
@@ -43,9 +43,7 @@ Angle MotorEncoder::getAngle() {
         angles.push_back(positions[i] * (speed / inp) * 1_rot); // todo test
     }
     // calc average of the angles
-    Angle angle = 0_rad;
-    for (Angle value : angles) { angle += value; }
-    angle /= angles.size();
+    Angle angle = avg(angles);
     lastAngle = angle;
     return angle;
 }

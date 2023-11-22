@@ -18,10 +18,7 @@ namespace lemlib {
  *
  * This function is a wrapper for the Odometry::setPose() function
  */
-void Chassis::setPose(Length x, Length y, Angle theta) {
-    Pose pose(x, y, theta);
-    setPose(pose);
-}
+void Chassis::setPose(Length x, Length y, Angle theta) { odom->setPose({x, y, theta}); }
 
 /**
  * Set the pose of the chassis

@@ -75,7 +75,7 @@ template <isQuantity Q> Q ema(Q current, Q previous, float smooth) {
  * @note The circle will be tangent to the theta value of the first pose
  * @note The curvature is signed. Positive curvature means the circle is going clockwise, negative means
  * counter-clockwise
- * @note Theta has to be in standard form. That means 0 is right and increases counter-clockwise
+ * @note Theta has to be in standard form. That means 0 is east and increases counter-clockwise
  *
  * @param pose the first pose
  * @param other the second pose
