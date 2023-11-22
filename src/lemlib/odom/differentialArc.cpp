@@ -177,10 +177,10 @@ void DifferentialArc::update() {
 
 int DifferentialArc::getPollRate() const {
     int maxPollRate = 0;
-    for (auto sensor : this->horizontals) maxPollRate = std::max(maxPollRate, sensor.getPollRate());
-    for (auto sensor : this->verticals) maxPollRate = std::max(maxPollRate, sensor.getPollRate());
-    for (auto sensor : this->gyros) maxPollRate = std::max(maxPollRate, sensor->getPollRate());
-    for (auto sensor : this->drivetrain) maxPollRate = std::max(maxPollRate, sensor.getPollRate());
+    for (auto& sensor : this->horizontals) maxPollRate = std::max(maxPollRate, sensor.getPollRate());
+    for (auto& sensor : this->verticals) maxPollRate = std::max(maxPollRate, sensor.getPollRate());
+    for (auto& sensor : this->gyros) maxPollRate = std::max(maxPollRate, sensor->getPollRate());
+    for (auto& sensor : this->drivetrain) maxPollRate = std::max(maxPollRate, sensor.getPollRate());
     return maxPollRate;
 }
 }; // namespace lemlib
