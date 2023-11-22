@@ -106,14 +106,15 @@ template <isQuantity Q> struct ControllerSettings {
          * @param slew the maximum acceleration of the chassis controller
          */
         ControllerSettings(float kP, float kD, Q smallError, Time smallErrorTimeout, Q largeError,
-                           Time largeErrorTimeout, float slew)
+                           Time largeErrorTimeout, float slew, Q base = Q(1.0))
             : kP(kP),
               kD(kD),
               smallError(smallError),
               smallErrorTimeout(smallErrorTimeout),
               largeError(largeError),
               largeErrorTimeout(largeErrorTimeout),
-              slew(slew) {}
+              slew(slew),
+              base(base) {}
 
         float kP;
         float kD;
@@ -122,6 +123,7 @@ template <isQuantity Q> struct ControllerSettings {
         Q largeError;
         Time largeErrorTimeout;
         float slew;
+        Q base;
 };
 
 /**

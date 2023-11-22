@@ -116,22 +116,24 @@ Lemlib uses 2 PIDs to control the motion of the robot (except for pure pursuit).
 ```cpp
 // forward/backward PID
 lemlib::ControllerSettings<Length> linearController(10, // proportional gain (kP)
-                                            30, // derivative gain (kD)
-                                            1_in, // small error range
-                                            100_ms, // small error range timeout
-                                            3_in, // large error range
-                                            500_ms, // large error range timeout
-                                            20 // maximum acceleration (slew)
+                                                    30, // derivative gain (kD)
+                                                    1_in, // small error range
+                                                    100_ms, // small error range timeout
+                                                    3_in, // large error range
+                                                    500_ms, // large error range timeout
+                                                    20, // maximum acceleration (slew)
+                                                    1_in // base unit for the controller (inches in this case)
 );
 
 // turning PID
 lemlib::ControllerSettings<Angle> angularController(2, // proportional gain (kP)
-                                             10, // derivative gain (kD)
-                                             1_deg, // small error range
-                                             100_ms, // small error range timeout
-                                             3_deg, // large error range
-                                             500_ms, // large error range timeout
-                                             0 // maximum acceleration (slew). 0 means no limit
+                                                    10, // derivative gain (kD)
+                                                    1_deg, // small error range
+                                                    100_ms, // small error range timeout
+                                                    3_deg, // large error range
+                                                    500_ms, // large error range timeout
+                                                    20, // maximum acceleration (slew)
+                                                    1_deg // base unit for the controller (degrees in this case)
 );
 ```
 
@@ -185,22 +187,24 @@ lemlib::OdomSensors sensors(&left_tracking_wheel, // vertical tracking wheel 1
 
 // forward/backward PID
 lemlib::ControllerSettings<Length> linearController(10, // proportional gain (kP)
-                                            30, // derivative gain (kD)
-                                            1_in, // small error range
-                                            100_ms, // small error range timeout
-                                            3_in, // large error range
-                                            500_ms, // large error range timeout
-                                            20 // maximum acceleration (slew)
+                                                    30, // derivative gain (kD)
+                                                    1_in, // small error range
+                                                    100_ms, // small error range timeout
+                                                    3_in, // large error range
+                                                    500_ms, // large error range timeout
+                                                    20, // maximum acceleration (slew)
+                                                    1_in // base unit for the controller (inches in this case)
 );
 
 // turning PID
 lemlib::ControllerSettings<Angle> angularController(2, // proportional gain (kP)
-                                             10, // derivative gain (kD)
-                                             1_deg, // small error range
-                                             100_ms, // small error range timeout
-                                             3_deg, // large error range
-                                             500_ms, // large error range timeout
-                                             0 // maximum acceleration (slew). 0 means no limit
+                                                    10, // derivative gain (kD)
+                                                    1_deg, // small error range
+                                                    100_ms, // small error range timeout
+                                                    3_deg, // large error range
+                                                    500_ms, // large error range timeout
+                                                    20, // maximum acceleration (slew)
+                                                    1_deg // base unit for the controller (degrees in this case)
 );
 
 // create the chassis

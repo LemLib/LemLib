@@ -31,21 +31,23 @@ lemlib::Drivetrain drivetrain(leftMotors, // left motor group
 // linear motion controller
 lemlib::ControllerSettings<Length> linearController(10, // proportional gain (kP)
                                                     30, // derivative gain (kD)
-                                                    1_in, // small error range, in inches
+                                                    1_in, // small error range
                                                     100_ms, // small error range timeout
-                                                    3_in, // large error range, in inches
+                                                    3_in, // large error range
                                                     500_ms, // large error range timeout
-                                                    20 // maximum acceleration (slew)
+                                                    20, // maximum acceleration (slew)
+                                                    1_in // base unit for the controller (inches in this case)
 );
 
 // angular motion controller
 lemlib::ControllerSettings<Angle> angularController(2, // proportional gain (kP)
                                                     10, // derivative gain (kD)
-                                                    1_deg, // small error range, in degrees
+                                                    1_deg, // small error range
                                                     100_ms, // small error range timeout
-                                                    3_deg, // large error range, in degrees
+                                                    3_deg, // large error range
                                                     500_ms, // large error range timeout
-                                                    20 // maximum acceleration (slew)
+                                                    20, // maximum acceleration (slew)
+                                                    1_deg // base unit for the controller (degrees in this case)
 );
 
 // sensors for odometry

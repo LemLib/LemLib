@@ -99,7 +99,7 @@ void Differential::turnToPose(Length x, Length y, Time timeout, bool reversed, i
     // if a movement is already running, wait until it is done
     if (movement != nullptr) waitUntilDone();
     // set up the PID
-    FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID", angularSettings.base);
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
                        angularSettings.smallErrorTimeout, timeout);
     // create the movement
@@ -124,7 +124,7 @@ void Differential::turnToHeading(Angle heading, Time timeout, int maxSpeed) {
     // convert heading to standard form
     Angle newHeading = M_PI_2 * rad - heading;
     // set up the PID
-    FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID", angularSettings.base);
     angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
                        angularSettings.smallErrorTimeout, timeout);
     // create the movement
@@ -150,10 +150,10 @@ void Differential::moveTo(Length x, Length y, Angle theta, Time timeout, bool re
     // convert target theta to standard form
     Pose target = Pose(x, y, M_PI_2 * rad - theta);
     // set up PIDs
-    FAPID<Length> linearPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "linearPID");
+    FAPID<Length> linearPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "linearPID", linearSettings.base);
     linearPID.setExit(linearSettings.largeError, linearSettings.smallError, linearSettings.largeErrorTimeout,
                       linearSettings.smallErrorTimeout, timeout);
-    FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    FAPID<Angle> angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID", angularSettings.base);
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = drivetrain.chasePower;
     // create the movement

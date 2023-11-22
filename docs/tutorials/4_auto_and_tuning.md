@@ -122,7 +122,8 @@ lemlib::ControllerSettings<Length> linearController {
 	100_ms, // smallErrorTimeout
 	3_in, // largeErrorRange
 	500_ms, // largeErrorTimeout,
-    20 // slew (maximum acceleration)
+    20, // slew (maximum acceleration)
+    1_in // base unit
 };
 ```
 
@@ -148,8 +149,8 @@ lemlib::ControllerSettings<Angle> angularController {
     100_ms, // smallErrorTimeout
     3_deg, // largeErrorRange
     500_ms, // largeErrorTimeout
-    80 // slew (maximum acceleration)
-
+    80, // slew (maximum acceleration)
+    1_deg // base unit
 };
 ```
 

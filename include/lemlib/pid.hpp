@@ -34,13 +34,14 @@ template <isQuantity Q> class FAPID {
          * @param kD derivative gain, multiplied by change in error and added to output
          * @param name name of the FAPID. Used for logging
          */
-        FAPID(float kF, float kA, float kP, float kI, float kD, std::string name) {
+        FAPID(float kF, float kA, float kP, float kI, float kD, std::string name, Q base = Q(1.0)) {
             this->kF = kF;
             this->kA = kA;
             this->kP = kP;
             this->kI = kI;
             this->kD = kD;
             this->name = name;
+            this->base = base;
         }
 
         /**
@@ -92,7 +93,7 @@ template <isQuantity Q> class FAPID {
             // calculate output
             Q error = target - position;
             Q deltaError = error - prevError;
-            float output = (kF * target + kP * error + kI * totalError + kD * deltaError).raw();
+            float output = (kF * target + kP * error + kI * totalError + kD * deltaError).convert(base); // todo test
             if (kA != 0) output = slew(output, prevOutput, kA);
             prevOutput = output;
             prevError = error;
@@ -189,6 +190,7 @@ template <isQuantity Q> class FAPID {
 
         Q prevError = Q(0);
         Q totalError = Q(0);
+        Q base;
         float prevOutput = 0;
 
         void log() {
