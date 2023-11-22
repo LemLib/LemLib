@@ -34,7 +34,14 @@ template <isQuantity Q> class FAPID {
          * @param kD derivative gain, multiplied by change in error and added to output
          * @param name name of the FAPID. Used for logging
          */
-        FAPID(float kF, float kA, float kP, float kI, float kD, std::string name);
+        FAPID(float kF, float kA, float kP, float kI, float kD, std::string name) {
+            this->kF = kF;
+            this->kA = kA;
+            this->kP = kP;
+            this->kI = kI;
+            this->kD = kD;
+            this->name = name;
+        }
 
         /**
          * @brief Set gains
@@ -45,7 +52,13 @@ template <isQuantity Q> class FAPID {
          * @param kI integral gain, multiplied by total error and added to output
          * @param kD derivative gain, multiplied by change in error and added to output
          */
-        void setGains(float kF, float kA, float kP, float kI, float kD);
+        void setGains(float kF, float kA, float kP, float kI, float kD) {
+            this->kF = kF;
+            this->kA = kA;
+            this->kP = kP;
+            this->kI = kI;
+            this->kD = kD;
+        }
 
         /**
          * @brief Set the exit conditions
@@ -56,7 +69,13 @@ template <isQuantity Q> class FAPID {
          * @param smallTime
          * @param maxTime
          */
-        void setExit(Q largeError, Q smallError, Time largeTime, Time smallTime, Time maxTime);
+        void setExit(Q largeError, Q smallError, Time largeTime, Time smallTime, Time maxTime) {
+            this->largeError = largeError;
+            this->smallError = smallError;
+            this->largeTime = largeTime;
+            this->smallTime = smallTime;
+            this->maxTime = maxTime;
+        }
 
         /**
          * @brief Update the FAPID
@@ -67,12 +86,30 @@ template <isQuantity Q> class FAPID {
          * multiple PIDs could slow down the program.
          * @return float - output
          */
-        float update(Q target, Q position, bool log = false);
+        float update(Q target, Q position, bool log = false) {
+            // check most recent input if logging is enabled
+            // this does not run by default because the mutexes could slow down the program
+            // calculate output
+            Q error = target - position;
+            Q deltaError = error - prevError;
+            float output = (kF * target + kP * error + kI * totalError + kD * deltaError).raw();
+            if (kA != 0) output = slew(output, prevOutput, kA);
+            prevOutput = output;
+            prevError = error;
+            totalError += error;
+
+            return output;
+        }
 
         /**
          * @brief Reset the FAPID
          */
-        void reset();
+        void reset() {
+            prevError = Q(0);
+            totalError = Q(0);
+            prevOutput = 0;
+        }
+
         /**
          * @brief Check if the FAPID has settled
          *
@@ -81,7 +118,28 @@ template <isQuantity Q> class FAPID {
          * @return true - the FAPID has settled
          * @return false - the FAPID has not settled
          */
-        bool settled();
+        bool settled() {
+            if (startTime == 0_sec) { // if maxTime has not been set
+                startTime = pros::millis() * ms;
+                return false;
+            } else { // check if the FAPID has settled
+                if (pros::millis() * ms - startTime > maxTime) return true; // maxTime has been exceeded
+                if (units::abs(prevError) < largeError) { // largeError within range
+                    if (largeTimeCounter == 0_sec)
+                        largeTimeCounter = pros::millis() * ms; // largeTimeCounter has not been set
+                    else if (pros::millis() * ms - largeTimeCounter > largeTime)
+                        return true; // largeTime has been exceeded
+                }
+                if (units::abs(prevError) < smallError) { // smallError within range
+                    if (smallTimeCounter == 0_sec)
+                        smallTimeCounter = pros::millis() * ms; // smallTimeCounter has not been set
+                    else if (pros::millis() * ms - smallTimeCounter > smallTime)
+                        return true; // smallTime has been exceeded
+                }
+                // if none of the exit conditions have been met
+                return false;
+            }
+        }
 
         /**
          * @brief initialize the FAPID logging system
@@ -101,7 +159,17 @@ template <isQuantity Q> class FAPID {
          * list of functions that can be called:
          * reset()
          */
-        static void init();
+        static void init() {
+            if (logTask != nullptr) {
+                logTask = new pros::Task {[=] {
+                    while (true) {
+                        // get input
+                        std::cin >> input;
+                        pros::delay(20);
+                    }
+                }};
+            }
+        }
     private:
         float kF;
         float kP;
@@ -123,7 +191,51 @@ template <isQuantity Q> class FAPID {
         Q totalError = Q(0);
         float prevOutput = 0;
 
-        void log();
+        void log() {
+            // check if the input starts with the name of the FAPID
+            // try to obtain the logging mutex
+            if (logMutex.take(5)) {
+                if (input.find(name) == 0) {
+                    // remove the name from the input
+                    input.erase(0, name.length() + 1);
+                    // check if the input is a function
+                    if (input == "reset()") {
+                        reset();
+                    } else if (input == "kF") {
+                        std::cout << kF << std::endl;
+                    } else if (input == "kA") {
+                        std::cout << kA << std::endl;
+                    } else if (input == "kP") {
+                        std::cout << kP << std::endl;
+                    } else if (input == "kI") {
+                        std::cout << kI << std::endl;
+                    } else if (input == "kD") {
+                        std::cout << kD << std::endl;
+                    } else if (input == "totalError") {
+                        std::cout << totalError.raw() << std::endl;
+                    } else if (input.find("kF_") == 0) {
+                        input.erase(0, 3);
+                        kF = std::stof(input);
+                    } else if (input.find("kA_") == 0) {
+                        input.erase(0, 3);
+                        kA = std::stof(input);
+                    } else if (input.find("kP_") == 0) {
+                        input.erase(0, 3);
+                        kP = std::stof(input);
+                    } else if (input.find("kI_") == 0) {
+                        input.erase(0, 3);
+                        kI = std::stof(input);
+                    } else if (input.find("kD_") == 0) {
+                        input.erase(0, 3);
+                        kD = std::stof(input);
+                    }
+                    // clear the input
+                    input = "";
+                }
+                // release the logging mutex
+                logMutex.give();
+            }
+        }
 
         std::string name;
         static std::string input;
