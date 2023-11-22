@@ -54,18 +54,6 @@ int sgn(float x) {
 }
 
 /**
- * @brief Exponential moving average
- *
- * @param current current measurement
- * @param previous previous output
- * @param smooth smoothing factor (0-1). 1 means no smoothing, 0 means no change
- * @return the smoothed output
- */
-template <isQuantity Q> Q ema(Q current, Q previous, float smooth) {
-    return (current * smooth) + (previous * (1 - smooth));
-}
-
-/**
  * Finds the curvature of a circle which intersects 2 points, and is tangent to the first point
  *
  * Inspired by: https://www.chiefdelphi.com/t/paper-implementation-of-the-adaptive-pure-pursuit-controller/166552

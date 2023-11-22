@@ -51,7 +51,11 @@ template <typename T> constexpr T sgn(T value) { return value < 0 ? -1 : 1; }
  * @param values
  * @return the average
  */
-template <isQuantity Q> Q avg(std::vector<Q> values);
+template <isQuantity Q> Q avg(std::vector<Q> values) {
+    Q sum = Q(0);
+    for (Q value : values) { sum += value; }
+    return sum / values.size();
+}
 
 /**
  * @brief Exponential moving average
@@ -61,7 +65,9 @@ template <isQuantity Q> Q avg(std::vector<Q> values);
  * @param smooth smoothing factor (0-1). 1 means no smoothing, 0 means no change
  * @return the smoothed output
  */
-template <isQuantity Q> Q ema(Q current, Q previous, float smooth);
+template <isQuantity Q> Q ema(Q current, Q previous, float smooth) {
+    return (current * smooth) + (previous * (1 - smooth));
+}
 
 /**
  * @brief Get the signed curvature of a circle that intersects the first pose and the second pose
