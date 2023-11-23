@@ -70,6 +70,14 @@ template <typename T> constexpr T sgn(T value) { return value < 0 ? -1 : 1; }
 float avg(std::vector<float> values);
 
 /**
+ * @brief Return the average of a vector of numbers
+ *
+ * @param values
+ * @return double
+ */
+double avg(std::vector<double> values);
+
+/**
  * @brief Exponential moving average
  *
  * @param current current measurement
