@@ -262,11 +262,11 @@ class Chassis {
          */
         void moveAtSpeed(float speed, bool forwards = true);
         /**
-        * @brief Move the chassis at a specific speed
-        *
-        * @param speed speed to move at in degree/s
-        * @param clockwise whether to move cw or ccw, true by default
-        */
+         * @brief Move the chassis at a specific speed
+         *
+         * @param speed speed to move at in degree/s
+         * @param clockwise whether to move cw or ccw, true by default
+         */
         void turnAtSpeed(float speed, bool clockwise = true, bool radians = true);
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In
