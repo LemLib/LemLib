@@ -255,11 +255,11 @@ class Chassis {
          */
         void follow(const asset& path, float lookahead, int timeout, bool forwards = true, bool async = true);
         /**
-        * @brief Accelerate a motor group to a target speed (RPM) 
-        *
-        * @param motorGroup the target motor group
-        * @param speed speed to move at in RPM
-        */
+         * @brief Accelerate a motor group to a target speed (RPM)
+         *
+         * @param motorGroup the target motor group
+         * @param speed speed to move at in RPM
+         */
         void moveVelocity(pros::MotorGroup* motorGroup, float targetVelocity, int controllerChoice = 1);
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In
