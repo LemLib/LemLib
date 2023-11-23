@@ -21,7 +21,7 @@ jobs:
       - name: Get short SHA
         id: short-sha
         run: |
-          if [${{github.event.action}} == opened]; then
+          if ['${{github.event.action}}' = 'opened']; then
               sha=$(wget -O- --quiet https://api.github.com/repos/LemLib/LemLib/pulls/${{ github.event.number }} | jq -r .head.sha | head -c 6)
           else
               sha=$(echo $SHA | head -c 6)
