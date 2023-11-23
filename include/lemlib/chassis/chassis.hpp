@@ -255,20 +255,6 @@ class Chassis {
          */
         void follow(const asset& path, float lookahead, int timeout, bool forwards = true, bool async = true);
         /**
-         * @brief Move the chassis at a specific speed
-         *
-         * @param speed speed to move at in in/s
-         * @param forwards whether to move forwards or backwards
-         */
-        void moveAtSpeed(float speed, bool forwards = true);
-        /**
-         * @brief Move the chassis at a specific speed
-         *
-         * @param speed speed to move at in degree/s
-         * @param clockwise whether to move cw or ccw, true by default
-         */
-        void turnAtSpeed(float speed, bool clockwise = true, bool radians = true);
-        /**
         * @brief Accelerate a motor group to a target speed (RPM) 
         *
         * @param motorGroup the target motor group
