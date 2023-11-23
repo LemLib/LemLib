@@ -540,7 +540,7 @@ void lemlib::Chassis::moveAtSpeed(float speed, bool forwards) {
  * @brief Turn the chassis at a specific speed
  * TODO: make a custom move_velocity (moveVelocity)
  *
- * @param speed speed to move at in rad/s or in/s
+ * @param speed speed to move at in rad/s or degrees/s
  * @param clockwise whether to move cw or ccw, true by default
  * @param radians if the speed is in rad/s, true by default
  */
