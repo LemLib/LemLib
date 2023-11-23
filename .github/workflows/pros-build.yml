@@ -21,7 +21,7 @@ jobs:
       - name: Get short SHA
         id: short-sha
         run: |
-          if ["$ACTION" = 'opened']; then
+          if [`$ACTION` = 'opened']; then
               sha=$(wget -O- --quiet https://api.github.com/repos/LemLib/LemLib/pulls/$PR_NUM | jq -r .head.sha | head -c 6)
           else
               sha=$(echo $SHA | head -c 6)
