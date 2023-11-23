@@ -17,6 +17,7 @@ jobs:
         id: short-sha
         run: |
           if [ $ACTION = opened ]; then
+              # we have to get the head sha directly from the pr api, because github silly ig
               echo "then"
               sha=$(wget -O- --quiet https://api.github.com/repos/LemLib/LemLib/pulls/$PR_NUM | jq -r .head.sha | head -c 6)
           else
@@ -25,7 +26,7 @@ jobs:
           fi
           echo "sha=$sha" >> $GITHUB_OUTPUT
         env:
-          SHA: ${{ github.event.after }}
+          SHA: ${{ github.event.after }} # this isn't present for pr opened events
           ACTION: ${{github.event.action}}
           PR_NUM: ${{github.event.number}}
       
