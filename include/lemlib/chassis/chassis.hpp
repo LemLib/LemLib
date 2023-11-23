@@ -269,6 +269,13 @@ class Chassis {
          */
         void turnAtSpeed(float speed, bool clockwise = true, bool radians = true);
         /**
+        * @brief Accelerate a motor group to a target speed (RPM) 
+        *
+        * @param motorGroup the target motor group
+        * @param speed speed to move at in RPM
+        */
+        void moveVelocity(pros::MotorGroup* motorGroup, float targetVelocity, int controllerChoice = 1);
+        /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In
          * this control scheme one joystick axis controls one half of the robot, and another joystick axis
          * controls another.

@@ -586,3 +586,116 @@ void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) {
         else drivetrain.leftMotors[i].move_velocity(-motorOutput);
     }
 }
+
+/**
+ * @brief Accelerate a motor group to a target speed (RPM)
+ *
+ * @param motorGroup the target motor group
+ * @param speed speed to move at in RPM
+ * @param controllerChoice choice of velocity controller (1 = take back half, 2 = PID)
+ */
+void lemlib::Chassis::moveVelocity(pros::MotorGroup* motorGroup, float targetVelocity, int controllerChoice) {
+    // asynchronous by nature, choose proper task name (protects against multiple tasks on same group)
+    if (motorGroup == drivetrain.rightMotors)
+        pros::Task moveVelocityR([&]() { moveVelocity(motorGroup, targetVelocity, controllerChoice); });
+    else if (motorGroup == drivetrain.leftMotors)
+        pros::Task moveVelocityL([&]() { moveVelocity(motorGroup, targetVelocity, controllerChoice); });
+    else pros::Task moveVelocityOther([&]() { moveVelocity(motorGroup, targetVelocity, controllerChoice); });
+    pros::delay(10); // delay to give the task time to start
+
+    // TBH controller (default)
+    if (controllerChoice == 1) {
+        float integral = 0;
+        float currentVelocity;
+        float error;
+        float output;
+        float prevError = 0;
+        float prevOutput = 0;
+        int compState = pros::competition::get_status();
+        float kI = .01;
+        int bangBangRange = 100; // RPM away from target
+
+        std::vector<pros::motor_gearset_e_t> gearsets = drivetrain.leftMotors->get_gearing();
+        float maxRPM;
+        float motorOutput;
+
+        // find max rpm
+        switch (gearsets[1]) {
+            case pros::E_MOTOR_GEARSET_36: maxRPM = 100; break;
+            case pros::E_MOTOR_GEARSET_18: maxRPM = 200; break;
+            case pros::E_MOTOR_GEARSET_06: maxRPM = 600; break;
+            default: maxRPM = 600; break;
+        }
+
+        // start at a reasonable RPM to lower time to reach target
+        motorGroup->move(targetVelocity / maxRPM * 127 / 1.5);
+
+        // get initial velocity
+        currentVelocity = avg(motorGroup->get_actual_velocities());
+
+        // find initial error
+        error = targetVelocity - currentVelocity;
+
+        // main loop
+        while (abs(error) > 5 && pros::competition::get_status() == compState) {
+            // get current velocity
+            currentVelocity = avg(motorGroup->get_actual_velocities());
+
+            // find error
+            error = targetVelocity - currentVelocity;
+
+            // find integral
+            integral += error;
+
+            // calculate output
+            output = prevOutput + (kI * error);
+
+            // clamp output
+            if (output > 127) output = 127;
+            if (output < -127) output = -127;
+
+            // start settling
+            if (abs(error) < 20) kI -= kI / 2;
+
+            // set up for next loop
+            prevOutput = output;
+            prevError = error;
+
+            // apply output
+            motorGroup->move(output);
+        }
+    }
+
+    // PID controller - still needs to be implemented for user (i.e. the velocityPID values and creating it in the
+    // chassis structure)
+    else if (controllerChoice == 2) {
+        // create new PID controller
+        FAPID velocityPID = FAPID(0, 0, 0, 0, 0, "velocityPID");
+        velocityPID.setExit(0, 0, 0, 0, 0); // exit conditions
+        float prevVelocity = 0; // previous velocity
+        int compState = pros::competition::get_status();
+        int start = pros::millis();
+        int velocityIncreased = 0;
+
+        // main loop
+        while (pros::competition::get_status() == compState &&
+               (!velocityPID.settled() || pros::millis() - start < 300)) {
+            // get current pose
+            float currentVelocity = (float)avg(motorGroup->get_actual_velocities());
+
+            // update error
+            float velocityError = targetVelocity - currentVelocity;
+
+            // calculate speed
+            float motorPower = velocityPID.update(targetVelocity, currentVelocity);
+
+            // set up for next run
+            prevVelocity = currentVelocity;
+
+            // move the motors
+            motorGroup->move(motorPower);
+
+            pros::delay(10); // delay to save resources
+        }
+    }
+}
