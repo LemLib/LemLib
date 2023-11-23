@@ -22,8 +22,10 @@ jobs:
         id: short-sha
         run: |
           if [ $ACTION = opened ]; then
+              echo "then"
               sha=$(wget -O- --quiet https://api.github.com/repos/LemLib/LemLib/pulls/$PR_NUM | jq -r .head.sha | head -c 6)
           else
+              echo "else"
               sha=$(echo $SHA | head -c 6)
           fi
           echo "sha=$sha" >> $GITHUB_OUTPUT
