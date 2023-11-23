@@ -504,14 +504,14 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
 }
 
 /**
- * @brief Move the chassis at a specific speed 
+ * @brief Move the chassis at a specific speed
  * TODO: make a custom move_velocity (moveVelocity)
  *
  * @param speed speed to move at in in/s
  * @param forwards whether to move forwards or backwards, true by default
  */
-void lemlib::Chassis::moveAtSpeed(float speed, bool forwards) { 
-    // find gearing 
+void lemlib::Chassis::moveAtSpeed(float speed, bool forwards) {
+    // find gearing
     std::vector<pros::motor_gearset_e_t> gearsets = drivetrain.leftMotors->get_gearing();
     float maxRPM;
     float motorOutput;
@@ -530,8 +530,7 @@ void lemlib::Chassis::moveAtSpeed(float speed, bool forwards) {
     if (forwards) {
         drivetrain.leftMotors->move_velocity(motorOutput);
         drivetrain.rightMotors->move_velocity(motorOutput);
-    }
-    else {
+    } else {
         drivetrain.leftMotors->move_velocity(-motorOutput);
         drivetrain.rightMotors->move_velocity(-motorOutput);
     }
@@ -545,14 +544,13 @@ void lemlib::Chassis::moveAtSpeed(float speed, bool forwards) {
  * @param clockwise whether to move cw or ccw, true by default
  * @param radians if the speed is in rad/s, true by default
  */
-void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) { 
+void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) {
     float maxRPM;
     float motorOutput;
 
     // left side motors loop
     std::vector<pros::motor_gearset_e_t> gearsets = drivetrain.leftMotors->get_gearing();
     for (int i = 0; i < drivetrain.leftMotors->size(); i++) {
-
         switch (gearsets[i]) {
             case pros::E_MOTOR_GEARSET_36: maxRPM = 100; break;
             case pros::E_MOTOR_GEARSET_18: maxRPM = 200; break;
@@ -561,8 +559,8 @@ void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) {
         }
 
         // calculate the necessary RPM
-        if (radians) motorOutput = speed * (1.0/2) * 60 * (maxRPM / drivetrain.rpm);
-        else motorOutput = speed * (1.0/2) * 60.0 * (maxRPM / drivetrain.rpm) * 360;
+        if (radians) motorOutput = speed * (1.0 / 2) * 60 * (maxRPM / drivetrain.rpm);
+        else motorOutput = speed * (1.0 / 2) * 60.0 * (maxRPM / drivetrain.rpm) * 360;
 
         // apply motorOutput
         if (clockwise) drivetrain.leftMotors[i].move_velocity(motorOutput);
@@ -572,7 +570,6 @@ void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) {
     // right side motors loop
     gearsets = drivetrain.rightMotors->get_gearing();
     for (int i = 0; i < drivetrain.rightMotors->size(); i++) {
-
         switch (gearsets[i]) {
             case pros::E_MOTOR_GEARSET_36: maxRPM = 100; break;
             case pros::E_MOTOR_GEARSET_18: maxRPM = 200; break;
@@ -581,12 +578,11 @@ void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) {
         }
 
         // calculate the necessary RPM
-        if (radians) motorOutput = speed * (1.0/2) * 60 * (maxRPM / drivetrain.rpm);
-        else motorOutput = speed * (1.0/2) * 60.0 * (maxRPM / drivetrain.rpm) * 360;
+        if (radians) motorOutput = speed * (1.0 / 2) * 60 * (maxRPM / drivetrain.rpm);
+        else motorOutput = speed * (1.0 / 2) * 60.0 * (maxRPM / drivetrain.rpm) * 360;
 
         // apply motorOutput
         if (clockwise) drivetrain.leftMotors[i].move_velocity(motorOutput);
         else drivetrain.leftMotors[i].move_velocity(-motorOutput);
     }
 }
-
