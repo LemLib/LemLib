@@ -504,7 +504,8 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
 }
 
 /**
- * @brief Move the chassis at a specific speed
+ * @brief Move the chassis at a specific speed 
+ * TODO: make a custom move_velocity (moveVelocity)
  *
  * @param speed speed to move at in in/s
  * @param forwards whether to move forwards or backwards, true by default
@@ -538,6 +539,7 @@ void lemlib::Chassis::moveAtSpeed(float speed, bool forwards) {
 
 /**
  * @brief Turn the chassis at a specific speed
+ * TODO: make a custom move_velocity (moveVelocity)
  *
  * @param speed speed to move at in rad/s or in/s
  * @param clockwise whether to move cw or ccw, true by default
@@ -587,3 +589,4 @@ void lemlib::Chassis::turnAtSpeed(float speed, bool clockwise, bool radians) {
         else drivetrain.leftMotors[i].move_velocity(-motorOutput);
     }
 }
+
