@@ -529,6 +529,7 @@ void lemlib::Chassis::moveVelocity(pros::MotorGroup* motorGroup, float targetVel
         float prevOutput = 0;
         int compState = pros::competition::get_status();
         float kI = .01;
+        float reductionValue = 1.5;
         int bangBangRange = 100; // RPM away from target
 
         std::vector<pros::motor_gearset_e_t> gearsets = drivetrain.leftMotors->get_gearing();
@@ -544,7 +545,7 @@ void lemlib::Chassis::moveVelocity(pros::MotorGroup* motorGroup, float targetVel
         }
 
         // start at a reasonable RPM to lower time to reach target
-        motorGroup->move(targetVelocity / maxRPM * 127 / 1.5);
+        motorGroup->move(targetVelocity / maxRPM * 127 / reductionValue);
 
         // get initial velocity
         currentVelocity = avg(motorGroup->get_actual_velocities());
