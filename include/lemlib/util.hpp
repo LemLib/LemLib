@@ -59,7 +59,9 @@ float angleError(float angle1, float angle2, bool radians = false);
  * @param x the number to get the sign of
  * @return int - -1 if negative, 1 if positive
  */
-template <typename T> constexpr T sgn(T value) { return value < 0 ? -1 : 1; }
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
 
 /**
  * @brief Return the average of a vector of numbers
@@ -67,7 +69,8 @@ template <typename T> constexpr T sgn(T value) { return value < 0 ? -1 : 1; }
  * @param values
  * @return float
  */
-float avg(std::vector<float> values);
+template <typename T>
+T avg(std::vector<T> values);
 
 /**
  * @brief Exponential moving average

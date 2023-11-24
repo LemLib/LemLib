@@ -9,6 +9,7 @@
  *
  */
 #include <math.h>
+#include <numeric>
 #include <vector>
 #include "lemlib/pose.hpp"
 #include "lemlib/util.hpp"
@@ -47,9 +48,9 @@ float lemlib::angleError(float angle1, float angle2, bool radians) {
  * @param values
  * @return float
  */
-float lemlib::avg(std::vector<float> values) {
-    float sum = 0;
-    for (float value : values) { sum += value; }
+template<typename T>
+T lemlib::avg(std::vector<T> values) {
+    T sum = std::accumulate(values.cbegin(), values.cend(), static_cast<T>(0));
     return sum / values.size();
 }
 
@@ -79,7 +80,7 @@ float lemlib::ema(float current, float previous, float smooth) {
  */
 float lemlib::getCurvature(Pose pose, Pose other) {
     // calculate whether the pose is on the left or right side of the circle
-    float side = lemlib::sgn(std::sin(pose.theta) * (other.x - pose.x) - std::cos(pose.theta) * (other.y - pose.y));
+    int side = lemlib::sgn(std::sin(pose.theta) * (other.x - pose.x) - std::cos(pose.theta) * (other.y - pose.y));
     // calculate center point and radius
     float a = -std::tan(pose.theta);
     float c = std::tan(pose.theta) * pose.x - pose.y;
