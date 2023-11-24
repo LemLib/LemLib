@@ -145,7 +145,9 @@ Pose Pose::rotate(float angle) const {
     return Pose(x * cosAngle - y * sinAngle, x * sinAngle + y * cosAngle, theta);
 }
 
-std::string format_as(const Pose& pose) {
+std::ostream& operator<<(std::ostream& os, const lemlib::Pose& pose) { return os << lemlib::format_as(pose).c_str(); }
+
+std::string format_as(const lemlib::Pose& pose) {
     // the double brackets become single brackets
     return fmt::format("lemlib::Pose {{ x: {}, y: {}, theta: {} }}", pose.x, pose.y, pose.theta);
 }

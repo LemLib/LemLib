@@ -1,0 +1,35 @@
+name: run-unit-tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: |
+          sudo apt install build-essential
+          sudo apt install cmake
+          sudo apt install lcov
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build .
+      - name: Test
+        working-directory: build
+        run: ./LemLib
+      - name: Collect Coverage
+        working-directory: build
+        run: |
+          lcov --directory . --capture --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info
+          lcov --remove coverage.info '*/LemLib/build/*' --output-file coverage.info 
+          lcov --list coverage.info
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        env:
+          fail_ci_if_error: true
+          files: ./build/coverage.info
