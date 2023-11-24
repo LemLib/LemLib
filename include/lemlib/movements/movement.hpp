@@ -7,6 +7,7 @@ namespace lemlib {
 /**
  * @brief Abstract class for a movement
  */
+ 
 class Movement {
     public:
         /**
@@ -28,4 +29,5 @@ class Movement {
          */
         virtual std::pair<int, int> update(Pose pose) = 0;
 };
+
 } // namespace lemlib
