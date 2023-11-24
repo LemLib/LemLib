@@ -48,8 +48,7 @@ float lemlib::angleError(float angle1, float angle2, bool radians) {
  * @param values
  * @return float
  */
-template<typename T>
-T lemlib::avg(std::vector<T> values) {
+template <typename T> T lemlib::avg(std::vector<T> values) {
     T sum = std::accumulate(values.cbegin(), values.cend(), static_cast<T>(0));
     return sum / values.size();
 }
