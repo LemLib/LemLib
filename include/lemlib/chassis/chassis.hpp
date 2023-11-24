@@ -54,7 +54,7 @@ class Chassis {
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          */
-        Pose getPose(bool radians = false);
+        Pose getPose(bool radians = false) const;
 
         /**
          * @brief Wait until the robot has traveled a certain distance, or angle, along the path
