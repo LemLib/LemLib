@@ -42,23 +42,23 @@ lemlib::FAPID::FAPID(float kF, float kA, float kP, float kI, float kD, std::stri
 }
 
 /**
-* @brief Construct a new FAPID
-*
-* @param gains the gains for the FAPID to use
-* @param name name of the FAPID. Used for logging
-*/
+ * @brief Construct a new FAPID
+ *
+ * @param gains the gains for the FAPID to use
+ * @param name name of the FAPID. Used for logging
+ */
 lemlib::FAPID::FAPID(Gains gains, std::string name) {
     currentGains = gains;
     this->name = name;
 }
 
 /**
-* @brief Construct a new FAPID
-*
-* @param gains the default gains for the FAPID to use
-* @param scheduled a set of (target, Gains) pairs to use for gain scheduling
-* @param name name of the FAPID. Used for logging
-*/
+ * @brief Construct a new FAPID
+ *
+ * @param gains the default gains for the FAPID to use
+ * @param scheduled a set of (target, Gains) pairs to use for gain scheduling
+ * @param name name of the FAPID. Used for logging
+ */
 lemlib::FAPID::FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, std::string name) {
     currentGains = gains;
     scheduledGains = scheduled;
@@ -66,14 +66,15 @@ lemlib::FAPID::FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, s
 }
 
 /**
-* @brief Construct a new FAPID
-*
-* @param gains the default gains for the FAPID to use
-* @param scheduled a set of (target, Gains) pairs to use for gain scheduling
-* @param interpolator the function to use when interpolating gains when scheduling
-* @param name name of the FAPID. Used for logging
-*/
-lemlib::FAPID::FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, Interpolator interpolator, std::string name) {
+ * @brief Construct a new FAPID
+ *
+ * @param gains the default gains for the FAPID to use
+ * @param scheduled a set of (target, Gains) pairs to use for gain scheduling
+ * @param interpolator the function to use when interpolating gains when scheduling
+ * @param name name of the FAPID. Used for logging
+ */
+lemlib::FAPID::FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, Interpolator interpolator,
+                     std::string name) {
     currentGains = gains;
     scheduledGains = scheduled;
     gainInterpolator = interpolator;
@@ -95,31 +96,25 @@ void lemlib::FAPID::setGains(float kF, float kA, float kP, float kI, float kD) {
 }
 
 /**
-* @brief Set gains
-*
-* @param gains the new gains
-*/
-void lemlib::FAPID::setGains(Gains gains) {
-    currentGains = gains;
-}
+ * @brief Set gains
+ *
+ * @param gains the new gains
+ */
+void lemlib::FAPID::setGains(Gains gains) { currentGains = gains; }
 
 /**
-* @brief Set scheduled gains
-*
-* @param gains the new scheduled gains
-*/
-void lemlib::FAPID::setScheduledGains(std::set<std::pair<float, Gains>> scheduled) {
-    scheduledGains = scheduled;
-}
+ * @brief Set scheduled gains
+ *
+ * @param gains the new scheduled gains
+ */
+void lemlib::FAPID::setScheduledGains(std::set<std::pair<float, Gains>> scheduled) { scheduledGains = scheduled; }
 
 /**
-* @brief Set gain interpolator
-*
-* @param gains the new gain interpolator
-*/
-void lemlib::FAPID::setGainInterpolator(Interpolator interpolator) {
-    gainInterpolator = interpolator;
-}
+ * @brief Set gain interpolator
+ *
+ * @param gains the new gain interpolator
+ */
+void lemlib::FAPID::setGainInterpolator(Interpolator interpolator) { gainInterpolator = interpolator; }
 
 /**
  * @brief Set the exit conditions
@@ -139,16 +134,16 @@ void FAPID::setExit(float largeError, float smallError, int largeTime, int small
 }
 
 /**
-* @brief A gain interpolator that selects the gains with the closest target
-*
-* @param target the target at which to interpolate
-* @param below the lower adjacent (target, Gains) value
-* @param above the higher adjacent (target, Gains) value
-*
-* @returns the interpolated gains
-*/
+ * @brief A gain interpolator that selects the gains with the closest target
+ *
+ * @param target the target at which to interpolate
+ * @param below the lower adjacent (target, Gains) value
+ * @param above the higher adjacent (target, Gains) value
+ *
+ * @returns the interpolated gains
+ */
 lemlib::Gains interpolateNearest(float target, std::pair<float, Gains> below, std::pair<float, Gains> above) {
-    if(std::abs(target - below.first) < std::abs(target - above.first)) {
+    if (std::abs(target - below.first) < std::abs(target - above.first)) {
         return below.second;
     } else {
         return above.second;
@@ -156,20 +151,20 @@ lemlib::Gains interpolateNearest(float target, std::pair<float, Gains> below, st
 }
 
 /**
-* @brief A gain interpolator that linearly interpolates gains
-*
-* @param target the target at which to interpolate
-* @param below the lower adjacent (target, Gains) value
-* @param above the higher adjacent (target, Gains) value
-*
-* @returns the interpolated gains
-*/
+ * @brief A gain interpolator that linearly interpolates gains
+ *
+ * @param target the target at which to interpolate
+ * @param below the lower adjacent (target, Gains) value
+ * @param above the higher adjacent (target, Gains) value
+ *
+ * @returns the interpolated gains
+ */
 lemlib::Gains interpolateLinear(float target, std::pair<float, Gains> below, std::pair<float, Gains> above) {
     auto nearest = lemlib::interpolateNearest(target, below, above);
     auto [x1, y1] = below;
     auto [x2, y2] = above;
 
-    // Should kF and kA be interpolated? 
+    // Should kF and kA be interpolated?
     // It seems that feedforward constants should remain the same
 
     auto kF = nearest.kF;
@@ -178,8 +173,8 @@ lemlib::Gains interpolateLinear(float target, std::pair<float, Gains> below, std
     auto kP = lemlib::linearInterp(target, x1, y1.kP, x2, y2.kP);
     auto kI = lemlib::linearInterp(target, x1, y1.kI, x2, y2.kI);
     auto kD = lemlib::linearInterp(target, x1, y1.kD, x2, y2.kD);
-    
-    return Gains{ kF, kA, kP, kI, kD };
+
+    return Gains {kF, kA, kP, kI, kD};
 }
 
 /**
@@ -194,12 +189,9 @@ lemlib::Gains interpolateLinear(float target, std::pair<float, Gains> below, std
 float lemlib::FAPID::update(float target, float position, bool log) {
     // Check if we have scheduled gains, and if we have a different target
     if (!scheduledGains.empty() && previousTarget != target) {
-        auto upper = std::upper_bound(
-            scheduledGains.begin(), 
-            scheduledGains.end(), 
-            target, 
-            [](auto value, auto entry ) { return value < entry.first; });
-        
+        auto upper = std::upper_bound(scheduledGains.begin(), scheduledGains.end(), target,
+                                      [](auto value, auto entry) { return value < entry.first; });
+
         // Nearest scheduled gains above and below (or equal) the target
         auto above = *upper;
         auto below = upper == scheduledGains.begin() ? *upper : *(--upper);
