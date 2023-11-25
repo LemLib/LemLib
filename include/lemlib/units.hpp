@@ -54,7 +54,7 @@ template <typename Mass, typename Length, typename Time, typename Angle> class Q
             return *this;
         }
 
-        constexpr inline Quantity operator-() { return Quantity(value * -1); }
+        constexpr inline Quantity operator-() const { return Quantity(value * -1); }
 
         constexpr inline Quantity const& operator*=(const double rhs) {
             value *= rhs;
