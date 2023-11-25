@@ -92,4 +92,5 @@ void Chassis::moveCustom(std::unique_ptr<Movement> movement) {
     // create the movement
     this->movement = std::move(movement);
 }
+
 }; // namespace lemlib

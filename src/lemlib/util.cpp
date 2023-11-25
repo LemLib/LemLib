@@ -72,7 +72,7 @@ float avg(std::vector<float> values) {
  * @param values
  * @return casted float
  */
-double lemlib::avg(std::vector<double> values) {
+double avg(std::vector<double> values) {
     double sum = 0;
     for (double value : values) { sum += value; }
     return (float)sum / values.size();

@@ -12,6 +12,7 @@
 #pragma once
 
 #include <memory>
+#include "pros/motor_group.hpp"
 #include "pros/rtos.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/movements/movement.hpp"
