@@ -15,39 +15,38 @@
 
 namespace lemlib {
 struct Gains {
-    float kF = 0;
-    float kA = 0;
-    float kP = 0;
-    float kI = 0;
-    float kD = 0;
+        float kF = 0;
+        float kA = 0;
+        float kP = 0;
+        float kI = 0;
+        float kD = 0;
 };
 
 /** @brief A function taking the target and the (target, Gains) elements adjacent to it, computing the resulting gains
-*/
+ */
 using Interpolator = std::function<Gains(float, std::pair<float, Gains>, std::pair<float, Gains>)>;
 
 /**
-* @brief A gain interpolator that selects the gains with the closest target
-*
-* @param target the target at which to interpolate
-* @param below the lower adjacent (target, Gains) value
-* @param above the higher adjacent (target, Gains) value
-*
-* @returns the interpolated gains
-*/
+ * @brief A gain interpolator that selects the gains with the closest target
+ *
+ * @param target the target at which to interpolate
+ * @param below the lower adjacent (target, Gains) value
+ * @param above the higher adjacent (target, Gains) value
+ *
+ * @returns the interpolated gains
+ */
 Gains interpolateNearest(float target, std::pair<float, Gains> below, std::pair<float, Gains> above);
 
 /**
-* @brief A gain interpolator that linearly interpolates gains
-*
-* @param target the target at which to interpolate
-* @param below the lower adjacent (target, Gains) value
-* @param above the higher adjacent (target, Gains) value
-*
-* @returns the interpolated gains
-*/
+ * @brief A gain interpolator that linearly interpolates gains
+ *
+ * @param target the target at which to interpolate
+ * @param below the lower adjacent (target, Gains) value
+ * @param above the higher adjacent (target, Gains) value
+ *
+ * @returns the interpolated gains
+ */
 Gains interpolateLinear(float, std::pair<float, Gains>, std::pair<float, Gains>);
-
 
 /**
  * @brief Feedforward, Acceleration, Proportional, Integral, Derivative PID controller
@@ -69,7 +68,7 @@ class FAPID {
          * @param name name of the FAPID. Used for logging
          */
         FAPID(float kF, float kA, float kP, float kI, float kD, std::string name);
-        
+
         /**
          * @brief Construct a new FAPID
          *
@@ -86,7 +85,7 @@ class FAPID {
          * @param name name of the FAPID. Used for logging
          */
         FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, std::string name);
-        
+
         /**
          * @brief Construct a new FAPID
          *
@@ -96,7 +95,7 @@ class FAPID {
          * @param name name of the FAPID. Used for logging
          */
         FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, Interpolator interpolator, std::string name);
-        
+
         /**
          * @brief Set gains
          *
@@ -189,7 +188,8 @@ class FAPID {
         // The gains the PID will use
         Gains currentGains;
 
-        // A function taking the target and the elements adjacent to the target in the (target, gain) set, computing the final gains
+        // A function taking the target and the elements adjacent to the target in the (target, gain) set, computing the
+        // final gains
         Interpolator gainInterpolator = interpolateNearest;
 
         float previousTarget = 0;
@@ -213,6 +213,5 @@ class FAPID {
         static pros::Task* logTask;
         static pros::Mutex logMutex;
 };
-
 
 } // namespace lemlib

@@ -195,12 +195,9 @@ Pose circleLineIntersect(Pose p1, Pose p2, Pose center, float radius) {
  * @return the interpolated y value
  */
 float linearInterp(float x, float x1, float y1, float x2, float y2) {
-    if (x2 - x1 == 0) {
-        return y1;
-    }
+    if (x2 - x1 == 0) { return y1; }
 
     return y1 + (x - x1) * ((y2 - y1) / (x2 - x1));
 }
 
 }; // namespace lemlib
-
