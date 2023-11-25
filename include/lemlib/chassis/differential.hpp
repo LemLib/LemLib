@@ -295,6 +295,15 @@ class Differential : public Chassis {
          */
         void curvature(int throttle, int turn, float cureGain = 0.0,
                        DriveCurveFunction_t driveCurve = defaultDriveCurve);
+
+        /**
+         * @brief Accelerate a motor group to a target speed (RPM)
+         *
+         * @param motorGroup the target motor group
+         * @param speed speed to move at in RPM
+         * @param controllerChoice choice of velocity controller (1 = take back half, 2 = PID)
+         */
+        void moveVelocity(pros::MotorGroup* motorGroup, float targetVelocity, int controllerChoice);
     private:
         /**
          * @brief Chassis update function. Updates chassis motion and odometry

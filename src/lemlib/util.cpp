@@ -67,6 +67,18 @@ float avg(std::vector<float> values) {
 }
 
 /**
+ * @brief Return the average of a vector of numbers
+ *
+ * @param values
+ * @return double
+ */
+double avg2(std::vector<double> values) {
+    double sum = 0;
+    for (double value : values) { sum += value; }
+    return (float)(sum / values.size());
+}
+
+/**
  * @brief Exponential moving average
  *
  * @param current current measurement

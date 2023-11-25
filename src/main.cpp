@@ -3,6 +3,7 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
 #include "pros/misc.h"
+#include "pros/rtos.h"
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -135,6 +136,7 @@ void opcontrol() {
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         // move the chassis with curvature drive
         chassis.curvature(leftY, rightX);
+
         // delay to save resources
         pros::delay(10);
     }

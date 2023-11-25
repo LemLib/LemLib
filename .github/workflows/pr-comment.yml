@@ -52,6 +52,7 @@ jobs:
                   }
                 }
               }
+              return {};  
             })();            
             if (issue_number) {
               core.info(`Using pull request ${issue_number}`);
