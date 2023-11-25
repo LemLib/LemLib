@@ -75,7 +75,7 @@ float avg(std::vector<float> values) {
 double avg2(std::vector<double> values) {
     double sum = 0;
     for (double value : values) { sum += value; }
-    return (float) (sum / values.size());
+    return (float)(sum / values.size());
 }
 
 /**
