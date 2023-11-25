@@ -304,7 +304,6 @@ class Differential : public Chassis {
          * @param controllerChoice choice of velocity controller (1 = take back half, 2 = PID)
          */
         void moveVelocity(pros::MotorGroup* motorGroup, float targetVelocity, int controllerChoice);
-        
     private:
         /**
          * @brief Chassis update function. Updates chassis motion and odometry
