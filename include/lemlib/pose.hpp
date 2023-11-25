@@ -35,35 +35,61 @@ class Pose {
          * @param other other pose
          * @return Pose
          */
-        Pose operator+(const Pose& other);
+        Pose operator+(const Pose& other) const;
+        /**
+         * @brief Set the value of this pose to its value + the value of another pose
+         *
+         * @param other other pose
+         */
+        void operator+=(const Pose& other);
         /**
          * @brief Subtract a pose from this pose
          *
          * @param other other pose
          * @return Pose
          */
-        Pose operator-(const Pose& other);
+        Pose operator-(const Pose& other) const;
+        /**
+         * @brief Set the value of this pose to its value - the value of another pose
+         *
+         * @param other other pose
+         */
+        void operator-=(const Pose& other);
         /**
          * @brief Multiply a pose by this pose
          *
          * @param other other pose
          * @return Pose
          */
-        float operator*(const Pose& other);
+        float operator*(const Pose& other) const;
         /**
          * @brief Multiply a pose by a float
          *
          * @param other float
          * @return Pose
          */
-        Pose operator*(const float& other);
+        Pose operator*(const float& other) const;
         /**
          * @brief Divide a pose by a float
          *
          * @param other float
          * @return Pose
          */
-        Pose operator/(const float& other);
+        Pose operator/(const float& other) const;
+        /**
+         * @brief Check if two poses are equal
+         *
+         * @param other the other pose
+         * @return bool
+         */
+        bool operator==(const Pose& other) const;
+        /**
+         * @brief Check if two poses are not equal
+         *
+         * @param other the other pose
+         * @return bool
+         */
+        bool operator!=(const Pose& other) const;
         /**
          * @brief Linearly interpolate between two poses
          *
@@ -71,28 +97,30 @@ class Pose {
          * @param t t value
          * @return Pose
          */
-        Pose lerp(Pose other, float t);
+        Pose lerp(const Pose other, float t) const;
         /**
          * @brief Get the distance between two poses
          *
          * @param other the other pose
          * @return float
          */
-        float distance(Pose other);
+        float distance(const Pose other) const;
         /**
          * @brief Get the angle between two poses
          *
          * @param other the other pose
          * @return float in radians
          */
-        float angle(Pose other);
+        float angle(const Pose other) const;
         /**
          * @brief Rotate a pose by an angle
+         *
+         * @note positive angle results in counterclockwise translation
          *
          * @param angle angle in radians
          * @return Pose
          */
-        Pose rotate(float angle);
+        Pose rotate(float angle) const;
 };
 
 /**
@@ -102,4 +130,26 @@ class Pose {
  * @return std::string
  */
 std::string format_as(const Pose& pose);
+
+/**
+ * @brief Waypoint class. Derived from Pose. Has speed field
+ */
+class Waypoint : public Pose {
+    public:
+        /**
+         * @brief Construct a new Waypoint
+         *
+         * @param x
+         * @param y
+         * @param theta
+         * @param speed
+         */
+        Waypoint(float x, float y, float theta = 0, float speed = 0, int index = 0)
+            : Pose(x, y, theta),
+              speed(speed),
+              index(index) {}
+
+        float speed;
+        int index;
+};
 } // namespace lemlib

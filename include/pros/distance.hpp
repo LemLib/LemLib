@@ -1,30 +1,40 @@
 /**
  * \file pros/distance.hpp
+ * \ingroup cpp-distance
  *
  * Contains prototypes for the V5 Distance Sensor-related functions.
- *
- * Visit https://pros.cs.purdue.edu/v5/tutorials/topical/distance.html to learn
- * more.
  *
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * \copyright (c) 2017-2021, Purdue University ACM SIGBots.
+ * \copyright (c) 2017-2023, Purdue University ACM SIGBots.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ * 
+ * \defgroup cpp-distance VEX Distance Sensor C++ API
  */
 
 #ifndef _PROS_DISTANCE_HPP_
 #define _PROS_DISTANCE_HPP_
 
 #include <cstdint>
+#include <iostream>
 
+#include "pros/device.hpp"
 #include "pros/distance.h"
 
 namespace pros {
-class Distance {
+inline namespace v5 {
+/**
+ * \ingroup cpp-distance
+ */
+class Distance : public Device {
+	/**
+	 * \addtogroup cpp-distance
+	 *  @{
+ 	*/
 	public:
 	/**
 	 * Creates a Distance Sensor object for the given port.
@@ -36,6 +46,15 @@ class Distance {
 	 *
 	 * \param port
 	 *        The V5 port number from 1-21
+	 *
+	 * \b Example
+	 * \code
+	 * #define DISTANCE_PORT 1
+	 *
+	 * void opcontrol() {
+	 *   Distance distance(DISTANCE_PORT);
+	 * }
+	 * \endcode
 	 */
 	explicit Distance(const std::uint8_t port);
 
@@ -49,6 +68,19 @@ class Distance {
 	 *
 	 * \return The distance value or PROS_ERR if the operation failed, setting
 	 * errno.
+	 *
+	 * \b Example
+	 * \code
+	 * #define DISTANCE_PORT 1
+	 * 
+	 * void opcontrol() {
+		Distance distance(DISTANCE_PORT);
+	 *   while (true) {
+	 *     printf("Distance confidence: %d\n", distance.get());
+	 *     delay(20);
+	 *   }
+	 * }
+	 * \endcode
 	 */
 	virtual std::int32_t get();
 
@@ -66,6 +98,19 @@ class Distance {
 	 *
 	 * \return The confidence value or PROS_ERR if the operation failed, setting
 	 * errno.
+	 *
+	 * \b Example
+	 * \code
+	 * #define DISTANCE_PORT 1
+	 * 
+	 * void opcontrol() {
+		Distance distance(DISTANCE_PORT);
+	 *   while (true) {
+	 *     printf("Distance confidence: %d\n", distance.get_confidence());
+	 *     delay(20);
+	 *   }
+	 * }
+	 * \endcode
 	 */
 	virtual std::int32_t get_confidence();
 
@@ -83,6 +128,19 @@ class Distance {
 	 *
 	 * \return The size value or PROS_ERR if the operation failed, setting
 	 * errno.
+	 *
+	 * \b Example
+	 * \code
+	 * #define DISTANCE_PORT 1
+	 * 
+	 * void opcontrol() {
+		Distance distance(DISTANCE_PORT);
+	 *   while (true) {
+	 *     printf("Distance confidence: %d\n", distance.get_object_size());
+	 *     delay(20);
+	 *   }
+	 * }
+	 * \endcode
 	 */
 	virtual std::int32_t get_object_size();
 
@@ -96,19 +154,38 @@ class Distance {
 	 *
 	 * \return The velocity value or PROS_ERR if the operation failed, setting
 	 * errno.
+	 * 
+	 * \b Example
+	 * \code
+	 * 
+	 * void opcontrol() {
+	 *	Distance distance(DISTANCE_PORT);
+	 *   while (true) {
+	 *     printf("Distance Object velocity: %f\n", distance.get_object_velocity());
+	 *     delay(20);
+	 *   }
+	 * }
+	 * \endcode
 	 */
 	virtual double get_object_velocity();
 
-	/**
-	 * Gets the port number of the distance sensor.
-	 *
-	 * \return The distance sensor's port number.
-	 */
-	std::uint8_t get_port();
-
+    /**
+     * This is the overload for the << operator for printing to streams
+     *
+     * Prints in format(this below is all in one line with no new line):
+     * Distance [port: (port number), distance: (distance), confidence: (confidence),
+     * object size: (object size), object velocity: (object velocity)]
+     */
+	friend std::ostream& operator<<(std::ostream& os, pros::Distance& distance);
+  
 	private:
-	const std::uint8_t _port;
+	///@}
 };
+
+namespace literals {
+const pros::Distance operator"" _dist(const unsigned long long int d);
+}  // namespace literals
+}
 }  // namespace pros
 
 #endif

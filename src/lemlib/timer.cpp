@@ -1,8 +1,7 @@
 #include "pros/rtos.hpp"
 #include "lemlib/timer.hpp"
 
-using namespace lemlib;
-
+namespace lemlib {
 /**
  * Construct a new timer
  *
@@ -95,3 +94,4 @@ void Timer::waitUntilDone() {
     do pros::delay(5);
     while (!this->isDone());
 }
+} // namespace lemlib
