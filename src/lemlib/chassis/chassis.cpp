@@ -41,7 +41,7 @@ void Chassis::setPose(Pose pose, bool radians) {
  * This function is a wrapper for the Odometry::getPose() function
  * but it also transforms the pose to the format needed by the user
  */
-Pose Chassis::getPose(bool radians) const{
+Pose Chassis::getPose(bool radians) const {
     Pose pose = odom->getPose();
     pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
