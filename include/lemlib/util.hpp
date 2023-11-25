@@ -76,7 +76,7 @@ float avg(std::vector<float> values);
  * @param values
  * @return double
  */
-double avg(std::vector<double> values);
+double avg2(std::vector<double> values);
 
 /**
  * @brief Exponential moving average

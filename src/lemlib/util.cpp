@@ -72,10 +72,10 @@ float avg(std::vector<float> values) {
  * @param values
  * @return double
  */
-double avg(std::vector<double> values) {
+double avg2(std::vector<double> values) {
     double sum = 0;
     for (double value : values) { sum += value; }
-    return sum / values.size();
+    return (float) (sum / values.size());
 }
 
 /**

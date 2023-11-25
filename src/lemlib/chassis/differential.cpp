@@ -243,7 +243,7 @@ void Differential::moveVelocity(pros::MotorGroup* motorGroup, float targetVeloci
         motorGroup->move(targetVelocity / maxRPM * 127 / reductionValue);
 
         // get initial velocity
-        currentVelocity = avg(motorGroup->get_actual_velocity_all());
+        currentVelocity = avg2(motorGroup->get_actual_velocity_all());
 
         // find initial error
         error = targetVelocity - currentVelocity;
@@ -251,7 +251,7 @@ void Differential::moveVelocity(pros::MotorGroup* motorGroup, float targetVeloci
         // main loop
         while (abs(error) > 5 && pros::competition::get_status() == compState) {
             // get current velocity
-            currentVelocity = avg(motorGroup->get_actual_velocity_all());
+            currentVelocity = avg2(motorGroup->get_actual_velocity_all());
 
             // find error
             error = targetVelocity - currentVelocity;
@@ -293,7 +293,7 @@ void Differential::moveVelocity(pros::MotorGroup* motorGroup, float targetVeloci
         while (pros::competition::get_status() == compState &&
                (!velocityPID.settled() || pros::millis() - start < 300)) {
             // get current pose
-            float currentVelocity = (float)avg(motorGroup->get_actual_velocity_all());
+            float currentVelocity = avg2(motorGroup->get_actual_velocity_all());
 
             // update error
             float velocityError = targetVelocity - currentVelocity;
