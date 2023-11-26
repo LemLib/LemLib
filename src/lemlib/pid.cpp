@@ -36,8 +36,7 @@ pros::Mutex FAPID::logMutex = pros::Mutex();
  * @param name name of the FAPID. Used for logging
  */
 lemlib::FAPID::FAPID(float kF, float kA, float kP, float kI, float kD, std::string name) {
-    auto gains = Gains {kF, kA, kP, kI, kD};
-    currentGains = gains;
+    currentGains = Gains {kF, kA, kP, kI, kD};
     this->name = name;
 }
 
