@@ -48,7 +48,9 @@ bool Imu::isCalibrating() const { return this->imu.is_calibrating(); }
  *
  * This function checks if the Imu is connected, is not calibrating,
  */
-bool Imu::isCalibrated() { return this->isConnected() && !this->imu.is_calibrating() && !std::isinf(this->imu.get_heading()); }
+bool Imu::isCalibrated() {
+    return this->isConnected() && !this->imu.is_calibrating() && !std::isinf(this->imu.get_heading());
+}
 
 /**
  * return whether the IMU is installed

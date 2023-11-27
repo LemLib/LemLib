@@ -4,7 +4,7 @@ namespace lemlib {
 /**
  * Return current pose
  */
-Pose Odom::getPose() const{ return this->pose; }
+Pose Odom::getPose() const { return this->pose; }
 
 /**
  * Set current pose

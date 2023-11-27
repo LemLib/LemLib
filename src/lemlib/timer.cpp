@@ -9,7 +9,8 @@ namespace lemlib {
  * makes the code more readable, and easier to develop.
  */
 Timer::Timer(uint32_t time)
-    : period(time), lastTime(pros::millis()) {}
+    : period(time),
+      lastTime(pros::millis()) {}
 
 /**
  * Get the amount of time the timer is set to wait

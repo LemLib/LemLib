@@ -237,12 +237,16 @@ bool FAPID::settled() {
     } else { // check if the FAPID has settled
         if (pros::c::millis() - this->startTime > this->maxTime) return true; // maxTime has been exceeded
         if (std::fabs(this->prevError) < this->largeError) { // largeError within range
-            if (!this->largeTimeCounter) this->largeTimeCounter = pros::c::millis(); // largeTimeCounter has not been set
-            else if (pros::c::millis() - this->largeTimeCounter > this->largeTime) return true; // largeTime has been exceeded
+            if (!this->largeTimeCounter)
+                this->largeTimeCounter = pros::c::millis(); // largeTimeCounter has not been set
+            else if (pros::c::millis() - this->largeTimeCounter > this->largeTime)
+                return true; // largeTime has been exceeded
         }
         if (std::fabs(this->prevError) < this->smallError) { // smallError within range
-            if (!this->smallTimeCounter) this->smallTimeCounter = pros::c::millis(); // smallTimeCounter has not been set
-            else if (pros::c::millis() - this->smallTimeCounter > this->smallTime) return true; // smallTime has been exceeded
+            if (!this->smallTimeCounter)
+                this->smallTimeCounter = pros::c::millis(); // smallTimeCounter has not been set
+            else if (pros::c::millis() - this->smallTimeCounter > this->smallTime)
+                return true; // smallTime has been exceeded
         }
         // if none of the exit conditions have been met
         return false;
