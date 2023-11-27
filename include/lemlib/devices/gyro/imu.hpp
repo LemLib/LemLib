@@ -18,7 +18,7 @@ class Imu : public Gyro {
          *
          * @param imu reference to the pros imu to use
          */
-        Imu(pros::Imu& imu);
+        Imu(const pros::Imu& imu);
         /**
          * @brief Calibrate the IMU
          *
