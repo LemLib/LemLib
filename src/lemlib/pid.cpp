@@ -326,7 +326,11 @@ void FAPID::log() {
                 currentGains.kA = std::stof(input);
             } else if (input.find("kP_") == 0) {
                 input.erase(0, 3);
+<<<<<<< HEAD
                 currentGains.kP = std::stof(input);
+=======
+                this->currentGains.>kP = std::stof(input);
+>>>>>>> ec46c82 (change - to -> in pid.cpp)
             } else if (input.find("kI_") == 0) {
                 input.erase(0, 3);
                 currentGains.kI = std::stof(input);
