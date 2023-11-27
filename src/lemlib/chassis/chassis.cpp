@@ -105,6 +105,7 @@ void lemlib::Chassis::calibrate(bool calibrateIMU) {
     // calibrate the IMU if it exists and the user doesn't specify otherwise
     if (sensors.imu != nullptr && calibrateIMU) {
         int attempt = 1;
+      
         // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
         while (sensors.imu->reset(true) != 1 && attempt < 5) {
             pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
