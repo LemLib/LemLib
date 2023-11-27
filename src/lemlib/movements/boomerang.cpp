@@ -79,7 +79,8 @@ std::pair<int, int> Boomerang::update(Pose pose) {
     this->prevPose = pose;
 
     // calculate the carrot point
-    Pose carrot = this->target - (Pose(cos(this->target.theta), sin(this->target.theta)) * this->lead * pose.distance(this->target));
+    Pose carrot = this->target -
+                  (Pose(cos(this->target.theta), sin(this->target.theta)) * this->lead * pose.distance(this->target));
     if (this->state == 1) carrot = this->target; // settling behavior
 
     // calculate error

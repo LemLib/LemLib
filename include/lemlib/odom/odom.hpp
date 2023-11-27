@@ -23,7 +23,7 @@ class Odom {
          *
          * @return Pose current pose
          */
-        Pose getPose()const;
+        Pose getPose() const;
         /**
          * @brief Set the current pose
          *
