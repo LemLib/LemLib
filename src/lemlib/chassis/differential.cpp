@@ -71,11 +71,11 @@ Differential::Differential(const Drivetrain& drivetrain, const ControllerSetting
  */
 void Differential::initialize() {
     // calibrate odom
-    const int pollRate = odom->getPollRate();
     this->odom->calibrate();
     // start the chassis task if it doesn't exist
     if (this->task == nullptr)
         this->task = std::make_unique<pros::Task>([this]() {
+            const int pollRate = odom->getPollRate();
             while (true) {
                 this->update();
                 pros::delay(pollRate);
