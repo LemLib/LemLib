@@ -87,12 +87,12 @@ float FAPID::update(float target, float position, bool log) {
     // this does not run by default because the mutexes could slow down the program
     // calculate output
     float error = target - position;
-    float deltaError = error - prevError;
-    float output = kF * target + kP * error + kI * totalError + kD * deltaError;
-    if (kA != 0) output = slew(output, prevOutput, kA);
-    prevOutput = output;
-    prevError = error;
-    totalError += error;
+    float deltaError = error - this->prevError;
+    float output = this->kF * target + this->kP * error + this->kI * this->totalError + this->kD * deltaError;
+    if (kA != 0) output = slew(output, this->prevOutput, this->kA);
+    this->prevOutput = output;
+    this->prevError = error;
+    this->totalError += error;
 
     return output;
 }
@@ -101,9 +101,9 @@ float FAPID::update(float target, float position, bool log) {
  * @brief Reset the FAPID
  */
 void FAPID::reset() {
-    prevError = 0;
-    totalError = 0;
-    prevOutput = 0;
+    this->prevError = 0;
+    this->totalError = 0;
+    this->prevOutput = 0;
 }
 
 /**
@@ -115,18 +115,18 @@ void FAPID::reset() {
  * @return false - the FAPID has not settled
  */
 bool FAPID::settled() {
-    if (startTime == 0) { // if maxTime has not been set
-        startTime = pros::c::millis();
+    if (this->startTime == 0) { // if maxTime has not been set
+        this->startTime = pros::c::millis();
         return false;
     } else { // check if the FAPID has settled
-        if (pros::c::millis() - startTime > maxTime) return true; // maxTime has been exceeded
-        if (std::fabs(prevError) < largeError) { // largeError within range
-            if (!largeTimeCounter) largeTimeCounter = pros::c::millis(); // largeTimeCounter has not been set
-            else if (pros::c::millis() - largeTimeCounter > largeTime) return true; // largeTime has been exceeded
+        if (pros::c::millis() - this->startTime > this->maxTime) return true; // maxTime has been exceeded
+        if (std::fabs(this->prevError) < this->largeError) { // largeError within range
+            if (!this->largeTimeCounter) this->largeTimeCounter = pros::c::millis(); // largeTimeCounter has not been set
+            else if (pros::c::millis() - this->largeTimeCounter > this->largeTime) return true; // largeTime has been exceeded
         }
-        if (std::fabs(prevError) < smallError) { // smallError within range
-            if (!smallTimeCounter) smallTimeCounter = pros::c::millis(); // smallTimeCounter has not been set
-            else if (pros::c::millis() - smallTimeCounter > smallTime) return true; // smallTime has been exceeded
+        if (std::fabs(this->prevError) < this->smallError) { // smallError within range
+            if (!this->smallTimeCounter) this->smallTimeCounter = pros::c::millis(); // smallTimeCounter has not been set
+            else if (pros::c::millis() - this->smallTimeCounter > this->smallTime) return true; // smallTime has been exceeded
         }
         // if none of the exit conditions have been met
         return false;
@@ -167,39 +167,39 @@ void FAPID::log() {
     // check if the input starts with the name of the FAPID
     // try to obtain the logging mutex
     if (logMutex.take(5)) {
-        if (input.find(name) == 0) {
+        if (input.find(this->name) == 0) {
             // remove the name from the input
-            input.erase(0, name.length() + 1);
+            input.erase(0, this->name.length() + 1);
             // check if the input is a function
             if (input == "reset()") {
                 reset();
             } else if (input == "kF") {
-                std::cout << kF << std::endl;
+                std::cout << this->kF << std::endl;
             } else if (input == "kA") {
-                std::cout << kA << std::endl;
+                std::cout << this->kA << std::endl;
             } else if (input == "kP") {
-                std::cout << kP << std::endl;
+                std::cout << this->kP << std::endl;
             } else if (input == "kI") {
-                std::cout << kI << std::endl;
+                std::cout << this->kI << std::endl;
             } else if (input == "kD") {
-                std::cout << kD << std::endl;
+                std::cout << this->kD << std::endl;
             } else if (input == "totalError") {
-                std::cout << totalError << std::endl;
+                std::cout << this->totalError << std::endl;
             } else if (input.find("kF_") == 0) {
                 input.erase(0, 3);
-                kF = std::stof(input);
+                this->kF = std::stof(input);
             } else if (input.find("kA_") == 0) {
                 input.erase(0, 3);
-                kA = std::stof(input);
+                this->kA = std::stof(input);
             } else if (input.find("kP_") == 0) {
                 input.erase(0, 3);
-                kP = std::stof(input);
+                this->kP = std::stof(input);
             } else if (input.find("kI_") == 0) {
                 input.erase(0, 3);
-                kI = std::stof(input);
+                this->kI = std::stof(input);
             } else if (input.find("kD_") == 0) {
                 input.erase(0, 3);
-                kD = std::stof(input);
+                this->kD = std::stof(input);
             }
             // clear the input
             input = "";

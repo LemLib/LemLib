@@ -30,10 +30,10 @@ Imu::Imu(const pros::Imu& imu)
  * the imu has calibrated successfully, as we can't look into the future
  */
 bool Imu::calibrate(bool blocking) {
-    if (!isConnected()) return true; // return true if imu is not connected
-    imu.reset(blocking);
+    if (!this->isConnected()) return true; // return true if imu is not connected
+    this->imu.reset(blocking);
     if (!blocking) return false; // return false if function is non-blocking
-    return !isCalibrated();
+    return !this->isCalibrated();
 }
 
 /**
@@ -41,27 +41,27 @@ bool Imu::calibrate(bool blocking) {
  *
  * Just a wrapper for the pros::Imu::is_calibrating() function
  */
-bool Imu::isCalibrating() const { return imu.is_calibrating(); }
+bool Imu::isCalibrating() const { return this->imu.is_calibrating(); }
 
 /**
  * return whether the IMU has been calibrated
  *
  * This function checks if the Imu is connected, is not calibrating,
  */
-bool Imu::isCalibrated() { return isConnected() && !imu.is_calibrating() && !std::isinf(imu.get_heading()); }
+bool Imu::isCalibrated() { return this->isConnected() && !this->imu.is_calibrating() && !std::isinf(this->imu.get_heading()); }
 
 /**
  * return whether the IMU is installed
  *
  * Just a wrapper for the pros::Imu::is_installed() function
  */
-bool Imu::isConnected() { return imu.is_installed(); }
+bool Imu::isConnected() { return this->imu.is_installed(); }
 
 /**
  * return the heading of the imu in radians and in standard position
  */
 float Imu::getHeading() {
-    float heading = std::fmod(getRotation(), 2 * M_PI);
+    float heading = std::fmod(this->getRotation(), 2 * M_PI);
     if (heading < 0) heading += 2 * M_PI;
     return heading;
 }
@@ -70,18 +70,18 @@ float Imu::getHeading() {
  * Get the rotation of the imu in radians and in standard position
  */
 float Imu::getRotation() {
-    const float rotation = M_PI_2 - degToRad(imu.get_rotation());
-    lastAngle = rotation;
+    const float rotation = M_PI_2 - degToRad(this->imu.get_rotation());
+    this->lastAngle = rotation;
     return rotation;
 }
 
 /**
  * Set the rotation of the imu in radians and in standard position
  */
-void Imu::setRotation(float orientation) const { imu.set_rotation(radToDeg(M_PI - radToDeg(orientation))); }
+void Imu::setRotation(float orientation) const { this->imu.set_rotation(radToDeg(M_PI - radToDeg(orientation))); }
 
 /**
  * Wrapper function for pros::Imu.get_port()
  */
-std::uint8_t Imu::getPort() { return imu.get_port(); }
+std::uint8_t Imu::getPort() { return this->imu.get_port(); }
 }; // namespace lemlib
