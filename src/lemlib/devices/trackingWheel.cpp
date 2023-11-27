@@ -62,7 +62,7 @@ TrackingWheel::TrackingWheel(int port, float diameter, float offset, float ratio
 /**
  * Reset the tracking wheel.
  */
-bool TrackingWheel::reset() { return encoder->reset(); }
+bool TrackingWheel::reset() { return this->encoder->reset(); }
 
 /**
  * Get the distance travelled by the tracking wheel, in inches
@@ -73,7 +73,7 @@ bool TrackingWheel::reset() { return encoder->reset(); }
  * we do
  * (angle / 2) * diameter
  */
-float TrackingWheel::getDistance() { return encoder->getAngle() / 2 * diameter; }
+float TrackingWheel::getDistance() { return this->encoder->getAngle() / 2 * this->diameter; }
 
 /**
  * Get the difference in distance travelled by the tracking wheel, in inches
@@ -84,7 +84,7 @@ float TrackingWheel::getDistance() { return encoder->getAngle() / 2 * diameter; 
  * we do
  * (angle / 2) * diameter
  */
-float TrackingWheel::getDistanceDelta(bool update) { return encoder->getAngleDelta(update) / 2 * diameter; }
+float TrackingWheel::getDistanceDelta(bool update) { return this->encoder->getAngleDelta(update) / 2 * this->diameter; }
 
 /**
  * Get the offset from the tracking center, in inches

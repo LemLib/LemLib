@@ -32,19 +32,11 @@ std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int
  * A notable exception is the odometry, which at the moment is too complex to
  * construct in the initializer list
  */
-<<<<<<< HEAD
-Differential::Differential(Drivetrain_t drivetrain, ChassisController_t lateralSettings,
-                           ChassisController_t angularSettings, OdomSensors_t sensors)
-    : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
-      angularSettings(angularSettings) {
-=======
 Differential::Differential(const Drivetrain& drivetrain, const ControllerSettings& linearSettings,
                            const ControllerSettings& angularSettings, const OdomSensors& sensors)
     : drivetrain(std::make_unique<Drivetrain>(drivetrain)),
       linearSettings(std::make_unique<ControllerSettings>(linearSettings)),
       angularSettings(std::make_unique<ControllerSettings>(angularSettings)) {
->>>>>>> b982d01 (Make changes to differential class)
     // create sensor vectors
     std::vector<TrackingWheel> verticals;
     std::vector<TrackingWheel> horizontals;

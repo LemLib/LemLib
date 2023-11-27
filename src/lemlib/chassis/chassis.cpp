@@ -22,8 +22,14 @@ namespace lemlib {
  * @param theta new theta value
  * @param radians true if theta is in radians, false if not. False by default
  */
+<<<<<<< HEAD
 void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
     lemlib::setPose(lemlib::Pose(x, y, theta), radians);
+=======
+void Chassis::setPose(float x, float y, float theta, bool radians) {
+    Pose pose(x, y, theta);
+    this->setPose(pose, radians);
+>>>>>>> b493d43 (Add this-> pointers to everything)
 }
 
 /**
@@ -35,7 +41,7 @@ void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
 void Chassis::setPose(Pose pose, bool radians) {
     if (!radians) pose.theta = degToRad(pose.theta);
     pose.theta = M_PI_2 - pose.theta;
-    odom->setPose(pose);
+    this->odom->setPose(pose);
 }
 
 /**
@@ -45,7 +51,7 @@ void Chassis::setPose(Pose pose, bool radians) {
  * but it also transforms the pose to the format needed by the user
  */
 Pose Chassis::getPose(bool radians) const {
-    Pose pose = odom->getPose();
+    Pose pose = this->odom->getPose();
     pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
     return pose;
@@ -59,16 +65,30 @@ Pose Chassis::getPose(bool radians) const {
  * Just uses a while loop and exits when the distance traveled is greater than the specified distance
  * or if the motion has finished
  */
+<<<<<<< HEAD
 void lemlib::Chassis::waitUntil(float dist) {
     // do while to give the thread time to start
     do pros::delay(10);
     while (distTravelled <= dist && distTravelled != -1);
+=======
+void Chassis::waitUntil(float dist) {
+    // give the movement time to start
+    pros::delay(10);
+    // wait until the robot has travelled a certain distance
+    while (this->movement != nullptr && this->movement->getDist() < dist && this->movement->getDist() >= prevDist) {
+        this->prevDist = this->movement->getDist(); // update previous distance
+        pros::delay(10);
+    }
+    // set prevDist to 0
+    this->prevDist = 0;
+>>>>>>> b493d43 (Add this-> pointers to everything)
 }
 
 /**
  * @brief Wait until the robot has completed the path
  *
  */
+<<<<<<< HEAD
 void lemlib::Chassis::waitUntilDone() {
     do pros::delay(10);
     while (distTravelled != -1);
@@ -115,6 +135,18 @@ bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
 void lemlib::Chassis::resetLocalPosition() {
     float theta = this->getPose().theta;
     lemlib::setPose(lemlib::Pose(0, 0, theta), false);
+=======
+void Chassis::waitUntilDone() {
+    // give the movement time to start
+    pros::delay(10);
+    // wait until the movement is done
+    while (this->movement != nullptr && this->movement->getDist() >= prevDist) {
+        this->prevDist = this->movement->getDist(); // update previous distance
+        pros::delay(10);
+    }
+    // set prevDist to 0
+    this->prevDist = 0;
+>>>>>>> b493d43 (Add this-> pointers to everything)
 }
 
 /**
