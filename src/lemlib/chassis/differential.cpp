@@ -253,9 +253,9 @@ void Differential::curvature(int throttle, int turn, float curveGain, const Driv
  */
 void Differential::arcade(int throttle, int turn, float linearCurveGain, float turnCurveGain,
                           const DriveCurveFunction_t& driveCurve) {
-     int leftPower = driveCurve(throttle + turn, curveGain);
-     int rightPower = driveCurve(throttle - turn, turnCurveGain);
-     this->drivetrain->leftMotors->move(leftPower);
+    int leftPower = driveCurve(throttle + turn, curveGain);
+    int rightPower = driveCurve(throttle - turn, turnCurveGain);
+    this->drivetrain->leftMotors->move(leftPower);
 }
 
 /**
