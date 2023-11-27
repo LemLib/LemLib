@@ -18,12 +18,11 @@
 #include "lemlib/devices/gyro/imu.hpp"
 
 namespace lemlib {
-std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t> ports,
-                                                 const pros::v5::MotorGears gears) {
+std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t>& ports,
+                                                 const pros::v5::MotorGears& gears) {
     // create the shared pointer
-    std::shared_ptr<pros::MotorGroup> motors =
-        std::make_shared<pros::MotorGroup>(std::initializer_list<int8_t> {ports}, gears);
-    return motors;
+    auto motorsPtr = std::make_shared<pros::MotorGroup>(ports, gears);
+    return motorsPtr;
 }
 
 /**
@@ -33,11 +32,11 @@ std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int
  * A notable exception is the odometry, which at the moment is too complex to
  * construct in the initializer list
  */
-Differential::Differential(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
-                           OdomSensors sensors)
-    : drivetrain(drivetrain),
-      linearSettings(linearSettings),
-      angularSettings(angularSettings) {
+Differential::Differential(const Drivetrain& drivetrain, const ControllerSettings& linearSettings,
+                           const ControllerSettings& angularSettings, const OdomSensors& sensors)
+    : drivetrain(std::make_unique<Drivetrain>(drivetrain)),
+      linearSettings(std::make_unique<ControllerSettings>(linearSettings)),
+      angularSettings(std::make_unique<ControllerSettings>(angularSettings)) {
     // create sensor vectors
     std::vector<TrackingWheel> verticals;
     std::vector<TrackingWheel> horizontals;
@@ -62,7 +61,7 @@ Differential::Differential(Drivetrain drivetrain, ControllerSettings linearSetti
     if (sensors.gyro != nullptr) imus.push_back(sensors.gyro);
 
     // create odom instance
-    odom = std::make_unique<DifferentialArc>(DifferentialArc(verticals, horizontals, drive, imus));
+    this->odom = std::make_unique<DifferentialArc>(verticals, horizontals, drive, imus);
 }
 
 /**
@@ -72,13 +71,13 @@ Differential::Differential(Drivetrain drivetrain, ControllerSettings linearSetti
  */
 void Differential::initialize() {
     // calibrate odom
-    odom->calibrate();
     const int pollRate = odom->getPollRate();
+    this->odom->calibrate();
     // start the chassis task if it doesn't exist
-    if (task == nullptr)
-        task = std::make_unique<pros::Task>([&]() {
+    if (this->task == nullptr)
+        this->task = std::make_unique<pros::Task>([this]() {
             while (true) {
-                update();
+                this->update();
                 pros::delay(pollRate);
             }
         });
@@ -98,13 +97,13 @@ void Differential::initialize() {
  */
 void Differential::turnToPose(float x, float y, int timeout, bool reversed, int maxSpeed) {
     // if a movement is already running, wait until it is done
-    if (movement != nullptr) waitUntilDone();
+    if (this->movement != nullptr) waitUntilDone();
     // set up the PID
-    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
-                       angularSettings.smallErrorTimeout, timeout);
+    FAPID angularPID(0, 0, this->angularSettings->kP, 0, this->angularSettings->kD, "angularPID");
+    angularPID.setExit(this->angularSettings->largeError, this->angularSettings->smallError,
+                       this->angularSettings->largeErrorTimeout, this->angularSettings->smallErrorTimeout, timeout);
     // create the movement
-    movement = std::make_unique<Turn>(angularPID, Pose(x, y), reversed, maxSpeed);
+    this->movement = std::make_unique<Turn>(angularPID, Pose(x, y), reversed, maxSpeed);
 }
 
 /**
@@ -121,15 +120,15 @@ void Differential::turnToPose(float x, float y, int timeout, bool reversed, int 
  */
 void Differential::turnToHeading(float heading, int timeout, int maxSpeed) {
     // if a movement is already running, wait until it is done
-    if (movement != nullptr) waitUntilDone();
+    if (this->movement != nullptr) waitUntilDone();
     // convert heading to radians and standard form
     float newHeading = M_PI_2 - degToRad(heading);
     // set up the PID
-    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    angularPID.setExit(angularSettings.largeError, angularSettings.smallError, angularSettings.largeErrorTimeout,
-                       angularSettings.smallErrorTimeout, timeout);
+    FAPID angularPID(0, 0, this->angularSettings->kP, 0, this->angularSettings->kD, "angularPID");
+    angularPID.setExit(this->angularSettings->largeError, this->angularSettings->smallError,
+                       this->angularSettings->largeErrorTimeout, this->angularSettings->smallErrorTimeout, timeout);
     // create the movement
-    movement = std::make_unique<Turn>(angularPID, newHeading, maxSpeed);
+    this->movement = std::make_unique<Turn>(angularPID, newHeading, maxSpeed);
 }
 
 /**
@@ -144,21 +143,21 @@ void Differential::turnToHeading(float heading, int timeout, int maxSpeed) {
  * It also needs to decide what the chasePower should be. Usually this will be the value set in
  * the drivetrain struct, but it can be overridden by the user if needed.
  */
-void Differential::moveTo(float x, float y, float theta, int timeout, bool forwards, float chasePower, float lead,
+void Differential::moveTo(float x, float y, float theta, int timeout, bool reversed, float chasePower, float lead,
                           int maxSpeed) {
     // if a movement is already running, wait until it is done
-    if (movement != nullptr) waitUntilDone();
+    if (this->movement != nullptr) waitUntilDone();
     // convert target theta to radians and standard form
     Pose target = Pose(x, y, M_PI_2 - degToRad(theta));
     // set up PIDs
-    FAPID linearPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "linearPID");
-    linearPID.setExit(linearSettings.largeError, linearSettings.smallError, linearSettings.largeErrorTimeout,
-                      linearSettings.smallErrorTimeout, timeout);
-    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    FAPID linearPID(0, 0, this->linearSettings->kP, 0, this->linearSettings->kD, "linearPID");
+    linearPID.setExit(this->linearSettings->largeError, this->linearSettings->smallError,
+                      this->linearSettings->largeErrorTimeout, this->linearSettings->smallErrorTimeout, timeout);
+    FAPID angularPID(0, 0, this->angularSettings->kP, 0, this->angularSettings->kD, "angularPID");
     // if chasePower is 0, is the value defined in the drivetrain struct
-    if (chasePower == 0) chasePower = drivetrain.chasePower;
+    if (chasePower == 0) chasePower = this->drivetrain->chasePower;
     // create the movement
-    movement = std::make_unique<Boomerang>(linearPID, angularPID, target, forwards, chasePower, lead, maxSpeed);
+    this->movement = std::make_unique<Boomerang>(linearPID, angularPID, target, reversed, chasePower, lead, maxSpeed);
 }
 
 /**
@@ -167,11 +166,12 @@ void Differential::moveTo(float x, float y, float theta, int timeout, bool forwa
  * Unlike the Differential::moveTo function, we can just pass the parameters directly to the
  * Pure Pursuit constructor
  */
-void Differential::follow(const asset& path, float lookahead, int timeout, bool forwards, int maxSpeed) {
+void Differential::follow(const asset& path, float lookahead, int timeout, bool reversed, int maxSpeed) {
     // if a movement is already running, wait until it is done
-    if (movement != nullptr) waitUntilDone();
+    if (this->movement != nullptr) waitUntilDone();
     // create the movement
-    movement = std::make_unique<PurePursuit>(drivetrain.trackWidth, path, lookahead, timeout, forwards, maxSpeed);
+    this->movement =
+        std::make_unique<PurePursuit>(this->drivetrain->trackWidth, path, lookahead, timeout, reversed, maxSpeed);
 }
 
 /**
@@ -184,18 +184,18 @@ void Differential::follow(const asset& path, float lookahead, int timeout, bool 
  */
 void Differential::update() {
     // update odometry
-    odom->update();
+    this->odom->update();
     // update the motion controller, if one is running
-    if (movement != nullptr) {
+    if (this->movement != nullptr) {
         std::pair<int, int> output = movement->update(odom->getPose()); // get output
         if (output.first == 128 && output.second == 128) { // if the movement is done
-            movement = nullptr; // stop movement
+            this->movement = nullptr; // stop movement
             output.first = 0;
             output.second = 0;
         }
         // move the motors
-        drivetrain.leftMotors->move(output.first);
-        drivetrain.rightMotors->move(output.second);
+        this->drivetrain->leftMotors->move(output.first);
+        this->drivetrain->rightMotors->move(output.second);
     }
 }
 
@@ -226,10 +226,10 @@ float defaultDriveCurve(float input, float scale) {
  * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Differential::curvature(int throttle, int turn, float curveGain, DriveCurveFunction_t driveCurve) {
+void Differential::curvature(int throttle, int turn, float curveGain, const DriveCurveFunction_t& driveCurve) {
     // If we're not moving forwards change to arcade drive
     if (throttle == 0) {
-        arcade(throttle, turn, curveGain);
+        this->arcade(throttle, turn, curveGain);
         return;
     }
 
@@ -239,8 +239,8 @@ void Differential::curvature(int throttle, int turn, float curveGain, DriveCurve
     leftPower = driveCurve(leftPower, curveGain);
     rightPower = driveCurve(rightPower, curveGain);
 
-    drivetrain.leftMotors->move(leftPower);
-    drivetrain.rightMotors->move(rightPower);
+    this->drivetrain->leftMotors->move(leftPower);
+    this->drivetrain->rightMotors->move(rightPower);
 }
 
 /**
@@ -252,11 +252,11 @@ void Differential::curvature(int throttle, int turn, float curveGain, DriveCurve
  * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Differential::arcade(int throttle, int turn, float curveGain, DriveCurveFunction_t driveCurve) {
+void Differential::arcade(int throttle, int turn, float curveGain, const DriveCurveFunction_t& driveCurve) {
     int leftPower = driveCurve(throttle + turn, curveGain);
     int rightPower = driveCurve(throttle - turn, curveGain);
-    drivetrain.leftMotors->move(leftPower);
-    drivetrain.rightMotors->move(rightPower);
+    this->drivetrain->leftMotors->move(leftPower);
+    this->drivetrain->rightMotors->move(rightPower);
 }
 
 /**
@@ -268,8 +268,8 @@ void Differential::arcade(int throttle, int turn, float curveGain, DriveCurveFun
  * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Differential::tank(int left, int right, float curveGain, DriveCurveFunction_t driveCurve) {
-    drivetrain.leftMotors->move(driveCurve(left, curveGain));
-    drivetrain.rightMotors->move(driveCurve(right, curveGain));
+void Differential::tank(int left, int right, float curveGain, const DriveCurveFunction_t& driveCurve) {
+    this->drivetrain->leftMotors->move(driveCurve(left, curveGain));
+    this->drivetrain->rightMotors->move(driveCurve(right, curveGain));
 }
 }; // namespace lemlib

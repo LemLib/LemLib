@@ -29,30 +29,31 @@ DifferentialArc::DifferentialArc(std::vector<TrackingWheel>& verticals, std::vec
  * calibration. The encoders will output errors if they fail to calibrate.
  */
 void DifferentialArc::calibrate(bool calibrateGyros) {
+    std::vector<TrackingWheel> newVerticals = {};
+    std::vector<TrackingWheel> newHorizontals = {};
+    std::vector<TrackingWheel> newDrivetrain = {};
+    std::vector<std::shared_ptr<Gyro>> newGyros = {};
+
     // calibrate vertical tracking wheels
     for (auto it = verticals.begin(); it != verticals.end(); it++) {
         if (it->reset()) {
             infoSink()->warn("Vertical tracker at offset {} failed calibration!", it->getOffset());
-            verticals.erase(it);
-        }
+        } else newVerticals.push_back(*it);
     }
 
     // calibrate horizontal tracking wheels
     for (auto it = horizontals.begin(); it != horizontals.end(); it++) {
         if (it->reset()) {
             infoSink()->warn("Horizontal tracker at offset {} failed calibration!", it->getOffset());
-            horizontals.erase(it);
-        }
+        } else newHorizontals.push_back(*it);
     }
 
     // calibrate drivetrain motors
     for (auto it = drivetrain.begin(); it != drivetrain.end(); it++) {
         if (it->reset()) {
-            if (sgn(it->getOffset() == 1))
-                infoSink()->warn("Left drivetrain motor failed to calibrate!", it->getOffset());
-            else infoSink()->warn("Right drivetrain motor failed to calibrate!", it->getOffset());
-            drivetrain.erase(it);
-        }
+            if (sgn(it->getOffset() == 1)) infoSink()->warn("Left drivetrain motor failed to calibrate!");
+            else infoSink()->warn("Right drivetrain motor failed to calibrate!");
+        } else newDrivetrain.push_back(*it);
     }
 
     if (!calibrateGyros) return; // return if we don't need to calibrate gyros
@@ -66,13 +67,18 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
         pros::delay(10);
     }
 
-    // if a gyro failed to calibrate, output an error and erase the gyro
     for (auto it = gyros.begin(); it != gyros.end(); it++) {
         if (!(**it).isCalibrated()) {
-            infoSink()->warn("IMU on port {} failed to calibrate! Removing", (**it).getPort());
-            gyros.erase(it);
+            infoSink()->warn("IMU on port {} failed to calibrate! Removing...", (**it).getPort());
+        } else {
+            newGyros.push_back(*it);
         }
     }
+
+    verticals = newVerticals;
+    horizontals = newHorizontals;
+    drivetrain = newDrivetrain;
+    gyros = newGyros;
 }
 
 /**

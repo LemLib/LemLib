@@ -33,8 +33,9 @@ namespace lemlib {
  * @param gears the gearbox used by the motors
  * @return std::shared_ptr<pros::MotorGroup> a shared pointer to the motor group
  */
-std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t> ports,
-                                                 const pros::v5::MotorGears gears);
+[[nodiscard("makeMotorGroup function returns a shared_ptr of pros::MotorGroup, you can use "
+            "std::shared_ptr<pros::MotorGroup> or auto to get the returned pointer")]] std::shared_ptr<pros::MotorGroup>
+makeMotorGroup(const std::initializer_list<int8_t>& ports, const pros::v5::MotorGears& gears);
 
 /**
  * @brief Struct containing all the sensors used for odometry
@@ -147,8 +148,9 @@ struct Drivetrain {
          * @param rpm the rpm of the wheels
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          */
-        Drivetrain(std::shared_ptr<pros::MotorGroup> leftMotors, std::shared_ptr<pros::MotorGroup> rightMotors,
-                   float trackWidth, float wheelDiameter, float rpm, float chasePower)
+        Drivetrain(const std::shared_ptr<pros::MotorGroup>& leftMotors,
+                   const std::shared_ptr<pros::MotorGroup>& rightMotors, float trackWidth, float wheelDiameter,
+                   float rpm, float chasePower)
             : leftMotors(leftMotors),
               rightMotors(rightMotors),
               trackWidth(trackWidth),
@@ -198,8 +200,8 @@ class Differential : public Chassis {
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          */
-        Differential(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
-                     OdomSensors sensors);
+        Differential(const Drivetrain& drivetrain, const ControllerSettings& linearSettings,
+                     const ControllerSettings& angularSettings, const OdomSensors& sensors);
 
         /**
          * @brief Initialize the chassis
@@ -240,14 +242,14 @@ class Differential : public Chassis {
          * @param y y location
          * @param theta theta (in degrees). Target angle
          * @param timeout longest time the robot can spend moving
-         * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
-         * backwards
+         * @param reversed whether the robot should move forwards or backwards. true for backwards, false for
+         * forwards (default)
          * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
          * default to global value
          * @param maxSpeed the maximum speed the robot can move at. 127 at default
          */
-        void moveTo(float x, float y, float theta, int timeout, bool forwards = true, float chasePower = 0,
+        void moveTo(float x, float y, float theta, int timeout, bool reversed = false, float chasePower = 0,
                     float lead = 0.6, int maxSpeed = 127);
 
         /**
@@ -257,10 +259,10 @@ class Differential : public Chassis {
          * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
          * will follow the path less accurately
          * @param timeout the maximum time the robot can spend moving
-         * @param forwards whether the robot should follow the path going forwards. true by default
+         * @param reversed whether the robot should follow the path in reverse. false by default
          * @param maxSpeed the maximum speed the robot can move at
          */
-        void follow(const asset& path, float lookahead, int timeout, bool forwards = true, int maxSpeed = 127);
+        void follow(const asset& path, float lookahead, int timeout, bool reversed = false, int maxSpeed = 127);
 
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this
@@ -270,7 +272,8 @@ class Differential : public Chassis {
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 0 disables the curve entirely.
          */
-        void tank(int left, int right, float curveGain = 0.0, DriveCurveFunction_t driveCurve = defaultDriveCurve);
+        void tank(int left, int right, float curveGain = 0.0,
+                  const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
 
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
@@ -281,7 +284,8 @@ class Differential : public Chassis {
          * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void arcade(int throttle, int turn, float curveGain = 0.0, DriveCurveFunction_t driveCurve = defaultDriveCurve);
+        void arcade(int throttle, int turn, float curveGain = 0.0,
+                    const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
 
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
@@ -294,7 +298,7 @@ class Differential : public Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void curvature(int throttle, int turn, float cureGain = 0.0,
-                       DriveCurveFunction_t driveCurve = defaultDriveCurve);
+                       const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
     private:
         /**
          * @brief Chassis update function. Updates chassis motion and odometry
@@ -302,8 +306,8 @@ class Differential : public Chassis {
          */
         void update() override;
 
-        ControllerSettings linearSettings;
-        ControllerSettings angularSettings;
-        Drivetrain drivetrain;
+        std::unique_ptr<ControllerSettings> linearSettings;
+        std::unique_ptr<ControllerSettings> angularSettings;
+        std::unique_ptr<Drivetrain> drivetrain;
 };
 } // namespace lemlib

@@ -19,7 +19,7 @@ Imu::Imu(uint8_t port)
  * Takes a reference to a pros Imu to be used. Pros imu is then constructed in an
  * initializer list
  */
-Imu::Imu(pros::Imu& imu)
+Imu::Imu(const pros::Imu& imu)
     : Gyro(10),
       imu(imu) {}
 
