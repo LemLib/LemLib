@@ -270,8 +270,8 @@ void Differential::arcade(int throttle, int turn, float linearCurveGain, float t
  * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Differential::tank(int left, int right, float curveGain, const DriveCurveFunction_t& driveCurve) {
-    this->drivetrain->leftMotors->move(driveCurve(left, curveGain));
-    this->drivetrain->rightMotors->move(driveCurve(right, curveGain));
+void Differential::tank(int left, int right, float leftCurveGain, float rightCurveGain, const DriveCurveFunction_t& driveCurve) {
+    this->drivetrain->leftMotors->move(driveCurve(left, leftCurveGain));
+    this->drivetrain->rightMotors->move(driveCurve(right, rightCurveGain));
 }
 }; // namespace lemlib
