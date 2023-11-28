@@ -272,7 +272,7 @@ class Differential : public Chassis {
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 0 disables the curve entirely.
          */
-        void tank(int left, int right, leftCurveGain = 0.0, rightCurveGain = 0.0,
+        void tank(int left, int right, float leftCurveGain = 0.0, float rightCurveGain = 0.0,
                   const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
 
         /**
