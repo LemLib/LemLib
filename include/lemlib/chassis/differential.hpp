@@ -272,7 +272,7 @@ class Differential : public Chassis {
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 0 disables the curve entirely.
          */
-        void tank(int left, int right, float curveGain = 0.0,
+        void tank(int left, int right, leftCurveGain = 0.0, rightCurveGain = 0.0,
                   const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
 
         /**
@@ -284,7 +284,7 @@ class Differential : public Chassis {
          * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void arcade(int throttle, int turn, float linearCurveGain = 0.0, float turnCurveGain = 0,
+        void arcade(int throttle, int turn, float linearCurveGain = 0.0, float turnCurveGain = 0.0,
                     const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
@@ -296,7 +296,7 @@ class Differential : public Chassis {
          * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void curvature(int throttle, int turn, float linearCurveGain = 0.0, float turnCurveGain = 0,
+        void curvature(int throttle, int turn, float linearCurveGain = 0.0, float turnCurveGain = 0.0,
                        const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
     private:
         /**
