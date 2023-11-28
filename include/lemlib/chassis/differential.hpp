@@ -297,7 +297,7 @@ class Differential : public Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void curvature(int throttle, int turn, float linearCurveGain = 0.0, float turnCurveGain = 0,
-                    const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
+                       const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
     private:
         /**
          * @brief Chassis update function. Updates chassis motion and odometry
