@@ -225,18 +225,21 @@ float defaultDriveCurve(float input, float scale) {
  * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Differential::curvature(int throttle, int turn, float curveGain, const DriveCurveFunction_t& driveCurve) {
+void Differential::curvature(int throttle, int turn, float linearCurveGain, float turnCurveGain, const DriveCurveFunction_t& driveCurve) {
     // If we're not moving forwards change to arcade drive
     if (throttle == 0) {
-        this->arcade(throttle, turn, curveGain);
+        this->arcade(throttle, turn, linearCurveGain, turnCurveGain);
         return;
     }
 
-    float leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
-    float rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
+    float curvedThrottle = driveCurve(throttle, linearCurveGain);
+    float curvedTurn = driveCurve(turn, turnCurveGain);
+  
+    float leftPower = curvedThrottle + (std::abs(curvedThrottle) * curvedTurn) / 127.0;
+    float rightPower = curvedThrottle - (std::abs(curvedThrottle) * curvedTurn) / 127.0;
 
-    leftPower = driveCurve(leftPower, curveGain);
-    rightPower = driveCurve(rightPower, curveGain);
+    leftPower = driveCurve(leftPower, linearCurveGain);
+    rightPower = driveCurve(rightPower, turnCurveGain);
 
     this->drivetrain->leftMotors->move(leftPower);
     this->drivetrain->rightMotors->move(rightPower);
