@@ -284,8 +284,8 @@ class Differential : public Chassis {
          * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void arcade(int throttle, int turn, float linearCurveGain = 0.0,
-                    float turnCurveGain = 0, const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
+        void arcade(int throttle, int turn, float linearCurveGain = 0.0, float turnCurveGain = 0,
+                  const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
          * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
