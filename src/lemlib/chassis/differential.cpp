@@ -259,6 +259,7 @@ void Differential::arcade(int throttle, int turn, float linearCurveGain, float t
     int leftPower = driveCurve(throttle + turn, linearCurveGain);
     int rightPower = driveCurve(throttle - turn, turnCurveGain);
     this->drivetrain->leftMotors->move(leftPower);
+    this->drivetrain->rightMotors->move(rightPower);
 }
 
 /**
