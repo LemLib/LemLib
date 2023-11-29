@@ -12,8 +12,6 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <limits>
-#include <math.h>
 #include "lemlib/pid.hpp"
 #include "lemlib/util.hpp"
 
@@ -202,8 +200,9 @@ float lemlib::FAPID::update(float target, float position, bool log) {
     auto [kF, kA, kP, kI, kD] = currentGains;
     float error = target - position;
     float deltaError = error - this->prevError;
-    float output = this->kF * target + this->kP * error + this->kI * this->totalError + this->kD * deltaError;
-    if (kA != 0) output = slew(output, this->prevOutput, this->kA);
+    float output = this->currentGains.kF * target + this->currentGains.kP * error +
+                   this->currentGains.kI * this->totalError + this->currentGains.kD * deltaError;
+    if (kA != 0) output = slew(output, this->prevOutput, this->currentGains.kA);
     this->prevOutput = output;
     this->prevError = error;
     this->totalError += error;
@@ -311,7 +310,7 @@ void FAPID::log() {
                 this->currentGains.kA = std::stof(input);
             } else if (input.find("kP_") == 0) {
                 input.erase(0, 3);
-                this->currentGains.>kP = std::stof(input);
+                this->currentGains.kP = std::stof(input);
             } else if (input.find("kI_") == 0) {
                 input.erase(0, 3);
                 this->currentGains.kI = std::stof(input);
