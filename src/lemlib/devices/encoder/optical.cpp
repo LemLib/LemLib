@@ -20,13 +20,13 @@ OpticalEncoder::OpticalEncoder(char topPort, char bottomPort, bool reversed, flo
  * which gets converted to radians
  */
 float OpticalEncoder::getAngle() {
-    float angle = (float(optical.get_value()) * (2 * M_PI) / 360) / ratio;
-    lastAngle = angle;
+    float angle = (float(this->optical.get_value()) * (2 * M_PI) / 360) / this->ratio;
+    this->lastAngle = angle;
     return angle;
 }
 
 /**
  * Reset/calibrate the optical encoder
  */
-bool OpticalEncoder::reset() { return (optical.reset()) ? 0 : 1; }
+bool OpticalEncoder::reset() { return (this->optical.reset()) ? 0 : 1; }
 }; // namespace lemlib
