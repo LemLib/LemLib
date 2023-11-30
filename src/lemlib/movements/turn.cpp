@@ -72,11 +72,11 @@ std::pair<int, int> Turn::update(Pose pose) {
 
     // update completion vars
     if (this->dist == 0_rad) { // if dist is 0, this is the first time update() has been called
-        this->distdist = 0.0001_deg;
+        this->dist = 0.0001_deg;
         this->startPose = pose;
     }
     this->dist = angleError(pose.theta, this->startPose.theta);
-  
+
     if (this->targetPose != std::nullopt) this->targetHeading = pose.angle(this->targetPose.value());
 
     // calculate error

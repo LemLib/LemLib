@@ -70,15 +70,9 @@ template <isQuantity Q> class FAPID {
          * @param name name of the FAPID. Used for logging
          */
         FAPID(float kF, float kA, float kP, float kI, float kD, std::string name, Q base = Q(1.0))
-            : currentGains(Gains(kF, kA, kP, kI, kD)) {
-            this->kF = kF;
-            this->kA = kA;
-            this->kP = kP;
-            this->kI = kI;
-            this->kD = kD;
-            this->name = name;
-            this->base = base;
-        }
+            : currentGains(Gains(kF, kA, kP, kI, kD)),
+              name(name),
+              base(base) {}
 
         /**
          * @brief Construct a new FAPID
