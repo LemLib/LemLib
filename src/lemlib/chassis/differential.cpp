@@ -34,10 +34,9 @@ std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int
  */
 Differential::Differential(const Drivetrain& drivetrain, const ControllerSettings<Length>& linearSettings,
                            const ControllerSettings<Angle>& angularSettings, const OdomSensors& sensors)
-    : drivetrain(std::make_unique<Drivtrain>(drivetrain)),
+    : drivetrain(std::make_unique<Drivetrain>(drivetrain)),
       linearSettings(std::make_unique<ControllerSettings<Length>>(linearSettings)),
       angularSettings(std::make_unique<ControllerSettings<Angle>>(angularSettings)) {
-
     // create sensor vectors
     std::vector<TrackingWheel> verticals;
     std::vector<TrackingWheel> horizontals;
@@ -99,7 +98,8 @@ void Differential::turnToPose(Length x, Length y, Time timeout, bool reversed, i
     // if a movement is already running, wait until it is done
     if (this->movement != nullptr) waitUntilDone();
     // set up the PID
-    FAPID<Angle> angularPID(0, 0, this->angularSettings->kP, 0, this->angularSettings->kD, "angularPID", angularSettings.base);
+    FAPID<Angle> angularPID(0, 0, this->angularSettings->kP, 0, this->angularSettings->kD, "angularPID",
+                            this->angularSettings->base);
     angularPID.setExit(this->angularSettings->largeError, this->angularSettings->smallError,
                        this->angularSettings->largeErrorTimeout, this->angularSettings->smallErrorTimeout, timeout);
 
@@ -125,9 +125,10 @@ void Differential::turnToHeading(Angle heading, Time timeout, int maxSpeed) {
     // convert heading to standard form
     Angle newHeading = M_PI_2 * rad - heading;
     // set up the PID
-    FAPID<Angle> angularPID(0, 0, this->angularSettings.kP, 0, this->angularSettings.kD, "angularPID", this->angularSettings.base);
-    angularPID.setExit(this->angularSettings.largeError, this->angularSettings.smallError, this->angularSettings.largeErrorTimeout,
-                       this->angularSettings.smallErrorTimeout, timeout);
+    FAPID<Angle> angularPID(0, 0, this->angularSettings->kP, 0, this->angularSettings->kD, "angularPID",
+                            this->angularSettings->base);
+    angularPID.setExit(this->angularSettings->largeError, this->angularSettings->smallError,
+                       this->angularSettings->largeErrorTimeout, this->angularSettings->smallErrorTimeout, timeout);
 
     // create the movement
     this->movement = std::make_unique<Turn>(angularPID, newHeading, maxSpeed);
@@ -152,10 +153,12 @@ void Differential::moveTo(Length x, Length y, Angle theta, Time timeout, bool re
     // convert target theta to standard form
     Pose target = Pose(x, y, M_PI_2 * rad - theta);
     // set up PIDs
-    FAPID<Length> linearPID(0, 0, this->linearSettings.kP, 0, this->linearSettings.kD, "linearPID", this->linearSettings.base);
-    linearPID.setExit(this->linearSettings.largeError, this->linearSettings.smallError, this->linearSettings.largeErrorTimeout,
-                      this->linearSettings.smallErrorTimeout, timeout);
-    FAPID<Angle> angularPID(0, 0, this->angularSettings.kP, 0, this->angularSettings.kD, "angularPID", this->angularSettings.base);
+    FAPID<Length> linearPID(0, 0, this->linearSettings->kP, 0, this->linearSettings->kD, "linearPID",
+                            this->linearSettings->base);
+    linearPID.setExit(this->linearSettings->largeError, this->linearSettings->smallError,
+                      this->linearSettings->largeErrorTimeout, this->linearSettings->smallErrorTimeout, timeout);
+    FAPID<Angle> angularPID(0, 0, this->angularSettings->kP, 0, this->angularSettings->kD, "angularPID",
+                            this->angularSettings->base);
     // if chasePower is 0, is the value defined in the drivetrain struct
     if (chasePower == 0) chasePower = this->drivetrain->chasePower;
     // create the movement

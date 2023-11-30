@@ -69,7 +69,8 @@ template <isQuantity Q> class FAPID {
          * @param kD derivative gain, multiplied by change in error and added to output
          * @param name name of the FAPID. Used for logging
          */
-        FAPID(float kF, float kA, float kP, float kI, float kD, std::string name, Q base = Q(1.0)) {
+        FAPID(float kF, float kA, float kP, float kI, float kD, std::string name, Q base = Q(1.0))
+            : currentGains(Gains(kF, kA, kP, kI, kD)) {
             this->kF = kF;
             this->kA = kA;
             this->kP = kP;
@@ -128,9 +129,7 @@ template <isQuantity Q> class FAPID {
          *
          * @param gains the new gains
          */
-        void setGains(Gains gains) {
-            this->currentGains = gains;
-        }
+        void setGains(Gains gains) { this->currentGains = gains; }
 
         /**
          * @brief Set scheduled gains
@@ -177,12 +176,14 @@ template <isQuantity Q> class FAPID {
             // this does not run by default because the mutexes could slow down the program
             // calculate output
             Q error = target - position;
-            Q deltaError = error - prevError;
-            float output = (kF * target + kP * error + kI * totalError + kD * deltaError).convert(base); // todo test
-            if (kA != 0) output = slew(output, prevOutput, kA);
-            prevOutput = output;
-            prevError = error;
-            totalError += error;
+            Q deltaError = error - this->prevError;
+            float output = (this->currentGains.kF * target + this->currentGains.kP * error +
+                            this->currentGains.kI * this->totalError + this->currentGains.kD * deltaError)
+                               .convert(base); // todo test
+            if (this->currentGains.kA != 0) output = slew(output, this->prevOutput, this->currentGains.kA);
+            this->prevOutput = output;
+            this->prevError = error;
+            this->totalError += error;
 
             return output;
         }
@@ -246,8 +247,8 @@ template <isQuantity Q> class FAPID {
          * reset()
          */
         static void init() {
-            if (this->logTask != nullptr) {
-                this->logTask = new pros::Task {[=] {
+            if (logTask != nullptr) {
+                logTask = new pros::Task {[=] {
                     while (true) {
                         // get input
                         std::cin >> input;
@@ -294,32 +295,32 @@ template <isQuantity Q> class FAPID {
                     if (input == "reset()") {
                         reset();
                     } else if (input == "kF") {
-                        std::cout << kF << std::endl;
+                        std::cout << this->currentGains.kF << std::endl;
                     } else if (input == "kA") {
-                        std::cout << kA << std::endl;
+                        std::cout << this->currentGains.kA << std::endl;
                     } else if (input == "kP") {
-                        std::cout << kP << std::endl;
+                        std::cout << this->currentGains.kP << std::endl;
                     } else if (input == "kI") {
-                        std::cout << kI << std::endl;
+                        std::cout << this->currentGains.kI << std::endl;
                     } else if (input == "kD") {
-                        std::cout << kD << std::endl;
+                        std::cout << this->currentGains.kD << std::endl;
                     } else if (input == "totalError") {
                         std::cout << totalError.raw() << std::endl;
                     } else if (input.find("kF_") == 0) {
                         input.erase(0, 3);
-                        kF = std::stof(input);
+                        this->currentGains.kF = std::stof(input);
                     } else if (input.find("kA_") == 0) {
                         input.erase(0, 3);
-                        kA = std::stof(input);
+                        this->currentGains.kA = std::stof(input);
                     } else if (input.find("kP_") == 0) {
                         input.erase(0, 3);
-                        kP = std::stof(input);
+                        this->currentGains.kP = std::stof(input);
                     } else if (input.find("kI_") == 0) {
                         input.erase(0, 3);
-                        kI = std::stof(input);
+                        this->currentGains.kI = std::stof(input);
                     } else if (input.find("kD_") == 0) {
                         input.erase(0, 3);
-                        kD = std::stof(input);
+                        this->currentGains.kD = std::stof(input);
                     }
                     // clear the input
                     input = "";
