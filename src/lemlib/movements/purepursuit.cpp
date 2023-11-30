@@ -29,7 +29,7 @@ PurePursuit::PurePursuit(Length trackWidth, const asset& path, Length lookaheadD
     this->compState = pros::competition::get_status();
     // get the starting time
     this->startTime = pros::millis() * ms;
- 
+
     // decode the asset
     // TODO: be able to pass in a buffer directly instead of covert to string
     std::string input(reinterpret_cast<char*>(path.buf), path.size);

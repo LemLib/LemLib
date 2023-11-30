@@ -124,6 +124,10 @@ Pose circleLineIntersect(Pose p1, Pose p2, Pose center, Length radius);
  * @param y2 the y value of the upper adjacent coordinate
  * @return the interpolated y value
  */
-float linearInterp(Length x, Length x1, Length y1, Length x2, Length y2);
+template <isQuantity Q> float linearInterp(Q x, Q x1, float y1, Q x2, float y2) {
+    if (x2 - x1 == Q(0)) { return y1; }
+
+    return (Number(y1) + (x - x1) * (Number(y2 - y1) / (x2 - x1))).raw();
+}
 
 } // namespace lemlib

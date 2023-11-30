@@ -97,7 +97,9 @@ Length TrackingWheel::getDistance() { return this->encoder->getAngle() / 2_rad *
  * we do
  * (angle / 2) * diameter
  */
-Length TrackingWheel::getDistanceDelta(bool update) { return this->encoder->getAngleDelta(update) / 2_rad * this->diameter; }
+Length TrackingWheel::getDistanceDelta(bool update) {
+    return this->encoder->getAngleDelta(update) / 2_rad * this->diameter;
+}
 
 /**
  * Get the offset from the tracking center

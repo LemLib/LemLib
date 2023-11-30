@@ -19,4 +19,5 @@ namespace lemlib {
 template <isQuantity T> std::string FAPID<T>::input = "FAPID"; // todo: needs testing
 template <isQuantity T> pros::Task* FAPID<T>::logTask = nullptr;
 template <isQuantity T> pros::Mutex FAPID<T>::logMutex = pros::Mutex();
+
 }; // namespace lemlib

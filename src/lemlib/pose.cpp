@@ -128,7 +128,9 @@ Pose Pose::lerp(Pose other, float t) const {
  * @param other the other pose
  * @return Length
  */
-Length Pose::distance(Pose other) const { return units::sqrt(units::square(this->x - other.x) + units::square(this->y - other.y)); }
+Length Pose::distance(Pose other) const {
+    return units::sqrt(units::square(this->x - other.x) + units::square(this->y - other.y));
+}
 
 /**
  * @brief Get the angle between two poses

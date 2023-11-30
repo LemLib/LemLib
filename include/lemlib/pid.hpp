@@ -11,6 +11,7 @@
 #pragma once
 #include <string>
 #include <set>
+#include "pros/imu.h"
 #include "pros/rtos.hpp"
 #include "lemlib/units.hpp"
 #include "lemlib/util.hpp"
@@ -26,7 +27,7 @@ struct Gains {
 
 /** @brief A function taking the target and the (target, Gains) elements adjacent to it, computing the resulting gains
  */
-using Interpolator = std::function<Gains(float, std::pair<float, Gains>, std::pair<float, Gains>)>;
+template <isQuantity Q> using Interpolator = std::function<Gains(Q, std::pair<Q, Gains>, std::pair<Q, Gains>)>;
 
 /**
  * @brief A gain interpolator that selects the gains with the closest target
@@ -37,7 +38,14 @@ using Interpolator = std::function<Gains(float, std::pair<float, Gains>, std::pa
  *
  * @returns the interpolated gains
  */
-Gains interpolateNearest(float target, std::pair<float, Gains> below, std::pair<float, Gains> above);
+template <isQuantity Q>
+Gains interpolateNearest(Q target, std::pair<Q, Gains> below, std::pair<Q, Gains> above) {
+    if (units::abs(target - below.first) < units::abs(target - above.first)) {
+        return below.second;
+    } else {
+        return above.second;
+    }
+}
 
 /**
  * @brief A gain interpolator that linearly interpolates gains
@@ -48,7 +56,24 @@ Gains interpolateNearest(float target, std::pair<float, Gains> below, std::pair<
  *
  * @returns the interpolated gains
  */
-Gains interpolateLinear(float, std::pair<float, Gains>, std::pair<float, Gains>);
+template <isQuantity Q>
+Gains interpolateLinear(Q target, std::pair<Q, Gains> below, std::pair<Q, Gains> above) {
+    Gains nearest = lemlib::interpolateNearest(target, below, above);
+    auto [x1, y1] = below;
+    auto [x2, y2] = above;
+
+    // Should kF and kA be interpolated?
+    // It seems that feedforward constants should remain the same
+
+    float kF = nearest.kF;
+    float kA = nearest.kA;
+
+    float kP = lemlib::linearInterp(target, x1, y1.kP, x2, y2.kP);
+    float kI = lemlib::linearInterp(target, x1, y1.kI, x2, y2.kI);
+    float kD = lemlib::linearInterp(target, x1, y1.kD, x2, y2.kD);
+
+    return Gains {kF, kA, kP, kI, kD};
+}
 
 /**
  * @brief Feedforward, Acceleration, Proportional, Integral, Derivative PID controller
@@ -70,36 +95,48 @@ template <isQuantity Q> class FAPID {
          * @param name name of the FAPID. Used for logging
          */
         FAPID(float kF, float kA, float kP, float kI, float kD, std::string name, Q base = Q(1.0))
-            : currentGains(Gains(kF, kA, kP, kI, kD)),
+            : currentGains(Gains {kF, kA, kP, kI, kD}),
               name(name),
               base(base) {}
 
         /**
          * @brief Construct a new FAPID
          *
-         * @param gains the gains for the FAPID to use
+         * @param Gains the Gains for the FAPID to use
          * @param name name of the FAPID. Used for logging
          */
-        FAPID(Gains gains, std::string name);
+        FAPID(Gains gains, std::string name, Q base = Q(1.0))
+            : currentGains(gains),
+              name(name),
+              base(base) {};
 
         /**
          * @brief Construct a new FAPID
          *
-         * @param gains the default gains for the FAPID to use
+         * @param Gains the default Gains for the FAPID to use
          * @param scheduled a set of (target, Gains) pairs to use for gain scheduling
          * @param name name of the FAPID. Used for logging
          */
-        FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, std::string name);
+        FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, std::string name, Q base = Q(1.0))
+            : currentGains(gains),
+              scheduledGains(scheduled),
+              name(name),
+              base(base) {};
 
         /**
          * @brief Construct a new FAPID
          *
-         * @param gains the default gains for the FAPID to use
+         * @param Gains the default Gains for the FAPID to use
          * @param scheduled a set of (target, Gains) pairs to use for gain scheduling
-         * @param interpolator the function to use when interpolating gains when scheduling
+         * @param interpolator the function to use when interpolating Gains when scheduling
          * @param name name of the FAPID. Used for logging
          */
-        FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, Interpolator interpolator, std::string name);
+        FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, Interpolator<Q> interpolator, std::string name)
+            : currentGains(gains),
+              scheduledGains(scheduled),
+              gainInterpolator(interpolator),
+              name(name),
+              base(base) {};
 
         /**
          * @brief Set gains
@@ -121,23 +158,23 @@ template <isQuantity Q> class FAPID {
         /**
          * @brief Set gains
          *
-         * @param gains the new gains
+         * @param Gains the new gains
          */
         void setGains(Gains gains) { this->currentGains = gains; }
 
         /**
          * @brief Set scheduled gains
          *
-         * @param gains the new scheduled gains
+         * @param Gains the new scheduled gains
          */
         void setScheduledGains(std::set<std::pair<float, Gains>> scheduled);
 
         /**
          * @brief Set gain interpolator
          *
-         * @param gains the new gain interpolator
+         * @param Gains the new gain interpolator
          */
-        void setGainInterpolator(Interpolator interpolator);
+        void setGainInterpolator(Interpolator<Q> interpolator);
 
         /**
          * @brief Set the exit conditions
@@ -228,7 +265,7 @@ template <isQuantity Q> class FAPID {
          * if this function is called, std::cin will be used to interact with the FAPID
          *
          * the user can interact with the FAPID through the terminal
-         * the user can access gains and other variables with the following format:
+         * the user can access Gains and other variables with the following format:
          * <name>.<variable> to get the value of the variable
          * <name>.<variable>_<value> to set the value of the variable
          * for example:
@@ -255,14 +292,14 @@ template <isQuantity Q> class FAPID {
         // An ordered set of (target, Gains) pairs for gain scheduling
         std::set<std::pair<float, Gains>> scheduledGains = {};
 
-        // The gains the PID will use
+        // The Gains the PID will use
         Gains currentGains;
 
         // A function taking the target and the elements adjacent to the target in the (target, gain) set, computing the
         // final gains
-        Interpolator gainInterpolator = interpolateNearest;
+        Interpolator<Q> gainInterpolator = interpolateNearest<Q>;
 
-        Q previousTarget = 0;
+        Q previousTarget = Q(0);
         Q largeError;
         Q smallError;
         Time largeTime = 0_sec;
