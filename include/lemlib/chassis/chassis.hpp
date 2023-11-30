@@ -58,7 +58,7 @@ class Chassis {
          *
          * @return Pose
          */
-        Pose getPose();
+        Pose getPose() const;
 
         /**
          * @brief Wait until the robot has traveled a certain distance along the path

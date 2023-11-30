@@ -35,8 +35,9 @@ namespace lemlib {
  * @param gears the gearbox used by the motors
  * @return std::shared_ptr<pros::MotorGroup> a shared pointer to the motor group
  */
-std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t> ports,
-                                                 const pros::v5::MotorGears gears);
+[[nodiscard("makeMotorGroup function returns a shared_ptr of pros::MotorGroup, you can use "
+            "std::shared_ptr<pros::MotorGroup> or auto to get the returned pointer")]] std::shared_ptr<pros::MotorGroup>
+makeMotorGroup(const std::initializer_list<int8_t>& ports, const pros::v5::MotorGears& gears);
 
 /**
  * @brief Struct containing all the sensors used for odometry
@@ -151,8 +152,9 @@ struct Drivetrain {
          * @param speed the angular velocity of the wheels
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          */
-        Drivetrain(std::shared_ptr<pros::MotorGroup> leftMotors, std::shared_ptr<pros::MotorGroup> rightMotors,
-                   Length trackWidth, Length wheelDiameter, AngularVelocity speed, float chasePower)
+        Drivetrain(const std::shared_ptr<pros::MotorGroup>& leftMotors,
+                   const std::shared_ptr<pros::MotorGroup>& rightMotors, Length trackWidth, Length wheelDiameter,
+                   AngularVelocity speed, float chasePower)
             : leftMotors(leftMotors),
               rightMotors(rightMotors),
               trackWidth(trackWidth),
@@ -202,8 +204,8 @@ class Differential : public Chassis {
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          */
-        Differential(Drivetrain drivetrain, ControllerSettings<Length> linearSettings,
-                     ControllerSettings<Angle> angularSettings, OdomSensors sensors);
+        Differential(const Drivetrain& drivetrain, const ControllerSettings<Length>& linearSettings,
+                     const ControllerSettings<Angle>& angularSettings, const OdomSensors& sensors);
 
         /**
          * @brief Initialize the chassis
@@ -274,7 +276,8 @@ class Differential : public Chassis {
          * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve. A value
          * of 0 disables the curve entirely.
          */
-        void tank(int left, int right, float curveGain = 0.0, DriveCurveFunction_t driveCurve = defaultDriveCurve);
+        void tank(int left, int right, float curveGain = 0.0,
+                  const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
 
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
@@ -285,7 +288,8 @@ class Differential : public Chassis {
          * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
          * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void arcade(int throttle, int turn, float curveGain = 0.0, DriveCurveFunction_t driveCurve = defaultDriveCurve);
+        void arcade(int throttle, int turn, float curveGain = 0.0,
+                    const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
 
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
@@ -298,7 +302,7 @@ class Differential : public Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void curvature(int throttle, int turn, float cureGain = 0.0,
-                       DriveCurveFunction_t driveCurve = defaultDriveCurve);
+                       const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
     private:
         /**
          * @brief Chassis update function. Updates chassis motion and odometry
@@ -306,8 +310,8 @@ class Differential : public Chassis {
          */
         void update() override;
 
-        struct ControllerSettings<Length> linearSettings;
-        struct ControllerSettings<Angle> angularSettings;
-        Drivetrain drivetrain;
+        std::unique_ptr<ControllerSettings<Length>> linearSettings;
+        std::unique_ptr<ControllerSettings<Angle>> angularSettings;
+        std::unique_ptr<Drivetrain> drivetrain;
 };
 } // namespace lemlib

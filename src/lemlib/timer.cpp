@@ -18,9 +18,9 @@ Timer::Timer(Time time)
  */
 Time Timer::getTimeSet() {
     const Time time = pros::millis() * ms; // get time from RTOS
-    if (!paused) timeWaited += time - lastTime; // don't update if paused
-    lastTime = time; // update last time
-    return period;
+    if (!this->paused) this->timeWaited += time - this->lastTime; // don't update if paused
+    this->lastTime = time; // update last time
+    return this->period;
 }
 
 /**
@@ -28,9 +28,9 @@ Time Timer::getTimeSet() {
  */
 Time Timer::getTimeLeft() {
     const Time time = pros::millis() * ms; // get time from RTOS
-    if (!paused) timeWaited += time - lastTime; // don't update is paused
-    lastTime = time; // update last time
-    const Time delta = period - timeWaited; // calculate how much time is left
+    if (!this->paused) this->timeWaited += time - this->lastTime; // don't update is paused
+    this->lastTime = time; // update last time
+    const Time delta = this->period - this->timeWaited; // calculate how much time is left
     return (delta > 0_sec) ? delta : 0_sec; // return 0 if timer is done
 }
 
@@ -39,9 +39,9 @@ Time Timer::getTimeLeft() {
  */
 Time Timer::getTimePassed() {
     const Time time = pros::millis() * ms; // get time from RTOS
-    if (!paused) timeWaited += time - lastTime; // don't update is paused
-    lastTime = time; // update last time;
-    return timeWaited;
+    if (!paused) this->timeWaited += time - this->lastTime; // don't update is paused
+    this->lastTime = time; // update last time;
+    return this->timeWaited;
 }
 
 /**
@@ -49,9 +49,9 @@ Time Timer::getTimePassed() {
  */
 bool Timer::isDone() {
     const Time time = pros::millis() * ms; // get time from RTOS
-    if (!paused) timeWaited += time - lastTime; // don't update is paused
-    lastTime = time; // update last time
-    const Time delta = period - timeWaited; // calculate how much time is left
+    if (!this->paused) this->timeWaited += time - this->lastTime; // don't update is paused
+    this->lastTime = time; // update last time
+    const Time delta = this->period - this->timeWaited; // calculate how much time is left
     return delta <= 0_sec;
 }
 
@@ -59,32 +59,32 @@ bool Timer::isDone() {
  * Set how long the timer should wait. Resets the timer.
  */
 void Timer::set(Time time) {
-    period = time; // set how long to wait
-    reset();
+    this->period = time; // set how long to wait
+    this->reset();
 }
 
 /**
  * Reset the timer
  */
 void Timer::reset() {
-    timeWaited = 0_sec;
-    lastTime = pros::millis() * ms;
+    this->timeWaited = 0_sec;
+    this->lastTime = pros::millis() * ms;
 }
 
 /**
  * Pause the timer
  */
 void Timer::pause() {
-    if (!paused) lastTime = pros::millis() * ms;
-    paused = true;
+    if (!this->paused) this->lastTime = pros::millis() * ms;
+    this->paused = true;
 }
 
 /**
  * Resume the timer
  */
 void Timer::resume() {
-    if (paused) lastTime = pros::millis() * ms;
-    paused = false;
+    if (this->paused) this->lastTime = pros::millis() * ms;
+    this->paused = false;
 }
 
 /**

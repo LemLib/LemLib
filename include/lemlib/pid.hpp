@@ -10,11 +10,46 @@
  */
 #pragma once
 #include <string>
+#include <set>
 #include "pros/rtos.hpp"
 #include "lemlib/units.hpp"
 #include "lemlib/util.hpp"
 
 namespace lemlib {
+struct Gains {
+        float kF = 0;
+        float kA = 0;
+        float kP = 0;
+        float kI = 0;
+        float kD = 0;
+};
+
+/** @brief A function taking the target and the (target, Gains) elements adjacent to it, computing the resulting gains
+ */
+using Interpolator = std::function<Gains(float, std::pair<float, Gains>, std::pair<float, Gains>)>;
+
+/**
+ * @brief A gain interpolator that selects the gains with the closest target
+ *
+ * @param target the target at which to interpolate
+ * @param below the lower adjacent (target, Gains) value
+ * @param above the higher adjacent (target, Gains) value
+ *
+ * @returns the interpolated gains
+ */
+Gains interpolateNearest(float target, std::pair<float, Gains> below, std::pair<float, Gains> above);
+
+/**
+ * @brief A gain interpolator that linearly interpolates gains
+ *
+ * @param target the target at which to interpolate
+ * @param below the lower adjacent (target, Gains) value
+ * @param above the higher adjacent (target, Gains) value
+ *
+ * @returns the interpolated gains
+ */
+Gains interpolateLinear(float, std::pair<float, Gains>, std::pair<float, Gains>);
+
 /**
  * @brief Feedforward, Acceleration, Proportional, Integral, Derivative PID controller
  *
@@ -45,6 +80,33 @@ template <isQuantity Q> class FAPID {
         }
 
         /**
+         * @brief Construct a new FAPID
+         *
+         * @param gains the gains for the FAPID to use
+         * @param name name of the FAPID. Used for logging
+         */
+        FAPID(Gains gains, std::string name);
+
+        /**
+         * @brief Construct a new FAPID
+         *
+         * @param gains the default gains for the FAPID to use
+         * @param scheduled a set of (target, Gains) pairs to use for gain scheduling
+         * @param name name of the FAPID. Used for logging
+         */
+        FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, std::string name);
+
+        /**
+         * @brief Construct a new FAPID
+         *
+         * @param gains the default gains for the FAPID to use
+         * @param scheduled a set of (target, Gains) pairs to use for gain scheduling
+         * @param interpolator the function to use when interpolating gains when scheduling
+         * @param name name of the FAPID. Used for logging
+         */
+        FAPID(Gains gains, std::set<std::pair<float, Gains>> scheduled, Interpolator interpolator, std::string name);
+
+        /**
          * @brief Set gains
          *
          * @param kF feedfoward gain, multiplied by target and added to output. Set 0 if disabled
@@ -54,12 +116,35 @@ template <isQuantity Q> class FAPID {
          * @param kD derivative gain, multiplied by change in error and added to output
          */
         void setGains(float kF, float kA, float kP, float kI, float kD) {
-            this->kF = kF;
-            this->kA = kA;
-            this->kP = kP;
-            this->kI = kI;
-            this->kD = kD;
+            this->currentGains.kF = kF;
+            this->currentGains.kA = kA;
+            this->currentGains.kP = kP;
+            this->currentGains.kI = kI;
+            this->currentGains.kD = kD;
         }
+
+        /**
+         * @brief Set gains
+         *
+         * @param gains the new gains
+         */
+        void setGains(Gains gains) {
+            this->currentGains = gains;
+        }
+
+        /**
+         * @brief Set scheduled gains
+         *
+         * @param gains the new scheduled gains
+         */
+        void setScheduledGains(std::set<std::pair<float, Gains>> scheduled);
+
+        /**
+         * @brief Set gain interpolator
+         *
+         * @param gains the new gain interpolator
+         */
+        void setGainInterpolator(Interpolator interpolator);
 
         /**
          * @brief Set the exit conditions
@@ -161,8 +246,8 @@ template <isQuantity Q> class FAPID {
          * reset()
          */
         static void init() {
-            if (logTask != nullptr) {
-                logTask = new pros::Task {[=] {
+            if (this->logTask != nullptr) {
+                this->logTask = new pros::Task {[=] {
                     while (true) {
                         // get input
                         std::cin >> input;
@@ -172,17 +257,22 @@ template <isQuantity Q> class FAPID {
             }
         }
     private:
-        float kF;
-        float kP;
-        float kI;
-        float kD;
-        float kA;
+        // An ordered set of (target, Gains) pairs for gain scheduling
+        std::set<std::pair<float, Gains>> scheduledGains = {};
 
+        // The gains the PID will use
+        Gains currentGains;
+
+        // A function taking the target and the elements adjacent to the target in the (target, gain) set, computing the
+        // final gains
+        Interpolator gainInterpolator = interpolateNearest;
+
+        Q previousTarget = 0;
         Q largeError;
         Q smallError;
         Time largeTime = 0_sec;
         Time smallTime = 0_sec;
-        Time maxTime = FOREVER;
+        Time maxTime = FOREVER; // -1 means no max time set, run forever
 
         Time largeTimeCounter = 0_sec;
         Time smallTimeCounter = 0_sec;

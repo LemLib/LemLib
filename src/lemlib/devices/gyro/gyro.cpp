@@ -6,9 +6,9 @@ namespace lemlib {
  * orientation
  */
 Angle Gyro::getRotationDelta(bool update) {
-    const Angle prevAngle = lastAngle; // save lastAngle, as it will get reset when calling getAngle() below
+    const Angle prevAngle = this->lastAngle; // save lastAngle, as it will get reset when calling getAngle() below
     const Angle angle = getRotation();
-    if (!update) lastAngle = prevAngle;
+    if (!update) this->lastAngle = prevAngle;
     return (angle - prevAngle);
 }
 }; // namespace lemlib

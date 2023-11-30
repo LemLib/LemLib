@@ -28,11 +28,11 @@ MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, AngularVelo
  */
 Angle MotorEncoder::getAngle() {
     // get gearboxes and encoder position for each motor in the group
-    std::vector<pros::MotorGears> gearsets = motors->get_gearing_all();
-    std::vector<double> positions = motors->get_position_all();
+    std::vector<pros::MotorGears> gearsets = this->motors->get_gearing_all();
+    std::vector<double> positions = this->motors->get_position_all();
     std::vector<Angle> angles;
     // calculate ratio'd output for each motor
-    for (int i = 0; i < motors->size(); i++) {
+    for (int i = 0; i < this->motors->size(); i++) {
         AngularVelocity inp;
         switch (gearsets[i]) {
             case pros::MotorGears::rpm_100: inp = 100_rpm; break;
@@ -44,7 +44,7 @@ Angle MotorEncoder::getAngle() {
     }
     // calc average of the angles
     Angle angle = avg(angles);
-    lastAngle = angle;
+    this->lastAngle = angle;
     return angle;
 }
 
@@ -53,6 +53,6 @@ Angle MotorEncoder::getAngle() {
  */
 bool MotorEncoder::reset() {
     lastAngle = 0_rad;
-    return (motors->tare_position()) ? 0 : 1;
+    return (this->motors->tare_position()) ? 0 : 1;
 }
 }; // namespace lemlib

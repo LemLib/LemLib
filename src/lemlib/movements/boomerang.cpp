@@ -25,9 +25,9 @@ Boomerang::Boomerang(FAPID<Length> linearPID, FAPID<Angle> angularPID, Pose targ
       lead(lead),
       maxSpeed(maxSpeed) {
     // get the current competition state. If this changes, the movement will stop
-    compState = pros::competition::get_status();
+    this->compState = pros::competition::get_status();
     // flip target theta if moving backwards
-    if (reversed) target.theta = units::mod(target.theta + M_PI * rad, 1_rot);
+    if (reversed) this->target.theta = units::mod(this->target.theta + M_PI * rad, 1_rot);
 }
 
 /**
@@ -36,7 +36,7 @@ Boomerang::Boomerang(FAPID<Length> linearPID, FAPID<Angle> angularPID, Pose targ
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float Boomerang::getDist() { return dist.convert(m); } // todo test
+float Boomerang::getDist() { return this->dist.convert(m); } // todo test
 
 /**
  * The boomerang controller is a motion algorithm inspired by adaptive PID seeking
@@ -61,37 +61,37 @@ float Boomerang::getDist() { return dist.convert(m); } // todo test
  */
 std::pair<int, int> Boomerang::update(Pose pose) {
     // set state to 1 if in state 0 and close to the target
-    if (state == 0 && pose.distance(target) < 7.5_in) state = 1;
+    if (this->state == 0 && pose.distance(this->target) < 7.5_in) this->state = 1;
     // set state to 2 if in state 1 and the linear PID has settled
-    if (state == 1 && linearPID.settled()) state = 2;
+    if (this->state == 1 && this->linearPID.settled()) this->state = 2;
     // exit if movement is in state 2 (done)
-    if (state == 2) return {128, 128};
+    if (this->state == 2) return {128, 128};
 
     // if going in reverse, flip the heading of the pose
-    if (reversed) pose.theta += M_PI * rad;
+    if (this->reversed) pose.theta += M_PI * rad;
 
     // update completion vars
-    if (dist == 0_m) { // if dist is 0, this is the first time update() has been called
-        dist = 0.0001_in;
-        prevPose = pose;
+    if (this->dist == 0_m) { // if dist is 0, this is the first time update() has been called
+        this->dist = 0.0001_in;
+        this->prevPose = pose;
     }
-    dist += pose.distance(prevPose);
-    prevPose = pose;
+    this->dist += pose.distance(this->prevPose);
+    this->prevPose = pose;
 
     // calculate the carrot point
-    Pose carrot = target - (Pose(units::cos(target.theta) * m, units::sin(target.theta) * m) *
-                            (float)(lead * pose.distance(target).convert(m)));
-    if (state == 1) carrot = target; // settling behavior
+    Pose carrot = this->target - (Pose(units::cos(this->target.theta) * m, units::sin(this->target.theta) * m) *
+                            (float)(this->lead * pose.distance(this->target).convert(m)));
+    if (this->state == 1) carrot = this->target; // settling behavior
 
     // calculate error
     Angle angularError = angleError(pose.angle(carrot), pose.theta); // angular error
     Length linearError = pose.distance(carrot) * units::cos(angularError); // linear error
-    if (state == 1) angularError = angleError(target.theta, pose.theta); // settling behavior
-    if (reversed) linearError = -linearError;
+    if (this->state == 1) angularError = angleError(this->target.theta, pose.theta); // settling behavior
+    if (this->reversed) linearError = -linearError;
 
     // get PID outputs
-    float angularPower = -angularPID.update(angularError, 0_rad); // todo: test
-    float linearPower = linearPID.update(linearError, 0_m);
+    float angularPower = -this->angularPID.update(angularError, 0_rad); // todo: test
+    float linearPower = this->linearPID.update(linearError, 0_m);
 
     // calculate radius of turn
     Curvature curvature = units::abs(getCurvature(pose, carrot));
@@ -101,14 +101,15 @@ std::pair<int, int> Boomerang::update(Pose pose) {
     // calculate the maximum speed at which the robot can turn
     // using the formula v = sqrt( u * r * g )
     if (radius != -1_m) {
-        float maxTurnSpeed = sqrt(chasePower * radius.raw() * 9.8);
+        float maxTurnSpeed = sqrt(this->chasePower * radius.raw() * 9.8);
+
         // the new linear power is the minimum of the linear power and the max turn speed
-        if (linearPower > maxTurnSpeed && state == 0) linearPower = maxTurnSpeed;
-        else if (linearPower < -maxTurnSpeed && state == 0) linearPower = -maxTurnSpeed;
+        if (linearPower > maxTurnSpeed && this->state == 0) linearPower = maxTurnSpeed;
+        else if (linearPower < -maxTurnSpeed && this->state == 0) linearPower = -maxTurnSpeed;
     }
 
     // prioritize turning over moving
-    float overturn = fabs(angularPower) + fabs(linearPower) - maxSpeed;
+    float overturn = fabs(angularPower) + fabs(linearPower) - this->maxSpeed;
     if (overturn > 0) linearPower -= linearPower > 0 ? overturn : -overturn;
 
     // calculate motor powers

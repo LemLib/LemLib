@@ -21,7 +21,7 @@ Turn::Turn(FAPID<Angle> angularPID, Angle target, int maxSpeed)
       targetHeading(target),
       maxSpeed(maxSpeed) {
     // get the current competition state. If this changes, the movement will stop
-    compState = pros::competition::get_status();
+    this->compState = pros::competition::get_status();
 }
 
 /**
@@ -39,7 +39,7 @@ Turn::Turn(FAPID<Angle> angularPID, Pose target, bool reversed, int maxSpeed)
       reversed(reversed),
       maxSpeed(maxSpeed) {
     // get the current competition state. If this changes, the movement will stop
-    compState = pros::competition::get_status();
+    this->compState = pros::competition::get_status();
 }
 
 /**
@@ -48,7 +48,7 @@ Turn::Turn(FAPID<Angle> angularPID, Pose target, bool reversed, int maxSpeed)
  * This is useful if you want to wait until the robot has travelled a certain distance.
  * For example, you want the robot to engage a mechanism when it has travelled 10 inches.
  */
-float Turn::getDist() { return dist.raw(); }
+float Turn::getDist() { return this->dist.raw(); }
 
 /**
  * The turning algorithm uses field-relative position of the robot to face a target heading
@@ -63,29 +63,29 @@ float Turn::getDist() { return dist.raw(); }
  */
 std::pair<int, int> Turn::update(Pose pose) {
     // set state to 1 if the pid has settled
-    if (angularPID.settled()) state = 1;
+    if (this->angularPID.settled()) this->state = 1;
     // exit if movement is in state 1 (settled)
-    if (state == 1) return {128, 128};
+    if (this->state == 1) return {128, 128};
 
     // reverse heading if doing movement in reverse
-    if (reversed) pose.theta = units::mod(pose.theta - rot / 2, rot);
+    if (this->reversed) pose.theta = units::mod(pose.theta - rot / 2, rot);
 
     // update completion vars
-    if (dist == 0_rad) { // if dist is 0, this is the first time update() has been called
-        dist = 0.0001_deg;
-        startPose = pose;
+    if (this->dist == 0_rad) { // if dist is 0, this is the first time update() has been called
+        this->distdist = 0.0001_deg;
+        this->startPose = pose;
     }
-    dist = angleError(pose.theta, startPose.theta);
-
-    if (targetPose != std::nullopt) targetHeading = pose.angle(targetPose.value());
+    this->dist = angleError(pose.theta, this->startPose.theta);
+  
+    if (this->targetPose != std::nullopt) this->targetHeading = pose.angle(this->targetPose.value());
 
     // calculate error
-    Angle error = angleError(targetHeading, pose.theta);
+    Angle error = angleError(this->targetHeading, pose.theta);
 
     // calculate the speed
-    float output = angularPID.update(0_rad, error); // todo: test
+    float output = this->angularPID.update(0_rad, error); // todo: test
     // cap the speed
-    output = std::clamp(int(std::round(output)), -maxSpeed, maxSpeed);
+    output = std::clamp(int(std::round(output)), -this->maxSpeed, this->maxSpeed);
     // return output
     return {output, -output};
 }

@@ -23,8 +23,8 @@ RotationEncoder::RotationEncoder(int port, bool reversed, float ratio)
  * Pretty straightforward, raw value from the rotation sensor gets converted to rotations
  */
 Angle RotationEncoder::getAngle() {
-    const Angle angle = (float(rotation.get_position()) / 36000) * 1_rot / ratio;
-    lastAngle = angle;
+    const Angle angle = (float(this->rotation.get_position()) / 36000) * 1_rot / this->ratio;
+    this->lastAngle = angle;
     return angle;
 }
 
@@ -32,7 +32,7 @@ Angle RotationEncoder::getAngle() {
  * Reset/calibrate the optical encoder
  */
 bool RotationEncoder::reset() {
-    lastAngle = 0_rad;
-    return (rotation.reset_position()) ? 0 : 1;
+    this->lastAngle = 0_rad;
+    return (this->rotation.reset_position()) ? 0 : 1;
 }
 }; // namespace lemlib

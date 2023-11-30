@@ -18,7 +18,7 @@ Imu::Imu(uint8_t port)
  * Takes a reference to a pros Imu to be used. Pros imu is then constructed in an
  * initializer list
  */
-Imu::Imu(pros::Imu& imu)
+Imu::Imu(const pros::Imu& imu)
     : imu(imu) {}
 
 /**
@@ -30,10 +30,10 @@ Imu::Imu(pros::Imu& imu)
  * the imu has calibrated successfully, as we can't look into the future
  */
 bool Imu::calibrate(bool blocking) {
-    if (!isConnected()) return true; // return true if imu is not connected
-    imu.reset(blocking);
+    if (!this->isConnected()) return true; // return true if imu is not connected
+    this->imu.reset(blocking);
     if (!blocking) return false; // return false if function is non-blocking
-    return !isCalibrated();
+    return !this->isCalibrated();
 }
 
 /**
@@ -41,27 +41,29 @@ bool Imu::calibrate(bool blocking) {
  *
  * Just a wrapper for the pros::Imu::is_calibrating() function
  */
-bool Imu::isCalibrating() const { return imu.is_calibrating(); }
+bool Imu::isCalibrating() const { return this->imu.is_calibrating(); }
 
 /**
  * return whether the IMU has been calibrated
  *
  * This function checks if the Imu is connected, is not calibrating,
  */
-bool Imu::isCalibrated() { return isConnected() && !imu.is_calibrating() && !std::isinf(imu.get_heading()); }
+bool Imu::isCalibrated() {
+    return this->isConnected() && !this->imu.is_calibrating() && !std::isinf(this->imu.get_heading());
+}
 
 /**
  * return whether the IMU is installed
  *
  * Just a wrapper for the pros::Imu::is_installed() function
  */
-bool Imu::isConnected() { return imu.is_installed(); }
+bool Imu::isConnected() { return this->imu.is_installed(); }
 
 /**
  * return the heading of the imu in standard position
  */
 Angle Imu::getHeading() {
-    Angle heading = units::mod(getRotation(), 1_rot);
+    Angle heading = units::mod(this->getRotation(), 1_rot);
     if (heading < 0_rad) heading += 1_rot;
     return heading;
 }
@@ -70,18 +72,18 @@ Angle Imu::getHeading() {
  * Get the rotation of the imu in standard position
  */
 Angle Imu::getRotation() {
-    const Angle rotation = (90 - imu.get_rotation()) * deg; // todo test
-    lastAngle = rotation;
+    const Angle rotation = (90 - this->imu.get_rotation()) * deg; // todo test
+    this->lastAngle = rotation;
     return rotation;
 }
 
 /**
  * Set the rotation of the imu in standard position
  */
-void Imu::setRotation(Angle orientation) const { imu.set_rotation(360 - orientation.convert(deg)); }
+void Imu::setRotation(Angle orientation) const { this->imu.set_rotation(180 - orientation.convert(deg)); }
 
 /**
  * Wrapper function for pros::Imu.get_port()
  */
-std::uint8_t Imu::getPort() { return imu.get_port(); }
+std::uint8_t Imu::getPort() { return this->imu.get_port(); }
 }; // namespace lemlib

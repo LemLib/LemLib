@@ -113,4 +113,17 @@ Waypoint closestWaypoint(const std::vector<Waypoint>& waypoints, const Pose& tar
  * multiple intersections, the first one will be returned
  */
 Pose circleLineIntersect(Pose p1, Pose p2, Pose center, Length radius);
+
+/*
+ * @brief Linearly interpolate two points
+ *
+ * @param x the x value to interpolate
+ * @param x1 the x value of the lower adjacent coordinate
+ * @param y1 the y value of the lower adjacent coordinate
+ * @param x2 the x value of the upper adjacent coordinate
+ * @param y2 the y value of the upper adjacent coordinate
+ * @return the interpolated y value
+ */
+float linearInterp(Length x, Length x1, Length y1, Length x2, Length y2);
+
 } // namespace lemlib

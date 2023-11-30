@@ -19,13 +19,13 @@ OpticalEncoder::OpticalEncoder(char topPort, char bottomPort, bool reversed, flo
  * Pretty straightforward, raw value from the encoder gets converted to rotations
  */
 Angle OpticalEncoder::getAngle() {
-    Angle angle = (float(optical.get_value()) * 1_deg) / ratio;
-    lastAngle = angle;
+    Angle angle = (float(this->optical.get_value()) * 1_deg) / this->ratio;
+    this->lastAngle = angle;
     return angle;
 }
 
 /**
  * Reset/calibrate the optical encoder
  */
-bool OpticalEncoder::reset() { return (optical.reset()) ? 0 : 1; }
+bool OpticalEncoder::reset() { return (this->optical.reset()) ? 0 : 1; }
 }; // namespace lemlib

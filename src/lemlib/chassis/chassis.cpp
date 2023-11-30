@@ -18,7 +18,7 @@ namespace lemlib {
  *
  * This function is a wrapper for the Odometry::setPose() function
  */
-void Chassis::setPose(Length x, Length y, Angle theta) { odom->setPose({x, y, theta}); }
+void Chassis::setPose(Length x, Length y, Angle theta) { this->odom->setPose({x, y, theta}); }
 
 /**
  * Set the pose of the chassis
@@ -26,7 +26,7 @@ void Chassis::setPose(Length x, Length y, Angle theta) { odom->setPose({x, y, th
  * This function is a wrapper for the Odometry::setPose() function
  * but it also transforms the pose to the format needed by the user
  */
-void Chassis::setPose(Pose pose) { odom->setPose(pose); }
+void Chassis::setPose(Pose pose) { this->odom->setPose(pose); }
 
 /**
  * Get the pose of the chassis
@@ -34,7 +34,27 @@ void Chassis::setPose(Pose pose) { odom->setPose(pose); }
  * This function is a wrapper for the Odometry::getPose() function
  * but it also transforms the pose to the format needed by the user
  */
-Pose Chassis::getPose() { return odom->getPose(); }
+Pose Chassis::getPose() const { return this->odom->getPose(); } // TODO: test
+
+/**
+ * Wait until the robot has traveled a certain distance, or angle
+ *
+ * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
+ *
+ * Just uses a while loop and exits when the distance traveled is greater than the specified distance
+ * or if the motion has finished
+ */
+void Chassis::waitUntil(float dist) {
+    // give the movement time to start
+    pros::delay(10);
+    // wait until the robot has travelled a certain distance
+    while (this->movement != nullptr && this->movement->getDist() < dist && this->movement->getDist() >= prevDist) {
+        this->prevDist = this->movement->getDist(); // update previous distance
+        pros::delay(10);
+    }
+    // set prevDist to 0
+    this->prevDist = 0;
+}
 
 /**
  * Wait until the robot has completed the current movement
@@ -43,12 +63,12 @@ void Chassis::waitUntilDone() {
     // give the movement time to start
     pros::delay(10);
     // wait until the movement is done
-    while (movement != nullptr && movement->getDist() >= prevDist) {
-        prevDist = movement->getDist(); // update previous distance
+    while (this->movement != nullptr && this->movement->getDist() >= prevDist) {
+        this->prevDist = this->movement->getDist(); // update previous distance
         pros::delay(10);
     }
     // set prevDist to 0
-    prevDist = 0;
+    this->prevDist = 0;
 }
 
 /**
