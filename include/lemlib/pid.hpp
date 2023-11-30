@@ -38,8 +38,7 @@ template <isQuantity Q> using Interpolator = std::function<Gains(Q, std::pair<Q,
  *
  * @returns the interpolated gains
  */
-template <isQuantity Q>
-Gains interpolateNearest(Q target, std::pair<Q, Gains> below, std::pair<Q, Gains> above) {
+template <isQuantity Q> Gains interpolateNearest(Q target, std::pair<Q, Gains> below, std::pair<Q, Gains> above) {
     if (units::abs(target - below.first) < units::abs(target - above.first)) {
         return below.second;
     } else {
@@ -56,8 +55,7 @@ Gains interpolateNearest(Q target, std::pair<Q, Gains> below, std::pair<Q, Gains
  *
  * @returns the interpolated gains
  */
-template <isQuantity Q>
-Gains interpolateLinear(Q target, std::pair<Q, Gains> below, std::pair<Q, Gains> above) {
+template <isQuantity Q> Gains interpolateLinear(Q target, std::pair<Q, Gains> below, std::pair<Q, Gains> above) {
     Gains nearest = lemlib::interpolateNearest(target, below, above);
     auto [x1, y1] = below;
     auto [x2, y2] = above;
