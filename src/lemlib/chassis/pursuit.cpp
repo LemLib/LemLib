@@ -205,7 +205,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
     mutex.take(TIMEOUT_MAX);
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveToPoint(x, y, timeout, forwards, maxSpeed, false); });
+        pros::Task task([&]() { follow(path, lookahead, timeout, forwards, false); });
         mutex.give();
         pros::delay(10); // delay to give the task time to start
         return;
