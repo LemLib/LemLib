@@ -85,7 +85,10 @@ std::pair<int, int> Boomerang::update(Pose pose) {
 
     // calculate error
     float angularError = angleError(pose.angle(carrot), pose.theta); // angular error
-    float linearError = pose.distance(carrot) * cos(angularError); // linear error
+    float linearError = pose.distance(carrot);
+    // linear error
+    if (this->state == 1) linearError *= cos(angularError);
+    else linearError *= std::fmax(cos(angularError), 0);
     if (this->state == 1) angularError = angleError(this->target.theta, pose.theta); // settling behavior
     if (this->reversed) linearError = -linearError;
 
