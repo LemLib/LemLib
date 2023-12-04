@@ -9,7 +9,6 @@
  *
  */
 #include <math.h>
-#include "main.h"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "lemlib/util.hpp"
@@ -347,7 +346,10 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
 
         // calculate error
         float angularError = angleError(pose.angle(carrot), pose.theta, true); // angular error
-        float linearError = pose.distance(carrot) * cos(angularError); // linear error
+        // linear error
+        float linearError = pose.distance(carrot);
+        if (close) linearError *= cos(angularError);
+        else linearError *= std::fmax(angularError, 0);
         if (close) angularError = angleError(target.theta, pose.theta, true); // settling behavior
         if (!forwards) linearError = -linearError;
 
@@ -451,10 +453,12 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         float hypot = pose.distance(target);
         float angularError =
             (forwards) ? angleError(pose.theta, targetTheta, true) : angleError(pose.theta, targetTheta + M_PI, true);
-        float lateralError = hypot * cos(angleError(pose.theta, targetTheta));
+        float linearError = hypot;
+        if (close) linearError *= cos(angleError(pose.theta, targetTheta));
+        else linearError *= std::fmax(angleError(pose.theta, targetTheta), 0);
 
         // calculate speed
-        float lateralPower = lateralPID.update(lateralError, 0);
+        float lateralPower = lateralPID.update(linearError, 0);
         float angularPower = -angularPID.update(radToDeg(angularError), 0);
 
         // if the robot is close to the target
