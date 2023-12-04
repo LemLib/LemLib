@@ -202,7 +202,7 @@ float findLookaheadCurvature(lemlib::Pose pose, float heading, lemlib::Pose look
  */
 void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bool forwards, bool async) {
     // take the mutex
-    if (!mutex.take(10)) return;
+    mutex.take(TIMEOUT_MAX);
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { follow(path, lookahead, timeout, forwards, false); });
