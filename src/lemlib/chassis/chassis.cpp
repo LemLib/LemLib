@@ -349,7 +349,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         // linear error
         float linearError = pose.distance(carrot);
         if (close) linearError *= cos(angularError);
-        else linearError *= std::fmax(angularError, 0);
+        else linearError *= std::fmax(cos(angularError), 0);
         if (close) angularError = angleError(target.theta, pose.theta, true); // settling behavior
         if (!forwards) linearError = -linearError;
 
