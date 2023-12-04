@@ -77,6 +77,7 @@ void Chassis::waitUntilDone() {
     while (this->movement != nullptr && this->movement->getDist() >= prevDist) {
         this->prevDist = this->movement->getDist(); // update previous distance
         pros::delay(10);
+
     }
     // set prevDist to 0
     this->prevDist = 0;
