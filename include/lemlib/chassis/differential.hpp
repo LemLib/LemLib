@@ -286,8 +286,8 @@ class Differential : public Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void arcade(int throttle, int turn, float linearCurveGain = 0.0, float turnCurveGain = 0.0,
-                  const DriveCurveFunction_t& leftCurve = defaultDriveCurve,
-                  const DriveCurveFunction_t& rightCurve = defaultDriveCurve);
+                    const DriveCurveFunction_t& leftCurve = defaultDriveCurve,
+                    const DriveCurveFunction_t& rightCurve = defaultDriveCurve);
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
          * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
