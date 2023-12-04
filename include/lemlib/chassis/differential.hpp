@@ -328,7 +328,8 @@ class Differential : public Chassis {
          * of 0 disables the curve entirely.
          */
         void tank(int left, int right, float leftCurveGain = 0.0, float rightCurveGain = 0.0,
-                  const DriveCurveFunction_t& leftCurve = defaultDriveCurve, const DriveCurveFunction_t& rightCurve = defaultDriveCurve);
+                  const DriveCurveFunction_t& leftCurve = defaultDriveCurve,
+                  const DriveCurveFunction_t& rightCurve = defaultDriveCurve);
 
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
@@ -340,7 +341,8 @@ class Differential : public Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void arcade(int throttle, int turn, float linearCurveGain = 0.0, float turnCurveGain = 0.0,
-                    const DriveCurveFunction_t& driveCurve = defaultDriveCurve, const DriveCurveFunction_t& turnCurve = defaultDriveCurve);
+                  const DriveCurveFunction_t& leftCurve = defaultDriveCurve,
+                  const DriveCurveFunction_t& rightCurve = defaultDriveCurve);
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
          * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
@@ -352,7 +354,8 @@ class Differential : public Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void curvature(int throttle, int turn, float linearCurveGain = 0.0, float turnCurveGain = 0.0,
-                       const DriveCurveFunction_t& driveCurve = defaultDriveCurve, const DriveCurveFunction_t& turnCurve = defaultDriveCurve);
+                       const DriveCurveFunction_t& driveCurve = defaultDriveCurve,
+                       const DriveCurveFunction_t& turnCurve = defaultDriveCurve);
     private:
         /**
          * @brief Chassis update function. Updates chassis motion and odometry
