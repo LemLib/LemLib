@@ -236,7 +236,7 @@ void Differential::curvature(int throttle, int turn, float linearCurveGain, floa
                              const DriveCurveFunction_t& driveCurve, const DriveCurveFunction_t& turnCurve) {
     // If we're not moving forwards change to arcade drive
     if (throttle == 0) {
-        this->arcade(throttle, turn, linearCurveGain, turnCurveGain);
+        this->arcade(throttle, turn, linearCurveGain, turnCurveGain, driveCurve, turnCurve);
         return;
     }
 
