@@ -67,12 +67,14 @@ class BaseSink {
 
          */
         template <typename... T> void log(Level level, fmt::format_string<T...> format, T&&... args) {
-            if (!sinks.empty()) {
-                for (std::shared_ptr<BaseSink> sink : sinks) { sink->log(level, format, std::forward<T>(args)...); }
+            if (!this->sinks.empty()) {
+                for (std::shared_ptr<BaseSink> sink : this->sinks) {
+                    sink->log(level, format, std::forward<T>(args)...);
+                }
                 return;
             }
 
-            if (level < lowestLevel) { return; }
+            if (level < this->lowestLevel) { return; }
 
             // substitute the user's arguments into the format.
             std::string messageString = fmt::format(format, std::forward<T>(args)...);
@@ -86,7 +88,7 @@ class BaseSink {
             formattingArgs.push_back(fmt::arg("level", message.level));
             formattingArgs.push_back(fmt::arg("message", messageString));
 
-            std::string formattedString = fmt::vformat(logFormat, std::move(formattingArgs));
+            std::string formattedString = fmt::vformat(this->logFormat, std::move(formattingArgs));
             message.message = std::move(formattedString);
             sendMessage(std::move(message));
         }

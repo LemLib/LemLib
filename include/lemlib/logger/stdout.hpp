@@ -22,7 +22,7 @@ class BufferedStdout : public Buffer {
          *
          */
         template <typename... T> void print(fmt::format_string<T...> format, T&&... args) {
-            pushToBuffer(fmt::format(format, std::forward<T>(args)...));
+            this->pushToBuffer(fmt::format(format, std::forward<T>(args)...));
         }
 };
 
