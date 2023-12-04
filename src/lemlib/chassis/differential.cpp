@@ -226,7 +226,7 @@ float defaultDriveCurve(float input, float scale) {
  * curve, refer to the `defaultDriveCurve` documentation.
  */
 void Differential::curvature(int throttle, int turn, float linearCurveGain, float turnCurveGain,
-                             const DriveCurveFunction_t& driveCurve) {
+                             const DriveCurveFunction_t& driveCurve, const DriveCurveFunction_t& turnCurve) {
     // If we're not moving forwards change to arcade drive
     if (throttle == 0) {
         this->arcade(throttle, turn, linearCurveGain, turnCurveGain);
@@ -234,12 +234,12 @@ void Differential::curvature(int throttle, int turn, float linearCurveGain, floa
     }
 
     float curvedThrottle = driveCurve(throttle, linearCurveGain);
-    float curvedTurn = driveCurve(turn, turnCurveGain);
+    float curvedTurn = turnCurve(turn, turnCurveGain);
     float leftPower = curvedThrottle + (std::abs(curvedThrottle) * curvedTurn) / 127.0;
     float rightPower = curvedThrottle - (std::abs(curvedThrottle) * curvedTurn) / 127.0;
 
     leftPower = driveCurve(leftPower, linearCurveGain);
-    rightPower = driveCurve(rightPower, turnCurveGain);
+    rightPower = turnCurve(rightPower, turnCurveGain);
 
     this->drivetrain->leftMotors->move(leftPower);
     this->drivetrain->rightMotors->move(rightPower);
@@ -255,9 +255,9 @@ void Differential::curvature(int throttle, int turn, float linearCurveGain, floa
  * curve, refer to the `defaultDriveCurve` documentation.
  */
 void Differential::arcade(int throttle, int turn, float linearCurveGain, float turnCurveGain,
-                          const DriveCurveFunction_t& driveCurve) {
+                          const DriveCurveFunction_t& driveCurve, const DriveCurveFunction_t& turnCurve) {
     int leftPower = driveCurve(throttle + turn, linearCurveGain);
-    int rightPower = driveCurve(throttle - turn, turnCurveGain);
+    int rightPower = turnCurve(throttle - turn, turnCurveGain);
     this->drivetrain->leftMotors->move(leftPower);
     this->drivetrain->rightMotors->move(rightPower);
 }
@@ -272,8 +272,8 @@ void Differential::arcade(int throttle, int turn, float linearCurveGain, float t
  * curve, refer to the `defaultDriveCurve` documentation.
  */
 void Differential::tank(int left, int right, float leftCurveGain, float rightCurveGain,
-                        const DriveCurveFunction_t& driveCurve) {
-    this->drivetrain->leftMotors->move(driveCurve(left, leftCurveGain));
-    this->drivetrain->rightMotors->move(driveCurve(right, rightCurveGain));
+                        const DriveCurveFunction_t& leftCurve, const DriveCurveFunction_t& rightCurve) {
+    this->drivetrain->leftMotors->move(leftCurve(left, leftCurveGain));
+    this->drivetrain->rightMotors->move(rightCurve(right, rightCurveGain));
 }
 }; // namespace lemlib
