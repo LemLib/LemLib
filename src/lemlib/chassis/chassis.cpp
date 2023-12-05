@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2023
  *
  */
-#include <math.h>
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/chassis.hpp"
 
