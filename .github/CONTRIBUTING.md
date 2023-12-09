@@ -154,9 +154,9 @@ In order to contribute to LemLib, you will need to [fork](https://help.github.co
 You can improve the documentation by:
 - Editing the [README](../README.md)
 - Adding/Editing comments in the source code
-- Editing the [Doxygen configuration file](Doxyfile)
-- Changing the [Header HTML file](docs/doxygen-awesome/header.html) and the [Footer HTML file](docs/doxygen-awesome/footer.html)
-- Adding/Editing [Tutorials](docs/tutorials)
+- Editing the [Doxygen configuration file](../docs/Doxyfile)
+- Changing the [Header HTML file](../docs/doxygen-awesome/header.html) and the [Footer HTML file](docs/doxygen-awesome/footer.html)
+- Adding/Editing [Tutorials](../docs/tutorials)
 - Opening an [Issue](https://github.com/LemLib/LemLib/issues) to suggest a change or to report a bug
 
 Changes should be requested via a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](PULL_REQUEST_TEMPLATE.md) to structure your pull request. Additionally, you should verify that the documentation builds correctly on your machine. You can do so by running `doxygen` in the root directory of the project. The documentation will be generated in the `docs` folder. You can then open the `index.html` file in your browser to view the documentation.
