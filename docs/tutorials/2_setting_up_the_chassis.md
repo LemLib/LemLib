@@ -19,7 +19,7 @@ pros::Motor right_front_motor(3, pros::E_MOTOR_GEARSET_36, true); // port 3, red
 pros::Motor right_back_motor(4, pros::E_MOTOR_GEARSET_36, true); // port 4, red gearbox, reversed
 ```
 
-Now we need to group the left side and right side motors so we can pass it to LemLib. To do this, we can use the `pros::MotorGroup` class. Here is an example:
+Now we need to group the left side and right side motors so that we can pass it to LemLib. To do this, we can use the `pros::MotorGroup` class. Here is an example:
 ```cpp
 pros::MotorGroup left_side_motors({left_front_motor, left_back_motor});
 pros::MotorGroup right_side_motors({right_front_motor, right_back_motor});
@@ -29,7 +29,7 @@ Now that we have the motors set up, we need to tell LemLib about the track width
 
 <img src="./assets/2_setting_up_the_chassis/track_width.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
 
-We also need to tell LemLib the diameter of the wheels. LemLib has wheel presets you can use for this (e.g `lemlib::Omniwheel::NEW_4` for the new 4 inch wheels) After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to [this spreadsheet](https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0) to find the rpm of the wheels. And finally, we need to tell the robot how fast it can go around corners. If you have traction wheels, you can start at 8+, but if you don't have traction wheels, start at 2. We will tune this later.
+We also need to tell LemLib the diameter of the wheels. LemLib has wheel presets you can use for this (e.g `lemlib::Omniwheel::NEW_4` for the new 4 inch wheels) After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to [this spreadsheet](https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0) to find the rpm of the wheels. And finally, we need to tell the robot how fast it can go around corners. If you have at least two traction wheels, you can start at 8, but if you don't have traction wheels, start at 2. We will tune this later.
 
 Now that we have all the information we need, we can create a `lemlib::Drivetrain_t` struct to pass to LemLib. Below is an example:
 ```cpp
@@ -112,7 +112,7 @@ You don't need all these sensors though. Even if you don't have any, you can sti
 
 ## PIDs
 
-Lemlib uses 2 PIDs to control the motion of the robot (except for pure pursuit). Every chassis will have different constants however, so you will need to tune them. More about that in the next tutorial. For now, just copy and paste the following code into your `main.cpp` file:
+Lemlib uses 2 PIDs to control the motion of the robot (except for pure pursuit). Every chassis will have different constants however, so you will need to tune them. More about that in the third tutorial. For now, just copy and paste the following code into your `main.cpp` file:
 ```cpp
 // forward/backward PID
 lemlib::ControllerSettings linearController(10, // proportional gain (kP)
