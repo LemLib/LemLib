@@ -155,7 +155,7 @@ You can improve the documentation by:
 - Editing the [README](../README.md)
 - Adding/Editing comments in the source code
 - Editing the [Doxygen configuration file](../docs/Doxyfile)
-- Changing the [Header HTML file](../docs/doxygen-awesome/header.html) and the [Footer HTML file](docs/doxygen-awesome/footer.html)
+- Changing the [Header HTML file](../docs/doxygen-awesome/header.html) and the [Footer HTML file](../docs/doxygen-awesome/footer.html)
 - Adding/Editing [Tutorials](../docs/tutorials)
 - Opening an [Issue](https://github.com/LemLib/LemLib/issues) to suggest a change or to report a bug
 
