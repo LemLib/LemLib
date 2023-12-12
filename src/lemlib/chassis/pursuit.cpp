@@ -149,7 +149,7 @@ lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::
     // as anything before would be discarded
     // - searched the path in reverse, as the first hit would be
     // the guaranteed farthest lookahead point
-    for (int i = path.size() - 1; i > lastLookahead.theta; i--) {
+    for (int i = path.size() - 1; i >= lastLookahead.theta; i--) {
         // since we are searching in reverse, instead of getting
         // the current pose and the next one, we should get the
         // current pose and the *last* one
