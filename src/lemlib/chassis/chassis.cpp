@@ -355,7 +355,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         // get PID outputs
         float angularPower = -angularPID.update(radToDeg(angularError), 0);
         float linearPower = linearPID.update(linearError, 0);
-        if (!close && linearPower < 0) linearPower = 0;
+        if (!close && forwards && linearPower < 0) linearPower = 0;
+        else if (!close && !forwards && linearPower > 0) linearPower = 0;
 
         // calculate radius of turn
         float curvature = fabs(getCurvature(pose, carrot));
@@ -459,7 +460,8 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         // calculate speed
         float lateralPower = lateralPID.update(linearError, 0);
         float angularPower = -angularPID.update(radToDeg(angularError), 0);
-        if (!close && lateralPower < 0) lateralPower = 0;
+        if (!close && forwards && lateralPower < 0) lateralPower = 0;
+        else if (!close && !forwards && lateralPower > 0) lateralPower = 0;
 
         // if the robot is close to the target
         if (pose.distance(target) < 7.5) {
