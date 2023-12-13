@@ -348,7 +348,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         float angularError = angleError(pose.angle(carrot), pose.theta, true); // angular error
         // linear error
         float linearError = pose.distance(carrot);
-        if (close) linearError *= cos(angularError);
+        linearError *= cos(angularError);
         if (close) angularError = angleError(target.theta, pose.theta, true); // settling behavior
         if (!forwards) linearError = -linearError;
 
@@ -424,85 +424,69 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         return;
     }
 
-    Pose pose(0, 0);
-    Pose lastPose = getPose();
-    float prevLateralPower = 0;
-    float prevAngularPower = 0;
-    bool close = false;
+    Pose target(x, y); // target pose in standard form
+    Pose lastPose = getPose(); // last pose
+    FAPID linearPID = FAPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "linearPID");
+    FAPID angularPID = FAPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
+    linearPID.setExit(linearSettings.largeError, linearSettings.smallError, linearSettings.smallErrorTimeout,
+                      linearSettings.smallErrorTimeout, timeout); // exit conditions
+    float prevLinearPower = 0; // previous linear power
+    int compState = pros::competition::get_status();
     int start = pros::millis();
-    std::uint8_t compState = pros::competition::get_status();
     distTravelled = 0;
 
-    // create a new PID controller
-    FAPID lateralPID(0, 0, linearSettings.kP, 0, linearSettings.kD, "lateralPID");
-    FAPID angularPID(0, 0, angularSettings.kP, 0, angularSettings.kD, "angularPID");
-    lateralPID.setExit(linearSettings.largeError, linearSettings.smallError, linearSettings.largeErrorTimeout,
-                       linearSettings.smallErrorTimeout, timeout);
+    // if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
     // main loop
-    while (pros::competition::get_status() == compState && (!lateralPID.settled() || pros::millis() - start < 300)) {
-        Pose target(x, y);
-        // get the current position
+    while (pros::competition::get_status() == compState && (!linearPID.settled() || pros::millis() - start < 300)) {
+        // get current pose
         Pose pose = getPose(true);
+        if (!forwards) pose.theta += M_PI;
+        pose.theta = M_PI_2 - pose.theta; // convert to standard form
+
+        // settling behaviour
+        bool close = pose.distance(target) < 7.5;
 
         // update completion vars
         distTravelled += pose.distance(lastPose);
         lastPose = pose;
 
-        // update error
-        float targetTheta = M_PI_2 - pose.angle(target);
-        float hypot = pose.distance(target);
-        float angularError =
-            (forwards) ? angleError(pose.theta, targetTheta, true) : angleError(pose.theta, targetTheta + M_PI, true);
-        float linearError = hypot;
-        if (close) linearError *= cos(angleError(pose.theta, targetTheta));
+        target.theta = pose.angle(target);
+        // calculate error
+        float angularError = angleError(pose.theta, target.theta); // angular error
+        // linear error
+        float linearError = pose.distance(target);
+        linearError *= cos(angularError);
+        if (!forwards) linearError = -linearError;
 
-        // calculate speed
-        float lateralPower = lateralPID.update(linearError, 0);
+        // get PID outputs
         float angularPower = -angularPID.update(radToDeg(angularError), 0);
-        if (!close && forwards && lateralPower < 0) lateralPower = 0;
-        else if (!close && !forwards && lateralPower > 0) lateralPower = 0;
+        float linearPower = linearPID.update(linearError, 0);
+        if (!close && forwards && linearPower < 0) linearPower = 0;
+        else if (!close && !forwards && linearPower > 0) linearPower = 0;
 
-        // if the robot is close to the target
-        if (pose.distance(target) < 7.5) {
-            close = true;
-            maxSpeed = (std::fabs(prevLateralPower) < 30) ? 30 : std::fabs(prevLateralPower);
-        }
+        // cap acceleration
+        if (forwards && !close && linearPower > prevLinearPower)
+            linearPower = slew(linearPower, prevLinearPower, linearSettings.slew);
+        else if (!forwards && !close && linearPower < prevLinearPower)
+            linearPower = slew(linearPower, prevLinearPower, linearSettings.slew);
 
-        // limit acceleration
-        if (!close) lateralPower = lemlib::slew(lateralPower, prevLateralPower, linearSettings.slew);
-        if (std::fabs(angularError) > 25)
-            angularPower = lemlib::slew(angularPower, prevAngularPower, angularSettings.slew);
+        prevLinearPower = linearPower;
 
-        // cap the speed
-        if (lateralPower > maxSpeed) lateralPower = maxSpeed;
-        else if (lateralPower < -maxSpeed) lateralPower = -maxSpeed;
-        if (close) angularPower = 0;
-
-        prevLateralPower = lateralPower;
-        prevAngularPower = angularPower;
-
-        float leftPower = lateralPower + angularPower;
-        float rightPower = lateralPower - angularPower;
-
-        // ratio the speeds to respect the max speed
-        float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
-        if (ratio > 1) {
-            leftPower /= ratio;
-            rightPower /= ratio;
-        }
+        // calculate motor powers
+        float leftPower = linearPower + angularPower;
+        float rightPower = linearPower - angularPower;
 
         // move the motors
         drivetrain.leftMotors->move(leftPower);
         drivetrain.rightMotors->move(rightPower);
 
-        pros::delay(10);
+        pros::delay(10); // delay to save resources
     }
 
     // stop the drivetrain
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
-
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     // give the mutex back
