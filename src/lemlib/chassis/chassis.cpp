@@ -209,7 +209,7 @@ void lemlib::Chassis::waitUntilDone() {
  * @brief Sets the brake mode of the drivetrain motors
  *
  */
-void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {\
+void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
     mutex.take(TIMEOUT_MAX);
     drivetrain.leftMotors->set_brake_modes(mode);
     drivetrain.rightMotors->set_brake_modes(mode);
