@@ -18,6 +18,8 @@
 #include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
+#include "lemlib/pid.hpp"
+#include "lemlib/exitcondition.hpp"
 
 namespace lemlib {
 /**
@@ -55,17 +57,31 @@ struct ControllerSettings {
          * Set a constant to 0 and it will be ignored
          *
          * @param kP proportional constant for the chassis controller
+         * @param kI integral constant for the chassis controller
          * @param kD derivative constant for the chassis controller
+         * @param antiWindup
          * @param smallError the error at which the chassis controller will switch to a slower control loop
          * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
          * @param largeError the error at which the chassis controller will switch to a faster control loop
          * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
          * @param slew the maximum acceleration of the chassis controller
          */
-        ControllerSettings(float kP, float kD, float smallError, float smallErrorTimeout, float largeError,
-                           float largeErrorTimeout, float slew);
+        ControllerSettings(float kP, float kI, float kD, float windupRange, float smallError, float smallErrorTimeout,
+                           float largeError, float largeErrorTimeout, float slew)
+            : kP(kP),
+              kI(kI),
+              kD(kD),
+              windupRange(windupRange),
+              smallError(smallError),
+              smallErrorTimeout(smallErrorTimeout),
+              largeError(largeError),
+              largeErrorTimeout(largeErrorTimeout),
+              slew(slew) {}
+
         float kP;
+        float kI;
         float kD;
+        float windupRange;
         float smallError;
         float smallErrorTimeout;
         float largeError;
@@ -128,7 +144,7 @@ class Chassis {
          * @brief Construct a new Chassis
          *
          * @param drivetrain drivetrain to be used for the chassis
-         * @param linearSettings settings for the linear controller
+         * @param lateralSettings settings for the lateral controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
@@ -163,29 +179,7 @@ class Chassis {
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          */
-        Pose getPose(bool radians = false);
-        /**
-         * @brief Get the speed of the robot
-         *
-         * @param radians true for theta in radians, false for degrees. False by default
-         * @return lemlib::Pose
-         */
-        Pose getSpeed(bool radians = false);
-        /**
-         * @brief Get the local speed of the robot
-         *
-         * @param radians true for theta in radians, false for degrees. False by default
-         * @return lemlib::Pose
-         */
-        Pose getLocalSpeed(bool radians = false);
-        /**
-         * @brief Estimate the pose of the robot after a certain amount of time
-         *
-         * @param time time in seconds
-         * @param radians False for degrees, true for radians. False by default
-         * @return lemlib::Pose
-         */
-        Pose estimatePose(float time, bool radians = false);
+        Pose getPose(bool radians = false, bool standardPos = false);
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *
@@ -290,10 +284,17 @@ class Chassis {
         pros::Mutex mutex;
         float distTravelled = 0;
 
-        ControllerSettings linearSettings;
+        ControllerSettings lateralSettings;
         ControllerSettings angularSettings;
         Drivetrain drivetrain;
         OdomSensors sensors;
         DriveCurveFunction_t driveCurve;
+
+        PID lateralPID;
+        PID angularPID;
+        ExitCondition lateralLargeExit;
+        ExitCondition lateralSmallExit;
+        ExitCondition angularLargeExit;
+        ExitCondition angularSmallExit;
 };
 } // namespace lemlib
