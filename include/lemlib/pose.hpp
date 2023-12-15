@@ -78,14 +78,14 @@ class Pose {
          * @param other the other pose
          * @return float
          */
-        float distance(Pose other);
+        float distance(Pose other) const;
         /**
          * @brief Get the angle between two poses
          *
          * @param other the other pose
          * @return float in radians
          */
-        float angle(Pose other);
+        float angle(Pose other) const;
         /**
          * @brief Rotate a pose by an angle
          *
