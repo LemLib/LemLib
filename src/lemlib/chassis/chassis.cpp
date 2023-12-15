@@ -353,6 +353,10 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         const float maxSlipSpeed(sqrt(chasePower * radius * 9.8));
         lateralOut = std::clamp(lateralOut, -maxSlipSpeed, maxSlipSpeed);
 
+        // prevent moving in the wrong direction
+        if (forwards) lateralOut = std::fmax(lateralOut, 0);
+        else lateralOut = std::fmin(lateralOut, 0);
+
         // update previous output
         prevAngularOut = angularOut;
         prevLateralOut = lateralOut;
