@@ -39,6 +39,5 @@ class PID {
 
         float integral = 0;
         float prevError = 0;
-        int prevTime = -1;
 };
 } // namespace lemlib
