@@ -9,6 +9,7 @@
  *
  */
 #include <math.h>
+#include <iostream>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
@@ -228,8 +229,10 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
         else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
 
         // move the drivetrain
-        drivetrain.leftMotors->move(-motorPower);
-        drivetrain.rightMotors->move(motorPower);
+        drivetrain.leftMotors->move(motorPower);
+        drivetrain.rightMotors->move(-motorPower);
+
+        std::cout << deltaTheta << std::endl;
 
         pros::delay(10);
     }
@@ -386,7 +389,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     mutex.take(TIMEOUT_MAX);
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveToPoint(x, y,timeout, forwards, maxSpeed, false); });
+        pros::Task task([&]() { moveToPoint(x, y, timeout, forwards, maxSpeed, false); });
         mutex.give(); // release the mutex so the lambda can run
         pros::delay(10); // delay to give the task time to start
         return;
