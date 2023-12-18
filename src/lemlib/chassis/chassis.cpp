@@ -9,7 +9,6 @@
  *
  */
 #include <math.h>
-#include <iostream>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
@@ -232,8 +231,6 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
         drivetrain.leftMotors->move(motorPower);
         drivetrain.rightMotors->move(-motorPower);
 
-        std::cout << deltaTheta << std::endl;
-
         pros::delay(10);
     }
 
@@ -298,8 +295,9 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
     const int compState = pros::competition::get_status();
 
     // main loop
-    while ((!timer.isDone() && !lateralLargeExit.getExit() && !lateralSmallExit.getExit()) ||
-           (!close && timer.getTimePassed() < 300)) {
+    while (!timer.isDone() && ((!lateralLargeExit.getExit() && !lateralSmallExit.getExit() &&
+                                !angularLargeExit.getExit() && !angularSmallExit.getExit()) ||
+                               !close)) {
         // update position
         const Pose pose = getPose(true, true);
 
@@ -329,6 +327,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         // update exit conditions
         lateralSmallExit.update(lateralError);
         lateralLargeExit.update(lateralError);
+        angularSmallExit.update(radToDeg(angularError));
+        angularLargeExit.update(radToDeg(angularError));
 
         // get output from PIDs
         float lateralOut = lateralPID.update(lateralError);
