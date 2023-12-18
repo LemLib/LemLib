@@ -290,14 +290,14 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
     distTravelled = 0;
     Timer timer(timeout);
     bool close = false;
+    bool lateralSettled = false;
     float prevLateralOut = 0; // previous lateral power
     float prevAngularOut = 0; // previous angular power
     const int compState = pros::competition::get_status();
 
     // main loop
-    while (!timer.isDone() && ((!lateralLargeExit.getExit() && !lateralSmallExit.getExit() &&
-                                !angularLargeExit.getExit() && !angularSmallExit.getExit()) ||
-                               !close)) {
+    while (!timer.isDone() &&
+           ((!lateralSettled && !angularLargeExit.getExit() && !angularSmallExit.getExit()) || !close)) {
         // update position
         const Pose pose = getPose(true, true);
 
@@ -313,6 +313,9 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
             close = true;
             maxSpeed = fmax(fabs(prevLateralOut), 60);
         }
+
+        // check if the lateral controller has settled
+        if (lateralLargeExit.getExit() && lateralSmallExit.getExit()) lateralSettled = true;
 
         // calculate the carrot point
         Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * lead * distTarget;
