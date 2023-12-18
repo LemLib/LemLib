@@ -325,7 +325,12 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         const float adjustedRobotTheta = forwards ? pose.theta : pose.theta + M_PI;
         const float angularError =
             close ? angleError(adjustedRobotTheta, target.theta) : angleError(adjustedRobotTheta, pose.angle(carrot));
-        const float lateralError = pose.distance(carrot) * cos(angleError(pose.theta, pose.angle(carrot)));
+        float lateralError = pose.distance(carrot);
+        // only use cos when settling
+        // otherwise just multiply by the sign of cos
+        // maxSlipSpeed takes care of lateralOut
+        if (close) lateralError *= cos(angleError(pose.theta, pose.angle(carrot)));
+        else lateralError *= sgn(cos(angleError(pose.theta, pose.angle(carrot))));
 
         // update exit conditions
         lateralSmallExit.update(lateralError);
