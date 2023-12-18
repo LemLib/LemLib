@@ -297,7 +297,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
 
     // main loop
     while (!timer.isDone() &&
-           ((!lateralSettled && !angularLargeExit.getExit() && !angularSmallExit.getExit()) || !close)) {
+           ((!lateralSettled || (!angularLargeExit.getExit() && !angularSmallExit.getExit())) || !close)) {
         // update position
         const Pose pose = getPose(true, true);
 
