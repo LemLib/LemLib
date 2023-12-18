@@ -141,8 +141,9 @@ void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, r
  * @return Pose
  */
 lemlib::Pose lemlib::Chassis::getPose(bool radians, bool standardPos) {
-    Pose pose = lemlib::getPose(radians);
-    pose.theta = (radians) ? M_PI_2 - pose.theta : 90 - pose.theta;
+    Pose pose = lemlib::getPose(true);
+    if (standardPos) pose.theta = M_PI_2 - pose.theta;
+    if (!radians) pose.theta = radToDeg(pose.theta);
     return pose;
 }
 
@@ -241,8 +242,6 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     mutex.give();
 }
 
-double maxSpeed(double curvature) {}
-
 /**
  * @brief Move the chassis towards the target pose
  *
@@ -323,8 +322,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         const float adjustedRobotTheta = forwards ? pose.theta : pose.theta + M_PI;
         const float angularError =
             close ? angleError(adjustedRobotTheta, target.theta) : angleError(adjustedRobotTheta, pose.angle(carrot));
-        const float targetThetaLateral = close ? target.theta : pose.angle(carrot);
-        const float lateralError = pose.distance(carrot) * cos(angleError(pose.theta, targetThetaLateral));
+        const float lateralError = pose.distance(carrot) * cos(angleError(pose.theta, pose.angle(carrot)));
 
         // update exit conditions
         lateralSmallExit.update(lateralError);
@@ -354,8 +352,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         lateralOut = std::clamp(lateralOut, -maxSlipSpeed, maxSlipSpeed);
 
         // prevent moving in the wrong direction
-        if (forwards) lateralOut = std::fmax(lateralOut, 0);
-        else lateralOut = std::fmin(lateralOut, 0);
+        if (forwards && !close) lateralOut = std::fmax(lateralOut, 0);
+        else if (!forwards && !close) lateralOut = std::fmin(lateralOut, 0);
 
         // update previous output
         prevAngularOut = angularOut;
@@ -363,7 +361,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
 
         // move the drivetrain
         drivetrain.leftMotors->move(lateralOut + angularOut);
-        drivetrain.leftMotors->move(lateralOut - angularOut);
+        drivetrain.rightMotors->move(lateralOut - angularOut);
 
         pros::delay(10);
     }
