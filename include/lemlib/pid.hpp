@@ -14,12 +14,12 @@
 #include "pros/rtos.hpp"
 
 namespace lemlib {
-struct Gains {  
-    float kF = 0;
-    float kA = 0;
-    float kP = 0;
-    float kI = 0;
-    float kD = 0;
+struct Gains {
+        float kF = 0;
+        float kA = 0;
+        float kP = 0;
+        float kI = 0;
+        float kD = 0;
 };
 
 /** @brief A function taking the target and the (target, Gains) elements adjacent to it, computing the resulting gains
