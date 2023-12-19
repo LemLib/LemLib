@@ -32,9 +32,10 @@ std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int
  * A notable exception is the odometry, which at the moment is too complex to
  * construct in the initializer list
  */
-Differential::Differential(const Drivetrain& drivetrain, const ControllerSettings& linearSettings,
+Differential::Differential(const Drivetrain& drivetrain, const Drivetrain& odomDrivetrain, const ControllerSettings& linearSettings,
                            const ControllerSettings& angularSettings, const OdomSensors& sensors)
     : drivetrain(std::make_unique<Drivetrain>(drivetrain)),
+      odomDrivetrain(std::make_unique<Drivetrain>(odomDrivetrain)),
       linearSettings(std::make_unique<ControllerSettings>(linearSettings)),
       angularSettings(std::make_unique<ControllerSettings>(angularSettings)) {
     // create sensor vectors
@@ -53,9 +54,9 @@ Differential::Differential(const Drivetrain& drivetrain, const ControllerSetting
 
     // configure drivetrain
     drive.push_back(
-        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.rpm));
+        TrackingWheel(odomDrivetrain.leftMotors, odomDrivetrain.wheelDiameter, -odomDrivetrain.trackWidth / 2, odomDrivetrain.rpm));
     drive.push_back(
-        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
+        TrackingWheel(odomDrivetrain.rightMotors, odomDrivetrain.wheelDiameter, odomDrivetrain.trackWidth / 2, odomDrivetrain.rpm));
 
     // configure imu
     if (sensors.gyro != nullptr) imus.push_back(sensors.gyro);
