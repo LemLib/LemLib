@@ -277,6 +277,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
     lateralLargeExit.reset();
     lateralSmallExit.reset();
     angularPID.reset();
+    angularLargeExit.reset();
+    angularSmallExit.reset();
 
     // calculate target pose in standard form
     Pose target(x, y, M_PI_2 - degToRad(theta));
@@ -367,10 +369,20 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         prevAngularOut = angularOut;
         prevLateralOut = lateralOut;
 
-        // move the drivetrain
-        drivetrain.leftMotors->move(lateralOut + angularOut);
-        drivetrain.rightMotors->move(lateralOut - angularOut);
+        // ratio the speeds to respect the max speed
+        float leftPower = lateralOut + angularOut;
+        float rightPower = lateralOut - angularOut;
+        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+        if (ratio > 1) {
+            leftPower /= ratio;
+            rightPower /= ratio;
+        }
 
+        // move the drivetrain
+        drivetrain.leftMotors->move(leftPower);
+        drivetrain.rightMotors->move(rightPower);
+
+        // delay to save resources
         pros::delay(10);
     }
 
@@ -422,8 +434,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     const int compState = pros::competition::get_status();
 
     // main loop
-    while ((!timer.isDone() && !lateralLargeExit.getExit() && !lateralSmallExit.getExit()) ||
-           (!close && timer.getTimePassed() < 300)) {
+    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close)) {
         // update position
         const Pose pose = getPose(true, true);
 
@@ -442,8 +453,8 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
 
         // calculate error
         const float adjustedRobotTheta = forwards ? pose.theta : pose.theta + M_PI;
-        const float angularError = angleError(pose.theta, pose.angle(target));
-        const float lateralError = pose.distance(target) * cos(angularError);
+        const float angularError = angleError(adjustedRobotTheta, pose.angle(target));
+        float lateralError = pose.distance(target) * cos(angleError(pose.theta, pose.angle(target)));
 
         // update exit conditions
         lateralSmallExit.update(lateralError);
@@ -452,6 +463,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         // get output from PIDs
         float lateralOut = lateralPID.update(lateralError);
         float angularOut = angularPID.update(radToDeg(angularError));
+        if (close) angularOut = 0;
 
         // apply restrictions on angular speed
         angularOut = std::clamp(angularOut, -maxSpeed, maxSpeed);
@@ -474,10 +486,22 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         prevAngularOut = angularOut;
         prevLateralOut = lateralOut;
 
-        // move the drivetrain
-        drivetrain.leftMotors->move(lateralOut + angularOut);
-        drivetrain.rightMotors->move(lateralOut - angularOut);
+        // ratio the speeds to respect the max speed
+        float leftPower = lateralOut + angularOut;
+        float rightPower = lateralOut - angularOut;
+        /**
+        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+        if (ratio > 1) {
+            leftPower /= ratio;
+            rightPower /= ratio;
+        }
+        */
 
+        // move the drivetrain
+        drivetrain.leftMotors->move(leftPower);
+        drivetrain.rightMotors->move(rightPower);
+
+        // delay to save resources
         pros::delay(10);
     }
 
