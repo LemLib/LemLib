@@ -489,13 +489,11 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         // ratio the speeds to respect the max speed
         float leftPower = lateralOut + angularOut;
         float rightPower = lateralOut - angularOut;
-        /**
         const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
         if (ratio > 1) {
             leftPower /= ratio;
             rightPower /= ratio;
         }
-        */
 
         // move the drivetrain
         drivetrain.leftMotors->move(leftPower);
