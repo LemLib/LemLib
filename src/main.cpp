@@ -13,6 +13,13 @@ auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::bl
 // right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
 auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
+auto ptoMotors = lemlib::makeMotorGroup({19, -13}, pros::v5::MotorGears::blue);
+
+auto piston1 = lemlib::makePiston('A', false);
+pros::adi::Pneumatics rlPiston('A', false);
+pros::adi::Pneumatics rrPiston('B', false);
+// auto backPTO = lemlib::PTO({&rlPiston, &rrPiston}, &ptoMotors);
+
 // Inertial Sensor on port 11
 pros::Imu imu(11);
 

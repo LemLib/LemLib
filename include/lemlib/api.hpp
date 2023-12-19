@@ -14,5 +14,6 @@
 #include "lemlib/pid.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/chassis/differential.hpp"
+#include "lemlib/pto/pto.hpp"
 
 #include "lemlib/logger/logger.hpp"
