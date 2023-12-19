@@ -43,3 +43,18 @@ TEST(UtilsTest, ema) {
     float output = lemlib::ema(127, 0, 0.5);
     EXPECT_FLOAT_EQ(output, 63.5);
 }
+
+TEST(UtilsTest, linearInterp1) {
+    float output = lemlib::linearInterp(5, 0, 0, 10, 10);
+    EXPECT_FLOAT_EQ(output, 5);
+}
+
+TEST(UtilsTest, linearInterp2) {
+    float output = lemlib::linearInterp(5, 0, 0, 10, 20);
+    EXPECT_FLOAT_EQ(output, 10);
+}
+
+TEST(UtilsTest, linearInterpDivBy0) {
+    float output = lemlib::linearInterp(0, 1, 1, 1, 1);
+    EXPECT_FLOAT_EQ(output, 1);
+}

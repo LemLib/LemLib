@@ -6,7 +6,7 @@
 namespace lemlib {
 BufferedStdout::BufferedStdout()
     : Buffer([](const std::string& text) { std::cout << text << std::flush; }) {
-    setRate(50);
+    this->setRate(50);
 }
 
 BufferedStdout& bufferedStdout() {
