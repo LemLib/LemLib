@@ -200,7 +200,7 @@ class Differential : public Chassis {
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          */
-        Differential(const Drivetrain& drivetrain, const Drivetrain& odomDrivetrain, const ControllerSettings& linearSettings,
+        Differential(const Drivetrain& drivetrain, const ControllerSettings& linearSettings,
                      const ControllerSettings& angularSettings, const OdomSensors& sensors);
 
         /**
@@ -309,6 +309,5 @@ class Differential : public Chassis {
         std::unique_ptr<ControllerSettings> linearSettings;
         std::unique_ptr<ControllerSettings> angularSettings;
         std::unique_ptr<Drivetrain> drivetrain;
-        std::unique_ptr<Drivetrain> odomDrivetrain;
 };
 } // namespace lemlib

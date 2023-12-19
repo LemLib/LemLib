@@ -13,12 +13,6 @@ auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::bl
 // right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
 auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
-// odom chassis motor groups
-// left motor in port 19 is pto'ed so it is removed. Everything else stays the same
-auto odomLeftMotors = lemlib::makeMotorGroup({-8, -20}, pros::v5::MotorGears::blue);
-// right motor in port 13 is pto'ed so it is removed. Everything else stays the same
-auto odomRightMotors = lemlib::makeMotorGroup({2, 11}, pros::v5::MotorGears::blue);
-
 // Inertial Sensor on port 11
 pros::Imu imu(11);
 
@@ -32,16 +26,6 @@ lemlib::Drivetrain drivetrain(leftMotors, // left motor group
                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
                               360, // drivetrain rpm is 360
                               2 // chase power is 2. If we had traction wheels, it would have been 8
-);
-
-// odom drivetrain settings
-// everything is the same as drivetrain above, except using the odom motor groups instead
-lemlib::Drivetrain odomDrivetrain(odomLeftMotors, // odom left motor group
-                                  odomRightMotors, // odom right motor group
-                                  10, // track width
-                                  lemlib::Omniwheel::NEW_325, // omni size
-                                  360, // drivetrain rpm
-                                  2 // chase power
 );
 
 // linear motion controller
@@ -74,7 +58,7 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 );
 
 // create the chassis
-lemlib::Differential chassis(drivetrain, odomDrivetrain, linearController, angularController, sensors);
+lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
