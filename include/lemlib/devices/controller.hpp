@@ -6,11 +6,11 @@ namespace lemlib {
     private:
 
         pros::controller_digital_e_t button;
-        std::vector<std::pair<std::string, int(*)()>> functions;
+        std::vector<std::pair<std::string, int(*)(int)>> functions;
 
     public:
 
-        LEMButtonMapping(pros::controller_digital_e_t buttonParam, std::string modeParam, int(*functionParam)()) {
+        LEMButtonMapping(pros::controller_digital_e_t buttonParam, std::string modeParam, int(*functionParam)(int)) {
             button = buttonParam;
             functions.push_back({modeParam, functionParam});
         }
@@ -20,20 +20,103 @@ namespace lemlib {
             return button;
         }
 
-        void addModeAndFunction(std::string modeParam, int(*functionParam)()) {
+        void addModeAndFunction(std::string modeParam, int(*functionParam)(int)) {
             functions.push_back({modeParam, functionParam});
         }
 
-        void runFunction(std::string mode) {
+        void runFunction(std::string mode, int funcParam = 0) {
             for (int i = 0; i < functions.size(); i++) {
                 if (functions[i].first == mode) {
-                    functions[i].second();
+                    functions[i].second(funcParam);
                 }
             }
         }
 
 
     };
+
+    /*struct LEMControllerValues {
+    private:
+
+        int16_t LeftY, RightY, LeftX, RightX, A, B, X, Y, Up, Down, Left, Right, L1, L2, R1, R2 = 0;
+
+    public:
+
+        LEMControllerValues() {
+            
+        }
+
+        static constexpr uint8_t LeftYKey = 0;
+        static constexpr uint8_t RightYKey = 1;
+        static constexpr uint8_t LeftXKey = 2;
+        static constexpr uint8_t RightXKey = 3;
+        static constexpr uint8_t AKey = 4;
+        static constexpr uint8_t BKey = 5;
+        static constexpr uint8_t XKey = 6;
+        static constexpr uint8_t YKey = 7;
+        static constexpr uint8_t UpKey = 8;
+        static constexpr uint8_t DownKey = 9;
+        static constexpr uint8_t LeftKey = 10;
+        static constexpr uint8_t RightKey = 11;
+        static constexpr uint8_t L1Key = 12;
+        static constexpr uint8_t L2Key = 13;
+        static constexpr uint8_t R1Key = 14;
+        static constexpr uint8_t R2Key = 15;
+
+        void setControllerValue(uint8_t key, int16_t value) {
+            switch (key) {
+                case LeftYKey:
+                    LeftY = value;
+                    break;
+                case RightYKey:
+                    RightY = value;
+                    break;
+                case LeftXKey:
+                    LeftX = value;
+                    break;
+                case RightXKey:
+                    RightX = value;
+                    break;
+                case AKey:
+                    A = value;
+                    break;
+                case BKey:
+                    B = value;
+                    break;
+                case XKey:
+                    X = value;
+                    break;
+                case YKey:
+                    Y = value;
+                    break;
+                case UpKey:
+                    Up = value;
+                    break;
+                case DownKey:
+                    Down = value;
+                    break;
+                case LeftKey:
+                    Left = value;
+                    break;
+                case RightKey:
+                    Right = value;
+                    break;
+                case L1Key:
+                    L1 = value;
+                    break;
+                case L2Key:
+                    L2 = value;
+                    break;
+                case R1Key:
+                    R1 = value;
+                    break;
+                case R2Key:
+                    R2 = value;
+                    break;
+            }
+        }
+
+    };*/
 
 
 class LEMController {
@@ -49,6 +132,7 @@ protected:
 
     std::vector<std::string> modes = {"DEFAULT"};
     std::vector<LEMButtonMapping> buttonsToFunctions; 
+
 
     /**
      * @brief When the main loop starts, this function gets called and uses function pointers/modes info to run user-made functions automaically.
@@ -129,7 +213,7 @@ public:
      * @param button 
      * @param modeParam Mode to add the button to. Defaults to "DEFAULT".
      */
-    void setFuncToButton(int(*functionPtr)(), pros::controller_digital_e_t button, std::string modeParam = "DEFAULT");
+    void setFuncToButton(int(*functionPtr)(int), pros::controller_digital_e_t button, std::string modeParam = "DEFAULT");
 
 
     /*================ MODES ================*/
@@ -169,6 +253,8 @@ public:
      * 
      */
     void rumble(const char* pattern);
+
+    std::vector<LEMButtonMapping> getButtonsToFunctions();
 
     
 
