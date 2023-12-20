@@ -1,5 +1,6 @@
 #include "lemlib/devices/controller.hpp"
 #include "pros/misc.h"
+#include <vector>
 
 namespace lemlib {
 
@@ -115,9 +116,9 @@ int LEMController::getJoystick(pros::controller_analog_e_t whichJoystick) {
     return joystickValue;
 }
 
-void LEMController::setFuncToButton(int(*functionPtr)(), pros::controller_digital_e_t button, std::string modeParam) {
+void LEMController::setFuncToButton(int(*functionPtr)(int), pros::controller_digital_e_t button, std::string modeParam) {
 
-    std::pair<pros::controller_digital_e_t, int(*)()> buttonFuncPair(button, functionPtr);
+    std::pair<pros::controller_digital_e_t, int(*)(int)> buttonFuncPair(button, functionPtr);
 
     
 
@@ -146,6 +147,10 @@ pros::Controller* LEMController::getController() {
 
 void LEMController::rumble(const char* pattern) {
     prosController->rumble(pattern);
+}
+
+std::vector<LEMButtonMapping> LEMController::getButtonsToFunctions() {
+    return buttonsToFunctions;
 }
 
 }
