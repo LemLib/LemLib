@@ -175,27 +175,32 @@ void lemlib::Chassis::requestMotionStart() {
     if (this->isInMotion()) this->motionQueued = true; // indicate a motion is queued
     else this->motionRunning = true; // indicate a motion is running
 
+    // wait until this motion is at front of "queue"
     this->mutex.take(TIMEOUT_MAX);
+    
     // this->motionRunning should be true
     // and this->motionQueued should be false
     // indicating this motion is running
 }
 
 void lemlib::Chassis::endMotion() {
+    // move the "queue" forward 1
     this->motionRunning = this->motionQueued;
     this->motionQueued = false;
-    this->mutex.give();
+
+    // permit queued motion to run
+    this->mutex.give(); 
 }
 
 void lemlib::Chassis::cancelMotion() {
     this->motionRunning = false;
-    pros::delay(10);
+    pros::delay(10); // give time for motion to stop
 }
 
 void lemlib::Chassis::cancelAllMotions() {
     this->motionRunning = false;
     this->motionQueued = false;
-    pros::delay(10);
+    pros::delay(10); // give time for motion to stop
 }
 
 bool lemlib::Chassis::isInMotion() const {
@@ -301,7 +306,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { moveToPose(x, y, theta, timeout, forwards, chasePower, lead, maxSpeed, false); });
-        this->endMotion(); // release the mutex so the lambda can run
+        this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
@@ -445,7 +450,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { moveToPoint(x, y, timeout, forwards, maxSpeed, false); });
-        this->endMotion(); // release the mutex so the lambda can run
+        this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
