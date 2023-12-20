@@ -62,6 +62,44 @@ Differential::Differential(const Drivetrain& drivetrain, const ControllerSetting
 
     // create odom instance
     this->odom = std::make_unique<DifferentialArc>(verticals, horizontals, drive, imus);
+
+    const bool PTOinUse = false;
+}
+
+Differential::Differential(const PTO& pto, const ControllerSettings& linearSettings,
+                           const ControllerSettings& angularSettings, const OdomSensors& sensors)
+    
+    : pto(std::make_unique<PTO>(pto)),
+      drivetrain(std::make_unique<Drivetrain>(*pto.currentDriveState)),
+      linearSettings(std::make_unique<ControllerSettings>(linearSettings)),
+      angularSettings(std::make_unique<ControllerSettings>(angularSettings)) {
+    // create sensor vectors
+    std::vector<TrackingWheel> verticals;
+    std::vector<TrackingWheel> horizontals;
+    std::vector<TrackingWheel> drive;
+    std::vector<std::shared_ptr<Gyro>> imus;
+
+    // configure vertical tracking wheels
+    if (sensors.vertical1 != nullptr) verticals.push_back(*sensors.vertical1); // add vertical tracker if configured
+    if (sensors.vertical2 != nullptr) verticals.push_back(*sensors.vertical2); // add vertical tracker if configured
+
+    // configure horizontal tracking wheels
+    if (sensors.horizontal1 != nullptr) horizontals.push_back(*sensors.horizontal1);
+    if (sensors.horizontal2 != nullptr) horizontals.push_back(*sensors.horizontal2);
+
+    // configure drivetrain
+    drive.push_back(
+        TrackingWheel(drivetrain->leftMotors, drivetrain->wheelDiameter, -drivetrain->trackWidth / 2, drivetrain->rpm));
+    drive.push_back(
+        TrackingWheel(drivetrain->leftMotors, drivetrain->wheelDiameter, drivetrain->trackWidth / 2, drivetrain->rpm));
+
+    // configure imu
+    if (sensors.gyro != nullptr) imus.push_back(sensors.gyro);
+
+    // create odom instance
+    this->odom = std::make_unique<DifferentialArc>(verticals, horizontals, drive, imus);
+
+    const bool PTOinUse = true;
 }
 
 /**
@@ -270,5 +308,36 @@ void Differential::arcade(int throttle, int turn, float curveGain, const DriveCu
 void Differential::tank(int left, int right, float curveGain, const DriveCurveFunction_t& driveCurve) {
     this->drivetrain->leftMotors->move(driveCurve(left, curveGain));
     this->drivetrain->rightMotors->move(driveCurve(right, curveGain));
+}
+
+/**
+ * @brief Switch the PTO state, implement different states based on enumerated values
+ */
+void Differential::switchPTO(int mode = 0) {
+    if (this->pto == nullptr) {
+        return;
+    }
+
+    if (mode == 0) {
+        this->pto->currentDriveState->piston1->set_value(0);
+        if (this->pto->currentDriveState->piston2 != nullptr) {this->pto->currentDriveState->piston2->set_value(0);}
+        this->pto->currentDriveState->piston1->set_value(0);
+        this->pto->currentDriveState = this->pto->stateA;
+    }
+
+    if (mode == 1) {
+        this->pto->currentDriveState->piston1->set_value(0);
+        if (this->pto->currentDriveState->piston2 != nullptr) {this->pto->currentDriveState->piston2->set_value(0);}
+        this->pto->currentDriveState->piston1->set_value(0);
+        this->pto->currentDriveState = this->pto->stateB;
+    }
+
+    if (mode == 2) {
+        this->pto->currentDriveState->piston1->set_value(0);
+        if (this->pto->currentDriveState->piston2 != nullptr) {this->pto->currentDriveState->piston2->set_value(0);}
+        this->pto->currentDriveState->piston1->set_value(0);
+        this->pto->currentDriveState = this->pto->stateC;
+    }
+    
 }
 }; // namespace lemlib

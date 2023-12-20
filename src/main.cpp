@@ -1,7 +1,9 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/chassis/differential.hpp"
 #include "lemlib/logger/stdout.hpp"
+#include "pros/adi.hpp"
 #include "pros/misc.h"
 
 // controller
@@ -13,20 +15,36 @@ auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::bl
 // right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
 auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
-// Inertial Sensor on port 11
+// inertial Sensor on port 11
 pros::Imu imu(11);
+
+// piston powering PTO mech
+pros::adi::DigitalOut piston1('A');
 
 // horizontal tracking wheel. Port 4, 2.75" diameter, 3.7" offset, back of the robot
 lemlib::TrackingWheel horizontal(4, lemlib::Omniwheel::NEW_275, -3.7);
 
-// drivetrain settings
-lemlib::Drivetrain drivetrain(leftMotors, // left motor group
-                              rightMotors, // right motor group
-                              10, // 10 inch track width
-                              lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-                              360, // drivetrain rpm is 360
-                              2 // chase power is 2. If we had traction wheels, it would have been 8
+// default drivetrain settings
+lemlib::Drivetrain drivetrain1(leftMotors, // left motor group
+                               rightMotors, // right motor group
+                               10, // 10 inch track width
+                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
+                               360, // drivetrain rpm is 360
+                               2 // chase power is 2. If we had traction wheels, it would have been 8
 );
+
+// pto drivetrain settings
+lemlib::Drivetrain drivetrain2(leftMotors, // left motor group
+                               rightMotors, // right motor group
+                               10, // 10 inch track width
+                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
+                               450, // drivetrain rpm is 450
+                               2, // chase power is 2. If we had traction wheels, it would have been 8
+                               &piston1
+);
+
+// PTO
+lemlib::PTO pto(drivetrain1, drivetrain2, nullptr);
 
 // linear motion controller
 lemlib::ControllerSettings linearController(10, // proportional gain (kP)
@@ -58,7 +76,7 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 );
 
 // create the chassis
-lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
+lemlib::Differential chassis(pto, linearController, angularController, sensors);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.

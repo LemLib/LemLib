@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 
+#include "pros/adi.hpp"
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 
@@ -135,6 +136,8 @@ struct ControllerSettings {
  * @param wheelDiameter the diameter of the wheel used on the drivetrain
  * @param rpm the rpm of the wheels
  * @param chasePower higher values make the robot move faster but causes more overshoot on turns
+ * @param piston1 piston that powers the pto, should be a nullptr if no pto is used and for default drive settings
+ * @param piston2 2nd piston that powers the pto
  */
 struct Drivetrain {
         /**
@@ -158,12 +161,81 @@ struct Drivetrain {
               rpm(rpm),
               chasePower(chasePower) {}
 
+        /**
+         * The constants are stored in a struct so that they can be easily passed to the chassis class
+         * Set a constant to 0 and it will be ignored
+         *
+         * @param leftMotors shared pointer to the left motors
+         * @param rightMotors shared pointer to the right motors
+         * @param trackWidth the track width of the robot
+         * @param wheelDiameter the diameter of the wheel used on the drivetrain
+         * @param rpm the rpm of the wheels
+         * @param chasePower higher values make the robot move faster but causes more overshoot on turns
+         * @param piston1 piston that powers the pto
+         */
+        Drivetrain(const std::shared_ptr<pros::MotorGroup>& leftMotors,
+                   const std::shared_ptr<pros::MotorGroup>& rightMotors, float trackWidth, float wheelDiameter,
+                   float rpm, float chasePower, pros::adi::DigitalOut* piston1)
+            : leftMotors(leftMotors),
+              rightMotors(rightMotors),
+              trackWidth(trackWidth),
+              wheelDiameter(wheelDiameter),
+              rpm(rpm),
+              chasePower(chasePower),
+              piston1(std::make_shared<pros::adi::DigitalOut>(*piston1)) {}
+
+        /**
+         * The constants are stored in a struct so that they can be easily passed to the chassis class
+         * Set a constant to 0 and it will be ignored
+         *
+         * @param leftMotors shared pointer to the left motors
+         * @param rightMotors shared pointer to the right motors
+         * @param trackWidth the track width of the robot
+         * @param wheelDiameter the diameter of the wheel used on the drivetrain
+         * @param rpm the rpm of the wheels
+         * @param chasePower higher values make the robot move faster but causes more overshoot on turns
+         * @param piston1 piston that powers the pto
+         * @param piston2 2nd piston that powers the pto
+         */
+        Drivetrain(const std::shared_ptr<pros::MotorGroup>& leftMotors,
+                   const std::shared_ptr<pros::MotorGroup>& rightMotors, float trackWidth, float wheelDiameter,
+                   float rpm, float chasePower, pros::adi::DigitalOut* piston1, pros::adi::DigitalOut* piston2)
+            : leftMotors(leftMotors),
+              rightMotors(rightMotors),
+              trackWidth(trackWidth),
+              wheelDiameter(wheelDiameter),
+              rpm(rpm),
+              chasePower(chasePower),
+              piston1(std::make_shared<pros::adi::DigitalOut>(*piston1)),
+              piston2(std::make_shared<pros::adi::DigitalOut>(*piston2)) {}
+
         std::shared_ptr<pros::MotorGroup> leftMotors;
         std::shared_ptr<pros::MotorGroup> rightMotors;
         float trackWidth;
         float wheelDiameter;
         float rpm;
         float chasePower;
+        std::shared_ptr<pros::adi::DigitalOut> piston1;
+        std::shared_ptr<pros::adi::DigitalOut> piston2;
+};
+
+/**
+ * @brief Struct containing constants for a PTO
+ *
+ * The constants are stored in a struct so that they can be easily passed to the chassis class
+ * Set a constant to 0 and it will be ignored
+ *
+ * @param stateA pointer to the first drivetrain state, this should be the state when the pneumatics are off
+ * @param stateB pointer to the second drivetrain state
+ * @param stateC pointer to the third drivetrain state
+ */
+struct PTO {
+        PTO(const Drivetrain& stateA, const std::shared_ptr<Drivetrain>& stateB,
+            const std::shared_ptr<Drivetrain>& stateC)
+            : stateA(stateA) {}
+
+        std::unique_ptr<Drivetrain> currentDriveState;
+        int PTOmode = 0;
 };
 
 /**
@@ -201,6 +273,17 @@ class Differential : public Chassis {
          * @param sensors sensors to be used for odometry
          */
         Differential(const Drivetrain& drivetrain, const ControllerSettings& linearSettings,
+                     const ControllerSettings& angularSettings, const OdomSensors& sensors);
+
+        /**
+         * @brief Construct a new Chassis for PTO use
+         *
+         * @param PTO PTO object to return a drivetrain
+         * @param linearSettings settings for the linear controller
+         * @param angularSettings settings for the angular controller
+         * @param sensors sensors to be used for odometry
+         */
+        Differential(const PTO& PTO, const ControllerSettings& linearSettings,
                      const ControllerSettings& angularSettings, const OdomSensors& sensors);
 
         /**
@@ -299,6 +382,8 @@ class Differential : public Chassis {
          */
         void curvature(int throttle, int turn, float cureGain = 0.0,
                        const DriveCurveFunction_t& driveCurve = defaultDriveCurve);
+
+        void switchPTO(int state);
     private:
         /**
          * @brief Chassis update function. Updates chassis motion and odometry
@@ -309,5 +394,6 @@ class Differential : public Chassis {
         std::unique_ptr<ControllerSettings> linearSettings;
         std::unique_ptr<ControllerSettings> angularSettings;
         std::unique_ptr<Drivetrain> drivetrain;
+        std::unique_ptr<PTO> pto;
 };
 } // namespace lemlib
