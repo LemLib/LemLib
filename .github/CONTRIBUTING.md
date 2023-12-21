@@ -150,7 +150,7 @@ You can apply the kernel to your project with the following commands
 In order to contribute to LemLib, you will need to [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the repository and clone it to your local machine. You can then [commit](#commit-messages) your changes to your fork. Once you are done, you can [create a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the master branch. You can use the [Pull Request Template](PULL_REQUEST_TEMPLATE.md) to structure your pull request.
 =======
 If you are creating new files in the `lemlib` folder
-- Run `make clean quick -j`
+- Run: `make clean quick -j`
 
 In order to contribute to LemLib, you will need to [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the repository and clone it to your local machine. You can then [commit](#commit-messages) your changes to your fork. Once you are done, you can [create a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the master branch. You can use the [Pull Request Template](.github/PULL_REQUEST_TEMPLATE.md) to structure your pull request.
 >>>>>>> 978df55 (Update CONTRIBUTING.md)
