@@ -116,6 +116,23 @@ struct Drivetrain {
 };
 
 /**
+ * @brief Parameters for Chassis::moveToPose
+ *
+ * We use a struct to simplify customization. Chassis::moveToPose has many
+ * parameters and specifying them all just to set one optional param ruins
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ */
+struct MoveToPoseParams {
+        bool forwards = true;
+        float chasePower = 0;
+        float lead = 0.6;
+        float maxSpeed = 127;
+        float minSpeed = 0;
+};
+
+/**
  * @brief Function pointer type for drive curve functions.
  * @param input The control input in the range [-127, 127].
  * @param scale The scaling factor, which can be optionally ignored.
@@ -216,17 +233,10 @@ class Chassis {
          * @param y y location
          * @param theta target heading in degrees.
          * @param timeout longest time the robot can spend moving
-         * @param forwards whether the robot should move forwards or backwards. true for forwards (default),
-         * false for backwards
-         * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0
-         * makes it default to global value
-         * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead <
-         * 1)
-         * @param maxSpeed the maximum speed the robot can move at. 127 at default
+         * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void moveToPose(float x, float y, float theta, int timeout, bool forwards = true, float chasePower = 0,
-                        float lead = 0.6, float maxSpeed = 127, bool async = true);
+        void moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params = {}, bool async = true);
         /**
          * @brief Move the chassis towards a target point
          *

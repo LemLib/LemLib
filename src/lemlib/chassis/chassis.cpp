@@ -290,22 +290,18 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
  * @param y y location
  * @param theta target heading in degrees.
  * @param timeout longest time the robot can spend moving
- * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
- * backwards
- * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
- * default to global value
- * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
+ *
  * @param maxSpeed the maximum speed the robot can move at. 127 at default
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, bool forwards, float chasePower,
-                                 float lead, float maxSpeed, bool async) {
+void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params, bool async) {
+    // take the mutex
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveToPose(x, y, theta, timeout, forwards, chasePower, lead, maxSpeed, false); });
+        pros::Task task([&]() { moveToPose(x, y, theta, timeout, params, false); });
         this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
@@ -321,10 +317,10 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
 
     // calculate target pose in standard form
     Pose target(x, y, M_PI_2 - degToRad(theta));
-    if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
+    if (!params.forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
     // use global chasePower is chasePower is 0
-    if (chasePower == 0) chasePower = drivetrain.chasePower;
+    if (params.chasePower == 0) params.chasePower = drivetrain.chasePower;
 
     // initialize vars used between iterations
     Pose lastPose = getPose();
@@ -353,18 +349,18 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         // check if the robot is close enough to the target to start settling
         if (distTarget < 7.5 && close == false) {
             close = true;
-            maxSpeed = fmax(fabs(prevLateralOut), 60);
+            params.maxSpeed = fmax(fabs(prevLateralOut), 60);
         }
 
         // check if the lateral controller has settled
         if (lateralLargeExit.getExit() && lateralSmallExit.getExit()) lateralSettled = true;
 
         // calculate the carrot point
-        Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * lead * distTarget;
+        Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * params.lead * distTarget;
         if (close) carrot = target; // settling behavior
 
         // calculate error
-        const float adjustedRobotTheta = forwards ? pose.theta : pose.theta + M_PI;
+        const float adjustedRobotTheta = params.forwards ? pose.theta : pose.theta + M_PI;
         const float angularError =
             close ? angleError(adjustedRobotTheta, target.theta) : angleError(adjustedRobotTheta, pose.angle(carrot));
         float lateralError = pose.distance(carrot);
@@ -385,25 +381,30 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         float angularOut = angularPID.update(radToDeg(angularError));
 
         // apply restrictions on angular speed
-        angularOut = std::clamp(angularOut, -maxSpeed, maxSpeed);
+        angularOut = std::clamp(angularOut, -params.maxSpeed, params.maxSpeed);
         angularOut = slew(angularOut, prevAngularOut, angularSettings.slew);
 
         // apply restrictions on lateral speed
-        lateralOut = std::clamp(lateralOut, -maxSpeed, maxSpeed);
+        lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
+
         // constrain lateral output by max accel
         // but not for decelerating, since that would interfere with settling
-        if (forwards && lateralOut > prevLateralOut)
+        if (params.forwards && lateralOut > prevLateralOut)
             lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-        if (!forwards && lateralOut < prevLateralOut)
+        if (!params.forwards && lateralOut < prevLateralOut)
             lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
+
         // constrain lateral output by the max speed it can travel at without slipping
         const float radius = 1 / fabs(getCurvature(pose, carrot));
-        const float maxSlipSpeed(sqrt(chasePower * radius * 9.8));
+        const float maxSlipSpeed(sqrt(params.chasePower * radius * 9.8));
         lateralOut = std::clamp(lateralOut, -maxSlipSpeed, maxSlipSpeed);
+        // prioritize angular movement over lateral movement
+        const float overturn = fabs(angularOut) + fabs(lateralOut) - params.maxSpeed;
+        if (overturn > 0) lateralOut -= lateralOut > 0 ? overturn : -overturn;
 
         // prevent moving in the wrong direction
-        if (forwards && !close) lateralOut = std::fmax(lateralOut, 0);
-        else if (!forwards && !close) lateralOut = std::fmin(lateralOut, 0);
+        if (params.forwards && !close) lateralOut = std::fmax(lateralOut, 0);
+        else if (!params.forwards && !close) lateralOut = std::fmin(lateralOut, 0);
 
         // update previous output
         prevAngularOut = angularOut;
@@ -412,7 +413,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         // ratio the speeds to respect the max speed
         float leftPower = lateralOut + angularOut;
         float rightPower = lateralOut - angularOut;
-        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / params.maxSpeed;
         if (ratio > 1) {
             leftPower /= ratio;
             rightPower /= ratio;
