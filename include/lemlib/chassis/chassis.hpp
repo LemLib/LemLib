@@ -123,6 +123,18 @@ struct Drivetrain {
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
  *
+ * @param forwards whether the robot should move forwards or backwards. True by default
+ * @param chasePower how fast the robot will move around corners. Recommended value 2-15.
+ *  0 means use chasePower set in chassis class. 0 by default.
+ * @param lead carrot point multiplier. value between 0 and 1. Higher values result in
+ *  curvier movements. 0.6 by default
+ * @param maxSpeed the maximum speed the robot can travel at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can travel at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange distance between the robot and target point where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
  */
 struct MoveToPoseParams {
         bool forwards = true;
@@ -130,6 +142,7 @@ struct MoveToPoseParams {
         float lead = 0.6;
         float maxSpeed = 127;
         float minSpeed = 0;
+        float earlyExitRange = 0;
 };
 
 /**
