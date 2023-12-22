@@ -338,7 +338,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         const Pose pose = getPose(true, true);
 
         // update distance travelled
-        distTravelled = pose.distance(lastPose);
+        distTravelled += pose.distance(lastPose);
         lastPose = pose;
 
         // calculate distance to the target point
@@ -479,7 +479,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         const Pose pose = getPose(true, true);
 
         // update distance travelled
-        distTravelled = pose.distance(lastPose);
+        distTravelled += pose.distance(lastPose);
         lastPose = pose;
 
         // calculate distance to the target point
