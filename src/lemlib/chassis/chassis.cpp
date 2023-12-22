@@ -177,7 +177,7 @@ void lemlib::Chassis::requestMotionStart() {
 
     // wait until this motion is at front of "queue"
     this->mutex.take(TIMEOUT_MAX);
-    
+
     // this->motionRunning should be true
     // and this->motionQueued should be false
     // indicating this motion is running
@@ -189,7 +189,7 @@ void lemlib::Chassis::endMotion() {
     this->motionQueued = false;
 
     // permit queued motion to run
-    this->mutex.give(); 
+    this->mutex.give();
 }
 
 void lemlib::Chassis::cancelMotion() {
@@ -203,9 +203,7 @@ void lemlib::Chassis::cancelAllMotions() {
     pros::delay(10); // give time for motion to stop
 }
 
-bool lemlib::Chassis::isInMotion() const {
-    return this->motionRunning;
-}
+bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
 
 /**
  * @brief Turn the chassis so it is facing the target point
@@ -447,7 +445,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
 void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
     this->requestMotionStart();
     // were all motions cancelled?
-    if(!this->motionRunning) return;
+    if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { moveToPoint(x, y, timeout, forwards, maxSpeed, false); });
@@ -475,7 +473,8 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     const int compState = pros::competition::get_status();
 
     // main loop
-    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) && this->motionRunning) {
+    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) &&
+           this->motionRunning) {
         // update position
         const Pose pose = getPose(true, true);
 
