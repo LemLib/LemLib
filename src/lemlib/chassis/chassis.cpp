@@ -475,7 +475,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     const int compState = pros::competition::get_status();
 
     // main loop
-    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close)) {
+    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) && this->motionRunning) {
         // update position
         const Pose pose = getPose(true, true);
 
