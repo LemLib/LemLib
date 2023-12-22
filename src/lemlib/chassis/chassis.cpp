@@ -326,6 +326,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
     Timer timer(timeout);
     bool close = false;
     bool lateralSettled = false;
+    bool prevSameSide = false;
     float prevLateralOut = 0; // previous lateral power
     float prevAngularOut = 0; // previous angular power
     const int compState = pros::competition::get_status();
@@ -356,6 +357,16 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         // calculate the carrot point
         Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * params.lead * distTarget;
         if (close) carrot = target; // settling behavior
+
+        // calculate if the robot is on the same side as the carrot point
+        const bool robotSide =
+            (pose.y - target.y) * -sin(target.theta) <= (pose.x - target.x) * cos(target.theta) + params.earlyExitRange;
+        const bool carrotSide = (carrot.y - target.y) * -sin(target.theta) <=
+                                (carrot.x - target.x) * cos(target.theta) + params.earlyExitRange;
+        const bool sameSide = robotSide == carrotSide;
+        // exit if close
+        if (!sameSide && prevSameSide && close && params.minSpeed != 0) break;
+        prevSameSide = sameSide;
 
         // calculate error
         const float adjustedRobotTheta = params.forwards ? pose.theta : pose.theta + M_PI;
@@ -403,6 +414,11 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         // prevent moving in the wrong direction
         if (params.forwards && !close) lateralOut = std::fmax(lateralOut, 0);
         else if (!params.forwards && !close) lateralOut = std::fmin(lateralOut, 0);
+
+        // constrain lateral output by the minimum speed
+        if (params.forwards && lateralOut < fabs(params.minSpeed) && lateralOut > 0) lateralOut = fabs(params.minSpeed);
+        if (!params.forwards && -lateralOut < fabs(params.minSpeed) && lateralOut < 0)
+            lateralOut = -fabs(params.minSpeed);
 
         // update previous output
         prevAngularOut = angularOut;
