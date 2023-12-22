@@ -290,7 +290,33 @@ class Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void curvature(int throttle, int turn, float cureGain = 0.0);
+        /**
+         * @brief Cancels the currently running motion.
+         * If there is a queued motion, then that queued motion will run.
+         */
+        void cancelMotion();
+        /**
+         * @brief Cancels all motions, even those that are queued.
+         * After this, the chassis will not be in motion.
+         */
+        void cancelAllMotions();
+        /**
+         * @return whether a motion is currently running
+         */
+        bool isInMotion() const;
+    protected:
+        /**
+         * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
+         */
+        void requestMotionStart();
+        /**
+         * @brief Dequeues this motion and permits queued task to run
+         */
+        void endMotion();
     private:
+        bool motionRunning = false;
+        bool motionQueued = false;
+
         pros::Mutex mutex;
         float distTravelled = 0;
 

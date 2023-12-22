@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2023
  *
  */
+#include <algorithm>
 #include <math.h>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
@@ -17,6 +18,7 @@
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/timer.hpp"
+#include "pros/rtos.hpp"
 
 /**
  * @brief The variables are pointers so that they can be set to nullptr if they are not used
@@ -169,6 +171,40 @@ void lemlib::Chassis::waitUntilDone() {
     while (distTravelled != -1);
 }
 
+void lemlib::Chassis::requestMotionStart() {
+    if (this->isInMotion()) this->motionQueued = true; // indicate a motion is queued
+    else this->motionRunning = true; // indicate a motion is running
+
+    // wait until this motion is at front of "queue"
+    this->mutex.take(TIMEOUT_MAX);
+
+    // this->motionRunning should be true
+    // and this->motionQueued should be false
+    // indicating this motion is running
+}
+
+void lemlib::Chassis::endMotion() {
+    // move the "queue" forward 1
+    this->motionRunning = this->motionQueued;
+    this->motionQueued = false;
+
+    // permit queued motion to run
+    this->mutex.give();
+}
+
+void lemlib::Chassis::cancelMotion() {
+    this->motionRunning = false;
+    pros::delay(10); // give time for motion to stop
+}
+
+void lemlib::Chassis::cancelAllMotions() {
+    this->motionRunning = false;
+    this->motionQueued = false;
+    pros::delay(10); // give time for motion to stop
+}
+
+bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
+
 /**
  * @brief Turn the chassis so it is facing the target point
  *
@@ -182,12 +218,13 @@ void lemlib::Chassis::waitUntilDone() {
  * @param async whether the function should be run asynchronously. true by default
  */
 void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
-    // take the mutex
-    mutex.take(TIMEOUT_MAX);
+    this->requestMotionStart();
+    // were all motions cancelled?
+    if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { turnTo(x, y, timeout, forwards, maxSpeed, false); });
-        mutex.give();
+        this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
@@ -203,7 +240,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     angularPID.reset();
 
     // main loop
-    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit()) {
+    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
         // update variables
         Pose pose = getPose();
         pose.theta = (forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
@@ -239,8 +276,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
-    // give the mutex back
-    mutex.give();
+    this->endMotion();
 }
 
 /**
@@ -258,11 +294,13 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
  */
 void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params, bool async) {
     // take the mutex
-    mutex.take(TIMEOUT_MAX);
+    this->requestMotionStart();
+    // were all motions cancelled?
+    if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { moveToPose(x, y, theta, timeout, params, false); });
-        mutex.give(); // release the mutex so the lambda can run
+        this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
@@ -294,7 +332,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
 
     // main loop
     while (!timer.isDone() &&
-           ((!lateralSettled || (!angularLargeExit.getExit() && !angularSmallExit.getExit())) || !close)) {
+           ((!lateralSettled || (!angularLargeExit.getExit() && !angularSmallExit.getExit())) || !close) &&
+           this->motionRunning) {
         // update position
         const Pose pose = getPose(true, true);
 
@@ -391,8 +430,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
-    // give the mutex back
-    mutex.give();
+    this->endMotion();
 }
 
 /**
@@ -405,12 +443,13 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
  * @param async whether the function should be run asynchronously. true by default
  */
 void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
-    // take the mutex
-    mutex.take(TIMEOUT_MAX);
+    this->requestMotionStart();
+    // were all motions cancelled?
+    if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { moveToPoint(x, y, timeout, forwards, maxSpeed, false); });
-        mutex.give(); // release the mutex so the lambda can run
+        this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
@@ -434,7 +473,8 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     const int compState = pros::competition::get_status();
 
     // main loop
-    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close)) {
+    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) &&
+           this->motionRunning) {
         // update position
         const Pose pose = getPose(true, true);
 
@@ -508,6 +548,5 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
-    // give the mutex back
-    mutex.give();
+    this->endMotion();
 }
