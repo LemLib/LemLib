@@ -2,27 +2,27 @@
 
 namespace lemlib {
 // PTO class constructor (drivetrain to subsystem)
-PTO::PTO(const PistonGroup& pistons,
-         const pros::MotorGroup& ptoMotors,
-         const Drivetrain& drivetrain,
-         const pros::MotorGroup& sysMotors)
-    : pistons(std::make_unique<PistonGroup>(pistons)),
-      motors(std::make_shared<pros::MotorGroup>(ptoMotors)),
-      drivetrain(std::make_shared<Drivetrain>(drivetrain)),
-      sysMotors1(std::make_shared<pros::MotorGroup>(sysMotors)) {
+PTO::PTO(const std::shared_ptr<PistonGroup>&      pistons,
+         const std::shared_ptr<pros::MotorGroup>& ptoMotors,
+         const std::shared_ptr<Drivetrain>&       drivetrain,
+         const std::shared_ptr<pros::MotorGroup>& sysMotors)
+    : pistons(pistons),
+      ptoMotors(ptoMotors),
+      drivetrain(drivetrain),
+      sysMotors1(sysMotors) {
     // Set using drivetrain flag to true
     onDrivetrain = true;
 }
 
 // PTO class constructor (two separate subsystems)
-PTO::PTO(const PistonGroup& pistons,
-         const pros::MotorGroup& ptoMotors,
-         const pros::MotorGroup& sysMotors1,
-         const pros::MotorGroup& sysMotors2)
-    : pistons(std::make_unique<PistonGroup>(pistons)),
-      motors(std::make_shared<pros::MotorGroup>(ptoMotors)),
-      sysMotors1(std::make_shared<pros::MotorGroup>(sysMotors1)),
-      sysMotors2(std::make_shared<pros::MotorGroup>(sysMotors2)) {
+PTO::PTO(const std::shared_ptr<PistonGroup>&      pistons,
+         const std::shared_ptr<pros::MotorGroup>& ptoMotors,
+         const std::shared_ptr<pros::MotorGroup>& sysMotors1,
+         const std::shared_ptr<pros::MotorGroup>& sysMotors2)
+    : pistons(pistons),
+      ptoMotors(ptoMotors),
+      sysMotors1(sysMotors1),
+      sysMotors2(sysMotors2) {
     // Set using drivetrain flag to false
     onDrivetrain = false;
 }

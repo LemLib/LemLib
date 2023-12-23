@@ -30,10 +30,10 @@ class PTO {
          * @param drivetrain shared pointer to drivetrain (if the pto connects to drivetrain)
          * @param sysMotors shared pointer to motor group of motors in other system
          */
-        PTO(const PistonGroup& pistons,
-            const pros::MotorGroup& ptoMotors,
-            const Drivetrain& drivetrain,
-            const pros::MotorGroup& sysMotors);
+        PTO(const std::shared_ptr<PistonGroup>& pistons,
+            const std::shared_ptr<pros::MotorGroup>& ptoMotors,
+            const std::shared_ptr<Drivetrain>& drivetrain,
+            const std::shared_ptr<pros::MotorGroup>& sysMotors);
         
         /**
          * @brief Construct a new PTO
@@ -43,10 +43,10 @@ class PTO {
          * @param sysMotors1 shared pointer to motor group of motors in first system 
          * @param sysMotors2 shared pointer to motor group of motors in second system
          */
-        PTO(const PistonGroup& pistons,
-            const pros::MotorGroup& ptoMotors,
-            const pros::MotorGroup& sysMotors1,
-            const pros::MotorGroup& sysMotors2);
+        PTO(const std::shared_ptr<PistonGroup>& pistons,
+            const std::shared_ptr<pros::MotorGroup>& ptoMotors,
+            const std::shared_ptr<pros::MotorGroup>& sysMotors1,
+            const std::shared_ptr<pros::MotorGroup>& sysMotors2);
 
         /**
          * @brief returns the PTO state
@@ -69,7 +69,7 @@ class PTO {
         void toggle();
     private:
         std::unique_ptr<PistonGroup> pistons;
-        std::shared_ptr<pros::MotorGroup> motors;
+        std::shared_ptr<pros::MotorGroup> ptoMotors;
         std::shared_ptr<Drivetrain> drivetrain = nullptr;
         std::shared_ptr<pros::MotorGroup> sysMotors1 = nullptr;
         std::shared_ptr<pros::MotorGroup> sysMotors2 = nullptr;

@@ -2,6 +2,7 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
+#include "lemlib/pto/pneumatics.hpp"
 #include "pros/misc.h"
 
 // controller
@@ -14,9 +15,12 @@ auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::bl
 auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
 auto ptoMotors = lemlib::makeMotorGroup({19, -13}, pros::v5::MotorGears::blue);
+auto liftMotors = lemlib::makeMotorGroup({19, -13}, pros::v5::MotorGears::blue);
 
 auto piston1 = pros::adi::Pneumatics('A', false);
 auto piston2 = pros::adi::Pneumatics('B', false);
+
+auto ptoPistons = lemlib::makePistonGroup({piston1, piston2});
 
 // auto backPistons = lemlib::
 
@@ -72,6 +76,8 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 
 // create the chassis
 lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
+
+lemlib::PTO testPTO(ptoPistons, ptoMotors, std::make_shared<lemlib::Drivetrain>(drivetrain), liftMotors);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.

@@ -37,6 +37,9 @@ class PistonGroup {
                     const bool startExtended,
                     const bool reversed = false);
         
+        // Piston Group copy constructor
+        // PistonGroup(PistonGroup &t);
+
         void extend();
         void retract();
         void toggle();

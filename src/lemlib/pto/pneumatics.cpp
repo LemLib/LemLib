@@ -21,6 +21,10 @@ PistonGroup::PistonGroup(const std::vector<pros::adi::ext_adi_port_pair_t> portP
     }
 }
 
+// PistonGroup::PistonGroup(PistonGroup &t) {
+//     pistonsVec = t.pistonsVec;
+// }
+
 // PistonGroup extend
 void PistonGroup::extend() {
     for (pros::adi::Pneumatics piston : pistonsVec) {
