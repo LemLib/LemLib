@@ -15,10 +15,16 @@ auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::bl
 
 auto ptoMotors = lemlib::makeMotorGroup({19, -13}, pros::v5::MotorGears::blue);
 
-auto piston1 = lemlib::makePiston('A', false);
-pros::adi::Pneumatics rlPiston('A', false);
-pros::adi::Pneumatics rrPiston('B', false);
-// auto backPTO = lemlib::PTO({&rlPiston, &rrPiston}, &ptoMotors);
+auto piston1 = pros::adi::Pneumatics('A', false);
+auto piston2 = pros::adi::Pneumatics('B', false);
+
+// auto backPistons = lemlib::
+
+// auto piston1 = lemlib::makePiston('A', false);
+// auto piston2 = lemlib::makePiston('B', false);
+// std::vector<std::shared_ptr<pros::adi::Pneumatics>> backPistons = {piston1, piston2};
+
+// auto backPTO = lemlib::PTO(backPistons, ptoMotors, true);
 
 // Inertial Sensor on port 11
 pros::Imu imu(11);
