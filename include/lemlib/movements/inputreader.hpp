@@ -2,7 +2,7 @@
 
 #include "lemlib/chassis/chassis.hpp"
 #include "main.h"
-#include "lemlib/devices/controller.hpp"
+#include "lemlib/devices/lemcontroller.hpp"
 #include "lemlib/chassis/differential.hpp"
 
 namespace lemlib {

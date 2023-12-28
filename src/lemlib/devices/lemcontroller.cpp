@@ -1,4 +1,4 @@
-#include "lemlib/devices/controller.hpp"
+#include "lemlib/devices/lemcontroller.hpp"
 #include "pros/misc.h"
 #include <vector>
 
@@ -11,6 +11,29 @@ LEMController::LEMController() {
 LEMController::LEMController(pros::controller_id_e_t controllerID, std::vector<std::string> modesParam) {
 
     prosController = new pros::Controller(controllerID);
+
+    if (modesParam.size() > 0) {
+        modes = modesParam;
+    }    
+
+    pros::controller_digital_e_t buttons[] = {pros::E_CONTROLLER_DIGITAL_A, 
+        pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_X, 
+        pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_UP, 
+        pros::E_CONTROLLER_DIGITAL_DOWN, pros::E_CONTROLLER_DIGITAL_LEFT, 
+        pros::E_CONTROLLER_DIGITAL_RIGHT, pros::E_CONTROLLER_DIGITAL_L1, 
+        pros::E_CONTROLLER_DIGITAL_L2, pros::E_CONTROLLER_DIGITAL_R1, 
+        pros::E_CONTROLLER_DIGITAL_R2};
+
+    for (int i = 0; i < sizeof(buttons)/sizeof(buttons[0]); i++) {
+        buttonsToFunctions.emplace_back(buttons[i], "DEFAULT", [](){});
+        
+    }
+    
+}
+
+LEMController::LEMController(pros::Controller* controller, std::vector<std::string> modesParam) {
+
+    prosController = controller;
 
     if (modesParam.size() > 0) {
         modes = modesParam;
