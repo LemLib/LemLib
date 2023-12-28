@@ -32,7 +32,7 @@ namespace lemlib {
             }
         }
 
-
+        
     };
 
     /*struct LEMControllerValues {
@@ -143,6 +143,8 @@ protected:
 public:
 
     LEMController(pros::controller_id_e_t controllerID, std::vector<std::string> modesParam = {"DEFAULT"});
+    
+    LEMController(pros::Controller* controller, std::vector<std::string> modesParam = {"DEFAULT"});
     
     ~LEMController();
 
