@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2023
  *
  */
+#include <algorithm>
 #include <math.h>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
@@ -17,6 +18,7 @@
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/timer.hpp"
+#include "pros/rtos.hpp"
 
 /**
  * @brief The variables are pointers so that they can be set to nullptr if they are not used
@@ -169,6 +171,40 @@ void lemlib::Chassis::waitUntilDone() {
     while (distTravelled != -1);
 }
 
+void lemlib::Chassis::requestMotionStart() {
+    if (this->isInMotion()) this->motionQueued = true; // indicate a motion is queued
+    else this->motionRunning = true; // indicate a motion is running
+
+    // wait until this motion is at front of "queue"
+    this->mutex.take(TIMEOUT_MAX);
+
+    // this->motionRunning should be true
+    // and this->motionQueued should be false
+    // indicating this motion is running
+}
+
+void lemlib::Chassis::endMotion() {
+    // move the "queue" forward 1
+    this->motionRunning = this->motionQueued;
+    this->motionQueued = false;
+
+    // permit queued motion to run
+    this->mutex.give();
+}
+
+void lemlib::Chassis::cancelMotion() {
+    this->motionRunning = false;
+    pros::delay(10); // give time for motion to stop
+}
+
+void lemlib::Chassis::cancelAllMotions() {
+    this->motionRunning = false;
+    this->motionQueued = false;
+    pros::delay(10); // give time for motion to stop
+}
+
+bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
+
 /**
  * @brief Turn the chassis so it is facing the target point
  *
@@ -182,12 +218,13 @@ void lemlib::Chassis::waitUntilDone() {
  * @param async whether the function should be run asynchronously. true by default
  */
 void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
-    // take the mutex
-    mutex.take(TIMEOUT_MAX);
+    this->requestMotionStart();
+    // were all motions cancelled?
+    if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { turnTo(x, y, timeout, forwards, maxSpeed, false); });
-        mutex.give();
+        this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
@@ -203,7 +240,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     angularPID.reset();
 
     // main loop
-    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit()) {
+    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
         // update variables
         Pose pose = getPose();
         pose.theta = (forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
@@ -239,8 +276,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
-    // give the mutex back
-    mutex.give();
+    this->endMotion();
 }
 
 /**
@@ -252,22 +288,19 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
  * @param y y location
  * @param theta target heading in degrees.
  * @param timeout longest time the robot can spend moving
- * @param forwards whether the robot should move forwards or backwards. true for forwards (default), false for
- * backwards
- * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0 makes it
- * default to global value
- * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead < 1)
+ *
  * @param maxSpeed the maximum speed the robot can move at. 127 at default
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, bool forwards, float chasePower,
-                                 float lead, float maxSpeed, bool async) {
+void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params, bool async) {
     // take the mutex
-    mutex.take(TIMEOUT_MAX);
+    this->requestMotionStart();
+    // were all motions cancelled?
+    if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveToPose(x, y, theta, timeout, forwards, chasePower, lead, maxSpeed, false); });
-        mutex.give(); // release the mutex so the lambda can run
+        pros::Task task([&]() { moveToPose(x, y, theta, timeout, params, false); });
+        this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
@@ -282,10 +315,10 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
 
     // calculate target pose in standard form
     Pose target(x, y, M_PI_2 - degToRad(theta));
-    if (!forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
+    if (!params.forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
     // use global chasePower is chasePower is 0
-    if (chasePower == 0) chasePower = drivetrain.chasePower;
+    if (params.chasePower == 0) params.chasePower = drivetrain.chasePower;
 
     // initialize vars used between iterations
     Pose lastPose = getPose();
@@ -293,18 +326,20 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
     Timer timer(timeout);
     bool close = false;
     bool lateralSettled = false;
+    bool prevSameSide = false;
     float prevLateralOut = 0; // previous lateral power
     float prevAngularOut = 0; // previous angular power
     const int compState = pros::competition::get_status();
 
     // main loop
     while (!timer.isDone() &&
-           ((!lateralSettled || (!angularLargeExit.getExit() && !angularSmallExit.getExit())) || !close)) {
+           ((!lateralSettled || (!angularLargeExit.getExit() && !angularSmallExit.getExit())) || !close) &&
+           this->motionRunning) {
         // update position
         const Pose pose = getPose(true, true);
 
         // update distance travelled
-        distTravelled = pose.distance(lastPose);
+        distTravelled += pose.distance(lastPose);
         lastPose = pose;
 
         // calculate distance to the target point
@@ -313,18 +348,28 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         // check if the robot is close enough to the target to start settling
         if (distTarget < 7.5 && close == false) {
             close = true;
-            maxSpeed = fmax(fabs(prevLateralOut), 60);
+            params.maxSpeed = fmax(fabs(prevLateralOut), 60);
         }
 
         // check if the lateral controller has settled
         if (lateralLargeExit.getExit() && lateralSmallExit.getExit()) lateralSettled = true;
 
         // calculate the carrot point
-        Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * lead * distTarget;
+        Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * params.lead * distTarget;
         if (close) carrot = target; // settling behavior
 
+        // calculate if the robot is on the same side as the carrot point
+        const bool robotSide =
+            (pose.y - target.y) * -sin(target.theta) <= (pose.x - target.x) * cos(target.theta) + params.earlyExitRange;
+        const bool carrotSide = (carrot.y - target.y) * -sin(target.theta) <=
+                                (carrot.x - target.x) * cos(target.theta) + params.earlyExitRange;
+        const bool sameSide = robotSide == carrotSide;
+        // exit if close
+        if (!sameSide && prevSameSide && close && params.minSpeed != 0) break;
+        prevSameSide = sameSide;
+
         // calculate error
-        const float adjustedRobotTheta = forwards ? pose.theta : pose.theta + M_PI;
+        const float adjustedRobotTheta = params.forwards ? pose.theta : pose.theta + M_PI;
         const float angularError =
             close ? angleError(adjustedRobotTheta, target.theta) : angleError(adjustedRobotTheta, pose.angle(carrot));
         float lateralError = pose.distance(carrot);
@@ -345,25 +390,35 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         float angularOut = angularPID.update(radToDeg(angularError));
 
         // apply restrictions on angular speed
-        angularOut = std::clamp(angularOut, -maxSpeed, maxSpeed);
+        angularOut = std::clamp(angularOut, -params.maxSpeed, params.maxSpeed);
         angularOut = slew(angularOut, prevAngularOut, angularSettings.slew);
 
         // apply restrictions on lateral speed
-        lateralOut = std::clamp(lateralOut, -maxSpeed, maxSpeed);
+        lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
+
         // constrain lateral output by max accel
         // but not for decelerating, since that would interfere with settling
-        if (forwards && lateralOut > prevLateralOut)
+        if (params.forwards && lateralOut > prevLateralOut)
             lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-        if (!forwards && lateralOut < prevLateralOut)
+        if (!params.forwards && lateralOut < prevLateralOut)
             lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
+
         // constrain lateral output by the max speed it can travel at without slipping
         const float radius = 1 / fabs(getCurvature(pose, carrot));
-        const float maxSlipSpeed(sqrt(chasePower * radius * 9.8));
+        const float maxSlipSpeed(sqrt(params.chasePower * radius * 9.8));
         lateralOut = std::clamp(lateralOut, -maxSlipSpeed, maxSlipSpeed);
+        // prioritize angular movement over lateral movement
+        const float overturn = fabs(angularOut) + fabs(lateralOut) - params.maxSpeed;
+        if (overturn > 0) lateralOut -= lateralOut > 0 ? overturn : -overturn;
 
         // prevent moving in the wrong direction
-        if (forwards && !close) lateralOut = std::fmax(lateralOut, 0);
-        else if (!forwards && !close) lateralOut = std::fmin(lateralOut, 0);
+        if (params.forwards && !close) lateralOut = std::fmax(lateralOut, 0);
+        else if (!params.forwards && !close) lateralOut = std::fmin(lateralOut, 0);
+
+        // constrain lateral output by the minimum speed
+        if (params.forwards && lateralOut < fabs(params.minSpeed) && lateralOut > 0) lateralOut = fabs(params.minSpeed);
+        if (!params.forwards && -lateralOut < fabs(params.minSpeed) && lateralOut < 0)
+            lateralOut = -fabs(params.minSpeed);
 
         // update previous output
         prevAngularOut = angularOut;
@@ -372,7 +427,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
         // ratio the speeds to respect the max speed
         float leftPower = lateralOut + angularOut;
         float rightPower = lateralOut - angularOut;
-        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / params.maxSpeed;
         if (ratio > 1) {
             leftPower /= ratio;
             rightPower /= ratio;
@@ -391,8 +446,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
-    // give the mutex back
-    mutex.give();
+    this->endMotion();
 }
 
 /**
@@ -405,12 +459,13 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, boo
  * @param async whether the function should be run asynchronously. true by default
  */
 void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
-    // take the mutex
-    mutex.take(TIMEOUT_MAX);
+    this->requestMotionStart();
+    // were all motions cancelled?
+    if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { moveToPoint(x, y, timeout, forwards, maxSpeed, false); });
-        mutex.give(); // release the mutex so the lambda can run
+        this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
@@ -434,12 +489,13 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     const int compState = pros::competition::get_status();
 
     // main loop
-    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close)) {
+    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) &&
+           this->motionRunning) {
         // update position
         const Pose pose = getPose(true, true);
 
         // update distance travelled
-        distTravelled = pose.distance(lastPose);
+        distTravelled += pose.distance(lastPose);
         lastPose = pose;
 
         // calculate distance to the target point
@@ -508,6 +564,5 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
-    // give the mutex back
-    mutex.give();
+    this->endMotion();
 }
