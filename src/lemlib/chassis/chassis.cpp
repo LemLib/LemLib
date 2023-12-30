@@ -312,7 +312,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
         return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveToPose(MoveToPoseTarget targetPose, timeout, params, false); });
+        pros::Task task([&]() { moveToPose(targetPose, timeout, params, false); });
         this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
