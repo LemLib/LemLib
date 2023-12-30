@@ -197,7 +197,7 @@ float defaultDriveCurve(float input, float scale);
  *
  */
 class Chassis {
-  public:
+public:
   /**
    * @brief Construct a new Chassis
    *
@@ -367,7 +367,7 @@ class Chassis {
    */
   bool isInMotion() const;
 
-  protected:
+protected:
   /**
    * @brief Indicates that this motion is queued and blocks current task until
    * this motion reaches front of queue
@@ -378,7 +378,7 @@ class Chassis {
    */
   void endMotion();
 
-  private:
+private:
   bool motionRunning = false;
   bool motionQueued = false;
 
