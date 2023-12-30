@@ -18,6 +18,8 @@
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
 #include <algorithm>
+#include <functional>
+#include <limits>
 #include <math.h>
 
 /**
