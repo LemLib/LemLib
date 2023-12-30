@@ -347,7 +347,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
         // Handle unknown movement type
         // Log error maybe
         // calculate target pose in standard form
-        target(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
+        target = (targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
         break;
     }
 
