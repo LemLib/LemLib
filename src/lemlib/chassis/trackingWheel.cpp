@@ -1,13 +1,3 @@
-/**
- * @file src/lemlib/chassis/trackingWheel.cpp
- * @author LemLib Team
- * @brief tracking wheel class definitions
- * @version 0.4.5
- * @date 2023-01-23
- *
- * @copyright Copyright (c) 2023
- *
- */
 
 #include <math.h>
 #include "lemlib/chassis/trackingWheel.hpp"

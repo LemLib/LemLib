@@ -1,13 +1,3 @@
-/**
- * @file src/lemlib/chassis/chassis.cpp
- * @author LemLib Team
- * @brief definitions for the chassis class
- * @version 0.4.5
- * @date 2023-01-27
- *
- * @copyright Copyright (c) 2023
- *
- */
 #include <algorithm>
 #include <math.h>
 #include "pros/motors.hpp"
