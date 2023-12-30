@@ -92,22 +92,22 @@ jobs:
       - name: Create template folder
         run: mkdir template
 
-      - name: Unzip Template
-        uses: montudor/action-zip@v1.0.0
-        with:
-          args: unzip "${{steps.template-name.outputs.name}}.zip" -d template
-
       - name: test
         run: ls -l
       - name: test2
         run: whoami
-
+        
       - name: Copy LICENSE and README.md into template
-        run: cp {LICENSE,README.md} template/include/lemlib/
-
+        run: cp {LICENSE,README.md} template/include/lemlib/  
+        
       - name: Append GitHub link to README.md
         run: echo "${{github.server_url}}/${{github.repository}}">> template/include/lemlib/README.md
-
+        
+      - name: Unzip Template
+        uses: montudor/action-zip@v1.0.0
+        with:
+          args: unzip "${{steps.template-name.outputs.name}}.zip" -d template
+        
       - name: Create VERSION file
         run: echo $POSTFIX > template/include/lemlib/VERSION
         env:
