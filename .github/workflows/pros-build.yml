@@ -104,7 +104,7 @@ jobs:
         run: echo "\n## [Github link](${{github.server_url}}/${{github.repository}})" >> template/include/lemlib/README.md
 
       - name: Fix relative Github links in README.md
-        run: perl -i -pe 's@(?<=[^/])(docs/assets/.*?)(?=[")])@${{github.server_url}}/${{github.repository}}/blob/master/$1?raw=true@g' include/lemlib/README.md
+        run: perl -i -pe 's@(?<=[^/])(docs/assets/.*?)(?=[")])@${{github.server_url}}/${{github.repository}}/blob/master/$1?raw=true@g' template/include/lemlib/README.md
 
       - name: Unzip Template
         uses: montudor/action-zip@v1.0.0
