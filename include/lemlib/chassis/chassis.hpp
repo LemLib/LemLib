@@ -156,7 +156,7 @@ struct MoveToPoseTarget {
  * @param earlyExitRange distance between the robot and target point where the
  * movement will exit. Only has an effect if minSpeed is non-zero.
  */
-struct lemlib::MoveToPoseFlags {
+struct MoveToPoseFlags {
     bool forwards = true;
     float chasePower = 0;
     float lead = 0.6;
@@ -272,7 +272,7 @@ class Chassis {
      * @param async whether the function should be run asynchronously. true by
      * default
      */
-    void moveToPose(MoveToPoseTarget targetPose, int timeout, lemlib::MoveToPoseFlags params = {}, bool async = true);
+    void moveToPose(MoveToPoseTarget targetPose, int timeout, MoveToPoseFlags params = {}, bool async = true);
     /**
      * @brief Move the chassis towards a target point
      *
