@@ -272,7 +272,7 @@ class Chassis {
      * @param async whether the function should be run asynchronously. true by
      * default
      */
-    void moveToPose(MoveToPoseTarget targetPose, int timeout, MoveToPoseFlags params = {}, bool async = true);
+    void moveToPose(MoveToPoseTarget targetPose = {}, int timeout, MoveToPoseFlags params = {}, bool async = true);
     /**
      * @brief Move the chassis towards a target point
      *
