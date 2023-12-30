@@ -339,7 +339,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
         break;
     case ClassicMovement:
         // calculate target pose in standard form
-        Pose target(x, y, M_PI_2 - degToRad(theta));
+        Pose target(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
         break;
 
     default:
