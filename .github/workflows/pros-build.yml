@@ -91,11 +91,6 @@ jobs:
 
       - name: Create template folder
         run: mkdir -p template/include/lemlib/
-
-      - name: test
-        run: ls -l
-      - name: test2
-        run: whoami
         
       - name: Copy LICENSE and README.md into template
         run: cp {LICENSE,README.md} template/include/lemlib/  
