@@ -372,10 +372,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
                                     // input
         }
     }
-    ...
-
-        // calculate target pose in standard form
-        Pose target(x, y, M_PI_2 - degToRad(theta));
+  
     if (!params.forwards)
         target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
