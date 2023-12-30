@@ -129,7 +129,7 @@ namespace lemlib {
 		float x = std::numeric_limits < float > ::quiet_NaN();
 		float y = std::numeric_limits < float > ::quiet_NaN();
 		float theta = std::numeric_limits < float > ::quiet_NaN();
-	}
+	};
 	/**
 	 * @brief Flags for Chassis::moveToPose
 	 *
@@ -267,7 +267,7 @@ namespace lemlib {
 		 * @param async whether the function should be run asynchronously. true by
 		 * default
 		 */
-		void moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params = {}, bool async = true);
+		void moveToPose(MoveToPoseTarget targetPose, int timeout, MoveToPoseFlags params = {}, bool async = true);
 		/**
 		 * @brief Move the chassis towards a target point
 		 *
