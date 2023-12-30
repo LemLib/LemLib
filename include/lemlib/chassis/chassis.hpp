@@ -128,7 +128,7 @@ struct Drivetrain {
  * @param theta the maximum speed the robot can travel at. Value between 0-127.
  *  127 by default
  */
-struct MoveToPoseTargets {
+struct MoveToPoseTarget {
     float dist = std::numeric_limits<float>::quiet_NaN();
     float x = std::numeric_limits<float>::quiet_NaN();
     float y = std::numeric_limits<float>::quiet_NaN();
