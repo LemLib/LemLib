@@ -19,7 +19,9 @@
 #include "pros/imu.hpp"
 #include "pros/motors.hpp"
 #include "pros/rtos.hpp"
+#include <cmath>
 #include <functional>
+#include <limits>
 
 namespace lemlib {
 /**
