@@ -328,7 +328,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
 
     const Pose pose = getPose(true, true);
     // Recalculate target based on user input
-    Pose target = (targetPose.x, targetPose.y, targetPose.theta);
+    Pose target(targetPose.x, targetPose.y,  M_PI_2 - degToRad(targetPose.theta));
     switch (getMovementType(targetPose)) {
     case RelativeWithoutAngle:
         target = (pose.x + targetPose.dist * std::cos(pose.theta), pose.y + targetPose.dist * std::sin(pose.theta),
