@@ -100,6 +100,9 @@ jobs:
       - name: Copy LICENSE and README.md into template
         run: cp {LICENSE,README.md} template/include/lemlib/
 
+      - name: Append GitHub link to README.md
+        run: echo "${{github.server_url}}/${{github.repository}}">> template/include/lemlib/README.md
+
       - name: Create VERSION file
         run: echo $POSTFIX > template/include/lemlib/VERSION
         env:
