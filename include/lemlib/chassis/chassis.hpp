@@ -8,7 +8,8 @@
  * @copyright Copyright (c) 2023
  *
  */
-#pragma once#include "lemlib/asset.hpp"
+#pragma once
+#include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/exitcondition.hpp"
 #include "lemlib/pid.hpp"
