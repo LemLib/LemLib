@@ -90,7 +90,7 @@ jobs:
         run: pros make template
 
       - name: Create template folder
-        run: mkdir template
+        run: mkdir -p template/include/lemlib/
 
       - name: test
         run: ls -l
@@ -102,7 +102,7 @@ jobs:
         
       - name: Append GitHub link to README.md
         run: echo "${{github.server_url}}/${{github.repository}}">> template/include/lemlib/README.md
-        
+
       - name: Unzip Template
         uses: montudor/action-zip@v1.0.0
         with:
