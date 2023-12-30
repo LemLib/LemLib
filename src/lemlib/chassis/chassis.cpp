@@ -328,25 +328,26 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
 
     const Pose pose = getPose(true, true);
     // Recalculate target based on user input
+    Pose target;
     switch (getMovementType(targetPose)) {
     case RelativeWithoutAngle:
-        Pose target = (pose.x + targetPose.dist * std::cos(pose.theta), pose.y + targetPose.dist * std::sin(pose.theta),
+        target = (pose.x + targetPose.dist * std::cos(pose.theta), pose.y + targetPose.dist * std::sin(pose.theta),
                        pose.theta);
         break;
     case RelativeWithAngle:
-        Pose target = (pose.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
+        target = (pose.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
                        pose.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
         break;
     case ClassicMovement:
         // calculate target pose in standard form
-        Pose target(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
+        target(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
         break;
 
     default:
         // Handle unknown movement type
         // Log error maybe
         // calculate target pose in standard form
-        Pose target(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
+        target(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
         break;
     }
 
