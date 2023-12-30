@@ -101,7 +101,7 @@ jobs:
         run: cp {LICENSE,README.md} template/include/lemlib/  
         
       - name: Append GitHub link to README.md
-        run: echo "${{github.server_url}}/${{github.repository}}">> template/include/lemlib/README.md
+        run: echo "\n## [Github link](${{github.server_url}}/${{github.repository}})" >> template/include/lemlib/README.md
 
       - name: Unzip Template
         uses: montudor/action-zip@v1.0.0
