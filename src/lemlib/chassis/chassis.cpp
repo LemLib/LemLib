@@ -371,7 +371,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout,
     break;
   }
 
-  private:
+private:
   // Enum to represent different movement types
   enum MovementType {
     RelativeWithoutAngle,
