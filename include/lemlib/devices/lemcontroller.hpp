@@ -1,4 +1,7 @@
 #include "pros/device.hpp"
+#include "unordered_map"
+#include "pros/misc.h"
+#include <unordered_map>
 
 namespace lemlib {
 
@@ -35,89 +38,79 @@ namespace lemlib {
         
     };
 
-    /*struct LEMControllerValues {
-    private:
-
-        int16_t LeftY, RightY, LeftX, RightX, A, B, X, Y, Up, Down, Left, Right, L1, L2, R1, R2 = 0;
-
+    struct LEMControllerValues {
     public:
+
+        static constexpr uint8_t AKey = 0;
+        static constexpr uint8_t BKey = 1;
+        static constexpr uint8_t XKey = 2;
+        static constexpr uint8_t YKey = 3;
+        static constexpr uint8_t UpKey = 4;
+        static constexpr uint8_t DownKey = 5;
+        static constexpr uint8_t LeftKey = 6;
+        static constexpr uint8_t RightKey = 7;
+        static constexpr uint8_t L1Key = 8;
+        static constexpr uint8_t L2Key = 9;
+        static constexpr uint8_t R1Key = 10;
+        static constexpr uint8_t R2Key = 11;
+        static constexpr uint8_t LeftYKey = 12;
+        static constexpr uint8_t RightYKey = 13;
+        static constexpr uint8_t LeftXKey = 14;
+        static constexpr uint8_t RightXKey = 15;
 
         LEMControllerValues() {
             
         }
 
-        static constexpr uint8_t LeftYKey = 0;
-        static constexpr uint8_t RightYKey = 1;
-        static constexpr uint8_t LeftXKey = 2;
-        static constexpr uint8_t RightXKey = 3;
-        static constexpr uint8_t AKey = 4;
-        static constexpr uint8_t BKey = 5;
-        static constexpr uint8_t XKey = 6;
-        static constexpr uint8_t YKey = 7;
-        static constexpr uint8_t UpKey = 8;
-        static constexpr uint8_t DownKey = 9;
-        static constexpr uint8_t LeftKey = 10;
-        static constexpr uint8_t RightKey = 11;
-        static constexpr uint8_t L1Key = 12;
-        static constexpr uint8_t L2Key = 13;
-        static constexpr uint8_t R1Key = 14;
-        static constexpr uint8_t R2Key = 15;
+        uint8_t getControllerKey(pros::controller_digital_e_t button) {
+            uint8_t key = 0;
 
-        void setControllerValue(uint8_t key, int16_t value) {
-            switch (key) {
-                case LeftYKey:
-                    LeftY = value;
+            switch (button) {
+                case pros::E_CONTROLLER_DIGITAL_A:
+                    key = AKey;
                     break;
-                case RightYKey:
-                    RightY = value;
+                case pros::E_CONTROLLER_DIGITAL_B:
+                    key = BKey;
                     break;
-                case LeftXKey:
-                    LeftX = value;
+                case pros::E_CONTROLLER_DIGITAL_X:
+                    key = XKey;
                     break;
-                case RightXKey:
-                    RightX = value;
+                case pros::E_CONTROLLER_DIGITAL_Y:
+                    key = YKey;
                     break;
-                case AKey:
-                    A = value;
+                case pros::E_CONTROLLER_DIGITAL_UP:
+                    key = UpKey;
                     break;
-                case BKey:
-                    B = value;
+                case pros::E_CONTROLLER_DIGITAL_DOWN:
+                    key = DownKey;
                     break;
-                case XKey:
-                    X = value;
+                case pros::E_CONTROLLER_DIGITAL_LEFT:
+                    key = LeftKey;
                     break;
-                case YKey:
-                    Y = value;
+                case pros::E_CONTROLLER_DIGITAL_RIGHT:
+                    key = RightKey;
                     break;
-                case UpKey:
-                    Up = value;
+                case pros::E_CONTROLLER_DIGITAL_L1:
+                    key = L1Key;
                     break;
-                case DownKey:
-                    Down = value;
+                case pros::E_CONTROLLER_DIGITAL_L2:
+                    key = L2Key;
                     break;
-                case LeftKey:
-                    Left = value;
+                case pros::E_CONTROLLER_DIGITAL_R1:
+                    key = R1Key;
                     break;
-                case RightKey:
-                    Right = value;
-                    break;
-                case L1Key:
-                    L1 = value;
-                    break;
-                case L2Key:
-                    L2 = value;
-                    break;
-                case R1Key:
-                    R1 = value;
-                    break;
-                case R2Key:
-                    R2 = value;
+                case pros::E_CONTROLLER_DIGITAL_R2:
+                    key = R2Key;
                     break;
             }
+
+            return key;
+
         }
 
-    };*/
 
+    };
+    
 
 class LEMController {
 private:
@@ -133,7 +126,9 @@ protected:
     std::vector<std::string> modes = {"DEFAULT"};
     std::vector<LEMButtonMapping> buttonsToFunctions; 
 
+    std::unordered_map<pros::controller_digital_e_t, bool> buttonStates;
 
+    LEMControllerValues controllerValues;
     /**
      * @brief When the main loop starts, this function gets called and uses function pointers/modes info to run user-made functions automaically.
      * 
@@ -155,32 +150,11 @@ public:
     /**
      * @brief Get whether a button is pressed.
      * 
-     * @param button 
+     * @param buttons vector of the buttons you want checked.
      * @return true 
      * @return false 
      */
-    bool getButton(pros::controller_digital_e_t button);
-
-    /**
-     * @brief Checks if two buttons were pressed at once.
-     * 
-     * @param button 
-     * @param button2 
-     * @return true 
-     * @return false 
-     */
-    bool getButtonCombination(pros::controller_digital_e_t button, pros::controller_digital_e_t button2);
-
-    /**
-     * @brief Checks if three buttons were pressed at once.
-     * 
-     * @param button 
-     * @param button2 
-     * @param button3 
-     * @return true 
-     * @return false 
-     */
-    bool getButtonCombination(pros::controller_digital_e_t button, pros::controller_digital_e_t button2, pros::controller_digital_e_t button3);
+    bool getButton(std::vector<pros::controller_digital_e_t> buttons);
 
     /**
      * @brief Checks if there was a new button press.

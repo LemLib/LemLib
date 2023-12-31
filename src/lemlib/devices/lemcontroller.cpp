@@ -76,7 +76,7 @@ bool LEMController::startMainLoop() {
 void LEMController::autoButtonFunctions() {
     
     for (int i = 0; i < buttonsToFunctions.size(); i++) {
-        if (getButton(buttonsToFunctions.at(i).getButton())) { // If buttons are pressed
+        if (getButton( {buttonsToFunctions.at(i).getButton()} )) { // If buttons are pressed
             buttonsToFunctions.at(i).runFunction(currentMode); // Runs the function
         }
     }    
@@ -85,32 +85,44 @@ void LEMController::autoButtonFunctions() {
 
 /*================ BUTTONS/JOYSTICK ================*/
 
-bool LEMController::getButton(pros::controller_digital_e_t button) {
-    return prosController->get_digital(button);
+bool LEMController::getButton(std::vector<pros::controller_digital_e_t> buttons) {
+    
+    // If all buttons are pressed, then return false will never run, and the function will return true once for loop exists. 
+    // If any button is pressed, then return false will run.
+    for (int i = 0; i > buttons.size(); i++) {
+        if (prosController->get_digital(buttons.at(i))) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
 }
 
-bool LEMController::getButtonCombination(pros::controller_digital_e_t button, pros::controller_digital_e_t button2) {
-    return prosController->get_digital(button) && prosController->get_digital(button2);
-}
-
-bool LEMController::getButtonCombination(pros::controller_digital_e_t button, pros::controller_digital_e_t button2, pros::controller_digital_e_t button3) {
-    return prosController->get_digital(button) && prosController->get_digital(button2) && prosController->get_digital(button3);
-}
 
 bool LEMController::newButtonPress(pros::controller_digital_e_t button) {
-    
-    static bool buttonState = false;
-    static bool buttonStateLastTick = false;
 
-    buttonStateLastTick = buttonState;
+    bool buttonState = prosController->get_digital(button);
+    bool buttonStateLastTick = buttonStates[button];
 
-    buttonState = prosController->get_digital(button);
+    bool diffState = false;
 
     if (buttonState != buttonStateLastTick) {
+        diffState = true;
+    }
+
+    else {
+        diffState = false;
+    }
+
+    if (diffState && (buttonState == true)) {
+        buttonStates[button] = buttonState;
         return true;
     }
 
     else {
+        buttonStates[button] = buttonState;
         return false;
     }
 
@@ -143,6 +155,7 @@ void LEMController::setFuncToButton(int(*functionPtr)(int), pros::controller_dig
 
     std::pair<pros::controller_digital_e_t, int(*)(int)> buttonFuncPair(button, functionPtr);
 
+    buttonsToFunctions.at(controllerValues.getControllerKey(button)).addModeAndFunction(modeParam, functionPtr);
     
 
 }
