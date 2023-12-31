@@ -351,15 +351,6 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
         break;
     }
 
-    private:
-    // Enum to represent different movement types
-    enum MovementType {
-        RelativeWithoutAngle,
-        RelativeWithAngle,
-        ClassicMovement
-        // Add more movement types as needed
-    };
-
     // Function to determine the movement type based on user input
     MovementType getMovementType(const MovementParams& params) {
         if (!isnan(params.distance)) {
