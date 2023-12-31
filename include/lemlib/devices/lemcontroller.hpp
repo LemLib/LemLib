@@ -9,11 +9,11 @@ namespace lemlib {
     private:
 
         pros::controller_digital_e_t button;
-        std::vector<std::pair<std::string, int(*)(int)>> functions;
+        std::vector<std::pair<std::string, std::pair<int(*)(int), int(*)(int)>>> functions;
 
     public:
 
-        LEMButtonMapping(pros::controller_digital_e_t buttonParam, std::string modeParam, int(*functionParam)(int)) {
+        LEMButtonMapping(pros::controller_digital_e_t buttonParam, std::string modeParam, std::pair<int(*)(int), int(*)(int)> functionParam) {
             button = buttonParam;
             functions.push_back({modeParam, functionParam});
         }
@@ -23,14 +23,23 @@ namespace lemlib {
             return button;
         }
 
-        void addModeAndFunction(std::string modeParam, int(*functionParam)(int)) {
+        void addModeAndFunction(std::string modeParam, std::pair<int(*)(int), int(*)(int)> functionParam) {
             functions.push_back({modeParam, functionParam});
         }
 
-        void runFunction(std::string mode, int funcParam = 0) {
+        void runFunction(std::string mode, bool buttonState, int funcParam = 0) {
+
+            // Loops through all the functions and runs the one that matches the mode.
+
             for (int i = 0; i < functions.size(); i++) {
-                if (functions[i].first == mode) {
-                    functions[i].second(funcParam);
+                if (functions[i].first == mode) { // If the mode matches,
+                    if (buttonState == true) {
+                        functions[i].second.second(funcParam); // Run the function pointer for the true state
+                    }
+                    else {
+                        functions[i].second.first(funcParam); // Run the function pointer for the false state
+                    }
+                    
                 }
             }
         }
@@ -137,8 +146,20 @@ protected:
 
 public:
 
+    /**
+     * @brief Construct a new LEMController object
+     * 
+     * @param controllerID 
+     * @param modesParam 
+     */
     LEMController(pros::controller_id_e_t controllerID, std::vector<std::string> modesParam = {"DEFAULT"});
     
+    /**
+     * @brief Construct a new LEMController object
+     * 
+     * @param controller 
+     * @param modesParam 
+     */
     LEMController(pros::Controller* controller, std::vector<std::string> modesParam = {"DEFAULT"});
     
     ~LEMController();
@@ -183,13 +204,14 @@ public:
     int getJoystick(pros::controller_analog_e_t whichJoystick);
 
     /**
-     * @brief Sets a button to a user-made function. When pressed, the function will automatically run without needing input from the user.
+     * @brief Sets a button to two user-made functions. When pressed, the function will automatically run without needing input from the user.
      * 
-     * @param functionPtr An integer function pointer. Int Data Type lets you return an error code if necessary.
-     * @param button 
+     * @param functionPtr A pair of integer function pointers. Int Data Type lets you return an error code if necessary. First function pointer
+     * is when the controller value is false, second function pointer is when the controller value is true.
+     * @param button Button you want these functions paired to.
      * @param modeParam Mode to add the button to. Defaults to "DEFAULT".
      */
-    void setFuncToButton(int(*functionPtr)(int), pros::controller_digital_e_t button, std::string modeParam = "DEFAULT");
+    void setFuncToButton(std::pair<int(*)(int), int(*)(int)>, pros::controller_digital_e_t button, std::string modeParam = "DEFAULT");
 
 
     /*================ MODES ================*/

@@ -77,7 +77,7 @@ void LEMController::autoButtonFunctions() {
     
     for (int i = 0; i < buttonsToFunctions.size(); i++) {
         if (getButton( {buttonsToFunctions.at(i).getButton()} )) { // If buttons are pressed
-            buttonsToFunctions.at(i).runFunction(currentMode); // Runs the function
+            buttonsToFunctions.at(i).runFunction(currentMode, controllerValues.getControllerKey(buttonsToFunctions.at(i).getButton())); // Runs the function
         }
     }    
     
@@ -151,9 +151,9 @@ int LEMController::getJoystick(pros::controller_analog_e_t whichJoystick) {
     return joystickValue;
 }
 
-void LEMController::setFuncToButton(int(*functionPtr)(int), pros::controller_digital_e_t button, std::string modeParam) {
+void LEMController::setFuncToButton(std::pair<int(*)(int), int(*)(int)> functionPtr, pros::controller_digital_e_t button, std::string modeParam) {
 
-    std::pair<pros::controller_digital_e_t, int(*)(int)> buttonFuncPair(button, functionPtr);
+    std::pair<pros::controller_digital_e_t, std::pair<int(*)(int), int(*)(int)>> buttonFuncPair(button, functionPtr);
 
     buttonsToFunctions.at(controllerValues.getControllerKey(button)).addModeAndFunction(modeParam, functionPtr);
     

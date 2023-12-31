@@ -48,8 +48,8 @@ TEST(LEMControllerTest, TestGetButton) {
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
   lemlib::LEMController controller(paramcontroller, modes);
 
-  EXPECT_EQ(controller.getButton(pros::E_CONTROLLER_DIGITAL_B), paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_B));
-  EXPECT_EQ(controller.getButton(pros::E_CONTROLLER_DIGITAL_A), paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_A));
+  EXPECT_EQ(controller.getButton({pros::E_CONTROLLER_DIGITAL_B}), paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_B));
+  EXPECT_EQ(controller.getButton({pros::E_CONTROLLER_DIGITAL_A}), paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_A));
 
   delete paramcontroller;
   
@@ -62,7 +62,7 @@ TEST(LEMControllerTest, TestGetTwoButtons) {
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
   lemlib::LEMController controller(paramcontroller, modes);
 
-  EXPECT_EQ(controller.getButtonCombination(pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_A), 
+  EXPECT_EQ(controller.getButton({pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_A}), 
     (paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_B) && paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_A)));
 
   delete paramcontroller;
@@ -77,8 +77,9 @@ TEST(LEMControllerTest, TestGetThreeButtons) {
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
   lemlib::LEMController controller(paramcontroller, modes);
 
-  EXPECT_EQ(controller.getButtonCombination(pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_X), 
-    paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_X));
+  EXPECT_EQ(controller.getButtonCombination({pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_X}), 
+    (paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_B) && paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_A) && 
+    paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_X)));
 
   delete paramcontroller;
   
@@ -100,8 +101,12 @@ TEST(LEMControllerTest, addMode) {
  
 }
 
-int returnSelfTestFunc(int param) {
+int returnSelfTestFuncTrue(int param) {
   return param;
+}
+
+int returnNegSelfTestFuncFalse(int param) {
+  return -param;
 }
 
 TEST(LEMControllerTest, addFunction) {
@@ -113,9 +118,13 @@ TEST(LEMControllerTest, addFunction) {
 
   const int parameter = 69;
 
-  controller.setFuncToButton(&returnSelfTestFunc(parameter), pros::E_CONTROLLER_DIGITAL_A, modes[0]);
+  controller.setFuncToButton(std::make_pair<int(*)(int), int(*)(int)>(&returnSelfTestFuncTrue(parameter), &returnNegSelfTestFuncFalse(parameter)), 
+    pros::E_CONTROLLER_DIGITAL_A, modes[0]);
 
-  EXPECT_EQ(controller.getButtonsToFunctions().at(0).runFunction(modes[0], parameter), 
+  EXPECT_EQ(controller.getButtonsToFunctions().at(0).runFunction(modes[0], true, parameter), 
+    returnSelfTestFunc(parameter));
+
+  EXPECT_EQ(controller.getButtonsToFunctions().at(0).runFunction(modes[0], false, parameter), 
     returnSelfTestFunc(parameter));
 
   delete paramcontroller;
@@ -125,10 +134,14 @@ TEST(LEMControllerTest, addFunction) {
 int beenRunBeforeTestFunc(int param) {
   
   static bool beenRunBefore = false;
-
-  if (beenRunBefore) {
-    beenRunBefore = 1;
+  static int counter = 0;
+  
+  if (counter > 11) {
+    beenRunBefore = true;
+    
   }
+
+  counter++;
   
   return beenRunBefore;
 
@@ -146,12 +159,12 @@ TEST(LEMControllerTest, autoLoopFunctions) {
   // Create an instance of LemController
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
 
-  std::vector<int(*)(int)> testFunctionsContainer;
+  std::vector<std::pair<int(*)(int),int(*)(int)> testFunctionsContainer;
 
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
   lemlib::LEMController controller(paramcontroller, modes);
 
-  const int parameter = 100;
+  int parameter = 0;
 
   pros::controller_digital_e_t buttons[] = {pros::E_CONTROLLER_DIGITAL_A, 
         pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_X, 
@@ -163,7 +176,7 @@ TEST(LEMControllerTest, autoLoopFunctions) {
 
   // Insert the test functions into the vector.
   for (int i = 0; i > buttons.size(); i++) {
-    testFunctionsContainer.emplace_back(&beenRunBeforeTestFunc(parameter));
+    testFunctionsContainer.emplace_back(&beenRunBeforeTestFunc(parameter), &beenRunBeforeTestFunc(parameter));
   }
   
   // Set the functions to the buttons.
@@ -172,13 +185,12 @@ TEST(LEMControllerTest, autoLoopFunctions) {
   }
 
   // Run once to set everything to true.
-  controller.autoLoopFunctions(modes[0], parameter);
+  controller.autoLoopFunctions(modes[0], true, parameter);
 
-  // Check to see if everything is true. If not, error has occured.
+  // Check to see if everything is true. If not, function didn't run has occured.
   for (int i = 0; i > buttons.size(); i++) {
-    EXPECT_EQ(testFunctionsContainer.at(i)(parameter), 1);
+    EXPECT_EQ(testFunctionsContainer.at(i)(parameter).first(), true);
   }
-  
 
   delete paramcontroller;
  
