@@ -289,7 +289,23 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     distTravelled = -1;
     this->endMotion();
 }
-
+ * @brief Figure Out The Movement Type For Boomerang Controller
+ */
+// Function to determine the movement type based on user input
+MovementType getMovementType(const MoveToPoseTarget& params_t) {
+    if (!isnan(params_t.dist)) {
+        return RelativeWithoutAngle;
+    } else if (!isnan(params_t.dist) && !isnan(params_t.theta)) {
+        return RelativeWithAngle;
+    } else if (!isnan(params_t.x) || !isnan(params_t.y) || !isnan(params_t.theta)) {
+        return ClassicMovement;
+    } else {
+        // Handle unknown movement type
+        // Maybe log error
+        return ClassicMovement; // Default to classic movement for unknown
+                                // input
+    }
+}
 /**
  * @brief Move the chassis towards the target pose
  *
@@ -349,22 +365,6 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
         // calculate target pose in standard form
         target = (targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
         break;
-    }
-
-    // Function to determine the movement type based on user input
-    MovementType getMovementType(const MoveToPoseTarget& params_t) {
-        if (!isnan(params_t.dist)) {
-            return RelativeWithoutAngle;
-        } else if (!isnan(params_t.dist) && !isnan(params_t.theta)) {
-            return RelativeWithAngle;
-        } else if (!isnan(params_t.x) || !isnan(params_t.y) || !isnan(params_t.theta)) {
-            return ClassicMovement;
-        } else {
-            // Handle unknown movement type
-            // Maybe log error
-            return ClassicMovement; // Default to classic movement for unknown
-                                    // input
-        }
     }
   
     if (!params.forwards)
