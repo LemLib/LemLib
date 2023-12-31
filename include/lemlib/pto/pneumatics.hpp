@@ -34,6 +34,5 @@ class PistonGroup {
     private:
         std::vector<pros::ADIDigitalOut> pistonsVec;
         std::vector<bool> states;
-        int size = 0;
 };
 } // namespace lemlib

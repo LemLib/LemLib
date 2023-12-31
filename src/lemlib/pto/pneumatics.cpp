@@ -17,7 +17,6 @@ PistonGroup::PistonGroup(const std::vector<pros::ADIDigitalOut> pistonsVec)
     : pistonsVec(pistonsVec) {
     for (pros::ADIDigitalOut piston : pistonsVec) {
         states.push_back(false);
-        size += 1;
     }
 }
 
@@ -25,7 +24,6 @@ PistonGroup::PistonGroup(const std::vector<uint8_t> ports) {
     for (std::uint8_t port : ports) {
         pistonsVec.push_back(pros::ADIDigitalOut(port));
         states.push_back(false);
-        size += 1;
     }
 }
 
@@ -45,7 +43,7 @@ void PistonGroup::retract() {
 
 // PistonGroup toggle
 void PistonGroup::toggle() {
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < pistonsVec.size(); i++) {
         pros::ADIDigitalOut piston = pistonsVec[i];
         bool isPistonExtended = states[i];
         if (isPistonExtended) piston.set_value(false);
