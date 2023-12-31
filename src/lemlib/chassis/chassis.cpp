@@ -290,24 +290,6 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     this->endMotion();
 }
 /**
- * @brief Figure Out The Movement Type For Boomerang Controller
- */
-// Function to determine the movement type based on user input
-MovementType getMovementType(const MoveToPoseTarget& params_t) {
-    if (!isnan(params_t.dist)) {
-        return RelativeWithoutAngle;
-    } else if (!isnan(params_t.dist) && !isnan(params_t.theta)) {
-        return RelativeWithAngle;
-    } else if (!isnan(params_t.x) || !isnan(params_t.y) || !isnan(params_t.theta)) {
-        return ClassicMovement;
-    } else {
-        // Handle unknown movement type
-        // Maybe log error
-        return ClassicMovement; // Default to classic movement for unknown
-                                // input
-    }
-}
-/**
  * @brief Move the chassis towards the target pose
  *
  * Uses the boomerang controller
@@ -342,18 +324,33 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
     angularPID.reset();
     angularLargeExit.reset();
     angularSmallExit.reset();
-
-    const Pose pose = getPose(true, true);
+  
+    // figure out movement type
+    MovementType mType;
+    if (!isnan(targetPose.dist)) {
+        mType = RelativeWithoutAngle;
+    } else if (!isnan(targetPose.dist) && !isnan(targetPose.theta)) {
+        mType = RelativeWithAngle;
+    } else if (!isnan(targetPose.x) || !isnan(targetPose.y) || !isnan(targetPose.theta)) {
+        mType = ClassicMovement;
+    } else {
+        // Handle unknown movement type
+        // Maybe log error
+        mType = ClassicMovement; // Default to classic movement for unknown
+                                // input
+    }
+  
+    const Pose pose_t = getPose(true, true);
     // Recalculate target based on user input
     Pose target(targetPose.x, targetPose.y,  M_PI_2 - degToRad(targetPose.theta));
-    switch (getMovementType(targetPose)) {
+    switch (mType) {
     case RelativeWithoutAngle:
-        target = (pose.x + targetPose.dist * std::cos(pose.theta), pose.y + targetPose.dist * std::sin(pose.theta),
-                       pose.theta);
+        target = (pose_t.x + targetPose.dist * std::cos(pose_t.theta), pose_t.y + targetPose.dist * std::sin(pose_t.theta),
+                       pose_t.theta);
         break;
     case RelativeWithAngle:
-        target = (pose.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
-                       pose.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
+        target = (pose_t.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
+                       pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
         break;
     case ClassicMovement:
         // calculate target pose in standard form
