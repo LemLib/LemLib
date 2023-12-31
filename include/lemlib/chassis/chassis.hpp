@@ -134,6 +134,14 @@ struct MoveToPoseTarget {
     float y = std::numeric_limits<float>::quiet_NaN();
     float theta = std::numeric_limits<float>::quiet_NaN();
 };
+
+// Enum to represent different movement types
+enum MovementType {
+    RelativeWithoutAngle,
+    RelativeWithAngle,
+    ClassicMovement
+    // Add more movement types as needed
+};
 /**
  * @brief Flags for Chassis::moveToPose
  *
@@ -379,5 +387,6 @@ class Chassis {
     ExitCondition lateralSmallExit;
     ExitCondition angularLargeExit;
     ExitCondition angularSmallExit;
+    MovementType getMovementType(const MovementParams& params);
 };
 } // namespace lemlib
