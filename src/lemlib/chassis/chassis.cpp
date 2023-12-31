@@ -352,12 +352,12 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
     }
 
     // Function to determine the movement type based on user input
-    MovementType getMovementType(const MovementParams& params) {
-        if (!isnan(params.distance)) {
+    MovementType getMovementType(const MoveToPoseTarget& params_t) {
+        if (!isnan(params_t.dist)) {
             return RelativeWithoutAngle;
-        } else if (!isnan(params.distance) && !isnan(params.angle)) {
+        } else if (!isnan(params_t.dist) && !isnan(params_t.theta)) {
             return RelativeWithAngle;
-        } else if (!isnan(params.x) || !isnan(params.y) || !isnan(params.angle)) {
+        } else if (!isnan(params_t.x) || !isnan(params_t.y) || !isnan(params_t.theta)) {
             return ClassicMovement;
         } else {
             // Handle unknown movement type
