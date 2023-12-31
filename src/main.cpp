@@ -127,7 +127,7 @@ void autonomous() {
     // example movement: Move to x: 20 and y: 15, and face heading 90. Timeout set to 4000 ms
     chassis.moveToPose({.x=20,.y=15,.theta=90}, 4000);
     // example movement: Move to x: 0 and y: 0 and face heading 270, going backwards. Timeout set to 4000ms
-    chassis.moveToPose({{.x=0,.y=0,.theta=270}}, 4000, {.forwards = false});
+    chassis.moveToPose({.x=0,.y=0,.theta=270}, 4000, {.forwards = false});
     // example movement: Move forward 10 inches face heading 90. Timeout set to 4000ms
     chassis.moveToPose({.dist=10,.theta=90},4000);
     // cancel the movement after it has travelled 10 inches
