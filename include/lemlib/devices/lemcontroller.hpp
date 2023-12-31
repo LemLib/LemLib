@@ -1,4 +1,4 @@
-#include "main.h"
+#include "pros/device.hpp"
 
 namespace lemlib {
 
