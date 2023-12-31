@@ -1,635 +1,403 @@
 /**
- * @file src/lemlib/chassis/chassis.cpp
+ * @file include/lemlib/chassis/chassis.hpp
  * @author LemLib Team
- * @brief definitions for the chassis class
+ * @brief Chassis class declarations
  * @version 0.4.5
- * @date 2023-01-27
+ * @date 2023-01-23
  *
  * @copyright Copyright (c) 2023
  *
  */
-#include "lemlib/chassis/chassis.hpp"
-#include "lemlib/chassis/odom.hpp"
+#pragma once
+#include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
-#include "lemlib/timer.hpp"
-#include "lemlib/util.hpp"
-#include "pros/misc.hpp"
+#include "lemlib/exitcondition.hpp"
+#include "lemlib/pid.hpp"
+#include "lemlib/pose.hpp"
+#include "pros/imu.hpp"
 #include "pros/motors.hpp"
-#include "pros/rtos.h"
 #include "pros/rtos.hpp"
-#include <algorithm>
+#include <cmath>
 #include <functional>
 #include <limits>
-#include <math.h>
 
+namespace lemlib {
 /**
- * @brief The variables are pointers so that they can be set to nullptr if they
- * are not used Otherwise the chassis class would have to have a constructor for
- * each possible combination of sensors
- *
- * @param vertical1 pointer to the first vertical tracking wheel
- * @param vertical2 pointer to the second vertical tracking wheel
- * @param horizontal1 pointer to the first horizontal tracking wheel
- * @param horizontal2 pointer to the second horizontal tracking wheel
- * @param imu pointer to the IMU
- */
-lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
-                                 TrackingWheel* horizontal2, pros::Imu* imu)
-    : vertical1(vertical1), vertical2(vertical2), horizontal1(horizontal1), horizontal2(horizontal2), imu(imu) {}
-
-/**
- * @brief The constants are stored in a struct so that they can be easily passed
- * to the chassis class Set a constant to 0 and it will be ignored
- *
- * @param leftMotors pointer to the left motors
- * @param rightMotors pointer to the right motors
- * @param trackWidth the track width of the robot
- * @param wheelDiameter the diameter of the wheel used on the drivetrain
- * @param rpm the rpm of the wheels
- * @param chasePower higher values make the robot move faster but causes more
- * overshoot on turns
- */
-lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth,
-                               float wheelDiameter, float rpm, float chasePower)
-    : leftMotors(leftMotors), rightMotors(rightMotors), trackWidth(trackWidth), wheelDiameter(wheelDiameter), rpm(rpm),
-      chasePower(chasePower) {}
-
-/**
- * @brief Construct a new Chassis
- *
- * @param drivetrain drivetrain to be used for the chassis
- * @param lateralSettings settings for the lateral controller
- * @param angularSettings settings for the angular controller
- * @param sensors sensors to be used for odometry
- * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
- */
-lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings lateralSettings, ControllerSettings angularSettings,
-                         OdomSensors sensors, DriveCurveFunction_t driveCurve)
-    : drivetrain(drivetrain), lateralSettings(lateralSettings), angularSettings(angularSettings), sensors(sensors),
-      driveCurve(driveCurve),
-      lateralPID(lateralSettings.kP, lateralSettings.kI, lateralSettings.kD, lateralSettings.windupRange, true),
-      angularPID(angularSettings.kP, angularSettings.kI, angularSettings.kD, angularSettings.windupRange, true),
-      lateralLargeExit(lateralSettings.largeError, lateralSettings.largeErrorTimeout),
-      lateralSmallExit(lateralSettings.smallError, lateralSettings.smallErrorTimeout),
-      angularLargeExit(angularSettings.largeError, angularSettings.largeErrorTimeout),
-      angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout) {}
-
-/**
- * @brief Calibrate the chassis sensors
- *
- * @param calibrateIMU whether the IMU should be calibrated. true by default
- */
-void lemlib::Chassis::calibrate(bool calibrateIMU) {
-    // calibrate the IMU if it exists and the user doesn't specify otherwise
-    if (sensors.imu != nullptr && calibrateIMU) {
-        int attempt = 1;
-        // calibrate inertial, and if calibration fails, then repeat 5 times or
-        // until successful
-        while (sensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
-               attempt < 5) {
-            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
-            pros::delay(10);
-            attempt++;
-        }
-        if (attempt == 5)
-            sensors.imu = nullptr;
-    }
-    // initialize odom
-    if (sensors.vertical1 == nullptr)
-        sensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
-                                                      -(drivetrain.trackWidth / 2), drivetrain.rpm);
-    if (sensors.vertical2 == nullptr)
-        sensors.vertical2 = new lemlib::TrackingWheel(drivetrain.rightMotors, drivetrain.wheelDiameter,
-                                                      drivetrain.trackWidth / 2, drivetrain.rpm);
-    sensors.vertical1->reset();
-    sensors.vertical2->reset();
-    if (sensors.horizontal1 != nullptr)
-        sensors.horizontal1->reset();
-    if (sensors.horizontal2 != nullptr)
-        sensors.horizontal2->reset();
-    lemlib::setSensors(sensors, drivetrain);
-    lemlib::init();
-    // rumble to controller to indicate success
-    pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
-}
-
-/**
- * @brief Set the Pose object
- *
- * @param x new x value
- * @param y new y value
- * @param theta new theta value
- * @param radians true if theta is in radians, false if not. False by default
- */
-void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
-    lemlib::setPose(lemlib::Pose(x, y, theta), radians);
-}
-
-/**
- * @brief Set the pose of the chassis
- *
- * @param Pose the new pose
- * @param radians whether pose theta is in radians (true) or not (false). false
- * by default
- */
-void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
-
-/**
- * @brief Get the pose of the chassis
- *
- * @param radians whether theta should be in radians (true) or degrees (false).
- * false by default
- * @return Pose
- */
-lemlib::Pose lemlib::Chassis::getPose(bool radians, bool standardPos) {
-    Pose pose = lemlib::getPose(true);
-    if (standardPos)
-        pose.theta = M_PI_2 - pose.theta;
-    if (!radians)
-        pose.theta = radToDeg(pose.theta);
-    return pose;
-}
-
-/**
- * @brief Wait until the robot has traveled a certain distance along the path
- *
- * @note Units are in inches if current motion is moveTo or follow, degrees if
- * using turnTo
- *
- * @param dist the distance the robot needs to travel before returning
- */
-void lemlib::Chassis::waitUntil(float dist) {
-    // do while to give the thread time to start
-    do
-        pros::delay(10);
-    while (distTravelled <= dist && distTravelled != -1);
-}
-
-/**
- * @brief Wait until the robot has completed the path
+ * @brief Struct containing all the sensors used for odometry
  *
  */
-void lemlib::Chassis::waitUntilDone() {
-    do
-        pros::delay(10);
-    while (distTravelled != -1);
-}
-
-void lemlib::Chassis::requestMotionStart() {
-    if (this->isInMotion())
-        this->motionQueued = true; // indicate a motion is queued
-    else
-        this->motionRunning = true; // indicate a motion is running
-
-    // wait until this motion is at front of "queue"
-    this->mutex.take(TIMEOUT_MAX);
-
-    // this->motionRunning should be true
-    // and this->motionQueued should be false
-    // indicating this motion is running
-}
-
-void lemlib::Chassis::endMotion() {
-    // move the "queue" forward 1
-    this->motionRunning = this->motionQueued;
-    this->motionQueued = false;
-
-    // permit queued motion to run
-    this->mutex.give();
-}
-
-void lemlib::Chassis::cancelMotion() {
-    this->motionRunning = false;
-    pros::delay(10); // give time for motion to stop
-}
-
-void lemlib::Chassis::cancelAllMotions() {
-    this->motionRunning = false;
-    this->motionQueued = false;
-    pros::delay(10); // give time for motion to stop
-}
-
-bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
+struct OdomSensors {
+        /**
+         * The sensors are stored in a struct so that they can be easily passed to the
+         * chassis class The variables are pointers so that they can be set to nullptr
+         * if they are not used Otherwise the chassis class would have to have a
+         * constructor for each possible combination of sensors
+         *
+         * @param vertical1 pointer to the first vertical tracking wheel
+         * @param vertical2 pointer to the second vertical tracking wheel
+         * @param horizontal1 pointer to the first horizontal tracking wheel
+         * @param horizontal2 pointer to the second horizontal tracking wheel
+         * @param imu pointer to the IMU
+         */
+        OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
+                    TrackingWheel* horizontal2, pros::Imu* imu);
+        TrackingWheel* vertical1;
+        TrackingWheel* vertical2;
+        TrackingWheel* horizontal1;
+        TrackingWheel* horizontal2;
+        pros::Imu* imu;
+};
 
 /**
- * @brief Turn the chassis so it is facing the target point
+ * @brief Struct containing constants for a chassis controller
  *
- * The PID logging id is "angularPID"
+ */
+struct ControllerSettings {
+        /**
+         * The constants are stored in a struct so that they can be easily passed to
+         * the chassis class Set a constant to 0 and it will be ignored
+         *
+         * @param kP proportional constant for the chassis controller
+         * @param kI integral constant for the chassis controller
+         * @param kD derivative constant for the chassis controller
+         * @param antiWindup
+         * @param smallError the error at which the chassis controller will switch to
+         * a slower control loop
+         * @param smallErrorTimeout the time the chassis controller will wait before
+         * switching to a slower control loop
+         * @param largeError the error at which the chassis controller will switch to
+         * a faster control loop
+         * @param largeErrorTimeout the time the chassis controller will wait before
+         * switching to a faster control loop
+         * @param slew the maximum acceleration of the chassis controller
+         */
+        ControllerSettings(float kP, float kI, float kD, float windupRange, float smallError, float smallErrorTimeout,
+                           float largeError, float largeErrorTimeout, float slew)
+            : kP(kP),
+              kI(kI),
+              kD(kD),
+              windupRange(windupRange),
+              smallError(smallError),
+              smallErrorTimeout(smallErrorTimeout),
+              largeError(largeError),
+              largeErrorTimeout(largeErrorTimeout),
+              slew(slew) {}
+
+        float kP;
+        float kI;
+        float kD;
+        float windupRange;
+        float smallError;
+        float smallErrorTimeout;
+        float largeError;
+        float largeErrorTimeout;
+        float slew;
+};
+
+/**
+ * @brief Struct containing constants for a drivetrain
  *
- * @param x x location
- * @param y y location
- * @param timeout longest time the robot can spend moving
- * @param forwards whether the robot should turn to face the point with the
- * front of the robot. true by default
- * @param maxSpeed the maximum speed the robot can turn at. Default is 127
- * @param async whether the function should be run asynchronously. true by
+ */
+struct Drivetrain {
+        /**
+         * The constants are stored in a struct so that they can be easily passed to
+         * the chassis class Set a constant to 0 and it will be ignored
+         *
+         * @param leftMotors pointer to the left motors
+         * @param rightMotors pointer to the right motors
+         * @param trackWidth the track width of the robot
+         * @param wheelDiameter the diameter of the wheel used on the drivetrain
+         * @param rpm the rpm of the wheels
+         * @param chasePower higher values make the robot move faster but causes more
+         * overshoot on turns
+         */
+        Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth, float wheelDiameter,
+                   float rpm, float chasePower);
+        pros::Motor_Group* leftMotors;
+        pros::Motor_Group* rightMotors;
+        float trackWidth;
+        float wheelDiameter;
+        float rpm;
+        float chasePower;
+};
+
+/**
+ * @brief Targets for Chassis::moveToPose
+ *
+ * We use a struct to simplify customization. Chassis::moveToPose has many
+ * parameters and specifying them all just to set one optional param ruins
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param dist whether the robot should move forwards or backwards. True by
  * default
+ * @param x how fast the robot will move around corners. Recommended value 2-15.
+ *  0 means use chasePower set in chassis class. 0 by default.
+ * @param y carrot point multiplier. value between 0 and 1. Higher values result
+ * in curvier movements. 0.6 by default
+ * @param theta the maximum speed the robot can travel at. Value between 0-127.
+ *  127 by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
-    this->requestMotionStart();
-    // were all motions cancelled?
-    if (!this->motionRunning)
-        return;
-    // if the function is async, run it in a new task
-    if (async) {
-        pros::Task task([&]() { turnTo(x, y, timeout, forwards, maxSpeed, false); });
-        this->endMotion();
-        pros::delay(10); // delay to give the task time to start
-        return;
-    }
-    float targetTheta;
-    float deltaX, deltaY, deltaTheta;
-    float motorPower;
-    float startTheta = getPose().theta;
-    std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
-    Timer timer(timeout);
-    angularLargeExit.reset();
-    angularSmallExit.reset();
-    angularPID.reset();
+struct MoveToPoseTarget {
+        float dist = std::numeric_limits<float>::quiet_NaN();
+        float x = std::numeric_limits<float>::quiet_NaN();
+        float y = std::numeric_limits<float>::quiet_NaN();
+        float theta = std::numeric_limits<float>::quiet_NaN();
+};
 
-    // main loop
-    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
-        // update variables
-        Pose pose = getPose();
-        pose.theta = (forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
-
-        // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
-
-        deltaX = x - pose.x;
-        deltaY = y - pose.y;
-        targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
-
-        // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta, false);
-
-        // calculate the speed
-        motorPower = angularPID.update(deltaTheta);
-        angularLargeExit.update(deltaTheta);
-        angularSmallExit.update(deltaTheta);
-
-        // cap the speed
-        if (motorPower > maxSpeed)
-            motorPower = maxSpeed;
-        else if (motorPower < -maxSpeed)
-            motorPower = -maxSpeed;
-
-        // move the drivetrain
-        drivetrain.leftMotors->move(motorPower);
-        drivetrain.rightMotors->move(-motorPower);
-
-        pros::delay(10);
-    }
-
-    // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
-    // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
-    this->endMotion();
-}
-/**
- * @brief Move the chassis towards the target pose
- *
- * Uses the boomerang controller
- *
- * @param x x location
- * @param y y location
- * @param theta target heading in degrees.
- * @param timeout longest time the robot can spend moving
- *
- * @param maxSpeed the maximum speed the robot can move at. 127 at default
- * @param async whether the function should be run asynchronously. true by
- * default
- */
-void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveToPoseFlags params, bool async) {
-    // take the mutex
-    this->requestMotionStart();
-    // were all motions cancelled?
-    if (!this->motionRunning)
-        return;
-    // if the function is async, run it in a new task
-    if (async) {
-        pros::Task task([&]() { moveToPose(targetPose, timeout, params, false); });
-        this->endMotion();
-        pros::delay(10); // delay to give the task time to start
-        return;
-    }
-
-    // reset PIDs and exit conditions
-    lateralPID.reset();
-    lateralLargeExit.reset();
-    lateralSmallExit.reset();
-    angularPID.reset();
-    angularLargeExit.reset();
-    angularSmallExit.reset();
-
-    // figure out movement type
-    MovementType mType;
-    if (!isnan(targetPose.dist)) {
-        mType = RelativeWithoutAngle;
-    } else if (!isnan(targetPose.dist) && !isnan(targetPose.theta)) {
-        mType = RelativeWithAngle;
-    } else if (!isnan(targetPose.x) || !isnan(targetPose.y) || !isnan(targetPose.theta)) {
-        mType = ClassicMovement;
-    } else {
-        // Handle unknown movement type
-        // Maybe log error
-        mType = ClassicMovement; // Default to classic movement for unknown
-                                 // input
-    }
-
-    const Pose pose_t = getPose(true, true);
-    // Recalculate target based on user input
-    Pose target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
-    switch (mType) {
-    case RelativeWithoutAngle:
-        target = Pose(pose_t.x + targetPose.dist * std::cos(pose_t.theta),
-                      pose_t.y + targetPose.dist * std::sin(pose_t.theta), pose_t.theta);
-        break;
-    case RelativeWithAngle:
-        target = Pose(pose_t.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
-                      pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
-        break;
-    case ClassicMovement:
-        // calculate target pose in standard form
-        target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
-        break;
-
-    default:
-        // Handle unknown movement type
-        // Log error maybe
-        // calculate target pose in standard form
-        target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
-        break;
-    }
-
-    if (!params.forwards)
-        target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
-
-    // use global chasePower is chasePower is 0
-    if (params.chasePower == 0)
-        params.chasePower = drivetrain.chasePower;
-
-    // initialize vars used between iterations
-    Pose lastPose = getPose();
-    distTravelled = 0;
-    Timer timer(timeout);
-    bool close = false;
-    bool lateralSettled = false;
-    bool prevSameSide = false;
-    float prevLateralOut = 0; // previous lateral power
-    float prevAngularOut = 0; // previous angular power
-    const int compState = pros::competition::get_status();
-
-    // main loop
-    while (!timer.isDone() &&
-           ((!lateralSettled || (!angularLargeExit.getExit() && !angularSmallExit.getExit())) || !close) &&
-           this->motionRunning) {
-        // update position
-        const Pose pose = getPose(true, true);
-
-        // update distance travelled
-        distTravelled += pose.distance(lastPose);
-        lastPose = pose;
-
-        // calculate distance to the target point
-        const float distTarget = pose.distance(target);
-
-        // check if the robot is close enough to the target to start settling
-        if (distTarget < 7.5 && close == false) {
-            close = true;
-            params.maxSpeed = fmax(fabs(prevLateralOut), 60);
-        }
-
-        // check if the lateral controller has settled
-        if (lateralLargeExit.getExit() && lateralSmallExit.getExit())
-            lateralSettled = true;
-
-        // calculate the carrot point
-        Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * params.lead * distTarget;
-        if (close)
-            carrot = target; // settling behavior
-
-        // calculate if the robot is on the same side as the carrot point
-        const bool robotSide =
-            (pose.y - target.y) * -sin(target.theta) <= (pose.x - target.x) * cos(target.theta) + params.earlyExitRange;
-        const bool carrotSide = (carrot.y - target.y) * -sin(target.theta) <=
-                                (carrot.x - target.x) * cos(target.theta) + params.earlyExitRange;
-        const bool sameSide = robotSide == carrotSide;
-        // exit if close
-        if (!sameSide && prevSameSide && close && params.minSpeed != 0)
-            break;
-        prevSameSide = sameSide;
-
-        // calculate error
-        const float adjustedRobotTheta = params.forwards ? pose.theta : pose.theta + M_PI;
-        const float angularError =
-            close ? angleError(adjustedRobotTheta, target.theta) : angleError(adjustedRobotTheta, pose.angle(carrot));
-        float lateralError = pose.distance(carrot);
-        // only use cos when settling
-        // otherwise just multiply by the sign of cos
-        // maxSlipSpeed takes care of lateralOut
-        if (close)
-            lateralError *= cos(angleError(pose.theta, pose.angle(carrot)));
-        else
-            lateralError *= sgn(cos(angleError(pose.theta, pose.angle(carrot))));
-
-        // update exit conditions
-        lateralSmallExit.update(lateralError);
-        lateralLargeExit.update(lateralError);
-        angularSmallExit.update(radToDeg(angularError));
-        angularLargeExit.update(radToDeg(angularError));
-
-        // get output from PIDs
-        float lateralOut = lateralPID.update(lateralError);
-        float angularOut = angularPID.update(radToDeg(angularError));
-
-        // apply restrictions on angular speed
-        angularOut = std::clamp(angularOut, -params.maxSpeed, params.maxSpeed);
-        angularOut = slew(angularOut, prevAngularOut, angularSettings.slew);
-
-        // apply restrictions on lateral speed
-        lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
-
-        // constrain lateral output by max accel
-        // but not for decelerating, since that would interfere with settling
-        if (params.forwards && lateralOut > prevLateralOut)
-            lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-        if (!params.forwards && lateralOut < prevLateralOut)
-            lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-
-        // constrain lateral output by the max speed it can travel at without
-        // slipping
-        const float radius = 1 / fabs(getCurvature(pose, carrot));
-        const float maxSlipSpeed(sqrt(params.chasePower * radius * 9.8));
-        lateralOut = std::clamp(lateralOut, -maxSlipSpeed, maxSlipSpeed);
-        // prioritize angular movement over lateral movement
-        const float overturn = fabs(angularOut) + fabs(lateralOut) - params.maxSpeed;
-        if (overturn > 0)
-            lateralOut -= lateralOut > 0 ? overturn : -overturn;
-
-        // prevent moving in the wrong direction
-        if (params.forwards && !close)
-            lateralOut = std::fmax(lateralOut, 0);
-        else if (!params.forwards && !close)
-            lateralOut = std::fmin(lateralOut, 0);
-
-        // constrain lateral output by the minimum speed
-        if (params.forwards && lateralOut < fabs(params.minSpeed) && lateralOut > 0)
-            lateralOut = fabs(params.minSpeed);
-        if (!params.forwards && -lateralOut < fabs(params.minSpeed) && lateralOut < 0)
-            lateralOut = -fabs(params.minSpeed);
-
-        // update previous output
-        prevAngularOut = angularOut;
-        prevLateralOut = lateralOut;
-
-        // ratio the speeds to respect the max speed
-        float leftPower = lateralOut + angularOut;
-        float rightPower = lateralOut - angularOut;
-        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / params.maxSpeed;
-        if (ratio > 1) {
-            leftPower /= ratio;
-            rightPower /= ratio;
-        }
-
-        // move the drivetrain
-        drivetrain.leftMotors->move(leftPower);
-        drivetrain.rightMotors->move(rightPower);
-
-        // delay to save resources
-        pros::delay(10);
-    }
-
-    // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
-    // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
-    this->endMotion();
-}
+// Enum to represent different movement types
+enum MovementType {
+    RelativeWithoutAngle,
+    RelativeWithAngle,
+    ClassicMovement
+    // Add more movement types as needed
+};
 
 /**
- * @brief Move the chassis towards a target point
+ * @brief Flags for Chassis::moveToPose
  *
- * @param x x location
- * @param y y location
- * @param timeout longest time the robot can spend moving
- * @param maxSpeed the maximum speed the robot can move at. 127 by default
- * @param async whether the function should be run asynchronously. true by
+ * We use a struct to simplify customization. Chassis::moveToPose has many
+ * parameters and specifying them all just to set one optional param ruins
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param forwards whether the robot should move forwards or backwards. True by
  * default
+ * @param chasePower how fast the robot will move around corners. Recommended
+ * value 2-15. 0 means use chasePower set in chassis class. 0 by default.
+ * @param lead carrot point multiplier. value between 0 and 1. Higher values
+ * result in curvier movements. 0.6 by default
+ * @param maxSpeed the maximum speed the robot can travel at. Value between
+ * 0-127. 127 by default
+ * @param minSpeed the minimum speed the robot can travel at. If set to a
+ * non-zero value, the exit conditions will switch to less accurate but smoother
+ * ones. Value between 0-127. 0 by default
+ * @param earlyExitRange distance between the robot and target point where the
+ * movement will exit. Only has an effect if minSpeed is non-zero.
  */
-void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
-    this->requestMotionStart();
-    // were all motions cancelled?
-    if (!this->motionRunning)
-        return;
-    // if the function is async, run it in a new task
-    if (async) {
-        pros::Task task([&]() { moveToPoint(x, y, timeout, forwards, maxSpeed, false); });
-        this->endMotion();
-        pros::delay(10); // delay to give the task time to start
-        return;
-    }
+struct MoveToPoseFlags {
+        bool forwards = true;
+        float chasePower = 0;
+        float lead = 0.6;
+        float maxSpeed = 127;
+        float minSpeed = 0;
+        float earlyExitRange = 0;
+};
 
-    // reset PIDs and exit conditions
-    lateralPID.reset();
-    lateralLargeExit.reset();
-    lateralSmallExit.reset();
-    angularPID.reset();
+/**
+ * @brief Function pointer type for drive curve functions.
+ * @param input The control input in the range [-127, 127].
+ * @param scale The scaling factor, which can be optionally ignored.
+ * @return The new value to be used.
+ */
+typedef std::function<float(float, float)> DriveCurveFunction_t;
+/**
+ * @brief  Default drive curve. Modifies  the input with an exponential curve.
+ * If the input is 127, the function will always output 127, no matter the value
+ * of scale, likewise for -127. This curve was inspired by team 5225, the
+ * Pilons. A Desmos graph of this curve can be found here:
+ * https://www.desmos.com/calculator/rcfjjg83zx
+ * @param input value from -127 to 127
+ * @param scale how steep the curve should be.
+ * @return The new value to be used.
+ */
+float defaultDriveCurve(float input, float scale);
 
-    // calculate target pose in standard form
-    const Pose target(x, y);
-
-    // initialize vars used between iterations
-    Pose lastPose = getPose();
-    distTravelled = 0;
-    Timer timer(timeout);
-    bool close = false;
-    float prevLateralOut = 0; // previous lateral power
-    float prevAngularOut = 0; // previous angular power
-    const int compState = pros::competition::get_status();
-
-    // main loop
-    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) &&
-           this->motionRunning) {
-        // update position
-        const Pose pose = getPose(true, true);
-
-        // update distance travelled
-        distTravelled += pose.distance(lastPose);
-        lastPose = pose;
-
-        // calculate distance to the target point
-        const float distTarget = pose.distance(target);
-
-        // check if the robot is close enough to the target to start settling
-        if (distTarget < 7.5 && close == false) {
-            close = true;
-            maxSpeed = fmax(fabs(prevLateralOut), 60);
-        }
-
-        // calculate error
-        const float adjustedRobotTheta = forwards ? pose.theta : pose.theta + M_PI;
-        const float angularError = angleError(adjustedRobotTheta, pose.angle(target));
-        float lateralError = pose.distance(target) * cos(angleError(pose.theta, pose.angle(target)));
-
-        // update exit conditions
-        lateralSmallExit.update(lateralError);
-        lateralLargeExit.update(lateralError);
-
-        // get output from PIDs
-        float lateralOut = lateralPID.update(lateralError);
-        float angularOut = angularPID.update(radToDeg(angularError));
-        if (close)
-            angularOut = 0;
-
-        // apply restrictions on angular speed
-        angularOut = std::clamp(angularOut, -maxSpeed, maxSpeed);
-        angularOut = slew(angularOut, prevAngularOut, angularSettings.slew);
-
-        // apply restrictions on lateral speed
-        lateralOut = std::clamp(lateralOut, -maxSpeed, maxSpeed);
-        // constrain lateral output by max accel
-        // but not for decelerating, since that would interfere with settling
-        if (forwards && lateralOut > prevLateralOut)
-            lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-        if (!forwards && lateralOut < prevLateralOut)
-            lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-
-        // prevent moving in the wrong direction
-        if (forwards && !close)
-            lateralOut = std::fmax(lateralOut, 0);
-        else if (!forwards && !close)
-            lateralOut = std::fmin(lateralOut, 0);
-
-        // update previous output
-        prevAngularOut = angularOut;
-        prevLateralOut = lateralOut;
-
-        // ratio the speeds to respect the max speed
-        float leftPower = lateralOut + angularOut;
-        float rightPower = lateralOut - angularOut;
-        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
-        if (ratio > 1) {
-            leftPower /= ratio;
-            rightPower /= ratio;
-        }
-
-        // move the drivetrain
-        drivetrain.leftMotors->move(leftPower);
-        drivetrain.rightMotors->move(rightPower);
-
-        // delay to save resources
-        pros::delay(10);
-    }
-
-    // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
-    // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
-    this->endMotion();
-}
+/**
+ * @brief Chassis class
+ *
+ */
+class Chassis {
+    public:
+        /**
+         * @brief Construct a new Chassis
+         *
+         * @param drivetrain drivetrain to be used for the chassis
+         * @param lateralSettings settings for the lateral controller
+         * @param angularSettings settings for the angular controller
+         * @param sensors sensors to be used for odometry
+         * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
+         */
+        Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
+                OdomSensors sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
+        /**
+         * @brief Calibrate the chassis sensors
+         *
+         * @param calibrateIMU whether the IMU should be calibrated. true by default
+         */
+        void calibrate(bool calibrateIMU = true);
+        /**
+         * @brief Set the pose of the chassis
+         *
+         * @param x new x value
+         * @param y new y value
+         * @param theta new theta value
+         * @param radians true if theta is in radians, false if not. False by default
+         */
+        void setPose(float x, float y, float theta, bool radians = false);
+        /**
+         * @brief Set the pose of the chassis
+         *
+         * @param pose the new pose
+         * @param radians whether pose theta is in radians (true) or not (false).
+         * false by default
+         */
+        void setPose(Pose pose, bool radians = false);
+        /**
+         * @brief Get the pose of the chassis
+         *
+         * @param radians whether theta should be in radians (true) or degrees
+         * (false). false by default
+         * @return Pose
+         */
+        Pose getPose(bool radians = false, bool standardPos = false);
+        /**
+         * @brief Wait until the robot has traveled a certain distance along the path
+         *
+         * @note Units are in inches if current motion is moveTo or follow, degrees if
+         * using turnTo
+         *
+         * @param dist the distance the robot needs to travel before returning
+         */
+        void waitUntil(float dist);
+        /**
+         * @brief Wait until the robot has completed the path
+         *
+         */
+        void waitUntilDone();
+        /**
+         * @brief Turn the chassis so it is facing the target point
+         *
+         * The PID logging id is "angularPID"
+         *
+         * @param x x location
+         * @param y y location
+         * @param timeout longest time the robot can spend moving
+         * @param forwards whether the robot should turn to face the point with the
+         * front of the robot. true by default
+         * @param maxSpeed the maximum speed the robot can turn at. Default is 127
+         * @param async whether the function should be run asynchronously. true by
+         * default
+         */
+        void turnTo(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
+        /**
+         * @brief Move the chassis towards the target pose
+         *
+         * Uses the boomerang controller
+         *
+         * @param x x location
+         * @param y y location
+         * @param theta target heading in degrees.
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by
+         * default
+         */
+        void moveToPose(MoveToPoseTarget targetPose, int timeout, MoveToPoseFlags params = {}, bool async = true);
+        /**
+         * @brief Move the chassis towards a target point
+         *
+         * @param x x location
+         * @param y y location
+         * @param timeout longest time the robot can spend moving
+         * @param maxSpeed the maximum speed the robot can move at. 127 by default
+         * @param async whether the function should be run asynchronously. true by
+         * default
+         */
+        void moveToPoint(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
+        /**
+         * @brief Move the chassis along a path
+         *
+         * @param path the path asset to follow
+         * @param lookahead the lookahead distance. Units in inches. Larger values
+         * will make the robot move faster but will follow the path less accurately
+         * @param timeout the maximum time the robot can spend moving
+         * @param forwards whether the robot should follow the path going forwards.
+         * true by default
+         * @param async whether the function should be run asynchronously. true by
+         * default
+         */
+        void follow(const asset& path, float lookahead, int timeout, bool forwards = true, bool async = true);
+        /**
+         * @brief Control the robot during the driver control period using the tank
+         * drive control scheme. In this control scheme one joystick axis controls one
+         * half of the robot, and another joystick axis controls another.
+         * @param left speed of the left side of the drivetrain. Takes an input from
+         * -127 to 127.
+         * @param right speed of the right side of the drivetrain. Takes an input from
+         * -127 to 127.
+         * @param curveGain control how steep the drive curve is. The larger the
+         * number, the steeper the curve. A value of 0 disables the curve entirely.
+         */
+        void tank(int left, int right, float curveGain = 0.0);
+        /**
+         * @brief Control the robot during the driver using the arcade drive control
+         * scheme. In this control scheme one joystick axis controls the forwards and
+         * backwards movement of the robot, while the other joystick axis controls the
+         * robot's turning
+         * @param throttle speed to move forward or backward. Takes an input from -127
+         * to 127.
+         * @param turn speed to turn. Takes an input from -127 to 127.
+         * @param curveGain the scale inputted into the drive curve function. If you
+         * are using the default drive curve, refer to the `defaultDriveCurve`
+         * documentation.
+         */
+        void arcade(int throttle, int turn, float curveGain = 0.0);
+        /**
+         * @brief Control the robot during the driver using the curvature drive
+         * control scheme. This control scheme is very similar to arcade drive, except
+         * the second joystick axis controls the radius of the curve that the
+         * drivetrain makes, rather than the speed. This means that the driver can
+         * accelerate in a turn without changing the radius of that turn. This control
+         * scheme defaults to arcade when forward is zero.
+         * @param throttle speed to move forward or backward. Takes an input from -127
+         * to 127.
+         * @param turn speed to turn. Takes an input from -127 to 127.
+         * @param curveGain the scale inputted into the drive curve function. If you
+         * are using the default drive curve, refer to the `defaultDriveCurve`
+         * documentation.
+         */
+        void curvature(int throttle, int turn, float cureGain = 0.0);
+        /**
+         * @brief Cancels the currently running motion.
+         * If there is a queued motion, then that queued motion will run.
+         */
+        void cancelMotion();
+        /**
+         * @brief Cancels all motions, even those that are queued.
+         * After this, the chassis will not be in motion.
+         */
+        void cancelAllMotions();
+        /**
+         * @return whether a motion is currently running
+         */
+        bool isInMotion() const;
+    protected:
+        /**
+         * @brief Indicates that this motion is queued and blocks current task until
+         * this motion reaches front of queue
+         */
+        void requestMotionStart();
+        /**
+         * @brief Dequeues this motion and permits queued task to run
+         */
+        void endMotion();
+    private:
+        bool motionRunning = false;
+        bool motionQueued = false;
+        pros::Mutex mutex;
+        float distTravelled = 0;
+        ControllerSettings lateralSettings;
+        ControllerSettings angularSettings;
+        Drivetrain drivetrain;
+        OdomSensors sensors;
+        DriveCurveFunction_t driveCurve;
+        PID lateralPID;
+        PID angularPID;
+        ExitCondition lateralLargeExit;
+        ExitCondition lateralSmallExit;
+        ExitCondition angularLargeExit;
+        ExitCondition angularSmallExit;
+        MovementType getMovementType(const MoveToPoseTarget& params_t);
+};
+} // namespace lemlib
