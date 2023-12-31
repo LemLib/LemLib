@@ -289,6 +289,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     distTravelled = -1;
     this->endMotion();
 }
+/**
  * @brief Figure Out The Movement Type For Boomerang Controller
  */
 // Function to determine the movement type based on user input
