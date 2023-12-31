@@ -31,6 +31,13 @@ class Chassis {
         virtual void initialize() = 0;
 
         /**
+         * @brief Calibrate the chassis sensors
+         *
+         * @param calibrateIMU whether the IMU should be calibrated. true by default
+         */
+        void calibrate(bool calibrateIMU = true);
+
+        /**
          * @brief Set the pose of the chassis
          *
          * @param x new x value
@@ -54,10 +61,10 @@ class Chassis {
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          */
-        Pose getPose(bool radians = false);
+        Pose getPose(bool radians = false) const;
 
         /**
-         * @brief Wait until the robot has traveled a certain distance, or angle, along the path
+         * @brief Wait until the robot has traveled a certain distance along the path
          *
          * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
          *

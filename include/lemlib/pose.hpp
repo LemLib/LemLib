@@ -11,6 +11,7 @@
 #pragma once
 
 #include <string>
+#include <ostream>
 
 namespace lemlib {
 class Pose {
@@ -35,7 +36,7 @@ class Pose {
          * @param other other pose
          * @return Pose
          */
-        Pose operator+(const Pose& other);
+        Pose operator+(const Pose& other) const;
         /**
          * @brief Set the value of this pose to its value + the value of another pose
          *
@@ -48,7 +49,7 @@ class Pose {
          * @param other other pose
          * @return Pose
          */
-        Pose operator-(const Pose& other);
+        Pose operator-(const Pose& other) const;
         /**
          * @brief Set the value of this pose to its value - the value of another pose
          *
@@ -61,35 +62,35 @@ class Pose {
          * @param other other pose
          * @return Pose
          */
-        float operator*(const Pose& other);
+        float operator*(const Pose& other) const;
         /**
          * @brief Multiply a pose by a float
          *
          * @param other float
          * @return Pose
          */
-        Pose operator*(const float& other);
+        Pose operator*(const float& other) const;
         /**
          * @brief Divide a pose by a float
          *
          * @param other float
          * @return Pose
          */
-        Pose operator/(const float& other);
+        Pose operator/(const float& other) const;
         /**
          * @brief Check if two poses are equal
          *
          * @param other the other pose
          * @return bool
          */
-        bool operator==(const Pose& other);
+        bool operator==(const Pose& other) const;
         /**
          * @brief Check if two poses are not equal
          *
          * @param other the other pose
          * @return bool
          */
-        bool operator!=(const Pose& other);
+        bool operator!=(const Pose& other) const;
         /**
          * @brief Linearly interpolate between two poses
          *
@@ -97,21 +98,21 @@ class Pose {
          * @param t t value
          * @return Pose
          */
-        Pose lerp(Pose other, float t);
+        Pose lerp(const Pose other, float t) const;
         /**
          * @brief Get the distance between two poses
          *
          * @param other the other pose
          * @return float
          */
-        float distance(Pose other);
+        float distance(const Pose other) const;
         /**
          * @brief Get the angle between two poses
          *
          * @param other the other pose
          * @return float in radians
          */
-        float angle(Pose other);
+        float angle(const Pose other) const;
         /**
          * @brief Rotate a pose by an angle
          *
@@ -120,8 +121,16 @@ class Pose {
          * @param angle angle in radians
          * @return Pose
          */
-        Pose rotate(float angle);
+        Pose rotate(float angle) const;
 };
+
+/**
+ * @brief output and format pose into a stream
+ *
+ * @param pose
+ * @return std::ostream
+ */
+std::ostream& operator<<(std::ostream& os, const lemlib::Pose& pose);
 
 /**
  * @brief Format a pose

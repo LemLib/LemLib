@@ -21,3 +21,6 @@ temp.errors
 
 # Doxygen
 latex
+
+# unit testing
+build/

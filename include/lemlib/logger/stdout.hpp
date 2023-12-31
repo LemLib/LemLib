@@ -25,7 +25,7 @@ class BufferedStdout : public Buffer {
          * @param args The values that will be substituted into the placeholders in the format
          */
         template <typename... T> void print(fmt::format_string<T...> format, T&&... args) {
-            pushToBuffer(format, std::forward<T>(args)...);
+            this->pushToBuffer(format, std::forward<T>(args)...);
         }
 };
 

@@ -4,7 +4,7 @@ namespace lemlib {
 BaseSink::BaseSink(std::initializer_list<std::shared_ptr<BaseSink>> sinks) { this->sinks = sinks; }
 
 void BaseSink::setLowestLevel(Level lowestLevel) {
-    if (isCombinedSink()) {
+    if (this->isCombinedSink()) {
         for (std::shared_ptr<BaseSink> sink : sinks) { sink->setLowestLevel(lowestLevel); }
         return;
     }
