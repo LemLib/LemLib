@@ -324,7 +324,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
     angularPID.reset();
     angularLargeExit.reset();
     angularSmallExit.reset();
-  
+
     // figure out movement type
     MovementType mType;
     if (!isnan(targetPose.dist)) {
@@ -337,20 +337,20 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
         // Handle unknown movement type
         // Maybe log error
         mType = ClassicMovement; // Default to classic movement for unknown
-                                // input
+                                 // input
     }
-  
+
     const Pose pose_t = getPose(true, true);
     // Recalculate target based on user input
-    Pose target = Pose(targetPose.x, targetPose.y,  M_PI_2 - degToRad(targetPose.theta));
+    Pose target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
     switch (mType) {
     case RelativeWithoutAngle:
-        target = Pose(pose_t.x + targetPose.dist * std::cos(pose_t.theta), pose_t.y + targetPose.dist * std::sin(pose_t.theta),
-                       pose_t.theta);
+        target = Pose(pose_t.x + targetPose.dist * std::cos(pose_t.theta),
+                      pose_t.y + targetPose.dist * std::sin(pose_t.theta), pose_t.theta);
         break;
     case RelativeWithAngle:
         target = Pose(pose_t.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
-                       pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
+                      pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
         break;
     case ClassicMovement:
         // calculate target pose in standard form
@@ -364,7 +364,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
         target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
         break;
     }
-  
+
     if (!params.forwards)
         target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
