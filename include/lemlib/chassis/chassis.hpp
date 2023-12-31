@@ -387,6 +387,6 @@ class Chassis {
     ExitCondition lateralSmallExit;
     ExitCondition angularLargeExit;
     ExitCondition angularSmallExit;
-    MovementType getMovementType(const MovementParams& params);
+    MovementType getMovementType(const MoveToPoseTarget& params_t);
 };
 } // namespace lemlib
