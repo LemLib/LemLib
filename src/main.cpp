@@ -2,12 +2,15 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
-#include <iomanip>
+#include "pros/adi.hpp"
+#include "pros/misc.h"
 
-// left drive motors on ports 8, 20, 18. Motors on ports 8 and 20 are reversed
-auto leftDrive = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
-// right drive motors on ports 2, 11, 13. Motor on port 13 is reversed
-auto rightDrive = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
+
+pros::adi::DigitalOut pistonLeft('A');
+pros::adi::DigitalOut pistonRight('B');
+
+// controller
+pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // Inertial Sensor on port 2
 pros::Imu imu(2);
@@ -200,6 +203,27 @@ void autonomous() {
 void opcontrol() {
     // controller
     // loop to continuously update motors
+
+    static bool toggledOn = false;
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+        // Toggle code
+    }
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        pistonLeft.set_value(true);
+        pistonRight.set_value(true);
+    }
+    else if (toggledOn) {
+        pistonLeft.set_value(true);
+        pistonRight.set_value(true);
+    }
+    else {
+        
+        pistonLeft.set_value(false);
+        pistonRight.set_value(false);
+    }
+
     while (true) {
         // get joystick positions
 <<<<<<< HEAD
