@@ -342,26 +342,26 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
   
     const Pose pose_t = getPose(true, true);
     // Recalculate target based on user input
-    Pose target(targetPose.x, targetPose.y,  M_PI_2 - degToRad(targetPose.theta));
+    Pose target = Pose(targetPose.x, targetPose.y,  M_PI_2 - degToRad(targetPose.theta));
     switch (mType) {
     case RelativeWithoutAngle:
-        target = (pose_t.x + targetPose.dist * std::cos(pose_t.theta), pose_t.y + targetPose.dist * std::sin(pose_t.theta),
+        target = Pose(pose_t.x + targetPose.dist * std::cos(pose_t.theta), pose_t.y + targetPose.dist * std::sin(pose_t.theta),
                        pose_t.theta);
         break;
     case RelativeWithAngle:
-        target = (pose_t.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
+        target = Pose(pose_t.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
                        pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
         break;
     case ClassicMovement:
         // calculate target pose in standard form
-        target = (targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
+        target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
         break;
 
     default:
         // Handle unknown movement type
         // Log error maybe
         // calculate target pose in standard form
-        target = (targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
+        target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
         break;
     }
   
