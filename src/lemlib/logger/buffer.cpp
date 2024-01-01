@@ -6,38 +6,38 @@
 namespace lemlib {
 Buffer::Buffer(std::function<void(const std::string&)> bufferFunc)
     : bufferFunc(bufferFunc),
-      task([=]() { taskLoop(); }) {}
+      task([this]() { this->taskLoop(); }) {}
 
 bool Buffer::buffersEmpty() {
-    mutex.take();
-    bool status = buffer.size() == 0;
-    mutex.give();
+    this->mutex.take();
+    bool status = this->buffer.size() == 0;
+    this->mutex.give();
     return status;
 }
 
 Buffer::~Buffer() {
     // make sure when the destructor is called so all
     // the messages are logged
-    while (!buffersEmpty()) { pros::delay(10); }
+    while (!this->buffersEmpty()) { pros::delay(10); }
 }
 
 void Buffer::pushToBuffer(const std::string& bufferData) {
-    mutex.take();
-    buffer.push_back(bufferData);
-    mutex.give();
+    this->mutex.take();
+    this->buffer.push_back(bufferData);
+    this->mutex.give();
 }
 
 void Buffer::setRate(uint32_t rate) { this->rate = rate; }
 
 void Buffer::taskLoop() {
     while (true) {
-        mutex.take();
+        this->mutex.take();
         if (buffer.size() > 0) {
-            bufferFunc(buffer.at(0));
-            buffer.pop_front();
+            this->bufferFunc(this->buffer.at(0));
+            this->buffer.pop_front();
         }
-        mutex.give();
-        pros::delay(rate);
+        this->mutex.give();
+        pros::delay(this->rate);
     }
 }
 } // namespace lemlib

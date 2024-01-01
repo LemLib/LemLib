@@ -1,41 +1,39 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
+#include "pros/adi.hpp"
 #include "pros/misc.h"
+
+
+pros::adi::DigitalOut pistonLeft('A');
+pros::adi::DigitalOut pistonRight('B');
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-// drive motors
-pros::Motor lF(-8, pros::E_MOTOR_GEARSET_06); // left front motor. port 8, reversed
-pros::Motor lM(-20, pros::E_MOTOR_GEARSET_06); // left middle motor. port 20, reversed
-pros::Motor lB(19, pros::E_MOTOR_GEARSET_06); // left back motor. port 19
-pros::Motor rF(2, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
-pros::Motor rM(11, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
-pros::Motor rB(-13, pros::E_MOTOR_GEARSET_06); // right back motor. port 13, reversed
-
 // motor groups
-pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
-pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
+// left motors on ports 8, 20, and 19. Motors on ports 8 and 20 are reversed. Using blue gearbox
+auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
+// right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
+auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
 // Inertial Sensor on port 11
-pros::Imu imu(12);
+pros::Imu imu(11);
 
-// tracking wheels
-pros::Rotation horizontalEnc(4);
-// horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
+// horizontal tracking wheel. Port 4, 2.75" diameter, 3.7" offset, back of the robot
+lemlib::TrackingWheel horizontal(4, lemlib::Omniwheel::NEW_275, -3.7);
 
 // drivetrain settings
-lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
-                              &rightMotors, // right motor group
+lemlib::Drivetrain drivetrain(leftMotors, // left motor group
+                              rightMotors, // right motor group
                               10, // 10 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
                               360, // drivetrain rpm is 360
                               2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
-// lateral motion controller
+// linear motion controller
 lemlib::ControllerSettings linearController(10, // proportional gain (kP)
                                             30, // derivative gain (kD)
                                             1, // small error range, in inches
@@ -65,7 +63,7 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 );
 
 // create the chassis
-lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors);
+lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -75,28 +73,18 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    chassis.calibrate(); // calibrate sensors
-
-    // the default rate is 50. however, if you need to change the rate, you
-    // can do the following.
-    // lemlib::bufferedStdout().setRate(...);
-    // If you use bluetooth or a wired connection, you will want to have a rate of 10ms
-
-    // for more information on how the formatting for the loggers
-    // works, refer to the fmtlib docs
+    chassis.initialize(); // calibrate sensors
 
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
         lemlib::Pose pose(0, 0, 0);
         while (true) {
-            // print robot location to the brain screen
+            pose = chassis.getPose();
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            // log position telemetry
-            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources
-            pros::delay(50);
+            pros::delay(10);
         }
     });
 }
@@ -122,10 +110,10 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  */
 void autonomous() {
     // example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4000 ms
-    chassis.moveToPose(20, 15, 90, 4000);
+    chassis.moveTo(20, 15, 90, 4000);
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
-    chassis.turnTo(45, -45, 1000, true, 60);
+    chassis.turnToPose(45, -45, 1000, true, 60);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
     // see line 116 to see how to define a path
@@ -146,6 +134,27 @@ void autonomous() {
 void opcontrol() {
     // controller
     // loop to continuously update motors
+
+    static bool toggledOn = false;
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+        // Toggle code
+    }
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        pistonLeft.set_value(true);
+        pistonRight.set_value(true);
+    }
+    else if (toggledOn) {
+        pistonLeft.set_value(true);
+        pistonRight.set_value(true);
+    }
+    else {
+        
+        pistonLeft.set_value(false);
+        pistonRight.set_value(false);
+    }
+
     while (true) {
         // get joystick positions
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
