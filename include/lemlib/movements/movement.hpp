@@ -7,7 +7,7 @@ namespace lemlib {
 /**
  * @brief Abstract class for a movement
  */
- 
+
 class Movement {
     public:
         /**

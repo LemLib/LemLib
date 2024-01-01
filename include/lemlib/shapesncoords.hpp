@@ -1,385 +1,347 @@
 
 
 class Coordinate {
-private:
+    private:
+    protected:
+        float x;
+        float y;
+    public:
+        Coordinate(float xarg, float yarg);
 
-protected:
+        /**
+         * @brief Get the X coordinate
+         *
+         * @return float
+         */
+        float getX();
 
-    float x;
-    float y;
+        /**
+         * @brief Get the Y coordinate
+         *
+         * @return float
+         */
+        float getY();
 
-public:
+        /**
+         * @brief Set the X coordinate
+         *
+         * @param xarg
+         */
+        void setX(float xarg);
 
-    Coordinate(float xarg, float yarg);
+        /**
+         * @brief Set the Y coordinate
+         *
+         * @param yarg
+         */
+        void setY(float yarg);
 
-    /**
-     * @brief Get the X coordinate
-     * 
-     * @return float 
-     */
-    float getX();
+        /**
+         * @brief Set the Coordinate to a new X and Y value
+         *
+         * @param xarg X Value
+         * @param yarg Y Value
+         */
+        void setCoordinate(float xarg, float yarg);
 
-    /**
-     * @brief Get the Y coordinate
-     * 
-     * @return float 
-     */
-    float getY();
+        /**
+         * @brief Set the Shape object to a new Shape object of the same type.
+         *
+         * @param coordArg
+         */
+        void setCoordinate(Coordinate coordArg);
 
-    /**
-     * @brief Set the X coordinate
-     * 
-     * @param xarg 
-     */
-    void setX(float xarg);
+        /**
+         * @brief Add to the X coordinate
+         *
+         * @param xarg
+         */
+        void addX(float xarg);
 
-    /**
-     * @brief Set the Y coordinate
-     * 
-     * @param yarg 
-     */
-    void setY(float yarg);
+        /**
+         * @brief Add to the Y coordinate
+         *
+         * @param yarg
+         */
+        void addY(float yarg);
 
-    /**
-     * @brief Set the Coordinate to a new X and Y value
-     * 
-     * @param xarg X Value
-     * @param yarg Y Value
-     */
-    void setCoordinate(float xarg, float yarg);
+        /**
+         * @brief Add to the Coordinate
+         *
+         * @param xarg
+         * @param yarg
+         */
+        void addXandY(float xarg, float yarg);
 
-    /**
-     * @brief Set the Shape object to a new Shape object of the same type.
-     * 
-     * @param coordArg 
-     */
-    void setCoordinate(Coordinate coordArg);
-
-    /**
-     * @brief Add to the X coordinate
-     * 
-     * @param xarg 
-     */
-    void addX(float xarg);
-
-    /**
-     * @brief Add to the Y coordinate
-     * 
-     * @param yarg 
-     */
-    void addY(float yarg);
-
-    /**
-     * @brief Add to the Coordinate 
-     * 
-     * @param xarg 
-     * @param yarg 
-     */
-    void addXandY(float xarg, float yarg);
-
-    /**
-     * @brief Checks if one shape = another shape
-     * 
-     * @param coordArg Input any shape / coordinate. 
-     * @return true 
-     * @return false 
-     */
-    bool shapeEquals(Coordinate coordArg);
-
+        /**
+         * @brief Checks if one shape = another shape
+         *
+         * @param coordArg Input any shape / coordinate.
+         * @return true
+         * @return false
+         */
+        bool shapeEquals(Coordinate coordArg);
 };
 
-
 class Shape {
-protected:
+    protected:
+        float x;
+        float y;
+    public:
+        Shape(float xarg, float yarg);
 
-    float x;
-    float y;
+        /**
+         * @brief Get the X coordinate
+         *
+         * @return float
+         */
+        float getX();
 
-public:
+        /**
+         * @brief Get the Y coordinate
+         *
+         * @return float
+         */
+        float getY();
 
-    Shape(float xarg, float yarg);
+        /**
+         * @brief Set the X coordinate
+         *
+         * @param xarg
+         */
+        void setX(float xarg);
 
-    /**
-     * @brief Get the X coordinate
-     * 
-     * @return float 
-     */
-    float getX();
+        /**
+         * @brief Set the Y coordinate
+         *
+         * @param yarg
+         */
+        void setY(float yarg);
 
-    /**
-     * @brief Get the Y coordinate
-     * 
-     * @return float 
-     */
-    float getY();
+        /**
+         * @brief Set the Shape to a new X and Y value
+         *
+         * @param xarg X Value
+         * @param yarg Y Value
+         */
+        void setCenter(float xarg, float yarg);
 
-    /**
-     * @brief Set the X coordinate
-     * 
-     * @param xarg 
-     */
-    void setX(float xarg);
+        /**
+         * @brief Set the Shape to a new X and Y value
+         *
+         * @param xarg X Value
+         * @param yarg Y Value
+         */
+        void setCenter(Coordinate coordArg);
 
-    /**
-     * @brief Set the Y coordinate
-     * 
-     * @param yarg 
-     */
-    void setY(float yarg);
+        /**
+         * @brief Set the Shape object to a new Shape object of the same type.
+         *
+         * @param shapearg
+         */
+        void setShape(Shape shapearg);
 
-    /**
-     * @brief Set the Shape to a new X and Y value
-     * 
-     * @param xarg X Value
-     * @param yarg Y Value
-     */
-    void setCenter(float xarg, float yarg);
+        /**
+         * @brief Add to the X coordinate
+         *
+         * @param xarg
+         */
+        void addX(float xarg);
 
-    /**
-     * @brief Set the Shape to a new X and Y value
-     * 
-     * @param xarg X Value
-     * @param yarg Y Value
-     */
-    void setCenter(Coordinate coordArg);
+        /**
+         * @brief Add to the Y coordinate
+         *
+         * @param yarg
+         */
+        void addY(float yarg);
 
-    /**
-     * @brief Set the Shape object to a new Shape object of the same type.
-     * 
-     * @param shapearg 
-     */
-    void setShape(Shape shapearg);
+        /**
+         * @brief Add to the Coordinate
+         *
+         * @param xarg
+         * @param yarg
+         */
+        void addXandY(float xarg, float yarg);
 
-    /**
-     * @brief Add to the X coordinate
-     * 
-     * @param xarg 
-     */
-    void addX(float xarg);
+        /**
+         * @brief Checks if one shape = another shape
+         *
+         * @param shapearg Input any shape.
+         * @return true
+         * @return false
+         */
+        bool shapeEquals(Shape shapearg);
 
-    /**
-     * @brief Add to the Y coordinate
-     * 
-     * @param yarg 
-     */
-    void addY(float yarg);
+        /**
+         * @brief Checks if one shape overlaps another shape
+         *
+         * @param shapearg Input any shape.
+         * @return true
+         * @return false
+         */
+        bool shapeOverlaps(Shape shapearg);
 
-    /**
-     * @brief Add to the Coordinate 
-     * 
-     * @param xarg 
-     * @param yarg 
-     */
-    void addXandY(float xarg, float yarg);
-
-    /**
-     * @brief Checks if one shape = another shape
-     * 
-     * @param shapearg Input any shape. 
-     * @return true 
-     * @return false 
-     */
-    bool shapeEquals(Shape shapearg);
-
-    /**
-     * @brief Checks if one shape overlaps another shape
-     * 
-     * @param shapearg Input any shape.
-     * @return true 
-     * @return false 
-     */
-    bool shapeOverlaps(Shape shapearg);
-
-    /**
-     * @brief Checks if a shape overlaps a coordinate
-     * 
-     * @param shapearg Input any coordinate.
-     * @return true 
-     * @return false 
-     */
-    bool shapeOverlaps(Coordinate coordArg);
-
+        /**
+         * @brief Checks if a shape overlaps a coordinate
+         *
+         * @param shapearg Input any coordinate.
+         * @return true
+         * @return false
+         */
+        bool shapeOverlaps(Coordinate coordArg);
 };
 
 class Polygon : public Shape {
-private:
-
-protected:
-
-    float width = 0;
-    float height = 0;
-
-public:
-
+    private:
+    protected:
+        float width = 0;
+        float height = 0;
+    public:
 };
 
-
-
 class Circle : public Shape {
-private:
+    private:
+        float radius = 0;
+    public:
+        /**
+         * @brief Construct a new Circle object
+         *
+         * @param xarg The center of the circle on the X axis
+         * @param yarg The center of the circle on the Y axis
+         * @param radiusarg The radius of the circle
+         */
+        Circle(float xarg, float yarg, float radiusarg);
 
-    float radius = 0;
+        /**
+         * @brief Get the radius of the circle
+         *
+         * @return float
+         */
+        float getRadius();
 
-public:
-
-    /**
-     * @brief Construct a new Circle object
-     * 
-     * @param xarg The center of the circle on the X axis
-     * @param yarg The center of the circle on the Y axis
-     * @param radiusarg The radius of the circle
-     */
-    Circle(float xarg, float yarg, float radiusarg);
-
-    /**
-     * @brief Get the radius of the circle
-     * 
-     * @return float 
-     */
-    float getRadius();
-
-    float setRadius();
-
+        float setRadius();
 };
 
 class Elipse : public Shape {
-private:
+    private:
+    protected:
+        float A = 1;
+        float B = 1;
+    public:
+        /**
+         * @brief Construct a new Elipse object
+         *
+         * @param xarg The center of the elipse on the X axis
+         * @param yarg The center of the elipse on the Y axis
+         * @param Aarg The A value of the elipse
+         * @param Barg The B value of the elipse
+         */
+        Elipse(float xarg, float yarg, float Aarg, float Barg);
 
-protected:
+        /**
+         * @brief Get the A value of the elipse
+         *
+         * @return float
+         */
+        float getA();
 
-    float A = 1;
-    float B = 1;
+        /**
+         * @brief Get the B value of the elipse
+         *
+         * @return float
+         */
+        float getB();
 
-public:
+        /**
+         * @brief Set the A value of the elipse
+         *
+         * @param Aarg
+         */
+        void setA(float Aarg);
 
-    /**
-     * @brief Construct a new Elipse object
-     * 
-     * @param xarg The center of the elipse on the X axis
-     * @param yarg The center of the elipse on the Y axis
-     * @param Aarg The A value of the elipse
-     * @param Barg The B value of the elipse
-     */
-    Elipse(float xarg, float yarg, float Aarg, float Barg);
+        /**
+         * @brief Set the B value of the elipse
+         *
+         * @param Barg
+         */
+        void setB(float Brag);
 
-    /**
-     * @brief Get the A value of the elipse
-     * 
-     * @return float 
-     */
-    float getA();
+        /**
+         * @brief Set the Elipse object to a new Elipse object of the same type.
+         *
+         * @param elipsearg
+         */
+        void setElipse(Elipse elipsearg);
 
-    /**
-     * @brief Get the B value of the elipse
-     * 
-     * @return float 
-     */
-    float getB();
+        /**
+         * @brief Set the Elipse object to a new Elipse object of the same type.
+         *
+         * @param xarg The center of the elipse on the X axis
+         * @param yarg The center of the elipse on the Y axis
+         * @param Aarg The A value of the elipse
+         * @param Barg The B value of the elipse
+         */
+        void setElipse(float xarg, float yarg, float Aarg, float Barg);
 
-    /**
-     * @brief Set the A value of the elipse
-     * 
-     * @param Aarg 
-     */
-    void setA(float Aarg);
-
-    /**
-     * @brief Set the B value of the elipse
-     * 
-     * @param Barg 
-     */
-    void setB(float Brag);
-
-    /**
-     * @brief Set the Elipse object to a new Elipse object of the same type.
-     * 
-     * @param elipsearg 
-     */
-    void setElipse(Elipse elipsearg);
-
-    /**
-     * @brief Set the Elipse object to a new Elipse object of the same type.
-     * 
-     * @param xarg The center of the elipse on the X axis
-     * @param yarg The center of the elipse on the Y axis
-     * @param Aarg The A value of the elipse
-     * @param Barg The B value of the elipse
-     */
-    void setElipse(float xarg, float yarg, float Aarg, float Barg);
-
-    /**
-     * @brief Add to the A value of the elipse
-     * 
-     * @param Aarg 
-     */
-    void addA(float Aarg);
-
+        /**
+         * @brief Add to the A value of the elipse
+         *
+         * @param Aarg
+         */
+        void addA(float Aarg);
 };
 
 class Rectangle : public Polygon {
-private:
-
-    float width = 0;
-    float height = 0;
-
-protected:
-
-public:
-
-    
-
+    private:
+        float width = 0;
+        float height = 0;
+    protected:
+    public:
 };
 
 class Square : public Rectangle {
-private:
+    private:
+        float sideLength = 0;
+    protected:
+    public:
+        Square(float xarg, float yarg, float sideLengtharg);
 
-    float sideLength = 0;
+        /**
+         * @brief Get the Side Length of the square
+         *
+         * @return float
+         */
+        float getSideLength();
 
-protected:
+        /**
+         * @brief Set the Side Length of the square
+         *
+         * @param sideLengtharg
+         */
+        void setSideLength(float sideLengtharg);
 
-public:
+        /**
+         * @brief Set the Square object to a new Square object of the same type.
+         *
+         * @param squarearg
+         */
+        void setSquare(Square squarearg);
 
-    Square(float xarg, float yarg, float sideLengtharg);
+        /**
+         * @brief Set the Square object to a new Square object of the same type.
+         *
+         * @param xarg
+         * @param yarg
+         * @param sideLengtharg
+         */
+        void setSquare(float xarg, float yarg, float sideLengtharg);
 
-    /**
-     * @brief Get the Side Length of the square
-     * 
-     * @return float 
-     */
-    float getSideLength();
-
-    /**
-     * @brief Set the Side Length of the square
-     * 
-     * @param sideLengtharg 
-     */
-    void setSideLength(float sideLengtharg);
-
-    /**
-     * @brief Set the Square object to a new Square object of the same type.
-     * 
-     * @param squarearg 
-     */
-    void setSquare(Square squarearg);
-
-    /**
-     * @brief Set the Square object to a new Square object of the same type.
-     * 
-     * @param xarg 
-     * @param yarg 
-     * @param sideLengtharg 
-     */
-    void setSquare(float xarg, float yarg, float sideLengtharg);
-
-    /**
-     * @brief Add to the Side Length of the square
-     * 
-     * @param sideLengtharg 
-     */
-    void addSideLength(float sideLengtharg);
-
+        /**
+         * @brief Add to the Side Length of the square
+         *
+         * @param sideLengtharg
+         */
+        void addSideLength(float sideLengtharg);
 };
 
-class Triangle : public Polygon {
-
-};
+class Triangle : public Polygon {};
