@@ -1,8 +1,11 @@
 
+#include "lemlib/logger/infoSink.hpp"
 #include "lemlib/movements/inputreader.hpp"
+#include "lemlib/odom/odom.hpp"
 #include "lemlib/shapesncoords.hpp"
+#include "lemlib/logger/poller.hpp"
+#include "lemlib/logger/logger.hpp"
 
-std::string testString;
 
 namespace lemlib {
 
@@ -14,14 +17,10 @@ namespace lemlib {
 
         LEMController* controller; // Pointer to the controller driver is using 
 
-        AutonSelector* autonSelector; // A pointer to the auton selector, so you can pick which auton is being run
-
         InputReader* inputReader; // A pointer to the input reader, to track misinputs
 
-        Logger* logger; // Logger for the saving the simulation results
-
-        Poller* poller; // Poller for getting past simulation results
-
+        Odom* odom; // Pointer to the odometry, to get the position of the bot
+        
         std::vector<Circle> circles; // Vector of circles that will be used for the performance evaluation
 
         std::vector<float> times; // Vector of times that the driver took to completely go through each circle
@@ -30,6 +29,8 @@ namespace lemlib {
 
         float lastTimeEnteredCircle; // The time that the driver last entered a circle, used for calculating the time it took
             // to go through the circle. Recorded in milliseconds.
+
+        int currentPathIndex; // The index of the current circle that the driver is going through
 
         Rectangle botDimensions; // Rectangle with the dimensions of the bot. Be as accurate as possible, as this
             // will be used for the performance evaluation. Only measure relevant things: an axle sticking out of the bot
@@ -50,10 +51,16 @@ namespace lemlib {
         void markTime(int circleIndex); 
 
         /**
-        * @brief Save the data to the SD card. Things like the times for each circle, percent performance.
+        * @brief Logs the data to the terminal. Things like the times for each circle, percent performance.
         * 
         */
-        void saveData(); // Save the data to the SD card
+        void logData(std::vector<float>* timeVector, std::vector<float>* distanceVector); // Save the data to the SD card
+
+        /**
+         * @brief Load the accuracy history from the SD card
+         * 
+         */
+        void loadAccuracyHistory(); 
 
         /**
          * @brief Records the distance from the current targeted circle over time, and sets it to the vector of max distances.
@@ -61,8 +68,11 @@ namespace lemlib {
          */
         void recordMaxDistance(); // Record the distance from the last circle
 
-        
-        
+        /**
+         * @brief Checks if the current circle index can move onto the next circle. You don't have to pass through the center in fact,
+         * only 1/6 of the radius of the circle from the center. 
+         */
+        bool canMoveToNextCircle(); 
 
 
     public:
@@ -71,11 +81,10 @@ namespace lemlib {
         * @brief Construct a new Skills Simulation object
         * 
         * @param controllerArg Pointer to the controller the driver is using
-        * @param autonSelectorArg Pointer to the auton selector that can be either inputted or not. If not inputted, the 
-        * auton will not be run and by default driver control will run.
+        * @param odomParam Pointer to the odometry. Used for getting the position of the bot
         * @param inputReaderArg Pointer to the input reader that can be either inputted or not. If not inputted, the
         */
-        AccuracySIM(LEMController* controllerArg, AutonSelector* autonSelectorArg = nullptr, InputReader* inputReaderArg = nullptr);
+        AccuracySIM(LEMController* controllerArg, Odom* odomParam, InputReader* inputReaderArg = nullptr);
 
         /**
         * @brief Destroy the Skills Simulation object

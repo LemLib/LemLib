@@ -94,7 +94,10 @@ protected:
 
     float x;
     float y;
+    float theta; // Rotation
 
+    Shape();
+    
 public:
 
     Shape(float xarg, float yarg);
@@ -173,7 +176,7 @@ public:
     void addXandY(float xarg, float yarg);
 
     /**
-     * @brief Checks if one shape = another shape
+     * @brief Checks if this shape object = another shape
      * 
      * @param shapearg Input any shape. 
      * @return true 
