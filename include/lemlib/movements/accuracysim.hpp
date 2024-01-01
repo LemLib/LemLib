@@ -5,7 +5,7 @@
 #include "lemlib/shapesncoords.hpp"
 #include "lemlib/logger/poller.hpp"
 #include "lemlib/logger/logger.hpp"
-
+#include "lemlib/util.hpp"
 
 namespace lemlib {
 
@@ -82,9 +82,10 @@ namespace lemlib {
         * 
         * @param controllerArg Pointer to the controller the driver is using
         * @param odomParam Pointer to the odometry. Used for getting the position of the bot
+        * @param path The path that the driver will be going through. Imported from /static/
         * @param inputReaderArg Pointer to the input reader that can be either inputted or not. If not inputted, the
         */
-        AccuracySIM(LEMController* controllerArg, Odom* odomParam, InputReader* inputReaderArg = nullptr);
+        AccuracySIM(LEMController* controllerArg, Odom* odomParam, const asset& path, InputReader* inputReaderArg = nullptr);
 
         /**
         * @brief Destroy the Skills Simulation object

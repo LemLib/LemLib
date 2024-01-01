@@ -6,10 +6,27 @@
 
 namespace lemlib {
 
-    AccuracySIM::AccuracySIM(LEMController* controllerParam, Odom* odomParam, InputReader* inputReaderParam) {
+    AccuracySIM::AccuracySIM(LEMController* controllerParam, Odom* odomParam, const asset& path, InputReader* inputReaderParam) {
         controller = controllerParam;
         odom = odomParam;
         inputReader = inputReaderParam;
+
+        static constexpr int circleRadius = 6; // In inches? Probably?
+
+        // Stolen from the Pure Pursuit code <3
+        std::string input(reinterpret_cast<char*>(path.buf), path.size);
+        std::vector<std::string> lines = splitString(input, "\n");
+        for (const std::string& line : lines) { // loop through all lines
+            if (line == "endData" || line == "endData\r") break;
+            std::vector<std::string> pointInput = splitString(line, ", "); // parse line
+            const float x = std::stof(pointInput.at(0)); // x position
+            const float y = std::stof(pointInput.at(1)); // y position
+            const float speed = std::stof(pointInput.at(2)); // speed
+            this->circles.emplace_back(x, y, circleRadius); // save data
+        }
+
+        currentPathIndex = 0;
+
     }
 
     AccuracySIM::~AccuracySIM() {
