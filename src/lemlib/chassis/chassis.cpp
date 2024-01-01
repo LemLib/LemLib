@@ -330,7 +330,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
         mType = RelativeWithoutAngle;
     } else if (!isnan(targetPose.dist) && !isnan(targetPose.theta)) {
         mType = RelativeWithAngle;
-    } else if (!isnan(targetPose.x) || !isnan(targetPose.y) || !isnan(targetPose.theta)) {
+    } else if (!isnan(targetPose.x) && !isnan(targetPose.y) && !isnan(targetPose.theta)) {
         mType = ClassicMovement;
     } else {
         // Handle unknown movement type
