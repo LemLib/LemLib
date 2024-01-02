@@ -2,7 +2,10 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
+#include "lemlib/devices/lemcontroller.hpp"
 #include "pros/misc.h"
+#include "pros/motor_group.hpp"
+#include "pros/motors.hpp"
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -59,6 +62,44 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 
 // create the chassis
 lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
+
+
+
+
+
+
+
+
+
+pros::MotorGroup leftTestMotors({8, 20, 19});
+pros::MotorGroup rightTestMotors({2, 11, 13});
+
+pros::Motor intakeMotor(3);
+
+
+int driveLeft(int percent) {
+    leftMotors->move_voltage(percent * 12000 / 127);
+    return percent;
+}
+
+int driveRight(int percent) {
+    rightMotors->move_voltage(percent * 12000 / 127);
+    return percent;
+}
+
+int intakeIn(int throwaway) {
+    intakeMotor.move(127);
+    return throwaway;
+}
+
+int intakeStop(int throwaway) {
+    intakeMotor.move(0);
+    return throwaway;
+
+}
+
+
+lemlib::LEMController lemController(&controller);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -127,6 +168,11 @@ void autonomous() {
  * Runs in driver control
  */
 void opcontrol() {
+
+    lemController.setFuncToAction(driveLeft, pros::E_CONTROLLER_ANALOG_LEFT_Y, "DEFAULT");
+    lemController.setFuncToAction(driveRight, pros::E_CONTROLLER_ANALOG_RIGHT_Y, "DEFAULT");
+    lemController.setFuncToAction({intakeStop, intakeIn}, pros::E_CONTROLLER_DIGITAL_A);
+
     // controller
     // loop to continuously update motors
     while (true) {

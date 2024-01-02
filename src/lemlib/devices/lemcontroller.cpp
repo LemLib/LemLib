@@ -90,6 +90,10 @@ void LEMController::autoButtonFunctions() {
             buttonsToFunctions.at(i)->runFunction(currentMode, controllerValues.getControllerKey(buttonsToFunctions.at(i)->getButton())); // Runs the function
         }
     }    
+
+    for (int i = 0; i < joysticksToFunctions.size(); i++) {
+        joysticksToFunctions.at(i)->runFunction(currentMode, prosController->get_analog(joysticksToFunctions.at(i)->getJoystick()));
+    }
     
 }
 
@@ -161,11 +165,20 @@ int LEMController::getJoystick(pros::controller_analog_e_t whichJoystick) {
     return joystickValue;
 }
 
-void LEMController::setFuncToButton(std::pair<int(*)(int), int(*)(int)> functionPtr, pros::controller_digital_e_t button, std::string modeParam) {
+void LEMController::setFuncToAction(std::pair<int(*)(int), int(*)(int)> functionPtr, pros::controller_digital_e_t button, std::string modeParam) {
 
     std::pair<pros::controller_digital_e_t, std::pair<int(*)(int), int(*)(int)>> buttonFuncPair(button, functionPtr);
 
     buttonsToFunctions.at(controllerValues.getControllerKey(button))->addModeAndFunction(modeParam, functionPtr);
+    
+
+}
+
+void LEMController::setFuncToAction(int(*functionPtr)(int), pros::controller_analog_e_t joystick, std::string modeParam) {
+
+    std::pair<pros::controller_analog_e_t, int(*)(int)> buttonFuncPair(joystick, functionPtr);
+
+    joysticksToFunctions.at(controllerValues.getControllerKey(joystick))->addModeAndFunction(modeParam, functionPtr);
     
 
 }

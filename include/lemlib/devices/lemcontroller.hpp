@@ -32,12 +32,54 @@ namespace lemlib {
             // Loops through all the functions and runs the one that matches the mode.
 
             for (int i = 0; i < functions.size(); i++) {
-                if (functions[i].first == mode) { // If the mode matches,
+                if (functions.at(i).first == mode) { // If the mode matches,
                     if (buttonState == true) {
-                        functions[i].second.second(funcParam); // Run the function pointer for the true state
+                        functions.at(i).second.second(funcParam); // Run the function pointer for the true state
                     }
                     else {
-                        functions[i].second.first(funcParam); // Run the function pointer for the false state
+                        functions.at(i).second.first(funcParam); // Run the function pointer for the false state
+                    }
+                    
+                }
+            }
+        }
+
+        
+    };
+
+    struct LEMJoystickMapping {
+    private:
+
+        pros::controller_analog_e_t joystick;
+        std::vector<std::pair<std::string, int(*)(int)>> functions;
+
+    public:
+
+        LEMJoystickMapping(pros::controller_analog_e_t joystickParam, std::string modeParam, int(*functionParam)(int) ) {
+            joystick = joystickParam;
+            functions.push_back({modeParam, functionParam});
+        }
+
+        // Acts like a tag
+        pros::controller_analog_e_t getJoystick() {
+            return joystick;
+        }
+
+        void addModeAndFunction(std::string modeParam, int(*functionParam)(int)) {
+            functions.push_back({modeParam, functionParam});
+        }
+
+        void runFunction(std::string mode, int joystickValue) {
+
+            // Loops through all the functions and runs the one that matches the mode.
+
+            for (int i = 0; i < functions.size(); i++) {
+                if (functions.at(i).first == mode) { // If the mode matches,
+                    try {
+                        functions.at(i).second(joystickValue); // Run the function pointer 
+                    }
+                    catch (...) {
+                        // Do nothing, move on
                     }
                     
                 }
@@ -117,6 +159,29 @@ namespace lemlib {
 
         }
 
+        uint8_t getControllerKey(pros::controller_analog_e_t joystick) {
+            uint8_t key = 0;
+
+            switch (joystick) {
+            case pros::E_CONTROLLER_ANALOG_LEFT_Y:
+                key = LeftYKey;
+                break;
+            case pros::E_CONTROLLER_ANALOG_RIGHT_Y:
+                key = RightYKey;
+                break;
+            case pros::E_CONTROLLER_ANALOG_LEFT_X:
+                key = LeftXKey;
+                break;
+            case pros::E_CONTROLLER_ANALOG_RIGHT_X:
+                key = RightXKey;
+                break;
+
+            }
+
+
+            return key;
+
+        }
 
     };
     
@@ -131,6 +196,7 @@ protected:
 
     std::vector<std::string> modes = {"DEFAULT"};
     std::vector<LEMButtonMapping*> buttonsToFunctions; 
+    std::vector<LEMJoystickMapping*> joysticksToFunctions; 
 
     std::unordered_map<pros::controller_digital_e_t, bool> buttonStates;
 
@@ -210,7 +276,16 @@ public:
      * @param button Button you want these functions paired to.
      * @param modeParam Mode to add the button to. Defaults to "DEFAULT".
      */
-    void setFuncToButton(std::pair<int(*)(int), int(*)(int)>, pros::controller_digital_e_t button, std::string modeParam = "DEFAULT");
+    void setFuncToAction(std::pair<int(*)(int), int(*)(int)>, pros::controller_digital_e_t button, std::string modeParam = "DEFAULT");
+
+    /**
+     * @brief Sets a button to two user-made functions. When pressed, the function will automatically run without needing input from the user.
+     * 
+     * @param functionPtr An integer function pointers. Int Data Type lets you return an error code if necessary. 
+     * @param joystick Joystick you want these functions paired to.
+     * @param modeParam Mode to add the button to. Defaults to "DEFAULT".
+     */
+    void setFuncToAction(int(*functionPtr)(int), pros::controller_analog_e_t joystick, std::string modeParam = "DEFAULT");
 
 
     /*================ MODES ================*/
