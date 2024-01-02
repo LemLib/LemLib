@@ -120,7 +120,6 @@ namespace lemlib {
 
     };
     
-
 class LEMController {
 private:
 
@@ -128,12 +127,10 @@ protected:
 
     pros::Controller* prosController;
 
-    LEMController();
-
     std::string currentMode = "DEFAULT";
 
     std::vector<std::string> modes = {"DEFAULT"};
-    std::vector<LEMButtonMapping> buttonsToFunctions; 
+    std::vector<LEMButtonMapping*> buttonsToFunctions; 
 
     std::unordered_map<pros::controller_digital_e_t, bool> buttonStates;
 
@@ -143,6 +140,8 @@ protected:
      * 
      */
     void autoButtonFunctions();
+
+    LEMController();
 
 public:
 
@@ -252,7 +251,7 @@ public:
      */
     void rumble(const char* pattern);
 
-    std::vector<LEMButtonMapping> getButtonsToFunctions();
+    std::vector<LEMButtonMapping*> getButtonsToFunctions();
 
     
 

@@ -80,10 +80,11 @@ void InputReader::replayInputs(uint16_t globalTick) {
             for (int i = 0; i > inputSourceNum; i++) {
 
                 if (readInputsMap[i][f] != 0 && i > 3) {
-                    Controller->getButtonsToFunctions().at(i).runFunction("DEFAULT");
+                    Controller->getButtonsToFunctions().at(i)->runFunction("DEFAULT", readInputsMap[i][f]);
+                    // Supposed to be for joysticks. May add special behavior later, hence the boilerplate.
                 }
                 else if (i <= 3 && useJoyFunctions) {
-                    Controller->getButtonsToFunctions().at(i).runFunction("DEFAULT", readInputsMap[i][f]);
+                    Controller->getButtonsToFunctions().at(i)->runFunction("DEFAULT", readInputsMap[i][f]);
                 }
                 else if (i <= 3 && !useJoyFunctions) {
                     drivetrain->leftMotors->move(readInputsMap[LeftY][f]);
@@ -150,18 +151,18 @@ void InputReader::inputsIntoMap(int globalTick) {
     readInputsMap[RightY][globalTick] = Controller->getJoystick(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
     readInputsMap[LeftX][globalTick] = Controller->getJoystick(pros::E_CONTROLLER_ANALOG_LEFT_X);
     readInputsMap[RightX][globalTick] = Controller->getJoystick(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-    readInputsMap[A][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_A);
-    readInputsMap[B][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_B);
-    readInputsMap[X][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_X);
-    readInputsMap[Y][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_Y);
-    readInputsMap[Up][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_UP);
-    readInputsMap[Down][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_DOWN);
-    readInputsMap[Left][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_LEFT);
-    readInputsMap[Right][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_RIGHT);
-    readInputsMap[L1][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_L1);
-    readInputsMap[L2][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_L2);
-    readInputsMap[R1][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_R1);
-    readInputsMap[R2][globalTick] = Controller->getButton(pros::E_CONTROLLER_DIGITAL_R2);
+    readInputsMap[A][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_A});
+    readInputsMap[B][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_B});
+    readInputsMap[X][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_X});
+    readInputsMap[Y][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_Y});
+    readInputsMap[Up][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_UP});
+    readInputsMap[Down][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_DOWN});
+    readInputsMap[Left][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_LEFT});
+    readInputsMap[Right][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_RIGHT});
+    readInputsMap[L1][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_L1});
+    readInputsMap[L2][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_L2});
+    readInputsMap[R1][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_R1});
+    readInputsMap[R2][globalTick] = Controller->getButton({pros::E_CONTROLLER_DIGITAL_R2});
     
 }
 

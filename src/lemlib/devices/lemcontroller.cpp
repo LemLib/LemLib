@@ -1,5 +1,6 @@
 #include "lemlib/devices/lemcontroller.hpp"
 #include "pros/misc.h"
+#include <utility>
 #include <vector>
 
 namespace lemlib {
@@ -47,8 +48,12 @@ LEMController::LEMController(pros::Controller* controller, std::vector<std::stri
         pros::E_CONTROLLER_DIGITAL_L2, pros::E_CONTROLLER_DIGITAL_R1, 
         pros::E_CONTROLLER_DIGITAL_R2};
 
+    int (*junkFunc)(int) = [](int x){return 0;};
+
+    std::pair<int(*)(int), int(*)(int)> junkFuncs = {nullptr, nullptr };
+
     for (int i = 0; i < sizeof(buttons)/sizeof(buttons[0]); i++) {
-        buttonsToFunctions.emplace_back(buttons[i], "DEFAULT", [](){});
+        buttonsToFunctions.emplace_back( new LEMButtonMapping( buttons[i], "DEFAULT", junkFuncs ) );
         
     }
     
@@ -56,6 +61,9 @@ LEMController::LEMController(pros::Controller* controller, std::vector<std::stri
 
 LEMController::~LEMController() {
     delete prosController;
+    for (int i = 0; i < buttonsToFunctions.size(); i++) {
+        delete &buttonsToFunctions.at(i);
+    }
 }
 
 bool LEMController::startMainLoop() {
@@ -76,8 +84,8 @@ bool LEMController::startMainLoop() {
 void LEMController::autoButtonFunctions() {
     
     for (int i = 0; i < buttonsToFunctions.size(); i++) {
-        if (getButton( {buttonsToFunctions.at(i).getButton()} )) { // If buttons are pressed
-            buttonsToFunctions.at(i).runFunction(currentMode, controllerValues.getControllerKey(buttonsToFunctions.at(i).getButton())); // Runs the function
+        if (getButton( {buttonsToFunctions.at(i)->getButton()} )) { // If buttons are pressed
+            buttonsToFunctions.at(i)->runFunction(currentMode, controllerValues.getControllerKey(buttonsToFunctions.at(i)->getButton())); // Runs the function
         }
     }    
     
@@ -155,7 +163,7 @@ void LEMController::setFuncToButton(std::pair<int(*)(int), int(*)(int)> function
 
     std::pair<pros::controller_digital_e_t, std::pair<int(*)(int), int(*)(int)>> buttonFuncPair(button, functionPtr);
 
-    buttonsToFunctions.at(controllerValues.getControllerKey(button)).addModeAndFunction(modeParam, functionPtr);
+    buttonsToFunctions.at(controllerValues.getControllerKey(button))->addModeAndFunction(modeParam, functionPtr);
     
 
 }
@@ -185,7 +193,7 @@ void LEMController::rumble(const char* pattern) {
     prosController->rumble(pattern);
 }
 
-std::vector<LEMButtonMapping> LEMController::getButtonsToFunctions() {
+std::vector<LEMButtonMapping*> LEMController::getButtonsToFunctions() {
     return buttonsToFunctions;
 }
 
