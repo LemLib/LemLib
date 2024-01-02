@@ -30,9 +30,10 @@ float defaultDriveCurve(float input, float scale) {
  * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Chassis::tank(int left, int right, float curveGain) {
-    drivetrain.leftMotors->move(driveCurve(left, curveGain));
-    drivetrain.rightMotors->move(driveCurve(right, curveGain));
+void Chassis::tank(int left, int right, float leftCurveGain, float rightCurveGain,
+                   const DriveCurveFunction_t& leftCurve, const DriveCurveFunction_t& rightCurve) {
+    this->drivetrain->leftMotors->move(leftCurve(left, leftCurveGain));
+    this->drivetrain->rightMotors->move(rightCurve(right, rightCurveGain));
 }
 
 /**
@@ -44,11 +45,12 @@ void Chassis::tank(int left, int right, float curveGain) {
  * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Chassis::arcade(int throttle, int turn, float curveGain) {
-    int leftPower = driveCurve(throttle + turn, curveGain);
-    int rightPower = driveCurve(throttle - turn, curveGain);
-    drivetrain.leftMotors->move(leftPower);
-    drivetrain.rightMotors->move(rightPower);
+void Chassis::arcade(int throttle, int turn, float linearCurveGain, float turnCurveGain,
+                     const DriveCurveFunction_t& driveCurve, const DriveCurveFunction_t& turnCurve) {
+    int leftPower = driveCurve(throttle, linearCurveGain) + turnCurve(turn, linearCurveGain);
+    int rightPower = driveCurve(throttle, linearCurveGain) - turnCurve(turn, linearCurveGain);
+    this->drivetrain->leftMotors->move(leftPower);
+    this->drivetrain->rightMotors->move(rightPower);
 }
 
 /**
@@ -61,20 +63,23 @@ void Chassis::arcade(int throttle, int turn, float curveGain) {
  * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
  * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Chassis::curvature(int throttle, int turn, float curveGain) {
+void Chassis::curvature(int throttle, int turn, float linearCurveGain, float turnCurveGain,
+                        const DriveCurveFunction_t& driveCurve, const DriveCurveFunction_t& turnCurve) {
     // If we're not moving forwards change to arcade drive
     if (throttle == 0) {
-        arcade(throttle, turn, curveGain);
+        this->arcade(throttle, turn, linearCurveGain, turnCurveGain, driveCurve, turnCurve);
         return;
     }
 
-    float leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
-    float rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
+    float curvedThrottle = driveCurve(throttle, linearCurveGain);
+    float curvedTurn = turnCurve(turn, turnCurveGain);
+    float leftPower = curvedThrottle + (std::abs(curvedThrottle) * curvedTurn) / 127.0;
+    float rightPower = curvedThrottle - (std::abs(curvedThrottle) * curvedTurn) / 127.0;
 
-    leftPower = driveCurve(leftPower, curveGain);
-    rightPower = driveCurve(rightPower, curveGain);
+    leftPower = driveCurve(leftPower, linearCurveGain);
+    rightPower = turnCurve(rightPower, turnCurveGain);
 
-    drivetrain.leftMotors->move(leftPower);
-    drivetrain.rightMotors->move(rightPower);
+    this->drivetrain->leftMotors->move(leftPower);
+    this->drivetrain->rightMotors->move(rightPower);
 }
 } // namespace lemlib
