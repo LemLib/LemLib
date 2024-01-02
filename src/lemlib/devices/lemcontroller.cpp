@@ -25,8 +25,10 @@ LEMController::LEMController(pros::controller_id_e_t controllerID, std::vector<s
         pros::E_CONTROLLER_DIGITAL_L2, pros::E_CONTROLLER_DIGITAL_R1, 
         pros::E_CONTROLLER_DIGITAL_R2};
 
+    std::pair<int(*)(int), int(*)(int)> junkFuncs = {nullptr, nullptr };
+
     for (int i = 0; i < sizeof(buttons)/sizeof(buttons[0]); i++) {
-        buttonsToFunctions.emplace_back(buttons[i], "DEFAULT", [](){});
+        buttonsToFunctions.emplace_back( new LEMButtonMapping( buttons[i], "DEFAULT", junkFuncs ) );
         
     }
     
@@ -68,7 +70,7 @@ LEMController::~LEMController() {
 
 bool LEMController::startMainLoop() {
 
-    pros::Task task{[=] {
+    pros::Task task{[this] {
 
         while (true) {
             autoButtonFunctions();

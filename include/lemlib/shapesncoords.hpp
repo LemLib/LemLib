@@ -1,4 +1,6 @@
+#include "math.h"
 
+namespace lemlib {
 
 class Coordinate {
 private:
@@ -70,14 +72,6 @@ public:
     void addY(float yarg);
 
     /**
-     * @brief Add to the Coordinate 
-     * 
-     * @param xarg 
-     * @param yarg 
-     */
-    void addXandY(float xarg, float yarg);
-
-    /**
      * @brief Checks if one shape = another shape
      * 
      * @param coordArg Input any shape / coordinate. 
@@ -100,7 +94,9 @@ protected:
     
 public:
 
-    Shape(float xarg, float yarg);
+    Shape(float xarg, float yarg, float thetaArg);
+
+    Shape(Coordinate coordArg, float thetaArg);
 
     /**
      * @brief Get the X coordinate
@@ -115,6 +111,13 @@ public:
      * @return float 
      */
     float getY();
+    
+    /**
+     * @brief Get the Theta value
+     * 
+     * @return float 
+     */
+    float getTheta();
 
     /**
      * @brief Set the X coordinate
@@ -129,6 +132,13 @@ public:
      * @param yarg 
      */
     void setY(float yarg);
+
+    /**
+     * @brief Set the Theta value
+     * 
+     * @param thetaarg 
+     */
+    void setTheta(float thetaarg);
 
     /**
      * @brief Set the Shape to a new X and Y value
@@ -168,12 +178,11 @@ public:
     void addY(float yarg);
 
     /**
-     * @brief Add to the Coordinate 
+     * @brief Add to the Theta value
      * 
-     * @param xarg 
-     * @param yarg 
+     * @param thetaarg 
      */
-    void addXandY(float xarg, float yarg);
+    void addTheta(float thetaarg);
 
     /**
      * @brief Checks if this shape object = another shape
@@ -192,15 +201,6 @@ public:
      * @return false 
      */
     bool shapeOverlaps(Shape shapearg);
-
-    /**
-     * @brief Checks if a shape overlaps a coordinate
-     * 
-     * @param shapearg Input any coordinate.
-     * @return true 
-     * @return false 
-     */
-    bool shapeOverlaps(Coordinate coordArg);
 
 };
 
@@ -241,7 +241,10 @@ public:
      */
     float getRadius();
 
-    float setRadius();
+    void setRadius(float radiusArg);
+
+    bool overlapsCircle(Circle circleArg);
+
 
 };
 
@@ -386,3 +389,5 @@ public:
 class Triangle : public Polygon {
 
 };
+
+}
