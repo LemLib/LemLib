@@ -221,6 +221,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
     int closestPoint;
     float leftInput = 0;
     float rightInput = 0;
+    float prevVel = 0;
     int compState = pros::competition::get_status();
     distTravelled = 0;
 
@@ -249,6 +250,8 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
 
         // get the target velocity of the robot
         targetVel = pathPoints.at(closestPoint).theta;
+        targetVel = slew(targetVel, prevVel, lateralSettings.slew);
+        prevVel = targetVel;
 
         // calculate target left and right velocities
         float targetLeftVel = targetVel * (2 + curvature * drivetrain.trackWidth) / 2;

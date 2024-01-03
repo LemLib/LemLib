@@ -231,6 +231,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     float targetTheta;
     float deltaX, deltaY, deltaTheta;
     float motorPower;
+    float prevMotorPower = 0;
     float startTheta = getPose().theta;
     std::uint8_t compState = pros::competition::get_status();
     distTravelled = 0;
@@ -263,6 +264,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
         // cap the speed
         if (motorPower > maxSpeed) motorPower = maxSpeed;
         else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
+        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
+        prevMotorPower = 0;
 
         // move the drivetrain
         drivetrain.leftMotors->move(motorPower);
@@ -391,17 +394,12 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
 
         // apply restrictions on angular speed
         angularOut = std::clamp(angularOut, -params.maxSpeed, params.maxSpeed);
-        angularOut = slew(angularOut, prevAngularOut, angularSettings.slew);
 
         // apply restrictions on lateral speed
         lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
 
         // constrain lateral output by max accel
-        // but not for decelerating, since that would interfere with settling
-        if (params.forwards && lateralOut > prevLateralOut)
-            lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-        if (!params.forwards && lateralOut < prevLateralOut)
-            lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
+        if (!close) lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
 
         // constrain lateral output by the max speed it can travel at without slipping
         const float radius = 1 / fabs(getCurvature(pose, carrot));
@@ -529,10 +527,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
         lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
         // constrain lateral output by max accel
         // but not for decelerating, since that would interfere with settling
-        if (params.forwards && lateralOut > prevLateralOut)
-            lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-        if (!params.forwards && lateralOut < prevLateralOut)
-            lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
+        if (!close) lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
 
         // prevent moving in the wrong direction
         if (params.forwards && !close) lateralOut = std::fmax(lateralOut, 0);
