@@ -455,16 +455,16 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
- * @param maxSpeed the maximum speed the robot can move at. 127 by default
+ * @param params struct to simulate named parameters
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
+void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointParams params, bool async) {
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { moveToPoint(x, y, timeout, forwards, maxSpeed, false); });
+        pros::Task task([&]() { moveToPoint(x, y, timeout, params, false); });
         this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
@@ -504,11 +504,11 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         // check if the robot is close enough to the target to start settling
         if (distTarget < 7.5 && close == false) {
             close = true;
-            maxSpeed = fmax(fabs(prevLateralOut), 60);
+            params.maxSpeed = fmax(fabs(prevLateralOut), 60);
         }
 
         // calculate error
-        const float adjustedRobotTheta = forwards ? pose.theta : pose.theta + M_PI;
+        const float adjustedRobotTheta = params.forwards ? pose.theta : pose.theta + M_PI;
         const float angularError = angleError(adjustedRobotTheta, pose.angle(target));
         float lateralError = pose.distance(target) * cos(angleError(pose.theta, pose.angle(target)));
 
@@ -522,21 +522,26 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         if (close) angularOut = 0;
 
         // apply restrictions on angular speed
-        angularOut = std::clamp(angularOut, -maxSpeed, maxSpeed);
+        angularOut = std::clamp(angularOut, -params.maxSpeed, params.maxSpeed);
         angularOut = slew(angularOut, prevAngularOut, angularSettings.slew);
 
         // apply restrictions on lateral speed
-        lateralOut = std::clamp(lateralOut, -maxSpeed, maxSpeed);
+        lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
         // constrain lateral output by max accel
         // but not for decelerating, since that would interfere with settling
-        if (forwards && lateralOut > prevLateralOut)
+        if (params.forwards && lateralOut > prevLateralOut)
             lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
-        if (!forwards && lateralOut < prevLateralOut)
+        if (!params.forwards && lateralOut < prevLateralOut)
             lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
 
         // prevent moving in the wrong direction
-        if (forwards && !close) lateralOut = std::fmax(lateralOut, 0);
-        else if (!forwards && !close) lateralOut = std::fmin(lateralOut, 0);
+        if (params.forwards && !close) lateralOut = std::fmax(lateralOut, 0);
+        else if (!params.forwards && !close) lateralOut = std::fmin(lateralOut, 0);
+
+        // constrain lateral output by the minimum speed
+        if (params.forwards && lateralOut < fabs(params.minSpeed) && lateralOut > 0) lateralOut = fabs(params.minSpeed);
+        if (!params.forwards && -lateralOut < fabs(params.minSpeed) && lateralOut < 0)
+            lateralOut = -fabs(params.minSpeed);
 
         // update previous output
         prevAngularOut = angularOut;
@@ -545,7 +550,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, bool forwards, 
         // ratio the speeds to respect the max speed
         float leftPower = lateralOut + angularOut;
         float rightPower = lateralOut - angularOut;
-        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+        const float ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / params.maxSpeed;
         if (ratio > 1) {
             leftPower /= ratio;
             rightPower /= ratio;

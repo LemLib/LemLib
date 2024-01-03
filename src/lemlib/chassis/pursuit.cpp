@@ -138,23 +138,20 @@ float circleIntersect(lemlib::Pose p1, lemlib::Pose p2, lemlib::Pose pose, float
  * @param lastLookahead - the last lookahead point
  * @param pose - the current position of the robot
  * @param path - the path to follow
+ * @param closest - the index of the point closest to the robot
  * @param lookaheadDist - the lookahead distance of the algorithm
  */
-lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::vector<lemlib::Pose> path,
+lemlib::Pose lookaheadPoint(lemlib::Pose lastLookahead, lemlib::Pose pose, std::vector<lemlib::Pose> path, int closest,
                             float lookaheadDist) {
-    // find the furthest lookahead point on the path
-
     // optimizations applied:
-    // - made the starting index the one after lastLookahead's index,
-    // as anything before would be discarded
-    // - searched the path in reverse, as the first hit would be
-    // the guaranteed farthest lookahead point
-    for (int i = path.size() - 1; i >= lastLookahead.theta; i--) {
-        // since we are searching in reverse, instead of getting
-        // the current pose and the next one, we should get the
-        // current pose and the *last* one
-        lemlib::Pose lastPathPose = path.at(i - 1);
-        lemlib::Pose currentPathPose = path.at(i);
+    // only consider intersections that have an index greater than or equal to the point closest
+    // to the robot
+    // and intersections that have an index greater than or equal to the index of the last
+    // lookahead point
+    const int start = std::max(closest, int(lastLookahead.theta));
+    for (int i = start; i < path.size() - 1; i++) {
+        lemlib::Pose lastPathPose = path.at(i);
+        lemlib::Pose currentPathPose = path.at(i + 1);
 
         float t = circleIntersect(lastPathPose, currentPathPose, pose, lookaheadDist);
 
@@ -243,7 +240,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
         if (pathPoints.at(closestPoint).theta == 0) break;
 
         // find the lookahead point
-        lookaheadPose = lookaheadPoint(lastLookahead, pose, pathPoints, lookahead);
+        lookaheadPose = lookaheadPoint(lastLookahead, pose, pathPoints, closestPoint, lookahead);
         lastLookahead = lookaheadPose; // update last lookahead position
 
         // get the curvature of the arc between the robot and the lookahead point
