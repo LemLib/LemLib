@@ -10,6 +10,7 @@
  */
 #include <algorithm>
 #include <math.h>
+#include <optional>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
@@ -474,9 +475,6 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     lateralSmallExit.reset();
     angularPID.reset();
 
-    // calculate target pose in standard form
-    const Pose target(x, y);
-
     // initialize vars used between iterations
     Pose lastPose = getPose();
     distTravelled = 0;
@@ -485,6 +483,11 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     float prevLateralOut = 0; // previous lateral power
     float prevAngularOut = 0; // previous angular power
     const int compState = pros::competition::get_status();
+    std::optional<bool> prevSide = std::nullopt;
+
+    // calculate target pose in standard form
+    Pose target(x, y);
+    target.theta = lastPose.angle(target);
 
     // main loop
     while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) &&
@@ -504,6 +507,14 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
             close = true;
             params.maxSpeed = fmax(fabs(prevLateralOut), 60);
         }
+
+        const bool side =
+            (pose.y - target.y) * -sin(target.theta) <= (pose.x - target.x) * cos(target.theta) + params.earlyExitRange;
+        if (prevSide == std::nullopt) prevSide = side;
+        const bool sameSide = side == prevSide;
+        // exit if close
+        if (!sameSide && close && params.minSpeed != 0) break;
+        prevSide = side;
 
         // calculate error
         const float adjustedRobotTheta = params.forwards ? pose.theta : pose.theta + M_PI;
