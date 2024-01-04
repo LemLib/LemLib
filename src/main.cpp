@@ -1,6 +1,5 @@
 #include "main.h"
 #include "lemlib/api.hpp"
-#include <cmath>
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);

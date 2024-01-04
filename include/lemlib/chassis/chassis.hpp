@@ -249,8 +249,8 @@ class Chassis {
          * @param maxSpeed the maximum speed the robot can turn at. Default is 127
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToHeading(float targetTheta, int timeout, bool forwards = true,
-                           float maxSpeed = 127, bool async = true);
+        void turnToHeading(float targetTheta, int timeout, bool forwards = true, float maxSpeed = 127,
+                           bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *

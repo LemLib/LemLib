@@ -290,8 +290,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool forwards, 
  * @param maxSpeed the maximum speed the robot can turn at. Default is 127
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::turnToHeading(float targetTheta, int timeout, bool forwards, float maxSpeed,
-                                    bool async) {
+void lemlib::Chassis::turnToHeading(float targetTheta, int timeout, bool forwards, float maxSpeed, bool async) {
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
@@ -333,9 +332,7 @@ void lemlib::Chassis::turnToHeading(float targetTheta, int timeout, bool forward
         motorPower = std::clamp(motorPower, -maxSpeed, maxSpeed);
 
         // slew output unless robot is within 20 degrees of target
-        if (deltaTheta > 20) {
-            motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
-        }
+        if (deltaTheta > 20) { motorPower = slew(motorPower, prevMotorPower, angularSettings.slew); }
 
         prevMotorPower = motorPower;
 
