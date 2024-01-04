@@ -326,7 +326,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
 
     // figure out movement type
     MovementType mType;
-    if (!isnan(targetPose.x) && !isnan(targetPose.y) && !isnan(targetPose.theta)) { 
+    if (!isnan(targetPose.x) && !isnan(targetPose.y) && !isnan(targetPose.theta)) {
         mType = ClassicMovement;
     } else if (!isnan(targetPose.dist) && !isnan(targetPose.theta)) {
         mType = RelativeWithAngle;
