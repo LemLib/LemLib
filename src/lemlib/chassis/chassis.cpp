@@ -217,13 +217,13 @@ bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
  * @param maxSpeed the maximum speed the robot can turn at. Default is 127
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
+void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { turnTo(x, y, timeout, forwards, maxSpeed, false); });
+        pros::Task task([&]() { turnToPoint(x, y, timeout, forwards, maxSpeed, false); });
         this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
@@ -251,6 +251,79 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
         deltaX = x - pose.x;
         deltaY = y - pose.y;
         targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
+
+        // calculate deltaTheta
+        deltaTheta = angleError(targetTheta, pose.theta, false);
+
+        // calculate the speed
+        motorPower = angularPID.update(deltaTheta);
+        angularLargeExit.update(deltaTheta);
+        angularSmallExit.update(deltaTheta);
+
+        // cap the speed
+        if (motorPower > maxSpeed) motorPower = maxSpeed;
+        else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
+
+        // move the drivetrain
+        drivetrain.leftMotors->move(motorPower);
+        drivetrain.rightMotors->move(-motorPower);
+
+        pros::delay(10);
+    }
+
+    // stop the drivetrain
+    drivetrain.leftMotors->move(0);
+    drivetrain.rightMotors->move(0);
+    // set distTraveled to -1 to indicate that the function has finished
+    distTravelled = -1;
+    this->endMotion();
+}
+
+/**
+ * @brief Turn the chassis so it is facing the target heading
+ *
+ * The PID logging id is "angularPID"
+ *
+ * @param targetTheta robot target heading
+ * @param timeout longest time the robot can spend moving
+ * @param radians whether the heading is in radians or degrees. false by default
+ * @param forwards whether the robot should turn to face the heading with the front of the robot. true by default
+ * @param maxSpeed the maximum speed the robot can turn at. Default is 127
+ * @param async whether the function should be run asynchronously. true by default
+ */
+void lemlib::Chassis::turnToHeading(float targetTheta, int timeout, bool radians, bool forwards, float maxSpeed, bool async) {
+    this->requestMotionStart();
+    // were all motions cancelled?
+    if (!this->motionRunning) return;
+    // if the function is async, run it in a new task
+    if (async) {
+        pros::Task task([&]() { turnToHeading(targetTheta, timeout, radians, forwards, maxSpeed, false); });
+        this->endMotion();
+        pros::delay(10); // delay to give the task time to start
+        return;
+    }
+    float deltaTheta;
+    float motorPower;
+    float startTheta = getPose().theta;
+    std::uint8_t compState = pros::competition::get_status();
+    distTravelled = 0;
+    Timer timer(timeout);
+    angularLargeExit.reset();
+    angularSmallExit.reset();
+    angularPID.reset();
+
+    // main loop
+    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
+        // update variables
+        Pose pose = getPose();
+        pose.theta = (forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
+        
+        if (radians) {
+            targetTheta = radToDeg(targetTheta);
+        }
+
+        // update completion vars
+        distTravelled = fabs(angleError(pose.theta, startTheta));
 
         // calculate deltaTheta
         deltaTheta = angleError(targetTheta, pose.theta, false);
