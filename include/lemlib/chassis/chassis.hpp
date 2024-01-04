@@ -245,11 +245,13 @@ class Chassis {
          * @param targetTheta robot target heading
          * @param timeout longest time the robot can spend moving
          * @param radians whether the heading is in radians or degrees. false by default
-         * @param forwards whether the robot should turn to face the heading with the front of the robot. true by default
+         * @param forwards whether the robot should turn to face the heading with the front of the robot. true by
+         * default
          * @param maxSpeed the maximum speed the robot can turn at. Default is 127
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToHeading(float targetTheta, int timeout, bool radians = false, bool forwards = true, float maxSpeed = 127, bool async = true);
+        void turnToHeading(float targetTheta, int timeout, bool radians = false, bool forwards = true,
+                           float maxSpeed = 127, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *
