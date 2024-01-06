@@ -132,7 +132,7 @@ void autonomous() {
     chassis.waitUntil(10);
     chassis.cancelMotion();
     // example movement: Turn to face a heading of 90º. Timeout set to 1500
-    chassis.turnToHeading(1000, 1500);
+    chassis.turnToHeading(90, 1500);
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
     chassis.turnToPoint(45, -45, 1000, true, 60);
