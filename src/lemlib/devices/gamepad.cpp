@@ -1,15 +1,16 @@
-#include "lemlib/devices/lemcontroller.hpp"
+#include "lemlib/devices/gamepad.hpp"
 #include "pros/misc.h"
 #include <utility>
+#include <iostream>
 #include <vector>
 
 namespace lemlib {
 
-LEMController::LEMController() {
+Gamepad::Gamepad() {
     
 }
 
-LEMController::LEMController(pros::controller_id_e_t controllerID, std::vector<std::string> modesParam) {
+Gamepad::Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> modesParam) {
 
     prosController = new pros::Controller(controllerID);
 
@@ -31,10 +32,10 @@ LEMController::LEMController(pros::controller_id_e_t controllerID, std::vector<s
         buttonsToFunctions.emplace_back( new LEMButtonMapping( buttons[i], "DEFAULT", junkFuncs ) );
         
     }
-    
+
 }
 
-LEMController::LEMController(pros::Controller* controller, std::vector<std::string> modesParam) {
+Gamepad::Gamepad(pros::Controller* controller, std::vector<std::string> modesParam) {
 
     prosController = controller;
 
@@ -50,6 +51,9 @@ LEMController::LEMController(pros::Controller* controller, std::vector<std::stri
         pros::E_CONTROLLER_DIGITAL_L2, pros::E_CONTROLLER_DIGITAL_R1, 
         pros::E_CONTROLLER_DIGITAL_R2};
 
+    pros::controller_analog_e_t joysticks[] = {pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_RIGHT_Y, 
+        pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X};
+
     int (*junkFunc)(int) = [](int x){return 0;};
 
     std::pair<int(*)(int), int(*)(int)> junkFuncs = {nullptr, nullptr };
@@ -59,22 +63,30 @@ LEMController::LEMController(pros::Controller* controller, std::vector<std::stri
         
     }
     
+    for (int i = 0; i < sizeof(joysticks)/sizeof(joysticks[0]); i++) {
+        joysticksToFunctions.emplace_back( new LEMJoystickMapping( joysticks[i], "DEFAULT", junkFunc ) );
+        
+    }
+    
 }
 
-LEMController::~LEMController() {
+Gamepad::~Gamepad() {
     delete prosController;
     for (int i = 0; i < buttonsToFunctions.size(); i++) {
         delete &buttonsToFunctions.at(i);
     }
+    for (int i = 0; i < joysticksToFunctions.size(); i++) {
+        delete &joysticksToFunctions.at(i);
+    }
 }
 
-bool LEMController::startMainLoop() {
+bool Gamepad::startMainLoop() {
 
     pros::Task task{[this] {
 
         while (true) {
             autoButtonFunctions();
-            pros::delay(20);
+            pros::delay(500);
         }
     
     }};
@@ -83,11 +95,15 @@ bool LEMController::startMainLoop() {
 
 }
 
-void LEMController::autoButtonFunctions() {
+void Gamepad::autoButtonFunctions() {
     
+    //for (int i = 0; i < buttonStates.size(); i++) {
+    //    buttonStates.at(buttonsToFunctions.at(i)->getButton()) = prosController->get_digital(buttonsToFunctions.at(i)->getButton());
+    //}
+
     for (int i = 0; i < buttonsToFunctions.size(); i++) {
         if (getButton( {buttonsToFunctions.at(i)->getButton()} )) { // If buttons are pressed
-            buttonsToFunctions.at(i)->runFunction(currentMode, controllerValues.getControllerKey(buttonsToFunctions.at(i)->getButton())); // Runs the function
+            buttonsToFunctions.at(i)->runFunction(currentMode, prosController->get_digital(buttonsToFunctions.at(i)->getButton())); // Runs the function
         }
     }    
 
@@ -99,7 +115,7 @@ void LEMController::autoButtonFunctions() {
 
 /*================ BUTTONS/JOYSTICK ================*/
 
-bool LEMController::getButton(std::vector<pros::controller_digital_e_t> buttons) {
+bool Gamepad::getButton(std::vector<pros::controller_digital_e_t> buttons) {
     
     // If all buttons are pressed, then return false will never run, and the function will return true once for loop exists. 
     // If any button is pressed, then return false will run.
@@ -115,7 +131,7 @@ bool LEMController::getButton(std::vector<pros::controller_digital_e_t> buttons)
 }
 
 
-bool LEMController::newButtonPress(pros::controller_digital_e_t button) {
+bool Gamepad::newButtonPress(pros::controller_digital_e_t button) {
 
     bool buttonState = prosController->get_digital(button);
     bool buttonStateLastTick = buttonStates[button];
@@ -142,7 +158,7 @@ bool LEMController::newButtonPress(pros::controller_digital_e_t button) {
 
 }
 
-bool LEMController::toggleButton(pros::controller_digital_e_t button) {
+bool Gamepad::toggleButton(pros::controller_digital_e_t button) {
 
     static int toggleState = 0;
 
@@ -160,55 +176,59 @@ bool LEMController::toggleButton(pros::controller_digital_e_t button) {
 
 }
 
-int LEMController::getJoystick(pros::controller_analog_e_t whichJoystick) {
+int Gamepad::getJoystick(pros::controller_analog_e_t whichJoystick) {
     int joystickValue = prosController->get_analog(whichJoystick);
     return joystickValue;
 }
 
-void LEMController::setFuncToAction(std::pair<int(*)(int), int(*)(int)> functionPtr, pros::controller_digital_e_t button, std::string modeParam) {
+void Gamepad::setFuncToAction(std::pair<int(*)(int), int(*)(int)> functionPtr, pros::controller_digital_e_t button, std::string modeParam) {
 
     std::pair<pros::controller_digital_e_t, std::pair<int(*)(int), int(*)(int)>> buttonFuncPair(button, functionPtr);
 
+    std::cout << "Controller Key: " << controllerValues.getControllerKey(button) << std::endl;
     buttonsToFunctions.at(controllerValues.getControllerKey(button))->addModeAndFunction(modeParam, functionPtr);
     
 
 }
 
-void LEMController::setFuncToAction(int(*functionPtr)(int), pros::controller_analog_e_t joystick, std::string modeParam) {
+void Gamepad::setFuncToAction(int(*functionPtr)(int), pros::controller_analog_e_t joystick, std::string modeParam) {
 
     std::pair<pros::controller_analog_e_t, int(*)(int)> buttonFuncPair(joystick, functionPtr);
 
-    joysticksToFunctions.at(controllerValues.getControllerKey(joystick))->addModeAndFunction(modeParam, functionPtr);
+    std::cout << "Controller Key: " << controllerValues.getControllerKey(joystick) << std::endl;
+
+    // - 12 because the joysticks are ahead of all the buttons, but the vector is only 4 joysticks. 
+    joysticksToFunctions.at(controllerValues.getControllerKey(joystick) - 12)->addModeAndFunction(modeParam, functionPtr);
     
 
 }
 
 /*================ MODES ================*/
 
-void LEMController::addMode(std::string modeParam) {
+void Gamepad::addMode(std::string modeParam) {
     modes.push_back(modeParam);
 }
 
-std::vector<std::string> LEMController::getModes() {
+std::vector<std::string> Gamepad::getModes() {
     return modes;
 }
 
-void LEMController::changeMode(std::string modeParam) {
+void Gamepad::changeMode(std::string modeParam) {
     currentMode = modeParam;
 
 }
 
 /*================ MISC. ================*/
 
-pros::Controller* LEMController::getController() {
+pros::Controller* Gamepad::getController() {
     return prosController;
 }
 
-void LEMController::rumble(const char* pattern) {
+void Gamepad::rumble(const char* pattern) {
     prosController->rumble(pattern);
 }
 
-std::vector<LEMButtonMapping*> LEMController::getButtonsToFunctions() {
+std::vector<LEMButtonMapping*> Gamepad::getButtonsToFunctions() {
     return buttonsToFunctions;
 }
 

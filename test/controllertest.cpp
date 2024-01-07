@@ -1,4 +1,4 @@
-#include "lemlib/devices/lemcontroller.hpp"
+#include "lemlib/devices/gamepad.hpp"
 #include "pros/misc.h"
 #include <gtest/gtest.h>
 #include <string>
@@ -7,7 +7,7 @@ TEST(LEMControllerTest, TestNewControllerConstructor) {
   // Create an instance of LemController
 
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
-  lemlib::LEMController controller(pros::E_CONTROLLER_MASTER, modes);
+  lemlib::Gamepad controller(pros::E_CONTROLLER_MASTER, modes);
 
   const int numButtons = 12;
   const int numModes = modes.size();
@@ -33,7 +33,7 @@ TEST(LEMControllerTest, TestInputtedControllerConstructor) {
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
 
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
-  lemlib::LEMController controller(paramcontroller, modes);
+  lemlib::Gamepad controller(paramcontroller, modes);
 
   EXPECT_EQ(controller.getButton(pros::E_CONTROLLER_DIGITAL_B), paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_B));
 
@@ -46,7 +46,7 @@ TEST(LEMControllerTest, TestGetButton) {
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
 
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
-  lemlib::LEMController controller(paramcontroller, modes);
+  lemlib::Gamepad controller(paramcontroller, modes);
 
   EXPECT_EQ(controller.getButton({pros::E_CONTROLLER_DIGITAL_B}), paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_B));
   EXPECT_EQ(controller.getButton({pros::E_CONTROLLER_DIGITAL_A}), paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_A));
@@ -60,7 +60,7 @@ TEST(LEMControllerTest, TestGetTwoButtons) {
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
 
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
-  lemlib::LEMController controller(paramcontroller, modes);
+  lemlib::Gamepad controller(paramcontroller, modes);
 
   EXPECT_EQ(controller.getButton({pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_A}), 
     (paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_B) && paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_A)));
@@ -75,7 +75,7 @@ TEST(LEMControllerTest, TestGetThreeButtons) {
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
 
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
-  lemlib::LEMController controller(paramcontroller, modes);
+  lemlib::Gamepad controller(paramcontroller, modes);
 
   EXPECT_EQ(controller.getButtonCombination({pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_X}), 
     (paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_B) && paramcontroller->get_digital(pros::E_CONTROLLER_DIGITAL_A) && 
@@ -90,7 +90,7 @@ TEST(LEMControllerTest, addMode) {
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
 
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
-  lemlib::LEMController controller(paramcontroller, modes);
+  lemlib::Gamepad controller(paramcontroller, modes);
 
   std::vector<std::string> correctModes = {"TEST1", "TEST2", "TEST3", "TEST4"};
 
@@ -114,7 +114,7 @@ TEST(LEMControllerTest, addFunction) {
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
 
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
-  lemlib::LEMController controller(paramcontroller, modes);
+  lemlib::Gamepad controller(paramcontroller, modes);
 
   const int parameter = 69;
 
@@ -162,7 +162,7 @@ TEST(LEMControllerTest, autoLoopFunctions) {
   std::vector<std::pair<int(*)(int),int(*)(int)> testFunctionsContainer;
 
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
-  lemlib::LEMController controller(paramcontroller, modes);
+  lemlib::Gamepad controller(paramcontroller, modes);
 
   int parameter = 0;
 
@@ -202,7 +202,7 @@ TEST(LEMControllerTest, newButtonPress) {
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
 
   pros::Controller* paramcontroller = new pros::Controller(pros::E_CONTROLLER_MASTER);
-  lemlib::LEMController controller(paramcontroller, modes);
+  lemlib::Gamepad controller(paramcontroller, modes);
 
   // SIM Button is pressed, should register as true below. Same goes for LEM button.
   bool expectedOutput = true

@@ -33,13 +33,17 @@ namespace lemlib {
 
             for (int i = 0; i < functions.size(); i++) {
                 if (functions.at(i).first == mode) { // If the mode matches,
+
                     if (buttonState == true) {
-                        functions.at(i).second.second(funcParam); // Run the function pointer for the true state
+                        if (functions.at(i).second.second != nullptr) { // If the function for when its true is not a null pointer
+                            functions.at(i).second.second(funcParam); // Run the function pointer for the true state
+                        }
                     }
                     else {
-                        functions.at(i).second.first(funcParam); // Run the function pointer for the false state
+                        if (functions.at(i).second.first != nullptr) { // If the function for when its false is not a null pointer
+                            functions.at(i).second.first(funcParam); // Run the function pointer for the false state
+                        }
                     }
-                    
                 }
             }
         }
@@ -75,13 +79,9 @@ namespace lemlib {
 
             for (int i = 0; i < functions.size(); i++) {
                 if (functions.at(i).first == mode) { // If the mode matches,
-                    try {
+                    if (functions.at(i).second != nullptr) { // If the function is not a null pointer
                         functions.at(i).second(joystickValue); // Run the function pointer 
                     }
-                    catch (...) {
-                        // Do nothing, move on
-                    }
-                    
                 }
             }
         }
@@ -185,7 +185,7 @@ namespace lemlib {
 
     };
     
-class LEMController {
+class Gamepad {
 private:
 
 protected:
@@ -207,27 +207,27 @@ protected:
      */
     void autoButtonFunctions();
 
-    LEMController();
+    Gamepad();
 
 public:
 
     /**
-     * @brief Construct a new LEMController object
+     * @brief Construct a new Gamepad object
      * 
      * @param controllerID 
      * @param modesParam 
      */
-    LEMController(pros::controller_id_e_t controllerID, std::vector<std::string> modesParam = {"DEFAULT"});
+    Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> modesParam = {"DEFAULT"});
     
     /**
-     * @brief Construct a new LEMController object
+     * @brief Construct a new Gamepad object
      * 
      * @param controller 
      * @param modesParam 
      */
-    LEMController(pros::Controller* controller, std::vector<std::string> modesParam = {"DEFAULT"});
+    Gamepad(pros::Controller* controller, std::vector<std::string> modesParam = {"DEFAULT"});
     
-    ~LEMController();
+    ~Gamepad();
 
     bool startMainLoop();
 

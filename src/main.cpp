@@ -2,14 +2,14 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
-#include "lemlib/devices/lemcontroller.hpp"
+#include "lemlib/devices/gamepad.hpp"
 #include "pros/misc.h"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
-
+/*
 // motor groups
 // left motors on ports 8, 20, and 19. Motors on ports 8 and 20 are reversed. Using blue gearbox
 auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
@@ -65,7 +65,7 @@ lemlib::Differential chassis(drivetrain, linearController, angularController, se
 
 
 
-
+*/
 
 
 
@@ -78,28 +78,41 @@ pros::Motor intakeMotor(3);
 
 
 int driveLeft(int percent) {
-    leftMotors->move_voltage(percent * 12000 / 127);
+    //leftTestMotors.move_voltage(percent * 12000 / 127);
+    std::cout << "driving left brrrr" << std::endl;
     return percent;
 }
 
 int driveRight(int percent) {
-    rightMotors->move_voltage(percent * 12000 / 127);
+    //rightTestMotors.move_voltage(percent * 12000 / 127);
+    std::cout << "driving right brrr" << std::endl;
     return percent;
 }
 
 int intakeIn(int throwaway) {
-    intakeMotor.move(127);
+    //intakeMotor.move(127);
+    std::cout << "intakinggggg" << std::endl;
     return throwaway;
 }
 
 int intakeStop(int throwaway) {
-    intakeMotor.move(0);
+    //intakeMotor.move(0);
+    std::cout << "stopping intake" << std::endl;
     return throwaway;
 
 }
 
+int debugRPM(int throwaway) {
+    std::cout << "RPM: " << leftTestMotors.get_actual_velocity() << std::endl;
+    return throwaway;
+}
 
-lemlib::LEMController lemController(&controller);
+int debugVoltage(int throwaway) {
+    std::cout << "Voltage: " << leftTestMotors.get_voltage() << std::endl;
+    return throwaway;
+}
+
+lemlib::Gamepad lemController(&controller, {"DEFAULT", "TEST"});
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -109,7 +122,7 @@ lemlib::LEMController lemController(&controller);
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    chassis.initialize(); // calibrate sensors
+    /*chassis.initialize(); // calibrate sensors
 
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
@@ -122,7 +135,7 @@ void initialize() {
             // delay to save resources
             pros::delay(10);
         }
-    });
+    });*/
 }
 
 /**
@@ -145,7 +158,7 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
 void autonomous() {
-    // example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4000 ms
+    /*// example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4000 ms
     chassis.moveTo(20, 15, 90, 4000);
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
@@ -161,7 +174,7 @@ void autonomous() {
     pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
     // wait until the movement is done
     chassis.waitUntilDone();
-    pros::lcd::print(4, "pure pursuit finished!");
+    pros::lcd::print(4, "pure pursuit finished!");*/
 }
 
 /**
@@ -169,19 +182,18 @@ void autonomous() {
  */
 void opcontrol() {
 
+    lemController.setFuncToAction({intakeStop, intakeIn}, pros::E_CONTROLLER_DIGITAL_A, "DEFAULT");
     lemController.setFuncToAction(driveLeft, pros::E_CONTROLLER_ANALOG_LEFT_Y, "DEFAULT");
     lemController.setFuncToAction(driveRight, pros::E_CONTROLLER_ANALOG_RIGHT_Y, "DEFAULT");
-    lemController.setFuncToAction({intakeStop, intakeIn}, pros::E_CONTROLLER_DIGITAL_A);
+    lemController.setFuncToAction({debugRPM, debugVoltage}, pros::E_CONTROLLER_DIGITAL_B, "TEST");
+
+    lemController.startMainLoop();
 
     // controller
     // loop to continuously update motors
     while (true) {
-        // get joystick positions
-        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-        // move the chassis with curvature drive
-        chassis.curvature(leftY, rightX);
-        // delay to save resources
+        pros::delay(4000);
+        lemController.changeMode("TEST");
         pros::delay(10);
     }
 }
