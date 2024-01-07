@@ -1,12 +1,3 @@
-/**
- * @file src/lemlib/chassis/pursuit.cpp
- * @author LemLib Team
- * @brief Pure Pursuit implementation
- * @version 0.4.5
- * @date 2023-02-09
- * @copyright Copyright (c) 2023
- *
- */
 
 // The implementation below is mostly based off of
 // the document written by Dawgma
