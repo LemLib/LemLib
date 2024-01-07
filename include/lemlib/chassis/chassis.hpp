@@ -20,6 +20,7 @@
 #include <cmath>
 #include <functional>
 #include <limits>
+#include<vector>
 
 namespace lemlib {
 /**
@@ -139,10 +140,7 @@ struct Drivetrain {
  *  127 by default
  */
 struct MoveToPoseTarget {
-        float dist = std::numeric_limits<float>::quiet_NaN();
-        float x = std::numeric_limits<float>::quiet_NaN();
-        float y = std::numeric_limits<float>::quiet_NaN();
-        float theta = std::numeric_limits<float>::quiet_NaN();
+        std::vector<float>params_t(4) = std::numeric_limits<float>::quiet_NaN();
 };
 
 // Enum to represent different movement types
@@ -175,7 +173,7 @@ enum MovementType {
  * @param earlyExitRange distance between the robot and target point where the
  * movement will exit. Only has an effect if minSpeed is non-zero.
  */
-struct MoveToPoseFlags {
+struct MoveToPoseOptions {
         bool forwards = true;
         float chasePower = 0;
         float lead = 0.6;
@@ -399,5 +397,6 @@ class Chassis {
         ExitCondition angularLargeExit;
         ExitCondition angularSmallExit;
         MovementType getMovementType(const MoveToPoseTarget& params_t);
+        Pose getTarget(MovementType mType);
 };
 } // namespace lemlib

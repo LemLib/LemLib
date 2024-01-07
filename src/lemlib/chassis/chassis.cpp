@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2023
  *
  */
- 
+
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
@@ -290,6 +290,58 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     this->endMotion();
 }
 
+/*
+ * @brief Get the movement type for boomerang so we can run calculations for the target
+ */
+MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) {
+    // count number of values in the vector that were used
+    uint16_t count = 0;
+    for (auto v : params_t)
+        if (!isnan(v)) count++;
+    // figure out movement type
+    if (count = 1) {
+        return ClassicMovement;
+    } else if (count = 2) {
+        return RelativeWithAngle;
+    } else if (count = 3) {
+        returnRelativeWithoutAngle;
+    } else {
+        // Handle unknown movement type
+        // Maybe log error
+        return ClassicMovement; // Default to classic movement for unknown
+                                // input
+    }
+}
+
+/*
+ * @brief get the target for the boomerang
+ */
+Pose lemlib::Chassis::getTarget(MovementType mType) {
+    const Pose pose_t = getPose(true, true);
+    // Recalculate target based on user input
+    switch (mType) {
+        case RelativeWithoutAngle:
+            return Pose(pose_t.x + targetPose.dist * std::cos(pose_t.theta),
+                        pose_t.y + targetPose.dist * std::sin(pose_t.theta), pose_t.theta);
+            break;
+        case RelativeWithAngle:
+            return Pose(pose_t.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
+                        pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
+            break;
+        case ClassicMovement:
+            // calculate target pose in standard form
+            return Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
+            break;
+
+        default:
+            // Handle unknown movement type
+            // Log error maybe
+            // calculate target pose in standard form
+            return Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
+            break;
+    }
+}
+
 /**
  * @brief Move the chassis towards the target pose
  *
@@ -304,7 +356,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
  * @param async whether the function should be run asynchronously. true by
  * default
  */
-void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveToPoseFlags params, bool async) {
+void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveToPoseOptions params, bool async) {
     // take the mutex
     this->requestMotionStart();
     // were all motions cancelled?
@@ -325,45 +377,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
     angularLargeExit.reset();
     angularSmallExit.reset();
 
-    // figure out movement type
-    MovementType mType;
-    if (!isnan(targetPose.x) && !isnan(targetPose.y) && !isnan(targetPose.theta)) {
-        mType = ClassicMovement;
-    } else if (!isnan(targetPose.dist) && !isnan(targetPose.theta)) {
-        mType = RelativeWithAngle;
-    } else if (!isnan(targetPose.dist)) {
-        mType = RelativeWithoutAngle;
-    } else {
-        // Handle unknown movement type
-        // Maybe log error
-        mType = ClassicMovement; // Default to classic movement for unknown
-                                 // input
-    }
-
-    const Pose pose_t = getPose(true, true);
-    // Recalculate target based on user input
-    Pose target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
-    switch (mType) {
-        case RelativeWithoutAngle:
-            target = Pose(pose_t.x + targetPose.dist * std::cos(pose_t.theta),
-                          pose_t.y + targetPose.dist * std::sin(pose_t.theta), pose_t.theta);
-            break;
-        case RelativeWithAngle:
-            target = Pose(pose_t.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
-                          pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
-            break;
-        case ClassicMovement:
-            // calculate target pose in standard form
-            target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
-            break;
-
-        default:
-            // Handle unknown movement type
-            // Log error maybe
-            // calculate target pose in standard form
-            target = Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
-            break;
-    }
+    Pose target = getTarget(getMovementType(targetPose));
 
     if (!params.forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
