@@ -260,6 +260,14 @@ class Chassis {
          * @param maxSpeed the maximum speed the robot can turn at. Default is 127
          * @param async whether the function should be run asynchronously. true by default
          */
+
+        /**
+         * @brief Sets the brake mode of the drivetrain motors
+         *
+         * @param mode Mode to set the drivetrain motors to
+         */
+        void setBrakeMode(pros::motor_brake_mode_e mode);
+
         void turnTo(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
