@@ -1,13 +1,3 @@
-/**
- * @file src/lemlib/util.cpp
- * @author Liam Teale
- * @brief File containing definitions for utility functions
- * @version 0.4.5
- * @date 2023-01-15
- *
- * @copyright Copyright (c) 2023
- *
- */
 #include <math.h>
 #include <vector>
 #include "lemlib/pose.hpp"

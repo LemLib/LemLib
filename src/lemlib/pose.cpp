@@ -1,13 +1,3 @@
-/**
- * @file src/lemlib/pose.cpp
- * @author LemLib Team
- * @brief Source file containing the implementation of the Pose class
- * @version 0.4.5
- * @date 2023-01-23
- *
- * @copyright Copyright (c) 2023
- *
- */
 
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"

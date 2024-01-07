@@ -1,13 +1,3 @@
-/**
- * @file include/lemlib/pose.hpp
- * @author LemLib Team
- * @brief Pose class declarations
- * @version 0.4.5
- * @date 2023-01-23
- *
- * @copyright Copyright (c) 2023
- *
- */
 #pragma once
 
 #include <string>
