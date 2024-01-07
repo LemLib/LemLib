@@ -1,4 +1,3 @@
-#include "pros/rtos.hpp"
 #include "pid.hpp"
 #include "util.hpp"
 
@@ -26,25 +25,13 @@ PID::PID(float kP, float kI, float kD, float windupRange, bool signFlipReset)
  * @return float output
  */
 float PID::update(const float error) {
-    // init
-    if (prevTime == -1) {
-        prevTime = float(pros::millis()) / 1000;
-        prevError = error;
-        integral = error;
-    }
-
-    // calculate delta time
-    const float time = float(pros::millis()) / 1000;
-    const float dTime = time - prevTime;
-    prevTime = time;
-
     // calculate integral
-    integral += error * dTime;
+    integral += error;
     if (sgn(error) != sgn((prevError))) integral = 0;
     if (fabs(error) > windupRange) integral = 0;
 
     // calculate derivative
-    const float derivative = (error - prevError) / dTime;
+    const float derivative = error - prevError;
     prevError = error;
 
     // calculate output
@@ -58,6 +45,5 @@ float PID::update(const float error) {
 void PID::reset() {
     integral = 0;
     prevError = 0;
-    prevTime = -1;
 }
 } // namespace lemlib
