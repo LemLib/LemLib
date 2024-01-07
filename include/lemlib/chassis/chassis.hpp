@@ -261,7 +261,7 @@ class Chassis {
          * @param async whether the function should be run asynchronously. true by default
          */
 
-         /**
+        /**
          * @brief Sets the brake mode of the drivetrain motors
          *
          * @param mode Mode to set the drivetrain motors to
