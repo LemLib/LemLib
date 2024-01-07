@@ -189,12 +189,13 @@ float findLookaheadCurvature(lemlib::Pose pose, float heading, lemlib::Pose look
  * @param async whether the function should be run asynchronously. true by default
  */
 void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bool forwards, bool async) {
-    // take the mutex
-    mutex.take(TIMEOUT_MAX);
+    this->requestMotionStart();
+    // were all motions cancelled?
+    if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
         pros::Task task([&]() { follow(path, lookahead, timeout, forwards, false); });
-        mutex.give();
+        this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
@@ -217,7 +218,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
     distTravelled = 0;
 
     // loop until the robot is within the end tolerance
-    for (int i = 0; i < timeout / 10 && pros::competition::get_status() == compState; i++) {
+    for (int i = 0; i < timeout / 10 && pros::competition::get_status() == compState && this->motionRunning; i++) {
         // get the current position of the robot
         pose = this->getPose(true);
         if (!forwards) pose.theta -= M_PI;
@@ -277,5 +278,5 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
     // set distTravelled to -1 to indicate that the function has finished
     distTravelled = -1;
     // give the mutex back
-    mutex.give();
+    this->endMotion();
 }
