@@ -140,7 +140,7 @@ struct Drivetrain {
  *  127 by default
  */
 struct MoveToPoseTarget {
-        std::vector<float>params_t(4) = std::numeric_limits<float>::quiet_NaN();
+        std::vector<float>params(4,std::numeric_limits<float>::quiet_NaN());
 };
 
 // Enum to represent different movement types
@@ -291,7 +291,7 @@ class Chassis {
          * @param async whether the function should be run asynchronously. true by
          * default
          */
-        void moveToPose(MoveToPoseTarget targetPose, int timeout, MoveToPoseFlags params = {}, bool async = true);
+        void moveToPose(MoveToPoseTarget targetPose, int timeout, MoveToPoseOptions params = {}, bool async = true);
         /**
          * @brief Move the chassis towards a target point
          *

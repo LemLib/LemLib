@@ -22,7 +22,7 @@
 #include <functional>
 #include <limits>
 #include <math.h>
-#include<vector>
+#include <vector>
 
 /**
  * @brief The variables are pointers so that they can be set to nullptr if they
