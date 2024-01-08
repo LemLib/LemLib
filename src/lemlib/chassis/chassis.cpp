@@ -305,7 +305,7 @@ lemlib::MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& pa
     } else if (count = 2) {
         return RelativeWithAngle;
     } else if (count = 3) {
-        return RelativeWithoutAngle;
+        return RelativeWithoutAngle; 
     } else {
         // Handle unknown movement type
         // Maybe log error
