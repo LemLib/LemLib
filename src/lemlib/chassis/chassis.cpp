@@ -293,7 +293,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
 /*
  * @brief Get the movement type for boomerang so we can run calculations for the target
  */
-MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) {
+lemlib::MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) {
     MovementType mType;
     // count number of values in the vector that were used
     uint16_t count = 0;
@@ -301,18 +301,17 @@ MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) 
         if (!isnan(v)) count++;
     // figure out movement type
     if (count = 1) {
-        mType = ClassicMovement;
+        return ClassicMovement;
     } else if (count = 2) {
-        mType = RelativeWithAngle;
+        return RelativeWithAngle;
     } else if (count = 3) {
-        mType = RelativeWithoutAngle;
+        return RelativeWithoutAngle;
     } else {
         // Handle unknown movement type
         // Maybe log error
-        mType = ClassicMovement; // Default to classic movement for unknown
+        return ClassicMovement; // Default to classic movement for unknown
                                 // input
     }
-    return mType;
 }
 
 /*
