@@ -290,6 +290,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     distTravelled = -1;
     this->endMotion();
 }
+
 /*
  * @brief Get the movement type for boomerang so we can run calculations for the target
  */
@@ -305,7 +306,7 @@ lemlib::MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& pa
     } else if (count = 2) {
         return RelativeWithAngle;
     } else if (count = 3) {
-        return RelativeWithoutAngle; 
+        return RelativeWithoutAngle;
     } else {
         // Handle unknown movement type
         // Maybe log error
@@ -319,29 +320,31 @@ lemlib::MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& pa
  */
 lemlib::Pose lemlib::Chassis::getTarget(MovementType mType, const MoveToPoseTarget& params_t) {
     struct Target { // structure for readability
-        float x;
-        float y;
-        float theta;
-        float dist;
-    }; Target targetPose;
+            float x;
+            float y;
+            float theta;
+            float dist;
+    };
+
+    Target targetPose;
     const Pose pose_t = getPose(true, true);
     // Recalculate target based on user input
     switch (mType) {
         case RelativeWithoutAngle:
-            targetPose.dist=params_t.params[0];
+            targetPose.dist = params_t.params[0];
             return Pose(pose_t.x + targetPose.dist * std::cos(pose_t.theta),
-                          pose_t.y + targetPose.dist * std::sin(pose_t.theta), pose_t.theta);
+                        pose_t.y + targetPose.dist * std::sin(pose_t.theta), pose_t.theta);
             break;
         case RelativeWithAngle:
-            targetPose.dist=params_t.params[0];
-            targetPose.theta=params_t.params[1];
+            targetPose.dist = params_t.params[0];
+            targetPose.theta = params_t.params[1];
             return Pose(pose_t.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
-                          pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
+                        pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
             break;
         case ClassicMovement:
-            targetPose.x=params_t.params[0];
-            targetPose.y=params_t.params[1];
-            targetPose.theta=params_t.params[2];
+            targetPose.x = params_t.params[0];
+            targetPose.y = params_t.params[1];
+            targetPose.theta = params_t.params[2];
             // calculate target pose in standard form
             return Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
             break;
@@ -390,7 +393,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
     angularLargeExit.reset();
     angularSmallExit.reset();
 
-    Pose target = getTarget(getMovementType(targetPose),targetPose);
+    Pose target = getTarget(getMovementType(targetPose), targetPose);
 
     if (!params.forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
