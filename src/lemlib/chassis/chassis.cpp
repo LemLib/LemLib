@@ -293,30 +293,32 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
 /*
  * @brief Get the movement type for boomerang so we can run calculations for the target
  */
-MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) {
+void lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) {
+    MovementType mType;
     // count number of values in the vector that were used
     uint16_t count = 0;
     for (auto v : params_t.params)
         if (!isnan(v)) count++;
     // figure out movement type
     if (count = 1) {
-        return ClassicMovement;
+        mType = ClassicMovement;
     } else if (count = 2) {
-        return RelativeWithAngle;
+        mType = RelativeWithAngle;
     } else if (count = 3) {
-        returnRelativeWithoutAngle;
+        mType = RelativeWithoutAngle;
     } else {
         // Handle unknown movement type
         // Maybe log error
-        return ClassicMovement; // Default to classic movement for unknown
+        mType = ClassicMovement; // Default to classic movement for unknown
                                 // input
     }
+    return mType;
 }
 
 /*
  * @brief get the target for the boomerang
  */
-Pose lemlib::Chassis::getTarget(MovementType mType, const MoveToPoseTarget& params_t) {
+void lemlib::Chassis::getTarget(MovementType mType, const MoveToPoseTarget& params_t) {
     struct Target { // structure for readability
         float x;
         float y;
@@ -389,7 +391,7 @@ void lemlib::Chassis::moveToPose(MoveToPoseTarget targetPose, int timeout, MoveT
     angularLargeExit.reset();
     angularSmallExit.reset();
 
-    Pose target = getTarget(getMovementType(targetPose));
+    Pose target = getTarget(getMovementType(targetPose),targetPose);
 
     if (!params.forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
