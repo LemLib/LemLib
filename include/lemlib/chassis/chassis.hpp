@@ -140,7 +140,7 @@ struct Drivetrain {
  *  127 by default
  */
 struct MoveToPoseTarget {
-        std::vector<float> params{4,std::numeric_limits<float>::quiet_NaN()};
+        std::vector<float> params {4, std::numeric_limits<float>::quiet_NaN()};
 };
 
 // Enum to represent different movement types
