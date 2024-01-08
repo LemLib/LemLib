@@ -293,7 +293,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
 /*
  * @brief Get the movement type for boomerang so we can run calculations for the target
  */
-void lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) {
+MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) {
     MovementType mType;
     // count number of values in the vector that were used
     uint16_t count = 0;
@@ -318,7 +318,7 @@ void lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) {
 /*
  * @brief get the target for the boomerang
  */
-void lemlib::Chassis::getTarget(MovementType mType, const MoveToPoseTarget& params_t) {
+lemlib::Pose lemlib::Chassis::getTarget(MovementType mType, const MoveToPoseTarget& params_t) {
     struct Target { // structure for readability
         float x;
         float y;
