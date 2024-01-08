@@ -290,7 +290,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
     distTravelled = -1;
     this->endMotion();
 }
-
+, const MoveToPoseTarget& params_t
 /*
  * @brief Get the movement type for boomerang so we can run calculations for the target
  */
@@ -317,28 +317,28 @@ MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) 
 /*
  * @brief get the target for the boomerang
  */
-void lemlib::Chassis::getTarget(MovementType mType) {
+void lemlib::Chassis::getTarget(MovementType mType, const MoveToPoseTarget& params_t) {
     const Pose pose_t = getPose(true, true);
     // Recalculate target based on user input
     switch (mType) {
         case RelativeWithoutAngle:
-            return Pose(pose_t.x + targetPose.dist * std::cos(pose_t.theta),
-                        pose_t.y + targetPose.dist * std::sin(pose_t.theta), pose_t.theta);
+            return Pose(params_t[0] + params_t[3] * std::cos(pose_t.theta),
+                        params_t[1] + params_t[3] * std::sin(pose_t.theta), params_t[2]);
             break;
         case RelativeWithAngle:
-            return Pose(pose_t.x + targetPose.dist * std::cos(degToRad(targetPose.theta)),
-                        pose_t.y + targetPose.dist * std::sin(degToRad(targetPose.theta)), targetPose.theta);
+            return Pose(params_t[0] + params_t[3] * std::cos(degToRad(params_t[2])),
+                        params_t[1] + params_t[3] * std::sin(degToRad(params_t[2])), params_t[2]);
             break;
         case ClassicMovement:
             // calculate target pose in standard form
-            return Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
+            return Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(params_t[2]));
             break;
 
         default:
             // Handle unknown movement type
             // Log error maybe
             // calculate target pose in standard form
-            return Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(targetPose.theta));
+            return Pose(targetPose.x, targetPose.y, M_PI_2 - degToRad(params_t[2]));
             break;
     }
 }
