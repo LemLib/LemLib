@@ -297,7 +297,7 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, bool forwards, float
 MovementType lemlib::Chassis::getMovementType(const MoveToPoseTarget& params_t) {
     // count number of values in the vector that were used
     uint16_t count = 0;
-    for (auto v : params_t)
+    for (auto v : params_t.params)
         if (!isnan(v)) count++;
     // figure out movement type
     if (count = 1) {
