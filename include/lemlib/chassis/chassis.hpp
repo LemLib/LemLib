@@ -20,7 +20,7 @@
 #include <cmath>
 #include <functional>
 #include <limits>
-#include<vector>
+#include <vector>
 
 namespace lemlib {
 /**
@@ -140,7 +140,7 @@ struct Drivetrain {
  *  127 by default
  */
 struct MoveToPoseTarget {
-        std::vector<float>params(4,std::numeric_limits<float>::quiet_NaN());
+        std::vector<float> params(4, std::numeric_limits<float>::quiet_NaN());
 };
 
 // Enum to represent different movement types
@@ -396,7 +396,7 @@ class Chassis {
         ExitCondition lateralSmallExit;
         ExitCondition angularLargeExit;
         ExitCondition angularSmallExit;
-        MovementType getMovementType(const MoveToPoseTarget& params_t);
-        Pose getTarget(MovementType mType);
+        MovementType getMovementType(const MoveToPoseTarget& params);
+        void getTarget(MovementType mType);
 };
 } // namespace lemlib
