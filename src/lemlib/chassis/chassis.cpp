@@ -1,13 +1,3 @@
-/**
- * @file src/lemlib/chassis/chassis.cpp
- * @author LemLib Team
- * @brief definitions for the chassis class
- * @version 0.4.5
- * @date 2023-01-27
- *
- * @copyright Copyright (c) 2023
- *
- */
 #include <algorithm>
 #include <math.h>
 #include <optional>
@@ -205,6 +195,15 @@ void lemlib::Chassis::cancelAllMotions() {
 }
 
 bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
+
+/**
+ * @brief Sets the brake mode of the drivetrain motors
+ *
+ */
+void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
+    drivetrain.leftMotors->set_brake_modes(mode);
+    drivetrain.rightMotors->set_brake_modes(mode);
+}
 
 /**
  * @brief Turn the chassis so it is facing the target point
