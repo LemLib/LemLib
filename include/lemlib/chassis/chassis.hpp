@@ -196,6 +196,13 @@ class Chassis {
         Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
                 OdomSensors sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
+         * @brief Set the drivetrain motors
+         * 
+         * @param leftMotors pointer to the left motors
+         * @param rightMotors pointer to the right motors
+         */
+        void setDriveMotorGroup(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors);
+        /**
          * @brief Calibrate the chassis sensors
          *
          * @param calibrateIMU whether the IMU should be calibrated. true by default
@@ -238,6 +245,12 @@ class Chassis {
          */
         void waitUntilDone();
         /**
+         * @brief Sets the brake mode of the drivetrain motors
+         *
+         * @param mode Mode to set the drivetrain motors to
+         */
+        void setBrakeMode(pros::motor_brake_mode_e mode);
+        /**
          * @brief Turn the chassis so it is facing the target point
          *
          * The PID logging id is "angularPID"
@@ -250,15 +263,6 @@ class Chassis {
          * @param maxSpeed the maximum speed the robot can turn at. Default is 127
          * @param async whether the function should be run asynchronously. true by default
          */
-
-        /**
-         * @brief Sets the brake mode of the drivetrain motors
-         *
-         * @param mode Mode to set the drivetrain motors to
-         */
-        void setBrakeMode(pros::motor_brake_mode_e mode);
-
-        void turnTo(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
         void turnToPoint(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target heading

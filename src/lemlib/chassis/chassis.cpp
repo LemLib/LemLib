@@ -73,6 +73,17 @@ lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings lateralSettin
       angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout) {}
 
 /**
+ * @brief Set the drivetrain motors
+ * 
+ * @param leftMotors pointer to the left motors
+ * @param rightMotors pointer to the right motors
+ */
+void lemlib::Chassis::setDriveMotorGroup(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors) {
+    this->drivetrain.leftMotors = leftMotors;
+    this->drivetrain.rightMotors = rightMotors;
+}
+
+/**
  * @brief Calibrate the chassis sensors
  *
  * @param calibrateIMU whether the IMU should be calibrated. true by default
