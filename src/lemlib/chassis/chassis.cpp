@@ -74,7 +74,7 @@ lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings lateralSettin
 
 /**
  * @brief Set the drivetrain motors
- * 
+ *
  * @param leftMotors pointer to the left motors
  * @param rightMotors pointer to the right motors
  */
@@ -305,7 +305,8 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool forwards, 
  * @param maxSpeed the maximum speed the robot can turn at. Default is 127
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::turnToHeading(float targetTheta, int timeout, bool radians, bool forwards, float maxSpeed, bool async) {
+void lemlib::Chassis::turnToHeading(float targetTheta, int timeout, bool radians, bool forwards, float maxSpeed,
+                                    bool async) {
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
@@ -331,10 +332,8 @@ void lemlib::Chassis::turnToHeading(float targetTheta, int timeout, bool radians
         // update variables
         Pose pose = getPose();
         pose.theta = (forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
-        
-        if (radians) {
-            targetTheta = radToDeg(targetTheta);
-        }
+
+        if (radians) { targetTheta = radToDeg(targetTheta); }
 
         // update completion vars
         distTravelled = fabs(angleError(pose.theta, startTheta));

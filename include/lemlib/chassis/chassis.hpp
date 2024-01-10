@@ -197,7 +197,7 @@ class Chassis {
                 OdomSensors sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
          * @brief Set the drivetrain motors
-         * 
+         *
          * @param leftMotors pointer to the left motors
          * @param rightMotors pointer to the right motors
          */
