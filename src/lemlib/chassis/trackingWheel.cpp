@@ -1,4 +1,3 @@
-
 #include <math.h>
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/util.hpp"

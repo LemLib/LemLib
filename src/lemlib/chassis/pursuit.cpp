@@ -1,4 +1,3 @@
-
 // The implementation below is mostly based off of
 // the document written by Dawgma
 // Here is a link to the original document
