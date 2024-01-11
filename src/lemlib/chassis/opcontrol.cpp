@@ -31,8 +31,7 @@ float defaultDriveCurve(float input, float scale) {
  * curve, refer to the `defaultDriveCurve` documentation.
  */
 void Chassis::tank(int left, int right, float curveGain) {
-    drivetrain.leftMotors->move(driveCurve(left, curveGain));
-    drivetrain.rightMotors->move(driveCurve(right, curveGain));
+    drivetrain.driveMotors(driveCurve(left, curveGain), driveCurve(right, curveGain));
 }
 
 /**
@@ -47,8 +46,7 @@ void Chassis::tank(int left, int right, float curveGain) {
 void Chassis::arcade(int throttle, int turn, float curveGain) {
     int leftPower = driveCurve(throttle + turn, curveGain);
     int rightPower = driveCurve(throttle - turn, curveGain);
-    drivetrain.leftMotors->move(leftPower);
-    drivetrain.rightMotors->move(rightPower);
+    drivetrain.driveMotors(leftPower, rightPower);
 }
 
 /**
@@ -74,7 +72,6 @@ void Chassis::curvature(int throttle, int turn, float curveGain) {
     leftPower = driveCurve(leftPower, curveGain);
     rightPower = driveCurve(rightPower, curveGain);
 
-    drivetrain.leftMotors->move(leftPower);
-    drivetrain.rightMotors->move(rightPower);
+    drivetrain.driveMotors(leftPower, rightPower);
 }
 } // namespace lemlib

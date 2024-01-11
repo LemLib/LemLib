@@ -2,6 +2,7 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
@@ -80,6 +81,34 @@ struct ControllerSettings {
 };
 
 /**
+ * @brief Struct for a PTO set
+ *
+ */
+struct PtoSet {
+        /**
+         * The constants are stored in a struct so that they can be easily passed to the chassis class
+         * @note this struct does not activate the piston, it is only used to tell the chassis class which motors to
+         * run.
+         *
+         * @param leftMotors pointer to the left motors
+         * @param rightMotors pointer to the right motors
+         * @param isActive whether or not the PTO is connected to the drivetrain at the start
+         */
+        PtoSet(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, bool isActive);
+
+        /**
+         * @brief sets the state of the PTO
+         *
+         * @param isActive the state to set the PTO to
+         */
+        void setState(bool isActive);
+
+        pros::MotorGroup* leftMotors;
+        pros::MotorGroup* rightMotors;
+        bool isActive;
+};
+
+/**
  * @brief Struct containing constants for a drivetrain
  *
  */
@@ -97,8 +126,29 @@ struct Drivetrain {
          */
         Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth, float wheelDiameter,
                    float rpm, float chasePower);
+
+        Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, std::vector<PtoSet*> ptoPairs,
+                   float trackWidth, float wheelDiameter, float rpm, float chasePower);
+
+        /**
+         * @brief Sets the motor powers
+         *
+         * @param leftPower left side motor power in volts [-127, 127]
+         * @param rightPower right side motor power in volts [-127, 127]
+         * @param useBrakeMode whether or not to respect the chosen braking mode when power = 0. True by defualt.
+         */
+        void driveMotors(float leftPower, float rightPower, bool useBrakeMode = true);
+
+        /**
+         * @brief Add a pto set to the drivetrain
+         *
+         * @param ptoSet the pto set to add (construct this using `lemlib::makePtoSet`)
+         */
+        void addPtoSet(PtoSet* ptoSet);
+
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
+        std::vector<PtoSet*> ptoSets;
         float trackWidth;
         float wheelDiameter;
         float rpm;

@@ -29,6 +29,13 @@ lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertic
       horizontal2(horizontal2),
       imu(imu) {}
 
+lemlib::PtoSet::PtoSet(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, bool isActive)
+    : leftMotors(leftMotors),
+      rightMotors(rightMotors),
+      isActive(isActive) {}
+
+void lemlib::PtoSet::setState(bool isActive) { this->isActive = isActive; }
+
 /**
  * @brief The constants are stored in a struct so that they can be easily passed to the chassis class
  * Set a constant to 0 and it will be ignored
@@ -48,6 +55,32 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
       wheelDiameter(wheelDiameter),
       rpm(rpm),
       chasePower(chasePower) {}
+
+void lemlib::Drivetrain::addPtoSet(PtoSet* ptoSet) { ptoSets.push_back(ptoSet); }
+
+/**
+ * @brief Sets the motor powers
+ *
+ * @param leftPower left side motor power in volts [-127, 127]
+ * @param rightPower right side motor power in volts [-127, 127]
+ * @param useBrakeMode whether or not to respect the chosen braking mode when power = 0. True by defualt.
+ */
+void lemlib::Drivetrain::driveMotors(float leftPower, float rightPower, bool useBrakeMode) {
+    auto setPower = [](pros::MotorGroup* motors, float power, bool useBrakeMode) {
+        if (useBrakeMode && power == 0) motors->move_velocity(0);
+        else motors->move(power);
+    };
+
+    setPower(this->leftMotors, leftPower, useBrakeMode);
+    setPower(this->rightMotors, rightPower, useBrakeMode);
+
+    for (PtoSet* ptoSet : this->ptoSets) {
+        if (ptoSet->isActive) {
+            setPower(ptoSet->leftMotors, leftPower, useBrakeMode);
+            setPower(ptoSet->rightMotors, rightPower, useBrakeMode);
+        }
+    }
+}
 
 /**
  * @brief Construct a new Chassis
@@ -214,6 +247,11 @@ bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
 void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
     drivetrain.leftMotors->set_brake_modes(mode);
     drivetrain.rightMotors->set_brake_modes(mode);
+
+    for (PtoSet* ptoSet : drivetrain.ptoSets) {
+        ptoSet->leftMotors->set_brake_modes(mode);
+        ptoSet->rightMotors->set_brake_modes(mode);
+    }
 }
 
 /**
@@ -279,15 +317,13 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool forwards, 
         prevMotorPower = 0;
 
         // move the drivetrain
-        drivetrain.leftMotors->move(motorPower);
-        drivetrain.rightMotors->move(-motorPower);
+        drivetrain.driveMotors(motorPower, -motorPower);
 
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.driveMotors(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
@@ -351,15 +387,13 @@ void lemlib::Chassis::turnToHeading(float targetTheta, int timeout, bool radians
         else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
 
         // move the drivetrain
-        drivetrain.leftMotors->move(motorPower);
-        drivetrain.rightMotors->move(-motorPower);
+        drivetrain.driveMotors(motorPower, -motorPower);
 
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.driveMotors(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
@@ -515,16 +549,14 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         }
 
         // move the drivetrain
-        drivetrain.leftMotors->move(leftPower);
-        drivetrain.rightMotors->move(rightPower);
+        drivetrain.driveMotors(leftPower, rightPower);
 
         // delay to save resources
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.driveMotors(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
@@ -645,16 +677,14 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
         }
 
         // move the drivetrain
-        drivetrain.leftMotors->move(leftPower);
-        drivetrain.rightMotors->move(rightPower);
+        drivetrain.driveMotors(leftPower, rightPower);
 
         // delay to save resources
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.driveMotors(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
