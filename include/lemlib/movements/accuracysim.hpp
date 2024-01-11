@@ -15,7 +15,7 @@ namespace lemlib {
         int amountOfSkillsSimsDone; // The amount of skills simulations that have been done. Used for saving the data to the
             // file.
 
-        LEMController* controller; // Pointer to the controller driver is using 
+        Gamepad* controller; // Pointer to the controller driver is using 
 
         InputReader* inputReader; // A pointer to the input reader, to track misinputs
 
@@ -85,7 +85,7 @@ namespace lemlib {
         * @param path The path that the driver will be going through. Imported from /static/
         * @param inputReaderArg Pointer to the input reader that can be either inputted or not. If not inputted, the
         */
-        AccuracySIM(LEMController* controllerArg, Odom* odomParam, const asset& path, InputReader* inputReaderArg = nullptr);
+        AccuracySIM(Gamepad* controllerArg, Odom* odomParam, const asset& path, InputReader* inputReaderArg = nullptr);
 
         /**
         * @brief Destroy the Skills Simulation object

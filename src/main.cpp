@@ -71,33 +71,33 @@ lemlib::Differential chassis(drivetrain, linearController, angularController, se
 
 
 
-pros::MotorGroup leftTestMotors({8, 20, 19});
-pros::MotorGroup rightTestMotors({2, 11, 13});
+pros::MotorGroup leftTestMotors({1, 2, -7});
+pros::MotorGroup rightTestMotors({4, 5, -6});
 
-pros::Motor intakeMotor(3);
+pros::Motor intakeMotor(10);
 
 
 int driveLeft(int percent) {
-    //leftTestMotors.move_voltage(percent * 12000 / 127);
-    std::cout << "driving left brrrr" << std::endl;
+    leftTestMotors.move_voltage(percent * 12000 / 127);
+    //std::cout << "driving left brrrr" << std::endl;
     return percent;
 }
 
 int driveRight(int percent) {
-    //rightTestMotors.move_voltage(percent * 12000 / 127);
-    std::cout << "driving right brrr" << std::endl;
+    rightTestMotors.move_voltage(percent * 12000 / 127);
+    //std::cout << "driving right brrr" << std::endl;
     return percent;
 }
 
 int intakeIn(int throwaway) {
-    //intakeMotor.move(127);
-    std::cout << "intakinggggg" << std::endl;
+    intakeMotor.move(127);
+    //std::cout << "intakinggggg" << std::endl;
     return throwaway;
 }
 
 int intakeStop(int throwaway) {
-    //intakeMotor.move(0);
-    std::cout << "stopping intake" << std::endl;
+    intakeMotor.move(0);
+    //std::cout << "stopping intake" << std::endl;
     return throwaway;
 
 }
@@ -189,7 +189,7 @@ void opcontrol() {
 
     lemController.startMainLoop();
 
-    // controller
+    // controller 
     // loop to continuously update motors
     while (true) {
         pros::delay(4000);

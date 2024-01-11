@@ -2,7 +2,7 @@
 
 #include "lemlib/chassis/chassis.hpp"
 #include "main.h"
-#include "lemlib/devices/lemcontroller.hpp"
+#include "lemlib/devices/gamepad.hpp"
 #include "lemlib/chassis/differential.hpp"
 
 namespace lemlib {
@@ -10,7 +10,7 @@ namespace lemlib {
 class InputReader {
 private:
 
-    LEMController* Controller; // Pointer to the LEM Controller
+    Gamepad* Controller; // Pointer to the LEM Controller
     Drivetrain* drivetrain;
 
     bool useJoyFunctions = false;
@@ -47,21 +47,21 @@ public:
     /**
      * @brief Construct a new Input Reader. It can playback your driving runs and make them repeatable.
      * 
-     * @param controllerArg LEM Controller pointer.
+     * @param controllerArg Gamepad pointer.
      * @param buttonsToFunctions The SAME EXACT BUTTONS TO FUNCTIONS VECTOR FROM THE CONTROLLER.    
      * @param joystickFunctions A vector of functions that use the joystick values to run the chassis. MUST
      * be in a CERTAIN ORDER : LeftY, RightY, LeftX, RightX.
      */
-    InputReader(LEMController* controllerArg, std::vector<LEMButtonMapping> buttonsToFunctions, std::vector<int(*)(int)> joystickFunctions);
+    InputReader(Gamepad* controllerArg, std::vector<LEMButtonMapping> buttonsToFunctions, std::vector<int(*)(int)> joystickFunctions);
 
     /**
      * @brief Construct a new Input Reader. It can playback your driving runs and make them repeatable.
      * 
-     * @param controllerArg LEM Controller pointer.
+     * @param controllerArg Gamepad pointer.
      * @param drivetrain The drivetrain to run the joystick functions on. RUNS ON TANK DRIVE.
      * @param buttonsToFunctions The SAME EXACT BUTTONS TO FUNCTIONS VECTOR FROM THE CONTROLLER. 
      */
-    InputReader(LEMController* controllerArg, Drivetrain* drivetrain, std::vector<LEMButtonMapping> buttonsToFunctions);
+    InputReader(Gamepad* controllerArg, Drivetrain* drivetrain, std::vector<LEMButtonMapping> buttonsToFunctions);
 
     ~InputReader();
 

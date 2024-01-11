@@ -6,7 +6,7 @@
 
 namespace lemlib {
 
-    AccuracySIM::AccuracySIM(LEMController* controllerParam, Odom* odomParam, const asset& path, InputReader* inputReaderParam) {
+    AccuracySIM::AccuracySIM(Gamepad* controllerParam, Odom* odomParam, const asset& path, InputReader* inputReaderParam) {
         controller = controllerParam;
         odom = odomParam;
         inputReader = inputReaderParam;

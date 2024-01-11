@@ -8,7 +8,7 @@ int16_t InputReader::readInputsMap[inputSourceNum][inputMapLength];
 int16_t InputReader::readInputsBuffer[inputSourceNum * inputMapLength];
 
 
-InputReader::InputReader(LEMController* controllerArg, std::vector<LEMButtonMapping> buttonsToFunctions, std::vector<int(*)(int)> joystickFunctions) {
+InputReader::InputReader(Gamepad* controllerArg, std::vector<LEMButtonMapping> buttonsToFunctions, std::vector<int(*)(int)> joystickFunctions) {
     Controller = controllerArg;
     this->buttonsToFunctions = buttonsToFunctions;
     this->joystickFunctions = joystickFunctions;
@@ -16,7 +16,7 @@ InputReader::InputReader(LEMController* controllerArg, std::vector<LEMButtonMapp
     useJoyFunctions = true;
 }
 
-InputReader::InputReader(LEMController* controllerArg, Drivetrain* drivetrain, std::vector<LEMButtonMapping> buttonsToFunctions) {
+InputReader::InputReader(Gamepad* controllerArg, Drivetrain* drivetrain, std::vector<LEMButtonMapping> buttonsToFunctions) {
     Controller = controllerArg;
     this->drivetrain = drivetrain;
     this->buttonsToFunctions = buttonsToFunctions;
