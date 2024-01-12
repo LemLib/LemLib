@@ -229,5 +229,9 @@ class FAPID {
 } // namespace lemlib
 =======
 
+<<<<<<< HEAD
 } // namespace lemlib
 >>>>>>> 0a9d1ca (:sparkles: Implement gain scheduling (#46))
+=======
+} // namespace lemlib
+>>>>>>> 05b4576 (Fixing Merge Conflicts)

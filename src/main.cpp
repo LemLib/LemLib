@@ -2,12 +2,7 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
-#include "pros/adi.hpp"
 #include "pros/misc.h"
-
-
-pros::adi::DigitalOut pistonLeft('A');
-pros::adi::DigitalOut pistonRight('B');
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -203,27 +198,6 @@ void autonomous() {
 void opcontrol() {
     // controller
     // loop to continuously update motors
-
-    static bool toggledOn = false;
-
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-        // Toggle code
-    }
-
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-        pistonLeft.set_value(true);
-        pistonRight.set_value(true);
-    }
-    else if (toggledOn) {
-        pistonLeft.set_value(true);
-        pistonRight.set_value(true);
-    }
-    else {
-        
-        pistonLeft.set_value(false);
-        pistonRight.set_value(false);
-    }
-
     while (true) {
         // get joystick positions
 <<<<<<< HEAD

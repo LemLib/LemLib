@@ -144,5 +144,27 @@ std::string format_as(const Pose& pose);
  * @param pose
  * @return std::string
  */
+<<<<<<< HEAD
 std::string format_as(const Pose& pose);
 } // namespace lemlib
+=======
+class Waypoint : public Pose {
+    public:
+        /**
+         * @brief Construct a new Waypoint
+         *
+         * @param x
+         * @param y
+         * @param theta
+         * @param speed
+         */
+        Waypoint(float x, float y, float theta = 0, float speed = 0, int index = 0)
+            : Pose(x, y, theta),
+              speed(speed),
+              index(index) {}
+
+        float speed;
+        int index;
+};
+} // namespace lemlib
+>>>>>>> 05b4576 (Fixing Merge Conflicts)

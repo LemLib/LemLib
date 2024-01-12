@@ -25,9 +25,10 @@ namespace lemlib {
  * @param theta heading. Defaults to 0
  */
 Pose::Pose(float x, float y, float theta)
-    : x(x),
-      y(y),
-      theta(theta) {}
+    :x(x),
+    y(y),
+    theta(theta)
+    {}
 
 /**
  * @brief Add a pose to this pose
@@ -35,7 +36,7 @@ Pose::Pose(float x, float y, float theta)
  * @param other other pose
  * @return Pose
  */
-Pose Pose::operator+(const Pose& other) const { return Pose(x + other.x, y + other.y, theta); }
+Pose Pose::operator+(const Pose& other) { return Pose(x + other.x, y + other.y, theta); }
 
 /**
  * @brief Set the value of this pose to its value + the value of another pose
@@ -43,9 +44,9 @@ Pose Pose::operator+(const Pose& other) const { return Pose(x + other.x, y + oth
  * @param other other pose
  */
 void Pose::operator+=(const Pose& other) {
-    this->x += other.x;
-    this->y += other.y;
-    this->theta += other.theta;
+    x += other.x;
+    y += other.y;
+    theta += other.theta;
 }
 
 /**
@@ -54,7 +55,7 @@ void Pose::operator+=(const Pose& other) {
  * @param other other pose
  * @return Pose
  */
-Pose Pose::operator-(const Pose& other) const { return Pose(this->x - other.x, this->y - other.y, theta); }
+Pose Pose::operator-(const Pose& other) { return Pose(x - other.x, y - other.y, theta); }
 
 /**
  * @brief Set the value of this pose to its value - the value of another pose
@@ -62,9 +63,9 @@ Pose Pose::operator-(const Pose& other) const { return Pose(this->x - other.x, t
  * @param other other pose
  */
 void Pose::operator-=(const Pose& other) {
-    this->x -= other.x;
-    this->y -= other.y;
-    this->theta -= other.theta;
+    x -= other.x;
+    y -= other.y;
+    theta -= other.theta;
 }
 
 /**
@@ -73,7 +74,7 @@ void Pose::operator-=(const Pose& other) {
  * @param other other pose
  * @return Pose
  */
-float Pose::operator*(const Pose& other) const { return this->x * other.x + this->y * other.y; }
+float Pose::operator*(const Pose& other) { return x * other.x + y * other.y; }
 
 /**
  * @brief Multiply a pose by a float
@@ -81,7 +82,7 @@ float Pose::operator*(const Pose& other) const { return this->x * other.x + this
  * @param other float
  * @return Pose
  */
-Pose Pose::operator*(const float& other) const { return Pose(this->x * other, this->y * other, this->theta); }
+Pose Pose::operator*(const float& other) { return Pose(x * other, y * other, theta); }
 
 /**
  * @brief Divide a pose by a float
@@ -89,7 +90,7 @@ Pose Pose::operator*(const float& other) const { return Pose(this->x * other, th
  * @param other float
  * @return Pose
  */
-Pose Pose::operator/(const float& other) const { return Pose(this->x / other, this->y / other, this->theta); }
+Pose Pose::operator/(const float& other) { return Pose(x / other, y / other, theta); }
 
 /**
  * @brief Check if two poses are equal
@@ -97,9 +98,7 @@ Pose Pose::operator/(const float& other) const { return Pose(this->x / other, th
  * @param other the other pose
  * @return bool
  */
-bool Pose::operator==(const Pose& other) const {
-    return this->x == other.x && this->y == other.y && this->theta == other.theta;
-}
+bool Pose::operator==(const Pose& other) { return x == other.x && y == other.y && theta == other.theta; }
 
 /**
  * @brief Check if two poses are not equal
@@ -107,9 +106,7 @@ bool Pose::operator==(const Pose& other) const {
  * @param other the other pose
  * @return bool
  */
-bool Pose::operator!=(const Pose& other) const {
-    return this->x != other.x || this->y != other.y || this->theta != other.theta;
-}
+bool Pose::operator!=(const Pose& other) { return x != other.x || y != other.y || theta != other.theta; }
 
 /**
  * @brief Linearly interpolate between two poses
@@ -118,9 +115,7 @@ bool Pose::operator!=(const Pose& other) const {
  * @param t t value
  * @return Pose
  */
-Pose Pose::lerp(Pose other, float t) const {
-    return Pose(this->x + (other.x - this->x) * t, this->y + (other.y - this->y) * t, this->theta);
-}
+Pose Pose::lerp(Pose other, float t) { return Pose(x + (other.x - x) * t, y + (other.y - y) * t, theta); }
 
 /**
  * @brief Get the distance between two poses
@@ -128,7 +123,7 @@ Pose Pose::lerp(Pose other, float t) const {
  * @param other the other pose
  * @return float
  */
-float Pose::distance(Pose other) const { return std::hypot(this->x - other.x, this->y - other.y); }
+float Pose::distance(Pose other) { return std::hypot(x - other.x, y - other.y); }
 
 /**
  * @brief Get the angle between two poses
@@ -136,7 +131,7 @@ float Pose::distance(Pose other) const { return std::hypot(this->x - other.x, th
  * @param other the other pose
  * @return float in radians
  */
-float Pose::angle(Pose other) const { return std::atan2(other.y - this->y, other.x - this->x); }
+float Pose::angle(Pose other) { return std::atan2(other.y - y, other.x - x); }
 
 /**
  * @brief Rotate a pose by an angle
@@ -144,16 +139,14 @@ float Pose::angle(Pose other) const { return std::atan2(other.y - this->y, other
  * @param angle angle in radians
  * @return Pose
  */
-Pose Pose::rotate(float angle) const {
+Pose Pose::rotate(float angle) {
     const float cosAngle = std::cos(angle);
     const float sinAngle = std::sin(angle);
 
-    return Pose(this->x * cosAngle - this->y * sinAngle, this->x * sinAngle + this->y * cosAngle, this->theta);
+    return Pose(x * cosAngle - y * sinAngle, x * sinAngle + y * cosAngle, theta);
 }
 
-std::ostream& operator<<(std::ostream& os, const lemlib::Pose& pose) { return os << lemlib::format_as(pose).c_str(); }
-
-std::string format_as(const lemlib::Pose& pose) {
+std::string format_as(const Pose& pose) {
     // the double brackets become single brackets
     return fmt::format("lemlib::Pose {{ x: {}, y: {}, theta: {} }}", pose.x, pose.y, pose.theta);
 }
