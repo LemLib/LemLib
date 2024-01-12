@@ -2,7 +2,7 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
-#include "lemlib/devices/gamepad.hpp"
+//#include "lemlib/devices/gamepad.hpp"
 #include "pros/misc.h"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
@@ -112,7 +112,7 @@ int debugVoltage(int throwaway) {
     return throwaway;
 }
 
-lemlib::Gamepad lemController(&controller, {"DEFAULT", "TEST"});
+//lemlib::Gamepad lemController(&controller, {"DEFAULT", "TEST"});
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -182,18 +182,18 @@ void autonomous() {
  */
 void opcontrol() {
 
-    lemController.setFuncToAction({intakeStop, intakeIn}, pros::E_CONTROLLER_DIGITAL_A, "DEFAULT");
+    /*lemController.setFuncToAction({intakeStop, intakeIn}, pros::E_CONTROLLER_DIGITAL_A, "DEFAULT");
     lemController.setFuncToAction(driveLeft, pros::E_CONTROLLER_ANALOG_LEFT_Y, "DEFAULT");
     lemController.setFuncToAction(driveRight, pros::E_CONTROLLER_ANALOG_RIGHT_Y, "DEFAULT");
     lemController.setFuncToAction({debugRPM, debugVoltage}, pros::E_CONTROLLER_DIGITAL_B, "TEST");
 
-    lemController.startMainLoop();
+    lemController.startMainLoop();*/
 
     // controller 
     // loop to continuously update motors
     while (true) {
-        pros::delay(4000);
-        lemController.changeMode("TEST");
+        
+        //lemController.changeMode("TEST");
         pros::delay(10);
     }
 }
