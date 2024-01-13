@@ -278,7 +278,6 @@ class Gamepad {
         void rumble(const char* pattern);
 
         std::vector<LEMButtonMapping*> getButtonsToFunctions();
-
 };
 
 } // namespace lemlib
