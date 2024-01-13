@@ -11,11 +11,9 @@
 
 namespace lemlib {
 
-    class AcornTracker : public Movement {
+class AcornTracker : public Movement {
     private:
-
     protected:
-
         std::vector<std::pair<float, float>> acornDistanceToHeight;
 
         pros::Vision* visionSensor = nullptr;
@@ -25,15 +23,12 @@ namespace lemlib {
         AcornTracker();
 
         ~AcornTracker();
-
     public:
-
         AcornTracker(pros::Vision* visionSensor, pros::vision_signature AcornSig);
 
         bool setAcornDistanceToHeight(std::vector<std::pair<float, float>> acornDistanceToHeight);
 
         std::pair<int, int> update(Pose pose) override;
+};
 
-    };
-
-}
+} // namespace lemlib
