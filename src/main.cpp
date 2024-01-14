@@ -3,9 +3,11 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/logger/stdout.hpp"
 //#include "lemlib/devices/gamepad.hpp"
+#include "lemlib/movements/acorntracking.hpp"
 #include "pros/misc.h"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
+#include "pros/vision.hpp"
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -69,12 +71,14 @@ lemlib::Differential chassis(drivetrain, linearController, angularController, se
 
 
 
-
+pros::Vision visionSensor(20);
 
 pros::MotorGroup leftTestMotors({1, 2, -7});
 pros::MotorGroup rightTestMotors({4, 5, -6});
 
 pros::Motor intakeMotor(10);
+
+lemlib::AcornTracker acornTracker(&visionSensor, 1);
 
 
 int driveLeft(int percent) {
@@ -182,6 +186,10 @@ void autonomous() {
  */
 void opcontrol() {
 
+    std::vector<std::pair<float, float>> acornDistanceToHeight = {std::make_pair<float, float>(60, 6), std::make_pair<float, float>(34, 12),
+    std::make_pair<float, float>(16, 24)};
+
+    acornTracker.setAcornDistanceToHeight(acornDistanceToHeight);
     /*lemController.setFuncToAction({intakeStop, intakeIn}, pros::E_CONTROLLER_DIGITAL_A, "DEFAULT");
     lemController.setFuncToAction(driveLeft, pros::E_CONTROLLER_ANALOG_LEFT_Y, "DEFAULT");
     lemController.setFuncToAction(driveRight, pros::E_CONTROLLER_ANALOG_RIGHT_Y, "DEFAULT");
@@ -192,7 +200,7 @@ void opcontrol() {
     // controller 
     // loop to continuously update motors
     while (true) {
-        
+        acornTracker.update(lemlib::Pose(0, 0, 0));
         //lemController.changeMode("TEST");
         pros::delay(10);
     }
