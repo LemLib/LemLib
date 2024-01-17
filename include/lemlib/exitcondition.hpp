@@ -33,7 +33,7 @@ class ExitCondition {
          *
          */
         void reset();
-    private:
+    protected:
         const float range;
         const int time;
         int startTime = -1;

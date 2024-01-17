@@ -347,11 +347,10 @@ class Chassis {
          * @brief Dequeues this motion and permits queued task to run
          */
         void endMotion();
-    private:
+
         bool motionRunning = false;
         bool motionQueued = false;
 
-        pros::Mutex mutex;
         float distTravelled = 0;
 
         ControllerSettings lateralSettings;
@@ -366,5 +365,7 @@ class Chassis {
         ExitCondition lateralSmallExit;
         ExitCondition angularLargeExit;
         ExitCondition angularSmallExit;
+    private:
+        pros::Mutex mutex;
 };
 } // namespace lemlib
