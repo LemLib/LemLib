@@ -1,14 +1,3 @@
-/**
- * @file src/lemlib/chassis/odom.cpp
- * @author LemLib Team
- * @brief Odometry source file. Contains odometry functions and global variables
- * @version 0.4.5
- * @date 2023-01-27
- *
- * @copyright Copyright (c) 2023
- *
- */
-
 // The implementation below is mostly based off of
 // the document written by 5225A (Pilons)
 // Here is a link to the original document

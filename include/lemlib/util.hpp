@@ -1,14 +1,3 @@
-/**
- * @file include/lemlib/util.hpp
- * @author LemLib Team
- * @brief Utility functions declarations
- * @version 0.4.5
- * @date 2023-01-15
- *
- * @copyright Copyright (c) 2023
- *
- */
-
 #pragma once
 
 #include <vector>
