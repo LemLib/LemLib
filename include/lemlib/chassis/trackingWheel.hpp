@@ -1,14 +1,3 @@
-/**
- * @file include/lemlib/chassis/trackingWheel.hpp
- * @author LemLib Team
- * @brief tracking wheel class declarations
- * @version 0.4.5
- * @date 2023-01-23
- *
- * @copyright Copyright (c) 2023
- *
- */
-
 #pragma once
 
 #include "pros/motors.hpp"
