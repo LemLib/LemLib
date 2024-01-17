@@ -1,16 +1,3 @@
-/**
- * @file src/lemlib/pose.cpp
- * @author LemLib Team
- * @brief Source file containing the implementation of the Pose class
- * @version 0.4.5
- * @date 2023-01-23
- *
- * @copyright Copyright (c) 2023
- *
- */
-
-#include <math.h>
-
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
 
@@ -94,7 +81,7 @@ lemlib::Pose lemlib::Pose::lerp(lemlib::Pose other, float t) {
  * @param other the other pose
  * @return float
  */
-float lemlib::Pose::distance(lemlib::Pose other) { return std::hypot(this->x - other.x, this->y - other.y); }
+float lemlib::Pose::distance(lemlib::Pose other) const { return std::hypot(this->x - other.x, this->y - other.y); }
 
 /**
  * @brief Get the angle between two poses
@@ -102,7 +89,7 @@ float lemlib::Pose::distance(lemlib::Pose other) { return std::hypot(this->x - o
  * @param other the other pose
  * @return float in radians
  */
-float lemlib::Pose::angle(lemlib::Pose other) { return std::atan2(other.y - this->y, other.x - this->x); }
+float lemlib::Pose::angle(lemlib::Pose other) const { return std::atan2(other.y - this->y, other.x - this->x); }
 
 /**
  * @brief Rotate a pose by an angle

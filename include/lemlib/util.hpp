@@ -1,14 +1,3 @@
-/**
- * @file include/lemlib/util.hpp
- * @author LemLib Team
- * @brief Utility functions declarations
- * @version 0.4.5
- * @date 2023-01-15
- *
- * @copyright Copyright (c) 2023
- *
- */
-
 #pragma once
 
 #include <vector>
@@ -51,7 +40,7 @@ constexpr float degToRad(float deg) { return deg * M_PI / 180; }
  * @param radians true if angle is in radians, false if not. False by default
  * @return float wrapped angle
  */
-float angleError(float angle1, float angle2, bool radians = false);
+float angleError(float angle1, float angle2, bool radians = true);
 
 /**
  * @brief Return the sign of a number

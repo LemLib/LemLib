@@ -1,14 +1,3 @@
-/**
- * @file include/lemlib/chassis/chassis.hpp
- * @author LemLib Team
- * @brief Chassis class declarations
- * @version 0.4.5
- * @date 2023-01-23
- *
- * @copyright Copyright (c) 2023
- *
- */
-
 #pragma once
 
 #include <functional>
@@ -18,6 +7,8 @@
 #include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pose.hpp"
+#include "lemlib/pid.hpp"
+#include "lemlib/exitcondition.hpp"
 
 namespace lemlib {
 /**
@@ -55,17 +46,31 @@ struct ControllerSettings {
          * Set a constant to 0 and it will be ignored
          *
          * @param kP proportional constant for the chassis controller
+         * @param kI integral constant for the chassis controller
          * @param kD derivative constant for the chassis controller
+         * @param antiWindup
          * @param smallError the error at which the chassis controller will switch to a slower control loop
          * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
          * @param largeError the error at which the chassis controller will switch to a faster control loop
          * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
          * @param slew the maximum acceleration of the chassis controller
          */
-        ControllerSettings(float kP, float kD, float smallError, float smallErrorTimeout, float largeError,
-                           float largeErrorTimeout, float slew);
+        ControllerSettings(float kP, float kI, float kD, float windupRange, float smallError, float smallErrorTimeout,
+                           float largeError, float largeErrorTimeout, float slew)
+            : kP(kP),
+              kI(kI),
+              kD(kD),
+              windupRange(windupRange),
+              smallError(smallError),
+              smallErrorTimeout(smallErrorTimeout),
+              largeError(largeError),
+              largeErrorTimeout(largeErrorTimeout),
+              slew(slew) {}
+
         float kP;
+        float kI;
         float kD;
+        float windupRange;
         float smallError;
         float smallErrorTimeout;
         float largeError;
@@ -100,6 +105,60 @@ struct Drivetrain {
 };
 
 /**
+ * @brief Parameters for Chassis::moveToPose
+ *
+ * We use a struct to simplify customization. Chassis::moveToPose has many
+ * parameters and specifying them all just to set one optional param ruins
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param forwards whether the robot should move forwards or backwards. True by default
+ * @param chasePower how fast the robot will move around corners. Recommended value 2-15.
+ *  0 means use chasePower set in chassis class. 0 by default.
+ * @param lead carrot point multiplier. value between 0 and 1. Higher values result in
+ *  curvier movements. 0.6 by default
+ * @param maxSpeed the maximum speed the robot can travel at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can travel at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange distance between the robot and target point where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct MoveToPoseParams {
+        bool forwards = true;
+        float chasePower = 0;
+        float lead = 0.6;
+        float maxSpeed = 127;
+        float minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
+/**
+ * @brief Parameters for Chassis::moveToPoint
+ *
+ * We use a struct to simplify customization. Chassis::moveToPoint has many
+ * parameters and specifying them all just to set one optional param harms
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param forwards whether the robot should move forwards or backwards. True by default
+ * @param maxSpeed the maximum speed the robot can travel at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can travel at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange distance between the robot and target point where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct MoveToPointParams {
+        bool forwards = true;
+        float maxSpeed = 127;
+        float minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
+/**
  * @brief Function pointer type for drive curve functions.
  * @param input The control input in the range [-127, 127].
  * @param scale The scaling factor, which can be optionally ignored.
@@ -128,7 +187,7 @@ class Chassis {
          * @brief Construct a new Chassis
          *
          * @param drivetrain drivetrain to be used for the chassis
-         * @param linearSettings settings for the linear controller
+         * @param lateralSettings settings for the lateral controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
          * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
@@ -163,29 +222,7 @@ class Chassis {
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          */
-        Pose getPose(bool radians = false);
-        /**
-         * @brief Get the speed of the robot
-         *
-         * @param radians true for theta in radians, false for degrees. False by default
-         * @return lemlib::Pose
-         */
-        Pose getSpeed(bool radians = false);
-        /**
-         * @brief Get the local speed of the robot
-         *
-         * @param radians true for theta in radians, false for degrees. False by default
-         * @return lemlib::Pose
-         */
-        Pose getLocalSpeed(bool radians = false);
-        /**
-         * @brief Estimate the pose of the robot after a certain amount of time
-         *
-         * @param time time in seconds
-         * @param radians False for degrees, true for radians. False by default
-         * @return lemlib::Pose
-         */
-        Pose estimatePose(float time, bool radians = false);
+        Pose getPose(bool radians = false, bool standardPos = false);
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *
@@ -212,6 +249,14 @@ class Chassis {
          * @param maxSpeed the maximum speed the robot can turn at. Default is 127
          * @param async whether the function should be run asynchronously. true by default
          */
+
+        /**
+         * @brief Sets the brake mode of the drivetrain motors
+         *
+         * @param mode Mode to set the drivetrain motors to
+         */
+        void setBrakeMode(pros::motor_brake_mode_e mode);
+
         void turnTo(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
@@ -222,27 +267,20 @@ class Chassis {
          * @param y y location
          * @param theta target heading in degrees.
          * @param timeout longest time the robot can spend moving
-         * @param forwards whether the robot should move forwards or backwards. true for forwards (default),
-         * false for backwards
-         * @param chasePower higher values make the robot move faster but causes more overshoot on turns. 0
-         * makes it default to global value
-         * @param lead the lead parameter. Determines how curved the robot will move. 0.6 by default (0 < lead <
-         * 1)
-         * @param maxSpeed the maximum speed the robot can move at. 127 at default
+         * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void moveToPose(float x, float y, float theta, int timeout, bool forwards = true, float chasePower = 0,
-                        float lead = 0.6, float maxSpeed = 127, bool async = true);
+        void moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params = {}, bool async = true);
         /**
          * @brief Move the chassis towards a target point
          *
          * @param x x location
          * @param y y location
          * @param timeout longest time the robot can spend moving
-         * @param maxSpeed the maximum speed the robot can move at. 127 by default
+         * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void moveToPoint(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
+        void moveToPoint(float x, float y, int timeout, MoveToPointParams params = {}, bool async = true);
         /**
          * @brief Move the chassis along a path
          *
@@ -286,14 +324,48 @@ class Chassis {
          * curve, refer to the `defaultDriveCurve` documentation.
          */
         void curvature(int throttle, int turn, float cureGain = 0.0);
-    private:
-        pros::Mutex mutex;
+        /**
+         * @brief Cancels the currently running motion.
+         * If there is a queued motion, then that queued motion will run.
+         */
+        void cancelMotion();
+        /**
+         * @brief Cancels all motions, even those that are queued.
+         * After this, the chassis will not be in motion.
+         */
+        void cancelAllMotions();
+        /**
+         * @return whether a motion is currently running
+         */
+        bool isInMotion() const;
+    protected:
+        /**
+         * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
+         */
+        void requestMotionStart();
+        /**
+         * @brief Dequeues this motion and permits queued task to run
+         */
+        void endMotion();
+
+        bool motionRunning = false;
+        bool motionQueued = false;
+
         float distTravelled = 0;
 
-        ControllerSettings linearSettings;
+        ControllerSettings lateralSettings;
         ControllerSettings angularSettings;
         Drivetrain drivetrain;
         OdomSensors sensors;
         DriveCurveFunction_t driveCurve;
+
+        PID lateralPID;
+        PID angularPID;
+        ExitCondition lateralLargeExit;
+        ExitCondition lateralSmallExit;
+        ExitCondition angularLargeExit;
+        ExitCondition angularSmallExit;
+    private:
+        pros::Mutex mutex;
 };
 } // namespace lemlib

@@ -1,14 +1,3 @@
-/**
- * @file src/lemlib/chassis/odom.cpp
- * @author LemLib Team
- * @brief Odometry source file. Contains odometry functions and global variables
- * @version 0.4.5
- * @date 2023-01-27
- *
- * @copyright Copyright (c) 2023
- *
- */
-
 // The implementation below is mostly based off of
 // the document written by 5225A (Pilons)
 // Here is a link to the original document
@@ -161,17 +150,17 @@ void lemlib::update() {
     float heading = odomPose.theta;
     // calculate the heading using the horizontal tracking wheels
     if (odomSensors.horizontal1 != nullptr && odomSensors.horizontal2 != nullptr)
-        heading += (deltaHorizontal1 - deltaHorizontal2) /
+        heading -= (deltaHorizontal1 - deltaHorizontal2) /
                    (odomSensors.horizontal1->getOffset() - odomSensors.horizontal2->getOffset());
     // else, if both vertical tracking wheels aren't substituted by the drivetrain, use the vertical tracking wheels
     else if (!odomSensors.vertical1->getType() && !odomSensors.vertical2->getType())
-        heading += (deltaVertical1 - deltaVertical2) /
+        heading -= (deltaVertical1 - deltaVertical2) /
                    (odomSensors.vertical1->getOffset() - odomSensors.vertical2->getOffset());
     // else, if the inertial sensor exists, use it
     else if (odomSensors.imu != nullptr) heading += deltaImu;
     // else, use the the substituted tracking wheels
     else
-        heading += (deltaVertical1 - deltaVertical2) /
+        heading -= (deltaVertical1 - deltaVertical2) /
                    (odomSensors.vertical1->getOffset() - odomSensors.vertical2->getOffset());
     float deltaHeading = heading - odomPose.theta;
     float avgHeading = odomPose.theta + deltaHeading / 2;
