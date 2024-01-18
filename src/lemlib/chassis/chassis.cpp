@@ -457,6 +457,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
  * @param async whether the function should be run asynchronously. true by default
  */
 void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointParams params, bool async) {
+    params.earlyExitRange = fabs(params.earlyExitRange);
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
@@ -507,12 +508,13 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
             params.maxSpeed = fmax(fabs(prevLateralOut), 60);
         }
 
+        // motion chaining
         const bool side =
             (pose.y - target.y) * -sin(target.theta) <= (pose.x - target.x) * cos(target.theta) + params.earlyExitRange;
         if (prevSide == std::nullopt) prevSide = side;
         const bool sameSide = side == prevSide;
         // exit if close
-        if (!sameSide && close && params.minSpeed != 0) break;
+        if (!sameSide && params.minSpeed != 0) break;
         prevSide = side;
 
         // calculate error
