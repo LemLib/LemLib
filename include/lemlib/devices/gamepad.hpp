@@ -1,17 +1,16 @@
 #include "pros/device.hpp"
-#include "unordered_map"
 #include "pros/misc.h"
 #include <unordered_map>
 
 namespace lemlib {
 
-struct LEMButtonMapping {
+struct ButtonMapping {
     private:
         pros::controller_digital_e_t button;
         std::vector<std::pair<std::string, std::pair<int (*)(int), int (*)(int)>>> functions;
     public:
-        LEMButtonMapping(pros::controller_digital_e_t buttonParam, std::string modeParam,
-                         std::pair<int (*)(int), int (*)(int)> functionParam) {
+        ButtonMapping(pros::controller_digital_e_t buttonParam, std::string modeParam,
+                      std::pair<int (*)(int), int (*)(int)> functionParam) {
             button = buttonParam;
             functions.push_back({modeParam, functionParam});
         }
@@ -45,13 +44,12 @@ struct LEMButtonMapping {
         }
 };
 
-struct LEMJoystickMapping {
+struct JoystickMapping {
     private:
         pros::controller_analog_e_t joystick;
         std::vector<std::pair<std::string, int (*)(int)>> functions;
     public:
-        LEMJoystickMapping(pros::controller_analog_e_t joystickParam, std::string modeParam,
-                           int (*functionParam)(int)) {
+        JoystickMapping(pros::controller_analog_e_t joystickParam, std::string modeParam, int (*functionParam)(int)) {
             joystick = joystickParam;
             functions.push_back({modeParam, functionParam});
         }
@@ -76,7 +74,7 @@ struct LEMJoystickMapping {
         }
 };
 
-struct LEMControllerValues {
+struct ControllerValues {
     public:
         static constexpr uint8_t AKey = 0;
         static constexpr uint8_t BKey = 1;
@@ -95,7 +93,7 @@ struct LEMControllerValues {
         static constexpr uint8_t LeftXKey = 14;
         static constexpr uint8_t RightXKey = 15;
 
-        LEMControllerValues() {}
+        ControllerValues() {}
 
         uint8_t getControllerKey(pros::controller_digital_e_t button) {
             uint8_t key = 0;
@@ -133,19 +131,18 @@ struct LEMControllerValues {
 };
 
 class Gamepad {
-    private:
     protected:
         pros::Controller* prosController;
 
         std::string currentMode = "DEFAULT";
 
         std::vector<std::string> modes = {"DEFAULT"};
-        std::vector<LEMButtonMapping*> buttonsToFunctions;
-        std::vector<LEMJoystickMapping*> joysticksToFunctions;
+        std::vector<ButtonMapping*> buttonsToFunctions;
+        std::vector<JoystickMapping*> joysticksToFunctions;
 
         std::unordered_map<pros::controller_digital_e_t, bool> buttonStates;
 
-        LEMControllerValues controllerValues;
+        ControllerValues controllerValues;
         /**
          * @brief When the main loop starts, this function gets called and uses function pointers/modes info to run
          * user-made functions automaically.
@@ -277,7 +274,7 @@ class Gamepad {
          */
         void rumble(const char* pattern);
 
-        std::vector<LEMButtonMapping*> getButtonsToFunctions();
+        std::vector<ButtonMapping*> getButtonsToFunctions();
 };
 
 } // namespace lemlib
