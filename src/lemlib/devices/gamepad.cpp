@@ -22,7 +22,7 @@ Gamepad::Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> 
     std::pair<int (*)(int), int (*)(int)> junkFuncs = {nullptr, nullptr};
 
     for (int i = 0; i < sizeof(buttons) / sizeof(buttons[0]); i++) {
-        buttonsToFunctions.emplace_back(new LEMButtonMapping(buttons[i], "DEFAULT", junkFuncs));
+        buttonsToFunctions.emplace_back(new ButtonMapping(buttons[i], "DEFAULT", junkFuncs));
     }
 }
 
@@ -45,11 +45,11 @@ Gamepad::Gamepad(pros::Controller* controller, std::vector<std::string> modesPar
     std::pair<int (*)(int), int (*)(int)> junkFuncs = {nullptr, nullptr};
 
     for (int i = 0; i < sizeof(buttons) / sizeof(buttons[0]); i++) {
-        buttonsToFunctions.emplace_back(new LEMButtonMapping(buttons[i], "DEFAULT", junkFuncs));
+        buttonsToFunctions.emplace_back(new ButtonMapping(buttons[i], "DEFAULT", junkFuncs));
     }
 
     for (int i = 0; i < sizeof(joysticks) / sizeof(joysticks[0]); i++) {
-        joysticksToFunctions.emplace_back(new LEMJoystickMapping(joysticks[i], "DEFAULT", junkFunc));
+        joysticksToFunctions.emplace_back(new JoystickMapping(joysticks[i], "DEFAULT", junkFunc));
     }
 }
 
@@ -180,6 +180,6 @@ pros::Controller* Gamepad::getController() { return prosController; }
 
 void Gamepad::rumble(const char* pattern) { prosController->rumble(pattern); }
 
-std::vector<LEMButtonMapping*> Gamepad::getButtonsToFunctions() { return buttonsToFunctions; }
+std::vector<ButtonMapping*> Gamepad::getButtonsToFunctions() { return buttonsToFunctions; }
 
 } // namespace lemlib
