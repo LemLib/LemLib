@@ -576,3 +576,17 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     distTravelled = -1;
     this->endMotion();
 }
+
+void lemlib::Chassis::moveDistance(float inches, int timeout, MoveToPointParams params, bool async) {
+    // Compute the target pose by
+    // 1. create a pose at (0, inches), equivalent to n inches forward at 0 degrees from (0, 0),
+    // 2. rotating it by the current heading so it is n inches forward at the robot heading, and
+    // 3. adding it to the current pose
+    Pose start = getPose(true, true);
+    Pose offset = Pose(0, inches).rotate(start.theta);
+    Pose target = start + offset;
+
+    // Delegate to moveToPoint now that we have a target pose
+    // moveToPoint is used over moveToPose here because there should not be any need for turning
+    this->moveToPoint(target.x, target.y, timeout, params, async);
+}

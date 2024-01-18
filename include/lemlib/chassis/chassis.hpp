@@ -281,6 +281,9 @@ class Chassis {
          * @param async whether the function should be run asynchronously. true by default
          */
         void moveToPoint(float x, float y, int timeout, MoveToPointParams params = {}, bool async = true);
+        
+        void moveDistance(float inches, int timeout, MoveToPointParams params = {}, bool async = true);
+
         /**
          * @brief Move the chassis along a path
          *
