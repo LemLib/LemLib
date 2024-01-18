@@ -281,7 +281,15 @@ class Chassis {
          * @param async whether the function should be run asynchronously. true by default
          */
         void moveToPoint(float x, float y, int timeout, MoveToPointParams params = {}, bool async = true);
-        
+
+        /**
+         * @brief Move the chassis forward for some number of inches
+         *
+         * @param inches the number of inches to move
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         */
         void moveDistance(float inches, int timeout, MoveToPointParams params = {}, bool async = true);
 
         /**

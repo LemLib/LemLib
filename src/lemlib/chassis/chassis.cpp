@@ -577,6 +577,14 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     this->endMotion();
 }
 
+/**
+ * @brief Move the chassis forward for some number of inches
+ *
+ * @param inches the number of inches to move
+ * @param timeout longest time the robot can spend moving
+ * @param params struct to simulate named parameters
+ * @param async whether the function should be run asynchronously. true by default
+ */
 void lemlib::Chassis::moveDistance(float inches, int timeout, MoveToPointParams params, bool async) {
     // Compute the target pose by
     // 1. create a pose at (0, inches), equivalent to n inches forward at 0 degrees from (0, 0),
