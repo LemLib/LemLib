@@ -10,38 +10,14 @@ struct ButtonMapping {
         std::vector<std::pair<std::string, std::pair<int (*)(int), int (*)(int)>>> functions;
     public:
         ButtonMapping(pros::controller_digital_e_t buttonParam, std::string modeParam,
-                      std::pair<int (*)(int), int (*)(int)> functionParam) {
-            button = buttonParam;
-            functions.push_back({modeParam, functionParam});
-        }
+                      std::pair<int (*)(int), int (*)(int)> functionParam);
 
         // Acts like a tag.
-        pros::controller_digital_e_t getButton() { return button; }
+        pros::controller_digital_e_t getButton();
 
-        void addModeAndFunction(std::string modeParam, std::pair<int (*)(int), int (*)(int)> functionParam) {
-            functions.push_back({modeParam, functionParam});
-        }
+        void addModeAndFunction(std::string modeParam, std::pair<int (*)(int), int (*)(int)> functionParam);
 
-        void runFunction(std::string mode, bool buttonState, int funcParam = 0) {
-            // Loops through all the functions and runs the one that matches the mode.
-
-            for (int i = 0; i < functions.size(); i++) {
-                if (functions.at(i).first == mode) { // If the mode matches,
-
-                    if (buttonState == true) {
-                        if (functions.at(i).second.second !=
-                            nullptr) { // If the function for when its true is not a null pointer
-                            functions.at(i).second.second(funcParam); // Run the function pointer for the true state
-                        }
-                    } else {
-                        if (functions.at(i).second.first !=
-                            nullptr) { // If the function for when its false is not a null pointer
-                            functions.at(i).second.first(funcParam); // Run the function pointer for the false state
-                        }
-                    }
-                }
-            }
-        }
+        void runFunction(std::string mode, bool buttonState, int funcParam = 0);
 };
 
 struct JoystickMapping {
@@ -49,29 +25,14 @@ struct JoystickMapping {
         pros::controller_analog_e_t joystick;
         std::vector<std::pair<std::string, int (*)(int)>> functions;
     public:
-        JoystickMapping(pros::controller_analog_e_t joystickParam, std::string modeParam, int (*functionParam)(int)) {
-            joystick = joystickParam;
-            functions.push_back({modeParam, functionParam});
-        }
+        JoystickMapping(pros::controller_analog_e_t joystickParam, std::string modeParam, int (*functionParam)(int));
 
         // Acts like a tag
-        pros::controller_analog_e_t getJoystick() { return joystick; }
+        pros::controller_analog_e_t getJoystick();
 
-        void addModeAndFunction(std::string modeParam, int (*functionParam)(int)) {
-            functions.push_back({modeParam, functionParam});
-        }
+        void addModeAndFunction(std::string modeParam, int (*functionParam)(int));
 
-        void runFunction(std::string mode, int joystickValue) {
-            // Loops through all the functions and runs the one that matches the mode.
-
-            for (int i = 0; i < functions.size(); i++) {
-                if (functions.at(i).first == mode) { // If the mode matches,
-                    if (functions.at(i).second != nullptr) { // If the function is not a null pointer
-                        functions.at(i).second(joystickValue); // Run the function pointer
-                    }
-                }
-            }
-        }
+        void runFunction(std::string mode, int joystickValue);
 };
 
 struct ControllerValues {
@@ -93,41 +54,11 @@ struct ControllerValues {
         static constexpr uint8_t LeftXKey = 14;
         static constexpr uint8_t RightXKey = 15;
 
-        ControllerValues() {}
+        ControllerValues();
 
-        uint8_t getControllerKey(pros::controller_digital_e_t button) {
-            uint8_t key = 0;
+        uint8_t getControllerKey(pros::controller_digital_e_t button);
 
-            switch (button) {
-                case pros::E_CONTROLLER_DIGITAL_A: key = AKey; break;
-                case pros::E_CONTROLLER_DIGITAL_B: key = BKey; break;
-                case pros::E_CONTROLLER_DIGITAL_X: key = XKey; break;
-                case pros::E_CONTROLLER_DIGITAL_Y: key = YKey; break;
-                case pros::E_CONTROLLER_DIGITAL_UP: key = UpKey; break;
-                case pros::E_CONTROLLER_DIGITAL_DOWN: key = DownKey; break;
-                case pros::E_CONTROLLER_DIGITAL_LEFT: key = LeftKey; break;
-                case pros::E_CONTROLLER_DIGITAL_RIGHT: key = RightKey; break;
-                case pros::E_CONTROLLER_DIGITAL_L1: key = L1Key; break;
-                case pros::E_CONTROLLER_DIGITAL_L2: key = L2Key; break;
-                case pros::E_CONTROLLER_DIGITAL_R1: key = R1Key; break;
-                case pros::E_CONTROLLER_DIGITAL_R2: key = R2Key; break;
-            }
-
-            return key;
-        }
-
-        uint8_t getControllerKey(pros::controller_analog_e_t joystick) {
-            uint8_t key = 0;
-
-            switch (joystick) {
-                case pros::E_CONTROLLER_ANALOG_LEFT_Y: key = LeftYKey; break;
-                case pros::E_CONTROLLER_ANALOG_RIGHT_Y: key = RightYKey; break;
-                case pros::E_CONTROLLER_ANALOG_LEFT_X: key = LeftXKey; break;
-                case pros::E_CONTROLLER_ANALOG_RIGHT_X: key = RightXKey; break;
-            }
-
-            return key;
-        }
+        uint8_t getControllerKey(pros::controller_analog_e_t joystick);
 };
 
 class Gamepad {
