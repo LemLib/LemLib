@@ -359,6 +359,9 @@ class Chassis {
          * @return whether a motion is currently running
          */
         bool isInMotion() const;
+
+        void setLateralGains(float kP, float kI, float kD);
+        void setAngularGains(float kP, float kI, float kD);
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue

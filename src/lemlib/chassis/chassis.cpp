@@ -585,3 +585,11 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     distTravelled = -1;
     this->endMotion();
 }
+
+void lemlib::Chassis::setLateralGains(float kP, float kI, float kD) {
+    this->lateralPID.setGains(kP, kI, kD);
+}
+
+void lemlib::Chassis::setAngularGains(float kP, float kI, float kD) {
+    this->angularPID.setGains(kP, kI, kD);
+}
