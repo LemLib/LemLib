@@ -48,8 +48,8 @@ class PID {
          *
          * @return the current PID gains
          */
-
         Gains getGains();
+
         /**
          * @brief Set the PID gains
          *

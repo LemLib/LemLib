@@ -588,6 +588,20 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
 }
 
 /**
+ * @brief Get the lateral PID gains
+ *
+ * @return gains the current PID gains
+ */
+lemlib::Gains lemlib::Chassis::getLateralGains() { return this->lateralPID.getGains(); }
+
+/**
+ * @brief Get the angular PID gains
+ *
+ * @return gains the current PID gains
+ */
+lemlib::Gains lemlib::Chassis::getAngularGains() { return this->angularPID.getGains(); }
+
+/**
  * @brief Set the lateral PID gains
  *
  * @param gains the new PID gains
