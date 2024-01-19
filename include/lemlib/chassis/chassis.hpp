@@ -360,7 +360,22 @@ class Chassis {
          */
         bool isInMotion() const;
 
+        /**
+         * @brief Set the lateral PID gains
+         *
+         * @param kP proportional gain
+         * @param kI integral gain
+         * @param kD derivative gain
+         */
         void setLateralGains(float kP, float kI, float kD);
+
+        /**
+         * @brief Set angular PID gains
+         *
+         * @param kP proportional gain
+         * @param kI integral gain
+         * @param kD derivative gain
+         */
         void setAngularGains(float kP, float kI, float kD);
     protected:
         /**

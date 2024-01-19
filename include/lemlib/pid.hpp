@@ -28,6 +28,13 @@ class PID {
          */
         void reset();
 
+        /**
+         * @brief Set the PID gains
+         *
+         * @param kP proportional gain
+         * @param kI integral gain
+         * @param kD derivative gain
+         */
         void setGains(float kP, float kI, float kD);
     protected:
         // gains

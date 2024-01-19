@@ -47,6 +47,13 @@ void PID::reset() {
     this->prevError = 0;
 }
 
+/**
+ * @brief Set the PID gains
+ *
+ * @param kP proportional gain
+ * @param kI integral gain
+ * @param kD derivative gain
+ */
 void PID::setGains(float kP, float kI, float kD) {
     this->kP = kP;
     this->kI = kI;
