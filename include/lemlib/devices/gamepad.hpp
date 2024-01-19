@@ -152,7 +152,7 @@ class Gamepad {
          * @param mode Mode to add the button to. Defaults to "DEFAULT".
          */
         void setFuncToAction(std::pair<int (*)(int), int (*)(int)>, pros::controller_digital_e_t button,
-                             std::string mode = "DEFAULT");
+                             const std::string& mode = "DEFAULT");
 
         /**
          * @brief Sets a button to two user-made functions. When pressed, the function will automatically run without
@@ -163,7 +163,7 @@ class Gamepad {
          * @param mode Mode to add the button to. Defaults to "DEFAULT".
          */
         void setFuncToAction(int (*functionPtr)(int), pros::controller_analog_e_t joystick,
-                             std::string mode = "DEFAULT");
+                             const std::string& mode = "DEFAULT");
 
         /*================ MODES ================*/
 
@@ -173,14 +173,14 @@ class Gamepad {
          *
          * @param mode
          */
-        void addMode(std::string mode);
+        void addMode(const std::string& mode);
 
         /**
          * @brief Get a vector of all modes.
          *
          * @return std::vector<std::string>
          */
-        std::vector<std::string> getModes();
+        const std::vector<std::string> getModes();
 
         /**
          * @brief Changes the mode of the controller to something else. Can be automated using the setFuncToButton
@@ -188,7 +188,7 @@ class Gamepad {
          *
          * @param mode
          */
-        void changeMode(std::string mode);
+        void changeMode(const std::string& mode);
 
         /*================ MISC. ================*/
 
