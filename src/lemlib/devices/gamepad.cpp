@@ -7,7 +7,7 @@
 namespace lemlib {
 
 ButtonMapping::ButtonMapping(pros::controller_digital_e_t button, std::string mode,
-              std::pair<int (*)(int), int (*)(int)> function) {
+                             std::pair<int (*)(int), int (*)(int)> function) {
     this->button = button;
     functions.push_back({mode, function});
 }
@@ -40,16 +40,7 @@ void ButtonMapping::runFunction(std::string mode, bool buttonState, int func) {
     }
 }
 
-
-
-
-
-
-
-
-
-JoystickMapping::JoystickMapping(pros::controller_analog_e_t joystick, std::string mode,
-                                 int (*function)(int)) {
+JoystickMapping::JoystickMapping(pros::controller_analog_e_t joystick, std::string mode, int (*function)(int)) {
     this->joystick = joystick;
     functions.push_back({mode, function});
 }
@@ -249,30 +240,29 @@ int Gamepad::getJoystick(pros::controller_analog_e_t whichJoystick) {
 }
 
 void Gamepad::setFuncToAction(std::pair<int (*)(int), int (*)(int)> functionPtr, pros::controller_digital_e_t button,
-                              std::string mode) {
+                              const std::string& mode) {
     std::pair<pros::controller_digital_e_t, std::pair<int (*)(int), int (*)(int)>> buttonFuncPair(button, functionPtr);
 
     std::cout << "Controller Key: " << controllerValues.getControllerKey(button) << std::endl;
     buttonsToFunctions.at(controllerValues.getControllerKey(button))->addModeAndFunction(mode, functionPtr);
 }
 
-void Gamepad::setFuncToAction(int (*functionPtr)(int), pros::controller_analog_e_t joystick, std::string mode) {
+void Gamepad::setFuncToAction(int (*functionPtr)(int), pros::controller_analog_e_t joystick, const std::string& mode) {
     std::pair<pros::controller_analog_e_t, int (*)(int)> buttonFuncPair(joystick, functionPtr);
 
     std::cout << "Controller Key: " << controllerValues.getControllerKey(joystick) << std::endl;
 
     // - 12 because the joysticks are ahead of all the buttons, but the vector is only 4 joysticks.
-    joysticksToFunctions.at(controllerValues.getControllerKey(joystick) - 12)
-        ->addModeAndFunction(mode, functionPtr);
+    joysticksToFunctions.at(controllerValues.getControllerKey(joystick) - 12)->addModeAndFunction(mode, functionPtr);
 }
 
 /*================ MODES ================*/
 
-void Gamepad::addMode(std::string mode) { modes.push_back(mode); }
+void Gamepad::addMode(const std::string& mode) { modes.push_back(mode); }
 
-std::vector<std::string> Gamepad::getModes() { return modes; }
+const std::vector<std::string> Gamepad::getModes() { return modes; }
 
-void Gamepad::changeMode(std::string mode) { currentMode = mode; }
+void Gamepad::changeMode(const std::string& mode) { currentMode = mode; }
 
 /*================ MISC. ================*/
 
