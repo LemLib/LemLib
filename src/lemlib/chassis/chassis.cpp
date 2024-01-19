@@ -4,6 +4,7 @@
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
+#include "pros/misc.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
@@ -72,6 +73,11 @@ lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings lateralSettin
       angularLargeExit(angularSettings.largeError, angularSettings.largeErrorTimeout),
       angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout) {}
 
+bool isDriverControl() {
+    return pros::competition::is_connected() && !pros::competition::is_autonomous() &&
+           !pros::competition::is_disabled();
+}
+
 /**
  * @brief Calibrate the chassis sensors
  *
@@ -82,11 +88,16 @@ void lemlib::Chassis::calibrate(bool calibrateIMU) {
     if (sensors.imu != nullptr && calibrateIMU) {
         int attempt = 1;
         // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
-        while (sensors.imu->reset(true) != 1 && attempt < 5) {
-            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
+        while (attempt < 5 && !isDriverControl()) {
+            sensors.imu->reset();
             pros::delay(10);
+            while (sensors.imu->get_status() != 0xFF && sensors.imu->is_calibrating() && !isDriverControl())
+                pros::delay(10);
+            if (!isnanf(sensors.imu->get_heading()) && !isinf(sensors.imu->get_heading())) break;
+            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
             attempt++;
         }
+        if (isDriverControl()) sensors.imu = nullptr;
         if (attempt == 5) sensors.imu = nullptr;
     }
     // initialize odom

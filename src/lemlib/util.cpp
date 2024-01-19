@@ -1,4 +1,3 @@
-#include <math.h>
 #include <vector>
 #include "lemlib/pose.hpp"
 #include "lemlib/util.hpp"
