@@ -9,15 +9,15 @@ struct ButtonMapping {
         pros::controller_digital_e_t button;
         std::vector<std::pair<std::string, std::pair<int (*)(int), int (*)(int)>>> functions;
     public:
-        ButtonMapping(pros::controller_digital_e_t buttonParam, std::string modeParam,
-                      std::pair<int (*)(int), int (*)(int)> functionParam);
+        ButtonMapping(pros::controller_digital_e_t button, std::string mode,
+                      std::pair<int (*)(int), int (*)(int)> function);
 
         // Acts like a tag.
         pros::controller_digital_e_t getButton();
 
-        void addModeAndFunction(std::string modeParam, std::pair<int (*)(int), int (*)(int)> functionParam);
+        void addModeAndFunction(std::string mode, std::pair<int (*)(int), int (*)(int)> function);
 
-        void runFunction(std::string mode, bool buttonState, int funcParam = 0);
+        void runFunction(std::string mode, bool buttonState, int func = 0);
 };
 
 struct JoystickMapping {
@@ -87,17 +87,17 @@ class Gamepad {
          * @brief Construct a new Gamepad object
          *
          * @param controllerID
-         * @param modesParam
+         * @param modes
          */
-        Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> modesParam = {"DEFAULT"});
+        Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> modes = {"DEFAULT"});
 
         /**
          * @brief Construct a new Gamepad object
          *
          * @param controller
-         * @param modesParam
+         * @param modes
          */
-        Gamepad(pros::Controller* controller, std::vector<std::string> modesParam = {"DEFAULT"});
+        Gamepad(pros::Controller* controller, std::vector<std::string> modes = {"DEFAULT"});
 
         ~Gamepad();
 
@@ -149,10 +149,10 @@ class Gamepad {
          * necessary. First function pointer is when the controller value is false, second function pointer is when the
          * controller value is true.
          * @param button Button you want these functions paired to.
-         * @param modeParam Mode to add the button to. Defaults to "DEFAULT".
+         * @param mode Mode to add the button to. Defaults to "DEFAULT".
          */
         void setFuncToAction(std::pair<int (*)(int), int (*)(int)>, pros::controller_digital_e_t button,
-                             std::string modeParam = "DEFAULT");
+                             std::string mode = "DEFAULT");
 
         /**
          * @brief Sets a button to two user-made functions. When pressed, the function will automatically run without
@@ -160,10 +160,10 @@ class Gamepad {
          *
          * @param functionPtr An integer function pointers. Int Data Type lets you return an error code if necessary.
          * @param joystick Joystick you want these functions paired to.
-         * @param modeParam Mode to add the button to. Defaults to "DEFAULT".
+         * @param mode Mode to add the button to. Defaults to "DEFAULT".
          */
         void setFuncToAction(int (*functionPtr)(int), pros::controller_analog_e_t joystick,
-                             std::string modeParam = "DEFAULT");
+                             std::string mode = "DEFAULT");
 
         /*================ MODES ================*/
 
@@ -171,9 +171,9 @@ class Gamepad {
          * @brief Adds a mode to the controller. Different modes mean different button mappings. Input a string to add a
          * mode.
          *
-         * @param modeParam
+         * @param mode
          */
-        void addMode(std::string modeParam);
+        void addMode(std::string mode);
 
         /**
          * @brief Get a vector of all modes.
@@ -186,9 +186,9 @@ class Gamepad {
          * @brief Changes the mode of the controller to something else. Can be automated using the setFuncToButton
          * function and making a function containing changeMode().
          *
-         * @param modeParam
+         * @param mode
          */
-        void changeMode(std::string modeParam);
+        void changeMode(std::string mode);
 
         /*================ MISC. ================*/
 

@@ -6,20 +6,20 @@
 
 namespace lemlib {
 
-ButtonMapping::ButtonMapping(pros::controller_digital_e_t buttonParam, std::string modeParam,
-              std::pair<int (*)(int), int (*)(int)> functionParam) {
-    button = buttonParam;
-    functions.push_back({modeParam, functionParam});
+ButtonMapping::ButtonMapping(pros::controller_digital_e_t button, std::string mode,
+              std::pair<int (*)(int), int (*)(int)> function) {
+    this->button = button;
+    functions.push_back({mode, function});
 }
 
 // Acts like a tag.
 pros::controller_digital_e_t ButtonMapping::getButton() { return button; }
 
-void ButtonMapping::addModeAndFunction(std::string modeParam, std::pair<int (*)(int), int (*)(int)> functionParam) {
-    functions.push_back({modeParam, functionParam});
+void ButtonMapping::addModeAndFunction(std::string mode, std::pair<int (*)(int), int (*)(int)> function) {
+    functions.push_back({mode, function});
 }
 
-void ButtonMapping::runFunction(std::string mode, bool buttonState, int funcParam) {
+void ButtonMapping::runFunction(std::string mode, bool buttonState, int func) {
     // Loops through all the functions and runs the one that matches the mode.
 
     for (int i = 0; i < functions.size(); i++) {
@@ -28,12 +28,12 @@ void ButtonMapping::runFunction(std::string mode, bool buttonState, int funcPara
             if (buttonState == true) {
                 if (functions.at(i).second.second !=
                     nullptr) { // If the function for when its true is not a null pointer
-                    functions.at(i).second.second(funcParam); // Run the function pointer for the true state
+                    functions.at(i).second.second(func); // Run the function pointer for the true state
                 }
             } else {
                 if (functions.at(i).second.first !=
                     nullptr) { // If the function for when its false is not a null pointer
-                    functions.at(i).second.first(funcParam); // Run the function pointer for the false state
+                    functions.at(i).second.first(func); // Run the function pointer for the false state
                 }
             }
         }
@@ -48,17 +48,17 @@ void ButtonMapping::runFunction(std::string mode, bool buttonState, int funcPara
 
 
 
-JoystickMapping::JoystickMapping(pros::controller_analog_e_t joystickParam, std::string modeParam,
-                                 int (*functionParam)(int)) {
-    joystick = joystickParam;
-    functions.push_back({modeParam, functionParam});
+JoystickMapping::JoystickMapping(pros::controller_analog_e_t joystick, std::string mode,
+                                 int (*function)(int)) {
+    this->joystick = joystick;
+    functions.push_back({mode, function});
 }
 
 // Acts like a tag
 pros::controller_analog_e_t JoystickMapping::getJoystick() { return joystick; }
 
-void JoystickMapping::addModeAndFunction(std::string modeParam, int (*functionParam)(int)) {
-    functions.push_back({modeParam, functionParam});
+void JoystickMapping::addModeAndFunction(std::string mode, int (*function)(int)) {
+    functions.push_back({mode, function});
 }
 
 void JoystickMapping::runFunction(std::string mode, int joystickValue) {
@@ -108,10 +108,10 @@ uint8_t ControllerValues::getControllerKey(pros::controller_analog_e_t joystick)
 
 Gamepad::Gamepad() {}
 
-Gamepad::Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> modesParam) {
+Gamepad::Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> modes) {
     prosController = new pros::Controller(controllerID);
 
-    if (modesParam.size() > 0) { modes = modesParam; }
+    if (modes.size() > 0) { this->modes = modes; }
 
     pros::controller_digital_e_t buttons[] = {
         pros::E_CONTROLLER_DIGITAL_A,    pros::E_CONTROLLER_DIGITAL_B,     pros::E_CONTROLLER_DIGITAL_X,
@@ -126,10 +126,10 @@ Gamepad::Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> 
     }
 }
 
-Gamepad::Gamepad(pros::Controller* controller, std::vector<std::string> modesParam) {
-    prosController = controller;
+Gamepad::Gamepad(pros::Controller* prosController, std::vector<std::string> modes) {
+    this->prosController = prosController;
 
-    if (modesParam.size() > 0) { modes = modesParam; }
+    if (modes.size() > 0) { this->modes = modes; }
 
     pros::controller_digital_e_t buttons[] = {
         pros::E_CONTROLLER_DIGITAL_A,    pros::E_CONTROLLER_DIGITAL_B,     pros::E_CONTROLLER_DIGITAL_X,
@@ -249,30 +249,30 @@ int Gamepad::getJoystick(pros::controller_analog_e_t whichJoystick) {
 }
 
 void Gamepad::setFuncToAction(std::pair<int (*)(int), int (*)(int)> functionPtr, pros::controller_digital_e_t button,
-                              std::string modeParam) {
+                              std::string mode) {
     std::pair<pros::controller_digital_e_t, std::pair<int (*)(int), int (*)(int)>> buttonFuncPair(button, functionPtr);
 
     std::cout << "Controller Key: " << controllerValues.getControllerKey(button) << std::endl;
-    buttonsToFunctions.at(controllerValues.getControllerKey(button))->addModeAndFunction(modeParam, functionPtr);
+    buttonsToFunctions.at(controllerValues.getControllerKey(button))->addModeAndFunction(mode, functionPtr);
 }
 
-void Gamepad::setFuncToAction(int (*functionPtr)(int), pros::controller_analog_e_t joystick, std::string modeParam) {
+void Gamepad::setFuncToAction(int (*functionPtr)(int), pros::controller_analog_e_t joystick, std::string mode) {
     std::pair<pros::controller_analog_e_t, int (*)(int)> buttonFuncPair(joystick, functionPtr);
 
     std::cout << "Controller Key: " << controllerValues.getControllerKey(joystick) << std::endl;
 
     // - 12 because the joysticks are ahead of all the buttons, but the vector is only 4 joysticks.
     joysticksToFunctions.at(controllerValues.getControllerKey(joystick) - 12)
-        ->addModeAndFunction(modeParam, functionPtr);
+        ->addModeAndFunction(mode, functionPtr);
 }
 
 /*================ MODES ================*/
 
-void Gamepad::addMode(std::string modeParam) { modes.push_back(modeParam); }
+void Gamepad::addMode(std::string mode) { modes.push_back(mode); }
 
 std::vector<std::string> Gamepad::getModes() { return modes; }
 
-void Gamepad::changeMode(std::string modeParam) { currentMode = modeParam; }
+void Gamepad::changeMode(std::string mode) { currentMode = mode; }
 
 /*================ MISC. ================*/
 
