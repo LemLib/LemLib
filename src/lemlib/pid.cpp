@@ -58,5 +58,6 @@ void PID::setGains(float kP, float kI, float kD) {
     this->kP = kP;
     this->kI = kI;
     this->kD = kD;
+    this->reset();
 }
 } // namespace lemlib
