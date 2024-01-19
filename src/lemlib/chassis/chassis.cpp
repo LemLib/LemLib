@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <math.h>
 #include <optional>
+#include "lemlib/pid.hpp"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
@@ -596,3 +597,31 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     distTravelled = -1;
     this->endMotion();
 }
+
+/**
+ * @brief Get the lateral PID gains
+ *
+ * @return gains the current PID gains
+ */
+lemlib::Gains lemlib::Chassis::getLateralGains() { return this->lateralPID.getGains(); }
+
+/**
+ * @brief Get the angular PID gains
+ *
+ * @return gains the current PID gains
+ */
+lemlib::Gains lemlib::Chassis::getAngularGains() { return this->angularPID.getGains(); }
+
+/**
+ * @brief Set the lateral PID gains
+ *
+ * @param gains the new PID gains
+ */
+void lemlib::Chassis::setLateralGains(lemlib::GainOptions gains) { this->lateralPID.setGains(gains); }
+
+/**
+ * @brief Set the angular PID gains
+ *
+ * @param gains the new PID gains
+ */
+void lemlib::Chassis::setAngularGains(lemlib::GainOptions gains) { this->angularPID.setGains(gains); }

@@ -2,6 +2,7 @@
 #include "util.hpp"
 
 namespace lemlib {
+
 /**
  * @brief Construct a new PID
  *
@@ -12,9 +13,19 @@ namespace lemlib {
  * @param signFlipReset whether to reset integral when sign of error flips
  */
 PID::PID(float kP, float kI, float kD, float windupRange, bool signFlipReset)
-    : kP(kP),
-      kI(kI),
-      kD(kD),
+    : gains(Gains {kP, kI, kD}),
+      windupRange(windupRange),
+      signFlipReset(signFlipReset) {}
+
+/**
+ * @brief Construct a new PID
+ *
+ * @param gains The PID gains
+ * @param windupRange integral anti windup range
+ * @param signFlipReset whether to reset integral when sign of error flips
+ */
+PID::PID(Gains gains, float windupRange, bool signFlipReset)
+    : gains(gains),
       windupRange(windupRange),
       signFlipReset(signFlipReset) {}
 
@@ -26,16 +37,16 @@ PID::PID(float kP, float kI, float kD, float windupRange, bool signFlipReset)
  */
 float PID::update(const float error) {
     // calculate integral
-    integral += error;
-    if (sgn(error) != sgn((prevError))) integral = 0;
-    if (fabs(error) > windupRange) integral = 0;
+    this->integral += error;
+    if (sgn(error) != sgn((this->prevError))) this->integral = 0;
+    if (fabs(error) > this->windupRange) this->integral = 0;
 
     // calculate derivative
-    const float derivative = error - prevError;
-    prevError = error;
+    const float derivative = error - this->prevError;
+    this->prevError = error;
 
     // calculate output
-    return error * kP + integral * kI + derivative * kD;
+    return error * this->gains.kP + integral * this->gains.kI + derivative * this->gains.kD;
 }
 
 /**
@@ -43,7 +54,24 @@ float PID::update(const float error) {
  *
  */
 void PID::reset() {
-    integral = 0;
-    prevError = 0;
+    this->integral = 0;
+    this->prevError = 0;
+}
+
+Gains PID::getGains() { return this->gains; }
+
+/**
+ * @brief Set the PID gains
+ *
+ * @param gains The new PID gains
+ */
+void PID::setGains(GainOptions gains) {
+    if (this->gains.kP) { this->gains.kP = *gains.kP; }
+
+    if (this->gains.kI) { this->gains.kI = *gains.kI; }
+
+    if (this->gains.kD) { this->gains.kD = *gains.kD; }
+
+    this->reset();
 }
 } // namespace lemlib

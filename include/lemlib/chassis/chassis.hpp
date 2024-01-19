@@ -359,6 +359,34 @@ class Chassis {
          * @return whether a motion is currently running
          */
         bool isInMotion() const;
+
+        /**
+         * @brief Get the lateral PID gains
+         *
+         * @return gains the current PID gains
+         */
+        Gains getLateralGains();
+
+        /**
+         * @brief Get the angular PID gains
+         *
+         * @return gains the current PID gains
+         */
+        Gains getAngularGains();
+
+        /**
+         * @brief Set the lateral PID gains
+         *
+         * @param gains the new PID gains
+         */
+        void setLateralGains(GainOptions gains);
+
+        /**
+         * @brief Set angular PID gains
+         *
+         * @param gains the new PID gains
+         */
+        void setAngularGains(GainOptions gains);
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
