@@ -1,6 +1,20 @@
 #pragma once
+#include <optional>
 
 namespace lemlib {
+struct GainOptions {
+        std::optional<float> kP = std::nullopt;
+        std::optional<float> kI = std::nullopt;
+        std::optional<float> kD = std::nullopt;
+};
+
+struct Gains {
+        float kP;
+        float kI;
+        float kD;
+        Gains() = delete;
+};
+
 class PID {
     public:
         /**
@@ -14,6 +28,7 @@ class PID {
          */
         PID(float kP, float kI, float kD, float windupRange = 0, bool signFlipReset = false);
 
+        PID(Gains gains, float winupRange = 0, bool signFlipReset = false);
         /**
          * @brief Update the PID
          *
@@ -29,18 +44,21 @@ class PID {
         void reset();
 
         /**
+         * @brief Get the PID gains
+         *
+         * @return the current PID gains
+         */
+
+        Gains getGains();
+        /**
          * @brief Set the PID gains
          *
-         * @param kP proportional gain
-         * @param kI integral gain
-         * @param kD derivative gain
+         * @param gains the new PID gains
          */
-        void setGains(float kP, float kI, float kD);
+        void setGains(GainOptions gains);
     protected:
         // gains
-        float kP;
-        float kI;
-        float kD;
+        Gains gains;
 
         // optimizations
         const float windupRange;

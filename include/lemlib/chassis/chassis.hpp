@@ -363,20 +363,16 @@ class Chassis {
         /**
          * @brief Set the lateral PID gains
          *
-         * @param kP proportional gain
-         * @param kI integral gain
-         * @param kD derivative gain
+         * @param gains the new PID gains
          */
-        void setLateralGains(float kP, float kI, float kD);
+        void setLateralGains(GainOptions gains);
 
         /**
          * @brief Set angular PID gains
          *
-         * @param kP proportional gain
-         * @param kI integral gain
-         * @param kD derivative gain
+         * @param gains the new PID gains
          */
-        void setAngularGains(float kP, float kI, float kD);
+        void setAngularGains(GainOptions gains);
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
