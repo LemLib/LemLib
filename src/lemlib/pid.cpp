@@ -26,16 +26,16 @@ PID::PID(float kP, float kI, float kD, float windupRange, bool signFlipReset)
  */
 float PID::update(const float error) {
     // calculate integral
-    integral += error;
-    if (sgn(error) != sgn((prevError))) integral = 0;
-    if (fabs(error) > windupRange) integral = 0;
+    this->integral += error;
+    if (sgn(error) != sgn((this->prevError))) this->integral = 0;
+    if (fabs(error) > this->windupRange) this->integral = 0;
 
     // calculate derivative
-    const float derivative = error - prevError;
-    prevError = error;
+    const float derivative = error - this->prevError;
+    this->prevError = error;
 
     // calculate output
-    return error * kP + integral * kI + derivative * kD;
+    return error * this->kP + integral * this->kI + derivative * this->kD;
 }
 
 /**
@@ -43,7 +43,13 @@ float PID::update(const float error) {
  *
  */
 void PID::reset() {
-    integral = 0;
-    prevError = 0;
+    this->integral = 0;
+    this->prevError = 0;
+}
+
+void PID::setGains(float kP, float kI, float kD) {
+    this->kP = kP;
+    this->kI = kI;
+    this->kD = kD;
 }
 } // namespace lemlib
