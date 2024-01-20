@@ -1,5 +1,6 @@
 #include "pros/device.hpp"
 #include "pros/misc.h"
+#include <memory>
 #include <unordered_map>
 
 namespace lemlib {
@@ -15,7 +16,7 @@ struct ButtonMapping {
         // Acts like a tag.
         pros::controller_digital_e_t getButton();
 
-        void addModeAndFunction(std::string mode, std::pair<int (*)(int), int (*)(int)> function);
+        void addModeAndFunction(std::string mode, std::pair<int (*)(int), int (*)(int)> function); 
 
         void runFunction(std::string mode, bool buttonState, int func = 0);
 };
@@ -63,17 +64,18 @@ struct ControllerValues {
 
 class Gamepad {
     protected:
-        pros::Controller* prosController;
+        std::shared_ptr<pros::Controller> prosController;
 
         std::string currentMode = "DEFAULT";
 
         std::vector<std::string> modes = {"DEFAULT"};
-        std::vector<ButtonMapping*> buttonsToFunctions;
-        std::vector<JoystickMapping*> joysticksToFunctions;
+        std::vector<std::unique_ptr<ButtonMapping>> buttonsToFunctions;
+        std::vector<std::unique_ptr<JoystickMapping>> joysticksToFunctions;
 
         std::unordered_map<pros::controller_digital_e_t, bool> buttonStates;
 
         ControllerValues controllerValues;
+
         /**
          * @brief When the main loop starts, this function gets called and uses function pointers/modes info to run
          * user-made functions automaically.
@@ -97,7 +99,7 @@ class Gamepad {
          * @param controller
          * @param modes
          */
-        Gamepad(pros::Controller* controller, std::vector<std::string> modes = {"DEFAULT"});
+        Gamepad(std::shared_ptr<pros::Controller> controller, std::vector<std::string> modes = {"DEFAULT"});
 
         ~Gamepad();
 
@@ -195,9 +197,9 @@ class Gamepad {
         /**
          * @brief Gets the underlying PROS Controller.
          *
-         * @return pros::Controller*
+         * @return pros::Controller Shared Ptr
          */
-        pros::Controller* getController();
+        std::shared_ptr<pros::Controller> getController();
 
         /**
          * @brief Rumble Controller.
@@ -205,7 +207,9 @@ class Gamepad {
          */
         void rumble(const char* pattern);
 
-        std::vector<ButtonMapping*> getButtonsToFunctions();
+        std::vector<std::unique_ptr<ButtonMapping>>& getButtonsToFunctions();
+
+        std::vector<std::unique_ptr<JoystickMapping>>& getJoysticksToFunctions();
 };
 
 } // namespace lemlib

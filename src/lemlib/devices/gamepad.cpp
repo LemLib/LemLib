@@ -1,5 +1,6 @@
 #include "lemlib/devices/gamepad.hpp"
 #include "pros/misc.h"
+#include <memory>
 #include <utility>
 #include <iostream>
 #include <vector>
@@ -100,7 +101,7 @@ uint8_t ControllerValues::getControllerKey(pros::controller_analog_e_t joystick)
 Gamepad::Gamepad() {}
 
 Gamepad::Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> modes) {
-    prosController = new pros::Controller(controllerID);
+    prosController = std::make_shared<pros::Controller>(controllerID);
 
     if (modes.size() > 0) { this->modes = modes; }
 
@@ -117,7 +118,7 @@ Gamepad::Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> 
     }
 }
 
-Gamepad::Gamepad(pros::Controller* prosController, std::vector<std::string> modes) {
+Gamepad::Gamepad(std::shared_ptr<pros::Controller> prosController, std::vector<std::string> modes) {
     this->prosController = prosController;
 
     if (modes.size() > 0) { this->modes = modes; }
@@ -145,7 +146,6 @@ Gamepad::Gamepad(pros::Controller* prosController, std::vector<std::string> mode
 }
 
 Gamepad::~Gamepad() {
-    delete prosController;
     for (int i = 0; i < buttonsToFunctions.size(); i++) { delete &buttonsToFunctions.at(i); }
     for (int i = 0; i < joysticksToFunctions.size(); i++) { delete &joysticksToFunctions.at(i); }
 }
@@ -266,10 +266,12 @@ void Gamepad::changeMode(const std::string& mode) { currentMode = mode; }
 
 /*================ MISC. ================*/
 
-pros::Controller* Gamepad::getController() { return prosController; }
+std::shared_ptr<pros::Controller> Gamepad::getController() { return prosController; }
 
 void Gamepad::rumble(const char* pattern) { prosController->rumble(pattern); }
 
-std::vector<ButtonMapping*> Gamepad::getButtonsToFunctions() { return buttonsToFunctions; }
+std::vector<std::unique_ptr<ButtonMapping>>& Gamepad::getButtonsToFunctions() { return buttonsToFunctions; }
+
+std::vector<std::unique_ptr<JoystickMapping>>& Gamepad::getJoysticksToFunctions() { return joysticksToFunctions; }
 
 } // namespace lemlib
