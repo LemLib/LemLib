@@ -8,15 +8,15 @@ namespace lemlib {
 struct ButtonMapping {
     private:
         pros::controller_digital_e_t button;
-        std::vector<std::pair<std::string, std::pair<int (*)(int), int (*)(int)>>> functions;
+        std::vector<std::pair<std::string, std::pair<std::function<int(int)>, std::function<int(int)>>>> functions;
     public:
         ButtonMapping(pros::controller_digital_e_t button, std::string mode,
-                      std::pair<int (*)(int), int (*)(int)> function);
+                      std::pair<std::function<int(int)>, std::function<int(int)>> function);
 
         // Acts like a tag.
         pros::controller_digital_e_t getButton();
 
-        void addModeAndFunction(std::string mode, std::pair<int (*)(int), int (*)(int)> function); 
+        void addModeAndFunction(std::string mode, std::pair<std::function<int(int)>, std::function<int(int)>> function);
 
         void runFunction(std::string mode, bool buttonState, int func = 0);
 };
@@ -24,14 +24,15 @@ struct ButtonMapping {
 struct JoystickMapping {
     private:
         pros::controller_analog_e_t joystick;
-        std::vector<std::pair<std::string, int (*)(int)>> functions;
+        std::vector<std::pair<std::string, std::function<int(int)>>> functions;
     public:
-        JoystickMapping(pros::controller_analog_e_t joystickParam, std::string modeParam, int (*functionParam)(int));
+        JoystickMapping(pros::controller_analog_e_t joystickParam, std::string modeParam,
+                        std::function<int(int)> functionParam);
 
         // Acts like a tag
         pros::controller_analog_e_t getJoystick();
 
-        void addModeAndFunction(std::string modeParam, int (*functionParam)(int));
+        void addModeAndFunction(std::string modeParam, std::function<int(int)> functionParam);
 
         void runFunction(std::string mode, int joystickValue);
 };
@@ -153,18 +154,18 @@ class Gamepad {
          * @param button Button you want these functions paired to.
          * @param mode Mode to add the button to. Defaults to "DEFAULT".
          */
-        void setFuncToAction(std::pair<int (*)(int), int (*)(int)>, pros::controller_digital_e_t button,
-                             const std::string& mode = "DEFAULT");
+        void setFuncToAction(std::pair<std::function<int(int)>, std::function<int(int)>>,
+                             pros::controller_digital_e_t button, const std::string& mode = "DEFAULT");
 
         /**
          * @brief Sets a button to two user-made functions. When pressed, the function will automatically run without
          * needing input from the user.
          *
-         * @param functionPtr An integer function pointers. Int Data Type lets you return an error code if necessary.
+         * @param function An integer function. Int Data Type lets you return an error code if necessary.
          * @param joystick Joystick you want these functions paired to.
          * @param mode Mode to add the button to. Defaults to "DEFAULT".
          */
-        void setFuncToAction(int (*functionPtr)(int), pros::controller_analog_e_t joystick,
+        void setFuncToAction(std::function<int(int)> function, pros::controller_analog_e_t joystick,
                              const std::string& mode = "DEFAULT");
 
         /*================ MODES ================*/
