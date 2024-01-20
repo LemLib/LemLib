@@ -24,18 +24,16 @@ void ButtonMapping::addModeAndFunction(std::string mode,
 void ButtonMapping::runFunction(std::string mode, bool buttonState, int func) {
     // Loops through all the functions and runs the one that matches the mode.
 
-    for (int i = 0; i < functions.size(); i++) {
-        if (functions.at(i).first == mode) { // If the mode matches,
+    for (std::pair<std::string, std::pair<std::function<int(int)>, std::function<int(int)>>>& i : functions) {
+        if (i.first == mode) { // If the mode matches,
 
             if (buttonState == true) {
-                if (functions.at(i).second.second !=
-                    nullptr) { // If the function for when its true is not a null pointer
-                    functions.at(i).second.second(func); // Run the function pointer for the true state
+                if (i.second.second != nullptr) { // If the function for when its true is not a null pointer
+                    i.second.second(func); // Run the function pointer for the true state
                 }
             } else {
-                if (functions.at(i).second.first !=
-                    nullptr) { // If the function for when its false is not a null pointer
-                    functions.at(i).second.first(func); // Run the function pointer for the false state
+                if (i.second.first != nullptr) { // If the function for when its false is not a null pointer
+                    i.second.first(func); // Run the function pointer for the false state
                 }
             }
         }
@@ -57,10 +55,10 @@ void JoystickMapping::addModeAndFunction(std::string mode, std::function<int(int
 
 void JoystickMapping::runFunction(std::string mode, int joystickValue) {
     // Loops through all the functions and runs the one that matches the mode.
-    for (int i = 0; i < functions.size(); i++) {
-        if (functions.at(i).first == mode) { // If the mode matches,
-            if (functions.at(i).second != nullptr) { // If the function is not a null pointer
-                functions.at(i).second(joystickValue); // Run the function pointer
+    for (std::pair<std::string, std::function<int(int)>> i : functions) {
+        if (i.first == mode) { // If the mode matches,
+            if (i.second != nullptr) { // If the function is not a null pointer
+                i.second(joystickValue); // Run the function pointer
             }
         }
     }
@@ -113,11 +111,20 @@ Gamepad::Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> 
         pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT, pros::E_CONTROLLER_DIGITAL_L1,
         pros::E_CONTROLLER_DIGITAL_L2,   pros::E_CONTROLLER_DIGITAL_R1,    pros::E_CONTROLLER_DIGITAL_R2};
 
+    std::function<int(int)> junkFunc = nullptr;
+
     std::pair<std::function<int(int)>, std::function<int(int)>> junkFuncs = {nullptr, nullptr};
 
     for (int i = 0; i < sizeof(buttons) / sizeof(buttons[0]); i++) {
         buttonsToFunctions.emplace_back(
             std::make_unique<ButtonMapping>(ButtonMapping(buttons[i], "DEFAULT", junkFuncs)));
+    }
+
+    pros::controller_analog_e_t joysticks[] = {pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_RIGHT_Y,
+                                               pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X};
+
+    for (int i = 0; i < sizeof(joysticks) / sizeof(joysticks[0]); i++) {
+        joysticksToFunctions.emplace_back(new JoystickMapping(joysticks[i], "DEFAULT", junkFunc));
     }
 }
 
@@ -135,7 +142,7 @@ Gamepad::Gamepad(std::shared_ptr<pros::Controller> prosController, std::vector<s
     pros::controller_analog_e_t joysticks[] = {pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_RIGHT_Y,
                                                pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X};
 
-    int (*junkFunc)(int) = [](int x) { return 0; };
+    std::function<int(int)> junkFunc = nullptr;
 
     std::pair<std::function<int(int)>, std::function<int(int)>> junkFuncs = {nullptr, nullptr};
 
@@ -149,10 +156,7 @@ Gamepad::Gamepad(std::shared_ptr<pros::Controller> prosController, std::vector<s
     }
 }
 
-Gamepad::~Gamepad() {
-    for (int i = 0; i < buttonsToFunctions.size(); i++) { delete &buttonsToFunctions.at(i); }
-    for (int i = 0; i < joysticksToFunctions.size(); i++) { delete &joysticksToFunctions.at(i); }
-}
+Gamepad::~Gamepad() {}
 
 bool Gamepad::startMainLoop() {
     pros::Task task {[this] {
@@ -171,16 +175,14 @@ void Gamepad::autoButtonFunctions() {
     //     prosController->get_digital(buttonsToFunctions.at(i)->getButton());
     // }
 
-    for (int i = 0; i < buttonsToFunctions.size(); i++) {
-        if (getButton({buttonsToFunctions.at(i)->getButton()})) { // If buttons are pressed
-            buttonsToFunctions.at(i)->runFunction(
-                currentMode, prosController->get_digital(buttonsToFunctions.at(i)->getButton())); // Runs the function
+    for (std::unique_ptr<lemlib::ButtonMapping>& i : buttonsToFunctions) {
+        if (getButton({i->getButton()})) { // If buttons are pressed
+            i->runFunction(currentMode, prosController->get_digital(i->getButton())); // Runs the function
         }
     }
 
-    for (int i = 0; i < joysticksToFunctions.size(); i++) {
-        joysticksToFunctions.at(i)->runFunction(currentMode,
-                                                prosController->get_analog(joysticksToFunctions.at(i)->getJoystick()));
+    for (std::unique_ptr<lemlib::JoystickMapping>& i : joysticksToFunctions) {
+        i->runFunction(currentMode, prosController->get_analog(i->getJoystick()));
     }
 }
 
