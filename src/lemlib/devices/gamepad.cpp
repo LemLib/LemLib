@@ -8,7 +8,7 @@
 namespace lemlib {
 
 ButtonMapping::ButtonMapping(pros::controller_digital_e_t button, std::string mode,
-                             std::pair<int (*)(int), int (*)(int)> function) {
+                             std::pair<std::function<int(int)>, std::function<int(int)>> function) {
     this->button = button;
     functions.push_back({mode, function});
 }
@@ -16,7 +16,8 @@ ButtonMapping::ButtonMapping(pros::controller_digital_e_t button, std::string mo
 // Acts like a tag.
 pros::controller_digital_e_t ButtonMapping::getButton() { return button; }
 
-void ButtonMapping::addModeAndFunction(std::string mode, std::pair<int (*)(int), int (*)(int)> function) {
+void ButtonMapping::addModeAndFunction(std::string mode,
+                                       std::pair<std::function<int(int)>, std::function<int(int)>> function) {
     functions.push_back({mode, function});
 }
 
@@ -41,7 +42,8 @@ void ButtonMapping::runFunction(std::string mode, bool buttonState, int func) {
     }
 }
 
-JoystickMapping::JoystickMapping(pros::controller_analog_e_t joystick, std::string mode, int (*function)(int)) {
+JoystickMapping::JoystickMapping(pros::controller_analog_e_t joystick, std::string mode,
+                                 std::function<int(int)> function) {
     this->joystick = joystick;
     functions.push_back({mode, function});
 }
@@ -49,7 +51,7 @@ JoystickMapping::JoystickMapping(pros::controller_analog_e_t joystick, std::stri
 // Acts like a tag
 pros::controller_analog_e_t JoystickMapping::getJoystick() { return joystick; }
 
-void JoystickMapping::addModeAndFunction(std::string mode, int (*function)(int)) {
+void JoystickMapping::addModeAndFunction(std::string mode, std::function<int(int)> function) {
     functions.push_back({mode, function});
 }
 
@@ -111,10 +113,11 @@ Gamepad::Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> 
         pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT, pros::E_CONTROLLER_DIGITAL_L1,
         pros::E_CONTROLLER_DIGITAL_L2,   pros::E_CONTROLLER_DIGITAL_R1,    pros::E_CONTROLLER_DIGITAL_R2};
 
-    std::pair<int (*)(int), int (*)(int)> junkFuncs = {nullptr, nullptr};
+    std::pair<std::function<int(int)>, std::function<int(int)>> junkFuncs = {nullptr, nullptr};
 
     for (int i = 0; i < sizeof(buttons) / sizeof(buttons[0]); i++) {
-        buttonsToFunctions.emplace_back(new ButtonMapping(buttons[i], "DEFAULT", junkFuncs));
+        buttonsToFunctions.emplace_back(
+            std::make_unique<ButtonMapping>(ButtonMapping(buttons[i], "DEFAULT", junkFuncs)));
     }
 }
 
@@ -134,10 +137,11 @@ Gamepad::Gamepad(std::shared_ptr<pros::Controller> prosController, std::vector<s
 
     int (*junkFunc)(int) = [](int x) { return 0; };
 
-    std::pair<int (*)(int), int (*)(int)> junkFuncs = {nullptr, nullptr};
+    std::pair<std::function<int(int)>, std::function<int(int)>> junkFuncs = {nullptr, nullptr};
 
     for (int i = 0; i < sizeof(buttons) / sizeof(buttons[0]); i++) {
-        buttonsToFunctions.emplace_back(new ButtonMapping(buttons[i], "DEFAULT", junkFuncs));
+        buttonsToFunctions.emplace_back(
+            std::make_unique<ButtonMapping>(ButtonMapping(buttons[i], "DEFAULT", junkFuncs)));
     }
 
     for (int i = 0; i < sizeof(joysticks) / sizeof(joysticks[0]); i++) {
@@ -239,21 +243,23 @@ int Gamepad::getJoystick(pros::controller_analog_e_t whichJoystick) {
     return joystickValue;
 }
 
-void Gamepad::setFuncToAction(std::pair<int (*)(int), int (*)(int)> functionPtr, pros::controller_digital_e_t button,
-                              const std::string& mode) {
-    std::pair<pros::controller_digital_e_t, std::pair<int (*)(int), int (*)(int)>> buttonFuncPair(button, functionPtr);
+void Gamepad::setFuncToAction(std::pair<std::function<int(int)>, std::function<int(int)>> functionPtr,
+                              pros::controller_digital_e_t button, const std::string& mode) {
+    std::pair<pros::controller_digital_e_t, std::pair<std::function<int(int)>, std::function<int(int)>>> buttonFuncPair(
+        button, functionPtr);
 
     std::cout << "Controller Key: " << controllerValues.getControllerKey(button) << std::endl;
     buttonsToFunctions.at(controllerValues.getControllerKey(button))->addModeAndFunction(mode, functionPtr);
 }
 
-void Gamepad::setFuncToAction(int (*functionPtr)(int), pros::controller_analog_e_t joystick, const std::string& mode) {
-    std::pair<pros::controller_analog_e_t, int (*)(int)> buttonFuncPair(joystick, functionPtr);
+void Gamepad::setFuncToAction(std::function<int(int)> function, pros::controller_analog_e_t joystick,
+                              const std::string& mode) {
+    std::pair<pros::controller_analog_e_t, std::function<int(int)>> buttonFuncPair(joystick, function);
 
     std::cout << "Controller Key: " << controllerValues.getControllerKey(joystick) << std::endl;
 
     // - 12 because the joysticks are ahead of all the buttons, but the vector is only 4 joysticks.
-    joysticksToFunctions.at(controllerValues.getControllerKey(joystick) - 12)->addModeAndFunction(mode, functionPtr);
+    joysticksToFunctions.at(controllerValues.getControllerKey(joystick) - 12)->addModeAndFunction(mode, function);
 }
 
 /*================ MODES ================*/
