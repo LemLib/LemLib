@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 
+#include "pros/gps.hpp"
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 
@@ -43,20 +44,9 @@ makeMotorGroup(const std::initializer_list<int8_t>& ports, const pros::v5::Motor
 >>>>>>> b982d01 (Make changes to differential class)
  * @brief Struct containing all the sensors used for odometry
  *
- * The sensors are stored in a struct so that they can be easily passed to the chassis class
- * The variables are pointers so that they can be set to nullptr if they are not used
- * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
- *
- * @param vertical1 pointer to the first vertical tracking wheel
- * @param vertical2 pointer to the second vertical tracking wheel
- * @param horizontal1 pointer to the first horizontal tracking wheel
- * @param horizontal2 pointer to the second horizontal tracking wheel
- * @param imu pointer to the IMU
  */
-<<<<<<< HEAD
-typedef struct {
-=======
 struct OdomSensors {
+        
         /**
          * The sensors are stored in a struct so that they can be easily passed to the chassis class
          * The variables are pointers so that they can be set to nullptr if they are not used
@@ -66,44 +56,26 @@ struct OdomSensors {
          * @param vertical2 pointer to the second vertical tracking wheel
          * @param horizontal1 pointer to the first horizontal tracking wheel
          * @param horizontal2 pointer to the second horizontal tracking wheel
-         * @param imu pointer to the IMU
-         */
-        OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
-                    TrackingWheel* horizontal2, pros::Imu* imu)
-            : vertical1(vertical1),
-              vertical2(vertical2),
-              horizontal1(horizontal1),
-              horizontal2(horizontal2),
-              gyro(std::make_shared<lemlib::Imu>(*imu)) {}
-
-        /**
-         * The sensors are stored in a struct so that they can be easily passed to the chassis class
-         * The variables are pointers so that they can be set to nullptr if they are not used
-         * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
-         *
-         * @param vertical1 pointer to the first vertical tracking wheel
-         * @param vertical2 pointer to the second vertical tracking wheel
-         * @param horizontal1 pointer to the first horizontal tracking wheel
-         * @param horizontal2 pointer to the second horizontal tracking wheel
+         * @param gps pointer to the GPS sensor
          * @param gyro shared pointer to a gyro
          */
-        OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
-                    TrackingWheel* horizontal2, std::shared_ptr<Gyro> gyro)
+        OdomSensors(std::shared_ptr<TrackingWheel> vertical1, std::shared_ptr<TrackingWheel> vertical2,
+                    std::shared_ptr<TrackingWheel> horizontal1, std::shared_ptr<TrackingWheel> horizontal2,
+                    std::shared_ptr<pros::GPS> gps, std::shared_ptr<pros::IMU> imu, std::shared_ptr<Gyro> gyro)
             : vertical1(vertical1),
               vertical2(vertical2),
               horizontal1(horizontal1),
               horizontal2(horizontal2),
+              gps(gps),
+              imu(imu),
               gyro(gyro) {}
 
->>>>>>> f74b927 (fix build errors)
-        TrackingWheel* vertical1;
-        TrackingWheel* vertical2;
-        TrackingWheel* horizontal1;
-        TrackingWheel* horizontal2;
-<<<<<<< HEAD
-        pros::Imu* imu;
-} OdomSensors_t;
-=======
+        std::shared_ptr<TrackingWheel> vertical1;
+        std::shared_ptr<TrackingWheel> vertical2;
+        std::shared_ptr<TrackingWheel> horizontal1;
+        std::shared_ptr<TrackingWheel> horizontal2;
+        std::shared_ptr<pros::GPS> gps;
+        std::shared_ptr<pros::IMU> imu;
         std::shared_ptr<Gyro> gyro;
 };
 >>>>>>> 475d619 (add support for generic gyros for differential)

@@ -1,6 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
+<<<<<<< HEAD
 #include "lemlib/eventhandler/joystickeventhandler.hpp"
 #include "lemlib/eventhandler/prosevents/joystickevents.hpp"
 #include "lemlib/eventhandler/testevents.hpp"
@@ -12,6 +13,12 @@
 #include "pros/misc.hpp"
 #include <memory>
 #include <vector>
+=======
+#include "lemlib/devices/trackingWheel.hpp"
+#include "lemlib/logger/stdout.hpp"
+#include "pros/misc.h"
+#include <memory>
+>>>>>>> cbd5330 (Began making everything a shared ptr)
 
 /*
 // controller
@@ -89,6 +96,7 @@ lemlib::ChassisController_t angularController {
 };
 
 // sensors for odometry
+<<<<<<< HEAD
 lemlib::OdomSensors_t sensors {
     &vertical, // vertical tracking wheel
     nullptr, // we don't have a second vertical tracking wheel
@@ -103,6 +111,16 @@ lemlib::Differential chassis(drivetrain, // drivetrain struct
                              lateralController, // forwards/backwards PID struct
                              angularController, // turning PID struct
                              sensors // sensors struct
+=======
+// note that in this example we use internal motor encoders, so we don't pass vertical tracking wheels
+lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullptr as we don't have one
+                            nullptr, // vertical tracking wheel 2, set to nullptr as we don't have one
+                            std::make_shared<lemlib::TrackingWheel>(horizontal), // horizontal tracking wheel 1
+                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+                            nullptr, // no GPS
+                            std::make_shared<pros::IMU>(11), // inertial sensor
+                            nullptr
+>>>>>>> cbd5330 (Began making everything a shared ptr)
 );
 
 =======
