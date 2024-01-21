@@ -15,11 +15,17 @@ namespace lemlib {
  * Vectors are passed since they can have a varying number of sensors in them, allowing for
  * any tracking wheel + imu setup
  */
-DifferentialArc::DifferentialArc(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                                 std::vector<TrackingWheel>& drivetrain, std::vector<std::shared_ptr<Gyro>>& gyros)
+DifferentialArc::DifferentialArc(std::vector<std::shared_ptr<TrackingWheel>>& verticals,
+                                 std::vector<std::shared_ptr<TrackingWheel>>& horizontals,
+                                 std::vector<std::shared_ptr<TrackingWheel>>& drivetrain,
+                                 std::vector<std::shared_ptr<pros::GPS>>& gps,
+                                 std::vector<std::shared_ptr<pros::IMU>>& imu,
+                                 std::vector<std::shared_ptr<Gyro>>& gyros)
     : verticals(verticals),
       horizontals(horizontals),
       drivetrain(drivetrain),
+      gps(gps),
+      imus(imus),
       gyros(gyros) {}
 
 /**
@@ -29,29 +35,32 @@ DifferentialArc::DifferentialArc(std::vector<TrackingWheel>& verticals, std::vec
  * calibration. The encoders will output errors if they fail to calibrate.
  */
 void DifferentialArc::calibrate(bool calibrateGyros) {
-    std::vector<TrackingWheel> newVerticals = {};
-    std::vector<TrackingWheel> newHorizontals = {};
-    std::vector<TrackingWheel> newDrivetrain = {};
+    std::vector<std::shared_ptr<TrackingWheel>> newVerticals = {};
+    std::vector<std::shared_ptr<TrackingWheel>> newHorizontals = {};
+    std::vector<std::shared_ptr<TrackingWheel>> newDrivetrain = {};
     std::vector<std::shared_ptr<Gyro>> newGyros = {};
+    std::vector<std::shared_ptr<pros::GPS>> gps = {};
+    std::vector<std::shared_ptr<pros::IMU>> imus = {};
+        
 
     // calibrate vertical tracking wheels
     for (auto it = this->verticals.begin(); it != this->verticals.end(); it++) {
-        if (it->reset()) {
-            infoSink()->warn("Vertical tracker at offset {} failed calibration!", it->getOffset());
+        if (it->get()->reset()) {
+            infoSink()->warn("Vertical tracker at offset {} failed calibration!", it->get()->getOffset());
         } else newVerticals.push_back(*it);
     }
 
     // calibrate horizontal tracking wheels
     for (auto it = this->horizontals.begin(); it != this->horizontals.end(); it++) {
-        if (it->reset()) {
-            infoSink()->warn("Horizontal tracker at offset {} failed calibration!", it->getOffset());
+        if (it->get()->reset()) {
+            infoSink()->warn("Horizontal tracker at offset {} failed calibration!", it->get()->getOffset());
         } else newHorizontals.push_back(*it);
     }
 
     // calibrate drivetrain motors
     for (auto it = this->drivetrain.begin(); it != this->drivetrain.end(); it++) {
-        if (it->reset()) {
-            if (sgn(it->getOffset() == 1)) infoSink()->warn("Left drivetrain motor failed to calibrate!");
+        if (it->get()->reset()) {
+            if (sgn(it->get()->getOffset() == 1)) infoSink()->warn("Left drivetrain motor failed to calibrate!");
             else infoSink()->warn("Right drivetrain motor failed to calibrate!");
         } else newDrivetrain.push_back(*it);
     }
@@ -59,8 +68,8 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     if (!calibrateGyros) return; // return if we don't need to calibrate gyros
     // calibrate gyros
     for (auto& it : this->gyros) it->calibrate();
-    Timer timer(3000); // try calibrating gyros for 3000 ms
-    while (!timer.isDone()) {
+    Timer gyrotimer(3000); // try calibrating gyros for 3000 ms
+    while (!gyrotimer.isDone()) {
         for (auto& gyro : this->gyros) { // continuously calibrate in case of failure
             if (!gyro->isCalibrating() && !gyro->isCalibrated()) gyro->calibrate();
         }
@@ -74,6 +83,17 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
             newGyros.push_back(*it);
         }
     }
+
+    // calibrate imus   
+    for (auto& it : this->imus) it.reset();
+    Timer imutimer(3000); // try calibrating gyros for 3000 ms
+    while (!imutimer.isDone()) {
+        for (std::shared_ptr<pros::IMU>& imu : this->imus) { // continuously calibrate in case of failure
+            if (!imu->is_calibrating()) imu.reset();
+        }
+        pros::delay(10);
+    }
+    
 
     this->verticals = newVerticals;
     this->horizontals = newHorizontals;

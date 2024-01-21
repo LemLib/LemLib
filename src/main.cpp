@@ -1,8 +1,10 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/devices/trackingWheel.hpp"
 #include "lemlib/logger/stdout.hpp"
 #include "pros/misc.h"
+#include <memory>
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -52,9 +54,11 @@ lemlib::ControllerSettings angularController(2, // proportional gain (kP)
 // note that in this example we use internal motor encoders, so we don't pass vertical tracking wheels
 lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullptr as we don't have one
                             nullptr, // vertical tracking wheel 2, set to nullptr as we don't have one
-                            &horizontal, // horizontal tracking wheel 1
+                            std::make_shared<lemlib::TrackingWheel>(horizontal), // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
-                            &imu // inertial sensor
+                            nullptr, // no GPS
+                            std::make_shared<pros::IMU>(11), // inertial sensor
+                            nullptr
 );
 
 // create the chassis

@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <memory>
+#include "pros/gps.hpp"
+#include "pros/imu.hpp"
 #include "lemlib/odom/odom.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
 #include "lemlib/devices/gyro/gyro.hpp"
@@ -18,7 +20,23 @@ class DifferentialArc : public Odom {
          * @param imus vector containing imus to be used
          */
         DifferentialArc(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                        std::vector<TrackingWheel>& drivetrain, std::vector<std::shared_ptr<Gyro>>& gyros);
+                        std::vector<TrackingWheel>& drivetrain, std::vector<std::shared_ptr<pros::GPS>>& gps,
+                        std::vector<std::shared_ptr<Gyro>>& gyros);
+
+        /**
+         * @brief Construct a new Arc Odom
+         *
+         * @param verticals vector containing vertical tracking wheels to be used
+         * @param horizontals vector containing horizontal tracking wheels to be used
+         * @param drivetrain vector containing drivetrain motors as tracking wheels
+         * @param gps vector containing gps sensors to be used
+         * @param imus vector containing imus to be used
+         */
+        DifferentialArc(std::vector<std::shared_ptr<TrackingWheel>>& verticals,
+                        std::vector<std::shared_ptr<TrackingWheel>>& horizontals,
+                        std::vector<std::shared_ptr<TrackingWheel>>& drivetrain,
+                        std::vector<std::shared_ptr<pros::GPS>>& gps, std::vector<std::shared_ptr<pros::IMU>>& imu,
+                        std::vector<std::shared_ptr<Gyro>>& gyros);
 
         /**
          * @brief Calibrate tracking wheels and inertial sensors
@@ -32,9 +50,11 @@ class DifferentialArc : public Odom {
          */
         void update() override;
     private:
-        std::vector<TrackingWheel> verticals;
-        std::vector<TrackingWheel> horizontals;
-        std::vector<TrackingWheel> drivetrain;
+        std::vector<std::shared_ptr<TrackingWheel>> verticals;
+        std::vector<std::shared_ptr<TrackingWheel>> horizontals;
+        std::vector<std::shared_ptr<TrackingWheel>> drivetrain;
+        std::vector<std::shared_ptr<pros::GPS>> gps;
+        std::vector<std::shared_ptr<pros::IMU>> imus;
         std::vector<std::shared_ptr<Gyro>> gyros;
 };
 } // namespace lemlib

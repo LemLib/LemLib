@@ -16,6 +16,7 @@
 #include "lemlib/movements/turn.hpp"
 #include "lemlib/odom/differentialArc.hpp"
 #include "lemlib/devices/gyro/imu.hpp"
+#include <memory>
 
 namespace lemlib {
 std::shared_ptr<pros::MotorGroup> makeMotorGroup(const std::initializer_list<int8_t>& ports,
@@ -38,30 +39,38 @@ Differential::Differential(const Drivetrain& drivetrain, const ControllerSetting
       linearSettings(std::make_unique<ControllerSettings>(linearSettings)),
       angularSettings(std::make_unique<ControllerSettings>(angularSettings)) {
     // create sensor vectors
-    std::vector<TrackingWheel> verticals;
-    std::vector<TrackingWheel> horizontals;
-    std::vector<TrackingWheel> drive;
-    std::vector<std::shared_ptr<Gyro>> imus;
+    std::vector<std::shared_ptr<TrackingWheel>> verticals;
+    std::vector<std::shared_ptr<TrackingWheel>> horizontals;
+    std::vector<std::shared_ptr<TrackingWheel>> drive;
+    std::vector<std::shared_ptr<pros::GPS>> gpssensors;
+    std::vector<std::shared_ptr<pros::IMU>> imus;
+    std::vector<std::shared_ptr<Gyro>> gyros;
 
     // configure vertical tracking wheels
-    if (sensors.vertical1 != nullptr) verticals.push_back(*sensors.vertical1); // add vertical tracker if configured
-    if (sensors.vertical2 != nullptr) verticals.push_back(*sensors.vertical2); // add vertical tracker if configured
+    if (sensors.vertical1 != nullptr) verticals.push_back(sensors.vertical1); // add vertical tracker if configured
+    if (sensors.vertical2 != nullptr) verticals.push_back(sensors.vertical2); // add vertical tracker if configured
 
     // configure horizontal tracking wheels
-    if (sensors.horizontal1 != nullptr) horizontals.push_back(*sensors.horizontal1);
-    if (sensors.horizontal2 != nullptr) horizontals.push_back(*sensors.horizontal2);
+    if (sensors.horizontal1 != nullptr) horizontals.push_back(sensors.horizontal1);
+    if (sensors.horizontal2 != nullptr) horizontals.push_back(sensors.horizontal2);
 
     // configure drivetrain
     drive.push_back(
-        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.rpm));
+        std::make_shared<TrackingWheel>(drivetrain.leftMotors, drivetrain.wheelDiameter, -drivetrain.trackWidth / 2, drivetrain.rpm));
     drive.push_back(
-        TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
+        std::make_shared<TrackingWheel>(drivetrain.leftMotors, drivetrain.wheelDiameter, drivetrain.trackWidth / 2, drivetrain.rpm));
+
+    // configure gps
+    if (sensors.gps != nullptr) gpssensors.push_back(sensors.gps);
 
     // configure imu
-    if (sensors.gyro != nullptr) imus.push_back(sensors.gyro);
+    if (sensors.imu != nullptr) imus.push_back(sensors.imu);
+
+    // configure gyros
+    if (sensors.gyro != nullptr) gyros.push_back(sensors.gyro);
 
     // create odom instance
-    this->odom = std::make_unique<DifferentialArc>(verticals, horizontals, drive, imus);
+    this->odom = std::make_unique<DifferentialArc>(verticals, horizontals, drive, gpssensors, imus, gyros);
 }
 
 /**
