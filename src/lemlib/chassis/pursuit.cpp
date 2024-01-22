@@ -36,6 +36,24 @@ std::vector<std::string> readElement(const std::string& input, std::string delim
 }
 
 /**
+ * @brief Convert a string to hex
+ *
+ * @param input the string to convert
+ * @return std::string hexadecimal output
+ */
+std::string stringToHex(const std::string& input) {
+    static const char hex_digits[] = "0123456789ABCDEF";
+
+    std::string output;
+    output.reserve(input.length() * 2);
+    for (unsigned char c : input) {
+        output.push_back(hex_digits[c >> 4]);
+        output.push_back(hex_digits[c & 15]);
+    }
+    return output;
+}
+
+/**
  * @brief Get a path from the sd card
  *
  * @param filePath The file to read from
