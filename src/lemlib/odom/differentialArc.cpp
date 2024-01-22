@@ -2,6 +2,7 @@
 #include "lemlib/timer.hpp"
 #include "lemlib/logger/logger.hpp"
 #include "lemlib/odom/differentialArc.hpp"
+#include <memory>
 
 namespace lemlib {
 /**
@@ -19,7 +20,7 @@ DifferentialArc::DifferentialArc(std::vector<std::shared_ptr<TrackingWheel>>& ve
                                  std::vector<std::shared_ptr<TrackingWheel>>& horizontals,
                                  std::vector<std::shared_ptr<TrackingWheel>>& drivetrain,
                                  std::vector<std::shared_ptr<pros::GPS>>& gps,
-                                 std::vector<std::shared_ptr<pros::IMU>>& imu,
+                                 std::vector<std::shared_ptr<pros::IMU>>& imus,
                                  std::vector<std::shared_ptr<Gyro>>& gyros)
     : verticals(verticals),
       horizontals(horizontals),
@@ -110,9 +111,9 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
  * @param tracker2 the second tracking wheel
  * @return float change in angle, in radians
  */
-float calcDeltaTheta(TrackingWheel& tracker1, TrackingWheel& tracker2) {
-    const float numerator = tracker1.getDistanceDelta(false) - tracker2.getDistanceDelta(false);
-    const float denominator = tracker1.getOffset() - tracker2.getOffset();
+float calcDeltaTheta(std::shared_ptr<TrackingWheel>& tracker1, std::shared_ptr<TrackingWheel>& tracker2) {
+    const float numerator = tracker1->getDistanceDelta(false) - tracker2->getDistanceDelta(false);
+    const float denominator = tracker1->getOffset() - tracker2->getOffset();
     return numerator / denominator;
 }
 
@@ -175,22 +176,22 @@ void DifferentialArc::update() {
     // calculate local y position
     for (auto& tracker : this->horizontals) {
         // prevent divide by 0
-        const float radius = (deltaTheta == 0) ? tracker.getDistanceDelta()
-                                               : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
+        const float radius = (deltaTheta == 0) ? tracker->getDistanceDelta()
+                                               : tracker->getDistanceDelta() / deltaTheta + tracker->getOffset();
         local.y += sinDTheta2 * radius / this->horizontals.size();
     }
 
     // calculate local x position
     if (this->verticals.size() > 0) { // use dedicated tracking wheels if we have any
         for (auto& tracker : this->verticals) {
-            const float radius = (deltaTheta == 0) ? tracker.getDistanceDelta()
-                                                   : tracker.getDistanceDelta() / deltaTheta + tracker.getOffset();
+            const float radius = (deltaTheta == 0) ? tracker->getDistanceDelta()
+                                                   : tracker->getDistanceDelta() / deltaTheta + tracker->getOffset();
             local.x += sinDTheta2 * radius / this->verticals.size();
         }
     } else if (this->drivetrain.size() > 0) { // use motor encoders if we have no dedicated tracking wheels
         for (auto& motor : this->drivetrain) {
-            const float radius = (deltaTheta == 0) ? motor.getDistanceDelta()
-                                                   : motor.getDistanceDelta() / deltaTheta + motor.getOffset();
+            const float radius = (deltaTheta == 0) ? motor->getDistanceDelta()
+                                                   : motor->getDistanceDelta() / deltaTheta + motor->getOffset();
             local.x += sinDTheta2 * radius / this->drivetrain.size();
         }
     } else { // output a warning if there are no available sensors to calculate local x
