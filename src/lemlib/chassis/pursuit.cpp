@@ -69,12 +69,13 @@ std::vector<lemlib::Pose> getData(const asset& path) {
 
     // read the points until 'endData' is read
     for (std::string line : dataLines) {
-        lemlib::infoSink()->debug("read raw line {}", line);
+        lemlib::infoSink()->debug("read raw line {}", stringToHex(line));
         if (line == "endData" || line == "endData\r") break;
         const std::vector<std::string> pointInput = readElement(line, ", "); // parse line
         // check if the line was read correctly
         if (pointInput.size() != 3) {
-            lemlib::infoSink()->error("Failed to read path file! Are you using the right format? Raw line: {}", line);
+            lemlib::infoSink()->error("Failed to read path file! Are you using the right format? Raw line: {}",
+                                      stringToHex(line));
             break;
         }
         lemlib::Pose pathPoint(0, 0);
@@ -224,7 +225,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
 
     std::vector<lemlib::Pose> pathPoints = getData(path); // get list of path points
     if (pathPoints.size() == 0) {
-        infoSink()->error("No points in path! Do you have the right format?");
+        infoSink()->error("No points in path! Do you have the right format? Skipping motion");
         // set distTravelled to -1 to indicate that the function has finished
         distTravelled = -1;
         // give the mutex back
