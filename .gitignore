@@ -21,3 +21,7 @@ temp.errors
 
 # Doxygen
 latex
+.DS_Store
+docs/.DS_Store
+include/.DS_Store
+src/.DS_Store
