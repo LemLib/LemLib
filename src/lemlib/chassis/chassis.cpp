@@ -136,8 +136,8 @@ void lemlib::Chassis::calibrate(bool calibrateImu) {
     sensors.vertical2->reset();
     if (sensors.horizontal1 != nullptr) sensors.horizontal1->reset();
     if (sensors.horizontal2 != nullptr) sensors.horizontal2->reset();
-    lemlib::setSensors(sensors, drivetrain);
-    lemlib::init();
+    setSensors(sensors, drivetrain);
+    init();
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
 }
@@ -310,6 +310,8 @@ void lemlib::Chassis::turnTo(float x, float y, int timeout, TurnToParams params,
         else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
         prevMotorPower = motorPower;
 
+        infoSink()->debug("Turn Motor Power: {} ", motorPower);
+
         // move the drivetrain
         drivetrain.leftMotors->move(motorPower);
         drivetrain.rightMotors->move(-motorPower);
@@ -465,6 +467,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         prevAngularOut = angularOut;
         prevLateralOut = lateralOut;
 
+        infoSink()->debug("lateralOut: {} angularOut: {}", lateralOut, angularOut);
+
         // ratio the speeds to respect the max speed
         float leftPower = lateralOut + angularOut;
         float rightPower = lateralOut - angularOut;
@@ -596,6 +600,8 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
         // update previous output
         prevAngularOut = angularOut;
         prevLateralOut = lateralOut;
+
+        infoSink()->debug("Angular Out: {}, Lateral Out: {}", angularOut, lateralOut);
 
         // ratio the speeds to respect the max speed
         float leftPower = lateralOut + angularOut;
