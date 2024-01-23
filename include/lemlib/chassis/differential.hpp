@@ -46,7 +46,6 @@ makeMotorGroup(const std::initializer_list<int8_t>& ports, const pros::v5::Motor
  *
  */
 struct OdomSensors {
-        
         /**
          * The sensors are stored in a struct so that they can be easily passed to the chassis class
          * The variables are pointers so that they can be set to nullptr if they are not used
@@ -59,24 +58,24 @@ struct OdomSensors {
          * @param gps pointer to the GPS sensor
          * @param gyro shared pointer to a gyro
          */
-        OdomSensors(std::unique_ptr<TrackingWheel> vertical1, std::unique_ptr<TrackingWheel> vertical2,
-                    std::unique_ptr<TrackingWheel> horizontal1, std::unique_ptr<TrackingWheel> horizontal2,
-                    std::unique_ptr<pros::GPS> gps, std::unique_ptr<pros::IMU> imu, std::unique_ptr<Gyro> gyro)
-            : vertical1(std::move(vertical1)),
-              vertical2(std::move(vertical2)),
-              horizontal1(std::move(horizontal1)),
-              horizontal2(std::move(horizontal2)),
-              gps(std::move(gps)),
-              imu(std::move(imu)),
-              gyro(std::move(gyro)) {}
+        OdomSensors(std::shared_ptr<TrackingWheel> vertical1, std::shared_ptr<TrackingWheel> vertical2,
+                    std::shared_ptr<TrackingWheel> horizontal1, std::shared_ptr<TrackingWheel> horizontal2,
+                    std::shared_ptr<pros::GPS> gps, std::shared_ptr<pros::IMU> imu, std::shared_ptr<Gyro> gyro)
+            : vertical1(vertical1),
+              vertical2(vertical2),
+              horizontal1(horizontal1),
+              horizontal2(horizontal2),
+              gps(gps),
+              imu(imu),
+              gyro(gyro) {}
 
-        std::unique_ptr<TrackingWheel> vertical1;
-        std::unique_ptr<TrackingWheel> vertical2;
-        std::unique_ptr<TrackingWheel> horizontal1;
-        std::unique_ptr<TrackingWheel> horizontal2;
-        std::unique_ptr<pros::GPS> gps;
-        std::unique_ptr<pros::IMU> imu;
-        std::unique_ptr<Gyro> gyro;
+        std::shared_ptr<TrackingWheel> vertical1;
+        std::shared_ptr<TrackingWheel> vertical2;
+        std::shared_ptr<TrackingWheel> horizontal1;
+        std::shared_ptr<TrackingWheel> horizontal2;
+        std::shared_ptr<pros::GPS> gps;
+        std::shared_ptr<pros::IMU> imu;
+        std::shared_ptr<Gyro> gyro;
 };
 >>>>>>> 475d619 (add support for generic gyros for differential)
 

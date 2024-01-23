@@ -115,13 +115,18 @@ lemlib::Differential chassis(drivetrain, // drivetrain struct
 // note that in this example we use internal motor encoders, so we don't pass vertical tracking wheels
 lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullptr as we don't have one
                             nullptr, // vertical tracking wheel 2, set to nullptr as we don't have one
-                            std::make_unique<lemlib::TrackingWheel>(horizontal), // horizontal tracking wheel 1
+                            std::make_shared<lemlib::TrackingWheel>(horizontal), // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             nullptr, // no GPS
+<<<<<<< HEAD
                             std::make_unique<pros::IMU>(11), // inertial sensor
                             nullptr
 >>>>>>> cbd5330 (Began making everything a shared ptr)
 );
+=======
+                            std::make_shared<pros::IMU>(11), // inertial sensor
+                            nullptr);
+>>>>>>> f548303 (Reverted to Shared Ptr, added calcDeltaTheta function for GPS)
 
 =======
 // create the chassis
