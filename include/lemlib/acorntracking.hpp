@@ -31,12 +31,11 @@ class AcornTracker { // : public Pose {
         std::pair<int, int> update(Pose pose); // override
 
         /**
-         * @brief Get the coordinates of the target acorn on the vision sensor's output. 
-         * 
-         * @return std::pair<int, int> 
+         * @brief Get the coordinates of the target acorn on the vision sensor's output.
+         *
+         * @return std::pair<int, int>
          */
         std::pair<int, int> getAcornVisionCoords();
-
 };
 
 } // namespace lemlib
