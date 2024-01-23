@@ -39,7 +39,7 @@ class PIDTuner {
 
         ~PIDTuner();
 
-        bool tunePID();
+        std::shared_ptr<FAPID> tunePID();
 };
 
 } // namespace lemlib

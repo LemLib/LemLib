@@ -112,7 +112,7 @@ void PIDTuner::tuneTurning(float targetAngle) {}
 
 void PIDTuner::tuneMisc(float target) {}
 
-bool PIDTuner::tunePID() {
+std::shared_ptr<FAPID> PIDTuner::tunePID() {
     switch (target) {
         case TUNER_TARGET::flywheel: tuneFlywheel(2000, 1); break;
         case TUNER_TARGET::catapult: break;
@@ -120,7 +120,7 @@ bool PIDTuner::tunePID() {
         case TUNER_TARGET::turning: break;
         case TUNER_TARGET::misc: break;
     }
-    return true;
+    return pid;
 }
 
 } // namespace lemlib
