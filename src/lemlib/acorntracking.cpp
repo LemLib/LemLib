@@ -64,4 +64,13 @@ std::pair<int, int> AcornTracker::update(Pose pose) {
     return acorncoords;
 }
 
+std::pair<int, int> AcornTracker::getAcornVisionCoords() {
+
+    pros::vision_object acorns = visionSensor->get_by_sig(0, AcornSig.id);
+
+    float trackedAcornRadius = acorns.height / 2.0;
+
+    return std::make_pair<int, int>(acorns.x_middle_coord - (acorns.width / 2 * trackedAcornRadius), acorns.y_middle_coord);
+
 } // namespace lemlib
+
