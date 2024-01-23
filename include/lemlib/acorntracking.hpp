@@ -29,6 +29,14 @@ class AcornTracker { // : public Pose {
         bool setAcornRadiusToDistance(std::vector<std::pair<float, float>> acornRadiusToDistance);
 
         std::pair<int, int> update(Pose pose); // override
+
+        /**
+         * @brief Get the coordinates of the target acorn on the vision sensor's output. 
+         * 
+         * @return std::pair<int, int> 
+         */
+        std::pair<int, int> getAcornVisionCoords();
+
 };
 
 } // namespace lemlib
