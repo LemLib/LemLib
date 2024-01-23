@@ -14,7 +14,6 @@ AcornTracker::AcornTracker(std::shared_ptr<pros::Vision> visionSensor, pros::vis
 AcornTracker::~AcornTracker() {}
 
 std::pair<int, int> AcornTracker::update(Pose pose) {
-
     // Get the largest pile of acorns from the vision sensor
     pros::vision_object acorns = visionSensor->get_by_sig(0, AcornSig.id);
 
@@ -65,12 +64,12 @@ std::pair<int, int> AcornTracker::update(Pose pose) {
 }
 
 std::pair<int, int> AcornTracker::getAcornVisionCoords() {
-
     pros::vision_object acorns = visionSensor->get_by_sig(0, AcornSig.id);
 
     float trackedAcornRadius = acorns.height / 2.0;
 
-    return std::make_pair<int, int>(acorns.x_middle_coord - (acorns.width / 2 * trackedAcornRadius), acorns.y_middle_coord);
+    return std::make_pair<int, int>(acorns.x_middle_coord - (acorns.width / 2 * trackedAcornRadius),
+                                    acorns.y_middle_coord);
+}
 
 } // namespace lemlib
-
