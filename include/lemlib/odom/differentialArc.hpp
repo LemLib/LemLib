@@ -2,9 +2,9 @@
 
 #include <vector>
 #include <memory>
-#include "pros/gps.hpp"
 #include "pros/imu.hpp"
 #include "lemlib/odom/odom.hpp"
+#include "lemlib/odom/gps.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
 #include "lemlib/devices/gyro/gyro.hpp"
 
@@ -19,9 +19,10 @@ class DifferentialArc : public Odom {
          * @param drivetrain vector containing drivetrain motors as tracking wheels
          * @param imus vector containing imus to be used
          */
-        DifferentialArc(std::vector<TrackingWheel>& verticals, std::vector<TrackingWheel>& horizontals,
-                        std::vector<TrackingWheel>& drivetrain, std::vector<std::shared_ptr<pros::GPS>>& gps,
-                        std::vector<std::shared_ptr<Gyro>>& gyros);
+        DifferentialArc(const std::vector<TrackingWheel>& verticals, const std::vector<TrackingWheel>& horizontals,
+                        const std::vector<TrackingWheel>& drivetrain,
+                        const std::vector<std::shared_ptr<pros::GPS>>& gps,
+                        const std::vector<std::shared_ptr<Gyro>>& gyros);
 
         /**
          * @brief Construct a new Arc Odom
@@ -32,11 +33,12 @@ class DifferentialArc : public Odom {
          * @param gps vector containing gps sensors to be used
          * @param imus vector containing imus to be used
          */
-        DifferentialArc(std::vector<std::shared_ptr<TrackingWheel>>& verticals,
-                        std::vector<std::shared_ptr<TrackingWheel>>& horizontals,
-                        std::vector<std::shared_ptr<TrackingWheel>>& drivetrain,
-                        std::vector<std::shared_ptr<pros::GPS>>& gps, std::vector<std::shared_ptr<pros::IMU>>& imu,
-                        std::vector<std::shared_ptr<Gyro>>& gyros);
+        DifferentialArc(const std::vector<std::shared_ptr<TrackingWheel>>& verticals,
+                        const std::vector<std::shared_ptr<TrackingWheel>>& horizontals,
+                        const std::vector<std::shared_ptr<TrackingWheel>>& drivetrain,
+                        const std::vector<std::shared_ptr<pros::GPS>>& gps,
+                        const std::vector<std::shared_ptr<pros::IMU>>& imu,
+                        const std::vector<std::shared_ptr<Gyro>>& gyros);
 
         /**
          * @brief Calibrate tracking wheels and inertial sensors
