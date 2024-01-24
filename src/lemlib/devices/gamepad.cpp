@@ -162,7 +162,7 @@ bool Gamepad::startMainLoop() {
     pros::Task task {[this] {
         while (true) {
             autoButtonFunctions();
-            pros::delay(500);
+            pros::delay(20);
         }
     }};
 
@@ -227,11 +227,13 @@ bool Gamepad::newButtonPress(pros::controller_digital_e_t button) {
 }
 
 bool Gamepad::toggleButton(pros::controller_digital_e_t button) {
-    static int toggleState = 0;
 
-    if (newButtonPress(button)) { toggleState++; }
+    static int toggleStates[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    if (toggleState % 2 == 0) {
+    if (newButtonPress(button)) { toggleStates[button - 6]++; }
+
+    // - 6 offsets the button int value to match the array index
+    if (toggleStates[button - 6] % 2 == 0) {
         return true;
     }
 
