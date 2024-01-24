@@ -16,12 +16,12 @@ namespace lemlib {
  * Vectors are passed since they can have a varying number of sensors in them, allowing for
  * any tracking wheel + imu setup
  */
-DifferentialArc::DifferentialArc(std::vector<std::shared_ptr<TrackingWheel>>& verticals,
-                                 std::vector<std::shared_ptr<TrackingWheel>>& horizontals,
-                                 std::vector<std::shared_ptr<TrackingWheel>>& drivetrain,
-                                 std::vector<std::shared_ptr<pros::GPS>>& gps,
-                                 std::vector<std::shared_ptr<pros::IMU>>& imus,
-                                 std::vector<std::shared_ptr<Gyro>>& gyros)
+DifferentialArc::DifferentialArc(const std::vector<std::shared_ptr<TrackingWheel>>& verticals,
+                                 const std::vector<std::shared_ptr<TrackingWheel>>& horizontals,
+                                 const std::vector<std::shared_ptr<TrackingWheel>>& drivetrain,
+                                 const std::vector<std::shared_ptr<pros::GPS>>& gps,
+                                 const std::vector<std::shared_ptr<pros::IMU>>& imus,
+                                 const std::vector<std::shared_ptr<Gyro>>& gyros)
     : verticals(verticals),
       horizontals(horizontals),
       drivetrain(drivetrain),
