@@ -23,12 +23,6 @@ class Buffer {
          */
         Buffer(std::function<void(const std::string&)> bufferFunc);
 
-        /**
-         * @brief Destroy the Buffer object
-         *
-         */
-        ~Buffer();
-
         Buffer(const Buffer&) = delete;
         Buffer& operator=(const Buffer&) = delete;
 

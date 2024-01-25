@@ -15,18 +15,6 @@ bool Buffer::buffersEmpty() {
     return status;
 }
 
-Buffer::~Buffer() {
-    // make sure when the destructor is called so all
-    // the messages are logged
-    while (!this->buffersEmpty()) { pros::delay(10); }
-}
-
-void Buffer::pushToBuffer(const std::string& bufferData) {
-    this->mutex.take();
-    this->buffer.push_back(bufferData);
-    this->mutex.give();
-}
-
 void Buffer::setRate(uint32_t rate) { this->rate = rate; }
 
 void Buffer::taskLoop() {
