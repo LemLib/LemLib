@@ -18,17 +18,21 @@ class BufferedStdout : public Buffer {
         BufferedStdout();
 
         /**
-         * @brief Print a string (thread-safe).
+         * @brief Print a string (thread-safe)
          *
+         * @tparam T
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
          */
         template <typename... T> void print(fmt::format_string<T...> format, T&&... args) {
-            this->pushToBuffer(fmt::format(format, std::forward<T>(args)...));
+            this->pushToBuffer(format, std::forward<T>(args)...);
         }
 };
 
 /**
  * @brief Get the buffered stdout.
  *
+ * @return BufferedStdout& A reference to the buffered stdout.
  */
 BufferedStdout& bufferedStdout();
 } // namespace lemlib

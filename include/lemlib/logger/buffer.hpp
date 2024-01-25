@@ -6,6 +6,8 @@
 
 #include "pros/rtos.hpp"
 
+#include "fmt/core.h"
+
 namespace lemlib {
 /**
  * @brief A buffer implementation
@@ -21,26 +23,26 @@ class Buffer {
          */
         Buffer(std::function<void(const std::string&)> bufferFunc);
 
-        /**
-         * @brief Destroy the Buffer object
-         *
-         */
-        ~Buffer();
-
         Buffer(const Buffer&) = delete;
         Buffer& operator=(const Buffer&) = delete;
 
         /**
          * @brief Push to the buffer
          *
-         * @param bufferData
+         * @tparam T
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
          */
-        void pushToBuffer(const std::string& bufferData);
+        template <typename... T> void pushToBuffer(fmt::format_string<T...> format, T&&... args) {
+            mutex.take();
+            buffer.push_back(fmt::format(format, std::forward<T>(args)...));
+            mutex.give();
+        }
 
         /**
          * @brief Set the rate of the sink
          *
-         * @param rate
+         * @param rate The new rate to log at (in mS)
          */
         void setRate(uint32_t rate);
 

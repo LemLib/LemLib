@@ -12,6 +12,7 @@ static std::string getColor(Level level) {
         case Level::WARN: return "\033[0;33m"; // yellow
         case Level::ERROR: return "\033[0;31m"; // red
         case Level::FATAL: return "\033[0;31;2m"; // dark red
+        case Level::TELEMETRY: return "";
     }
     __builtin_unreachable();
 }

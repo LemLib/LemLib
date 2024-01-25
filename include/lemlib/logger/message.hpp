@@ -7,7 +7,7 @@ namespace lemlib {
  * @brief Level of the message
  *
  */
-enum class Level { INFO, DEBUG, WARN, ERROR, FATAL };
+enum class Level { TELEMETRY, INFO, DEBUG, WARN, ERROR, FATAL };
 
 /**
  * @brief A loggable message
@@ -27,8 +27,8 @@ struct Message {
 /**
  * @brief Format a level
  *
- * @param level
- * @return std::string
+ * @param level The level to format
+ * @return std::string The formatted level, in caps (ex. info -> INFO)
  */
 std::string format_as(Level level);
 } // namespace lemlib

@@ -8,6 +8,7 @@ std::string format_as(Level level) {
         case Level::WARN: return "WARN";
         case Level::ERROR: return "ERROR";
         case Level::FATAL: return "FATAL";
+        case Level::TELEMETRY: return "TELE";
     }
     __builtin_unreachable();
 }

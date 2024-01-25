@@ -23,11 +23,23 @@ class TelemetrySink : public BaseSink {
          * @brief Construct a new Telemetry Sink object
          */
         TelemetrySink();
+
+        /**
+         * @brief Log a message at the telemetry level
+         * @tparam T
+         * @param format The format that the string will use
+         * @param args The values that will be substituted into the placeholders in the format
+         */
+        template <typename... T> void telemetry(fmt::format_string<T...> format, T&&... args) {
+            if (isCombinedSink()) { return; }
+
+            log(Level::TELEMETRY, format, std::forward<T>(args)...);
+        }
     private:
         /**
          * @brief Log the given message
          *
-         * @param message
+         * @param message The message to log
          */
         void sendMessage(const Message& message) override;
 };

@@ -4,7 +4,7 @@ namespace lemlib {
 BaseSink::BaseSink(std::initializer_list<std::shared_ptr<BaseSink>> sinks) { this->sinks = sinks; }
 
 void BaseSink::setLowestLevel(Level lowestLevel) {
-    if (!this->sinks.empty()) {
+    if (this->isCombinedSink()) {
         for (std::shared_ptr<BaseSink> sink : sinks) { sink->setLowestLevel(lowestLevel); }
         return;
     }
@@ -17,6 +17,8 @@ void BaseSink::setFormat(const std::string& logFormat) { this->logFormat = logFo
 fmt::dynamic_format_arg_store<fmt::format_context> BaseSink::getExtraFormattingArgs(const Message& messageInfo) {
     return {};
 }
+
+bool BaseSink::isCombinedSink() { return !sinks.empty(); }
 
 void BaseSink::sendMessage(const Message& message) {}
 } // namespace lemlib
