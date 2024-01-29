@@ -278,7 +278,18 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnTo(float x, float y, int timeout, TurnToParams params, bool async = true);
+        void turnToPoint(float x, float y, int timeout, TurnToParams params, bool async = true);
+        /**
+         * @brief Turn the chassis so it is facing the target heading
+         *
+         * The PID logging id is "angularPID"
+         *
+         * @param theta heading location
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         */
+        void turnToHeading(float theta, int timeout, TurnToParams params, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *
