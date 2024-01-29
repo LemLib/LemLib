@@ -1,8 +1,6 @@
-
 #pragma once
 
 #include <functional>
-#include <utility>
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 #include "pros/imu.hpp"
@@ -81,34 +79,6 @@ struct ControllerSettings {
 };
 
 /**
- * @brief Struct for a PTO set
- *
- */
-struct PtoSet {
-        /**
-         * The constants are stored in a struct so that they can be easily passed to the chassis class
-         * @note this struct does not activate the piston, it is only used to tell the chassis class which motors to
-         * run.
-         *
-         * @param leftMotors pointer to the left motors
-         * @param rightMotors pointer to the right motors
-         * @param isActive whether or not the PTO is connected to the drivetrain at the start
-         */
-        PtoSet(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, bool isActive);
-
-        /**
-         * @brief sets the state of the PTO
-         *
-         * @param isActive the state to set the PTO to
-         */
-        void setState(bool isActive);
-
-        pros::MotorGroup* leftMotors;
-        pros::MotorGroup* rightMotors;
-        bool isActive;
-};
-
-/**
  * @brief Struct containing constants for a drivetrain
  *
  */
@@ -126,33 +96,37 @@ struct Drivetrain {
          */
         Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth, float wheelDiameter,
                    float rpm, float chasePower);
-
-        Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, std::vector<PtoSet*> ptoPairs,
-                   float trackWidth, float wheelDiameter, float rpm, float chasePower);
-
-        /**
-         * @brief Sets the motor powers
-         *
-         * @param leftPower left side motor power in volts [-127, 127]
-         * @param rightPower right side motor power in volts [-127, 127]
-         * @param useBrakeMode whether or not to respect the chosen braking mode when power = 0. True by defualt.
-         */
-        void driveMotors(float leftPower, float rightPower, bool useBrakeMode = true);
-
-        /**
-         * @brief Add a pto set to the drivetrain
-         *
-         * @param ptoSet the pto set to add (construct this using `lemlib::makePtoSet`)
-         */
-        void addPtoSet(PtoSet* ptoSet);
-
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
-        std::vector<PtoSet*> ptoSets;
         float trackWidth;
         float wheelDiameter;
         float rpm;
         float chasePower;
+};
+
+/**
+ * @brief Parameters for Chassis::turnTo
+ *
+ * We use a struct to simplify customization. Chassis::turnTo has many
+ * parameters and specifying them all just to set one optional param ruins
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param forwards whether the robot should turn to face the point with the front of the robot.
+ * True by default
+ * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange angle between the robot and target point where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct TurnToParams {
+        bool forwards = true;
+        int maxSpeed = 127;
+        int minSpeed = 0;
+        float earlyExitRange = 0;
 };
 
 /**
@@ -246,13 +220,6 @@ class Chassis {
         Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
                 OdomSensors sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
-         * @brief Set the drivetrain motors
-         *
-         * @param leftMotors pointer to the left motors
-         * @param rightMotors pointer to the right motors
-         */
-        void setDriveMotorGroup(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors);
-        /**
          * @brief Calibrate the chassis sensors
          *
          * @param calibrateIMU whether the IMU should be calibrated. true by default
@@ -308,27 +275,10 @@ class Chassis {
          * @param x x location
          * @param y y location
          * @param timeout longest time the robot can spend moving
-         * @param forwards whether the robot should turn to face the point with the front of the robot. true by
-         * default
-         * @param maxSpeed the maximum speed the robot can turn at. Default is 127
+         * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToPoint(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
-        /**
-         * @brief Turn the chassis so it is facing the target heading
-         *
-         * The PID logging id is "angularPID"
-         *
-         * @param targetTheta robot target heading
-         * @param timeout longest time the robot can spend moving
-         * @param radians whether the heading is in radians or degrees. false by default
-         * @param forwards whether the robot should turn to face the heading with the front of the robot. true by
-         * default
-         * @param maxSpeed the maximum speed the robot can turn at. Default is 127
-         * @param async whether the function should be run asynchronously. true by default
-         */
-        void turnToHeading(float targetTheta, int timeout, bool radians = false, bool forwards = true,
-                           float maxSpeed = 127, bool async = true);
+        void turnTo(float x, float y, int timeout, TurnToParams params, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *
@@ -418,11 +368,10 @@ class Chassis {
          * @brief Dequeues this motion and permits queued task to run
          */
         void endMotion();
-    private:
+
         bool motionRunning = false;
         bool motionQueued = false;
 
-        pros::Mutex mutex;
         float distTravelled = 0;
 
         ControllerSettings lateralSettings;
@@ -437,5 +386,7 @@ class Chassis {
         ExitCondition lateralSmallExit;
         ExitCondition angularLargeExit;
         ExitCondition angularSmallExit;
+    private:
+        pros::Mutex mutex;
 };
 } // namespace lemlib

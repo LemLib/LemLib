@@ -27,7 +27,7 @@ class PID {
          *
          */
         void reset();
-    private:
+    protected:
         // gains
         const float kP;
         const float kI;
