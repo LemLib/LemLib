@@ -28,4 +28,11 @@ latex
 =======
 # unit testing
 build/
+<<<<<<< HEAD
 >>>>>>> 6f7a3bb (Get gtest working)
+=======
+include/Graphy/Grapher.hpp
+include/Graphy/TaskWrapper.hpp
+src/Graphy/TaskWrapper.cpp
+src/Graphy/Grapher.cpp
+>>>>>>> b1a83a0 (Abstract Gamepad base)
