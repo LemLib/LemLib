@@ -316,6 +316,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool async) {
     distTravelled = -1;
     this->endMotion();
 }
+
 /**
  * @brief Turn the chassis so it is facing the target point
  *
