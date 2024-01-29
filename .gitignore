@@ -24,3 +24,7 @@ latex
 
 # unit testing
 build/
+include/Graphy/Grapher.hpp
+include/Graphy/TaskWrapper.hpp
+src/Graphy/TaskWrapper.cpp
+src/Graphy/Grapher.cpp
