@@ -1,9 +1,12 @@
 #include <algorithm>
 #include <math.h>
 #include <optional>
+#include "lemlib/logger/baseSink.hpp"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
+#include "pros/misc.hpp"
+#include "lemlib/logger/logger.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
@@ -72,24 +75,56 @@ lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings lateralSettin
       angularLargeExit(angularSettings.largeError, angularSettings.largeErrorTimeout),
       angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout) {}
 
+bool isDriverControl() {
+    return pros::competition::is_connected() && !pros::competition::is_autonomous() &&
+           !pros::competition::is_disabled();
+}
+
+/**
+ * @brief calibrate the IMU given a sensors struct
+ *
+ * @param sensors reference to the sensors struct
+ */
+void calibrateIMU(lemlib::OdomSensors& sensors) {
+    int attempt = 1;
+    bool calibrated = false;
+    // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
+    while (attempt <= 5 && !isDriverControl()) {
+        sensors.imu->reset();
+        // wait until IMU is calibrated
+        do pros::delay(10);
+        while (sensors.imu->get_status() != 0xFF && sensors.imu->is_calibrating() && !isDriverControl());
+        // exit if imu has been calibrated
+        if (!isnanf(sensors.imu->get_heading()) && !isinf(sensors.imu->get_heading())) {
+            calibrated = true;
+            break;
+        }
+        // indicate error
+        pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
+        lemlib::infoSink()->warn("IMU failed to calibrate! Attempt #{}", attempt);
+        attempt++;
+    }
+    // check if its driver control through the comp switch
+    if (isDriverControl() && !calibrated) {
+        sensors.imu = nullptr;
+        lemlib::infoSink()->error(
+            "Driver control started, abandoning IMU calibration, defaulting to tracking wheels / motor encoders");
+    }
+    // check if calibration attempts were successful
+    if (attempt > 5) {
+        sensors.imu = nullptr;
+        lemlib::infoSink()->error("IMU calibration failed, defaulting to tracking wheels / motor encoders");
+    }
+}
+
 /**
  * @brief Calibrate the chassis sensors
  *
  * @param calibrateIMU whether the IMU should be calibrated. true by default
  */
-void lemlib::Chassis::calibrate(bool calibrateIMU) {
+void lemlib::Chassis::calibrate(bool calibrateImu) {
     // calibrate the IMU if it exists and the user doesn't specify otherwise
-    if (sensors.imu != nullptr && calibrateIMU) {
-        int attempt = 1;
-        // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
-        while (sensors.imu->reset(true) != 1 && (errno == PROS_ERR || errno == ENODEV || errno == ENXIO) &&
-               attempt < 5) {
-            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
-            pros::delay(10);
-            attempt++;
-        }
-        if (attempt == 5) sensors.imu = nullptr;
-    }
+    if (sensors.imu != nullptr && calibrateImu) calibrateIMU(sensors);
     // initialize odom
     if (sensors.vertical1 == nullptr)
         sensors.vertical1 = new lemlib::TrackingWheel(drivetrain.leftMotors, drivetrain.wheelDiameter,
@@ -101,8 +136,8 @@ void lemlib::Chassis::calibrate(bool calibrateIMU) {
     sensors.vertical2->reset();
     if (sensors.horizontal1 != nullptr) sensors.horizontal1->reset();
     if (sensors.horizontal2 != nullptr) sensors.horizontal2->reset();
-    lemlib::setSensors(sensors, drivetrain);
-    lemlib::init();
+    setSensors(sensors, drivetrain);
+    init();
     // rumble to controller to indicate success
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
 }
@@ -213,8 +248,7 @@ void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
  * @param x x location
  * @param y y location
  * @param timeout longest time the robot can spend moving
- * @param forwards whether the robot should turn to face the point with the front of the robot. true by default
- * @param maxSpeed the maximum speed the robot can turn at. Default is 127
+ * @param params struct to simulate named parameters
  * @param async whether the function should be run asynchronously. true by default
  */
 void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool forwards, float maxSpeed, bool async) {
@@ -233,6 +267,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool forwards, 
     float motorPower;
     float prevMotorPower = 0;
     float startTheta = getPose().theta;
+    std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
     distTravelled = 0;
     Timer timer(timeout);
@@ -244,7 +279,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool forwards, 
     while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
         // update variables
         Pose pose = getPose();
-        pose.theta = (forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
+        pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
 
         // update completion vars
         distTravelled = fabs(angleError(pose.theta, startTheta));
@@ -255,6 +290,11 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool forwards, 
 
         // calculate deltaTheta
         deltaTheta = angleError(targetTheta, pose.theta, false);
+        if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
+
+        // motion chaining
+        if (params.minSpeed != 0 && fabs(deltaTheta) < params.earlyExitRange) break;
+        if (params.minSpeed != 0 && sgn(deltaTheta) != sgn(prevDeltaTheta)) break;
 
         // calculate the speed
         motorPower = angularPID.update(deltaTheta);
@@ -262,10 +302,14 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool forwards, 
         angularSmallExit.update(deltaTheta);
 
         // cap the speed
-        if (motorPower > maxSpeed) motorPower = maxSpeed;
-        else if (motorPower < -maxSpeed) motorPower = -maxSpeed;
+        if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
+        else if (motorPower < -params.maxSpeed) motorPower = -params.maxSpeed;
         if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
-        prevMotorPower = 0;
+        if (motorPower < 0 && motorPower > -params.minSpeed) motorPower = -params.minSpeed;
+        else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
+        prevMotorPower = motorPower;
+
+        infoSink()->debug("Turn Motor Power: {} ", motorPower);
 
         // move the drivetrain
         drivetrain.leftMotors->move(motorPower);
@@ -494,6 +538,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         prevAngularOut = angularOut;
         prevLateralOut = lateralOut;
 
+        infoSink()->debug("lateralOut: {} angularOut: {}", lateralOut, angularOut);
+
         // ratio the speeds to respect the max speed
         float leftPower = lateralOut + angularOut;
         float rightPower = lateralOut - angularOut;
@@ -529,6 +575,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
  * @param async whether the function should be run asynchronously. true by default
  */
 void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointParams params, bool async) {
+    params.earlyExitRange = fabs(params.earlyExitRange);
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
@@ -579,12 +626,13 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
             params.maxSpeed = fmax(fabs(prevLateralOut), 60);
         }
 
+        // motion chaining
         const bool side =
             (pose.y - target.y) * -sin(target.theta) <= (pose.x - target.x) * cos(target.theta) + params.earlyExitRange;
         if (prevSide == std::nullopt) prevSide = side;
         const bool sameSide = side == prevSide;
         // exit if close
-        if (!sameSide && close && params.minSpeed != 0) break;
+        if (!sameSide && params.minSpeed != 0) break;
         prevSide = side;
 
         // calculate error
@@ -623,6 +671,8 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
         // update previous output
         prevAngularOut = angularOut;
         prevLateralOut = lateralOut;
+
+        infoSink()->debug("Angular Out: {}, Lateral Out: {}", angularOut, lateralOut);
 
         // ratio the speeds to respect the max speed
         float leftPower = lateralOut + angularOut;

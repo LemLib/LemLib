@@ -21,7 +21,6 @@ temp.errors
 
 # Doxygen
 latex
+
+# MacOS
 .DS_Store
-docs/.DS_Store
-include/.DS_Store
-src/.DS_Store

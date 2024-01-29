@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "pros/misc.hpp"
+#include "lemlib/logger/logger.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/util.hpp"
 
@@ -17,7 +18,7 @@
  * @param delimeter string separating the elements in the line
  * @return std::vector<std::string> array of elements read from the file
  */
-std::vector<std::string> readElement(const std::string& input, std::string delimiter) {
+std::vector<std::string> readElement(const std::string& input, const std::string& delimiter) {
     std::string token;
     std::string s = input;
     std::vector<std::string> output;
@@ -36,6 +37,24 @@ std::vector<std::string> readElement(const std::string& input, std::string delim
 }
 
 /**
+ * @brief Convert a string to hex
+ *
+ * @param input the string to convert
+ * @return std::string hexadecimal output
+ */
+std::string stringToHex(const std::string& input) {
+    static const char hex_digits[] = "0123456789ABCDEF";
+
+    std::string output;
+    output.reserve(input.length() * 2);
+    for (unsigned char c : input) {
+        output.push_back(hex_digits[c >> 4]);
+        output.push_back(hex_digits[c & 15]);
+    }
+    return output;
+}
+
+/**
  * @brief Get a path from the sd card
  *
  * @param filePath The file to read from
@@ -43,22 +62,28 @@ std::vector<std::string> readElement(const std::string& input, std::string delim
  */
 std::vector<lemlib::Pose> getData(const asset& path) {
     std::vector<lemlib::Pose> robotPath;
-    std::string line;
-    std::vector<std::string> pointInput;
-    lemlib::Pose pathPoint(0, 0, 0);
 
     // format data from the asset
-    std::string data(reinterpret_cast<char*>(path.buf), path.size);
-    std::vector<std::string> dataLines = readElement(data, "\n");
+    const std::string data(reinterpret_cast<char*>(path.buf), path.size);
+    const std::vector<std::string> dataLines = readElement(data, "\n");
 
     // read the points until 'endData' is read
     for (std::string line : dataLines) {
+        lemlib::infoSink()->debug("read raw line {}", stringToHex(line));
         if (line == "endData" || line == "endData\r") break;
-        pointInput = readElement(line, ", "); // parse line
+        const std::vector<std::string> pointInput = readElement(line, ", "); // parse line
+        // check if the line was read correctly
+        if (pointInput.size() != 3) {
+            lemlib::infoSink()->error("Failed to read path file! Are you using the right format? Raw line: {}",
+                                      stringToHex(line));
+            break;
+        }
+        lemlib::Pose pathPoint(0, 0);
         pathPoint.x = std::stof(pointInput.at(0)); // x position
         pathPoint.y = std::stof(pointInput.at(1)); // y position
         pathPoint.theta = std::stof(pointInput.at(2)); // velocity
         robotPath.push_back(pathPoint); // save data
+        lemlib::infoSink()->debug("read point {}", pathPoint);
     }
 
     return robotPath;
@@ -73,12 +98,11 @@ std::vector<lemlib::Pose> getData(const asset& path) {
  */
 int findClosest(lemlib::Pose pose, std::vector<lemlib::Pose> path) {
     int closestPoint;
-    float closestDist = 1000000;
-    float dist;
+    float closestDist = infinity();
 
     // loop through all path points
     for (int i = 0; i < path.size(); i++) {
-        dist = pose.distance(path.at(i));
+        const float dist = pose.distance(path.at(i));
         if (dist < closestDist) { // new closest point
             closestDist = dist;
             closestPoint = i;
@@ -200,6 +224,14 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
     }
 
     std::vector<lemlib::Pose> pathPoints = getData(path); // get list of path points
+    if (pathPoints.size() == 0) {
+        infoSink()->error("No points in path! Do you have the right format? Skipping motion");
+        // set distTravelled to -1 to indicate that the function has finished
+        distTravelled = -1;
+        // give the mutex back
+        this->endMotion();
+        return;
+    }
     Pose pose = this->getPose(true);
     Pose lastPose = pose;
     Pose lookaheadPose(0, 0, 0);
