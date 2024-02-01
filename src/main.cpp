@@ -133,7 +133,10 @@ void autonomous() {
     chassis.cancelMotion();
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
-    chassis.turnTo(45, -45, 1000, {.maxSpeed = 60});
+    chassis.turnToPoint(45, -45, 1000, {.maxSpeed = 60});
+    // example movement: Turn to face a direction of 90º. Timeout set to 1000
+    // will always be faster than 100 (out of a maximum of 127)
+    chassis.turnToHeading(90, 1000, {.minSpeed = 100});
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
     // see line 116 to see how to define a path
