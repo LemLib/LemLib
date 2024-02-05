@@ -7,9 +7,10 @@ namespace lemlib {
 
 template <class T> class Event {
     protected:
-        std::shared_ptr<std::function<T>> function = nullptr;
+        std::function<T> function = nullptr;
+        Event() {};
     public:
-        Event(std::shared_ptr<std::function<T>> function)
+        Event(std::function<T> function)
             : function(function) {};
 
         virtual bool check() = 0;

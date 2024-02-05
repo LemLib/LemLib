@@ -19,10 +19,6 @@ bool AbstractGamepad::startMainLoop() {
     return true;
 }
 
-void AbstractGamepad::autoButtonFunctions() {
-   
-}
-
 /*================ BUTTONS/JOYSTICK ================*/
 
 bool AbstractGamepad::getButton(std::vector<int> buttons) {
