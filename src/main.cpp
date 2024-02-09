@@ -10,27 +10,24 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 namespace lemlib {
-template <class T> class ButtonEvent : public Event<T> {
-    protected: 
-        std::shared_ptr<std::function<T>> function = nullptr;
+class ButtonEvent : public Event {
+    protected:
+        std::shared_ptr<std::function<bool()>> function = nullptr;
     public:
-    
-        ButtonEvent<T>(std::shared_ptr<std::function<T>> function) {this->function = function;};
+        ButtonEvent(std::shared_ptr<std::function<bool()>> function) { this->function = function; };
 
-        bool check() override {
-            return function.get();
-        }
+        bool check() override { return function.get(); }
 };
-}
+} // namespace lemlib
 
 bool isButtonPressed() {
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
+
 // motor groups
 // left motors on ports 8, 20, and 19. Motors on ports 8 and 20 are reversed. Using blue gearbox
 auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
@@ -151,11 +148,8 @@ void autonomous() {
  * Runs in driver control
  */
 void opcontrol() {
-
-    lemlib::ButtonEvent<bool()> buttonEv(std::move(isButtonPressed));
-
-    std::vector<std::shared_ptr<lemlib::ButtonEvent<bool()>>> evHandlerArg = { std::make_shared<lemlib::ButtonEvent<bool()>>(buttonEv)};
-    lemlib::EventHandler<bool()> evHandler(evHandlerArg);
+    lemlib::EventHandler eventHandler(
+        {std::make_shared<lemlib::ButtonEvent>(std::make_shared<std::function<bool()>>(isButtonPressed))});
     // controller
     // loop to continuously update motors
     while (true) {
