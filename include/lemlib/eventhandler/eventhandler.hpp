@@ -4,12 +4,12 @@
 
 namespace lemlib {
 
-template <class T> class EventHandler {
+class EventHandler {
     protected:
-        std::vector<std::shared_ptr<Event<T>>> eventVector;
+        std::vector<std::shared_ptr<Event>> eventVector;
         std::vector<bool> eventStates;
     public:
-        EventHandler(std::vector<std::shared_ptr<Event<T>>> eventVector);
+        EventHandler(std::vector<std::shared_ptr<Event>> eventVector);
         ~EventHandler();
 
         std::vector<bool>& getCurrentEvents();
