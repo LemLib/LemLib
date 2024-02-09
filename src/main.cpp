@@ -12,11 +12,11 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 namespace lemlib {
 class ButtonEvent : public Event {
     protected:
-        std::shared_ptr<std::function<bool()>> function = nullptr;
+        std::function<bool()> function = nullptr;
     public:
-        ButtonEvent(std::shared_ptr<std::function<bool()>> function) { this->function = function; };
+        ButtonEvent(std::function<bool()> function) { this->function = function; };
 
-        bool check() override { return function.get(); }
+        bool check() override { return function(); }
 };
 } // namespace lemlib
 
@@ -149,7 +149,7 @@ void autonomous() {
  */
 void opcontrol() {
     lemlib::EventHandler eventHandler(
-        {std::make_shared<lemlib::ButtonEvent>(std::make_shared<std::function<bool()>>(isButtonPressed))});
+        {std::make_shared<lemlib::ButtonEvent>(std::function<bool()>(isButtonPressed))});
     // controller
     // loop to continuously update motors
     while (true) {
