@@ -1,28 +1,28 @@
-#include "lemlib/acorntracking.hpp"
+#include "lemlib/visiontracking.hpp"
 
 namespace lemlib {
 
-AcornTracker::AcornTracker() {}
+VisionTracker::VisionTracker() {}
 
-AcornTracker::AcornTracker(std::shared_ptr<pros::Vision> visionSensor, pros::vision_signature AcornSig,
-                           std::vector<std::pair<float, float>> acornRadiusToDistance) {
+VisionTracker::VisionTracker(std::shared_ptr<pros::Vision> visionSensor, pros::vision_signature AcornSig,
+                             std::vector<std::pair<float, float>> acornRadiusToDistance) {
     this->visionSensor = visionSensor;
     this->AcornSig = AcornSig;
     this->acornRadiusToDistance = acornRadiusToDistance;
 }
 
-AcornTracker::~AcornTracker() {}
+VisionTracker::~VisionTracker() {}
 
-std::pair<int, int> AcornTracker::update(Pose pose) {
+std::pair<int, int> VisionTracker::update(Pose pose) {
     // Get the largest pile of acorns from the vision sensor
-    pros::vision_object acorns = visionSensor->get_by_sig(0, AcornSig.id);
+    pros::vision_object gamepiece = visionSensor->get_by_sig(0, AcornSig.id);
 
-    float trackedAcornRadius = acorns.height / 2.0;
+    float trackedPieceRadius = gamepiece.height / 2.0;
 
     // X1 = Small radius, X2 = Large radius, Y1 = Small distance, Y2 = Large distance
     float x1, x2, y1, y2 = 0;
 
-    float distance;
+    float distance = 0;
 
     if (acornRadiusToDistance.size() > 1) {
         x1 = acornRadiusToDistance[0].first; // Radius of an acorn
@@ -30,17 +30,17 @@ std::pair<int, int> AcornTracker::update(Pose pose) {
         y1 = acornRadiusToDistance[0].first; // Radius of another acorn
         y2 = acornRadiusToDistance[1].second; // Another distance correlated with the area
 
-        for (int i = 0; i > acornRadiusToDistance.size(); i++) {
+        for (int i = 1; i > acornRadiusToDistance.size(); i++) {
             // If in range of acorn radius, do linear interp. between the 2 tuples.
-            if (trackedAcornRadius > acornRadiusToDistance[i - 1].first &&
-                trackedAcornRadius < acornRadiusToDistance[i].first) {
+            if (trackedPieceRadius < acornRadiusToDistance[i - 1].first &&
+                trackedPieceRadius < acornRadiusToDistance[i].first) {
                 x1 = acornRadiusToDistance[i - 1].first;
                 y1 = acornRadiusToDistance[i - 1].second;
                 x2 = acornRadiusToDistance[i].first;
                 y2 = acornRadiusToDistance[i].second;
             }
             // If it takes up the whole screen, set the distance to 0.
-            if (trackedAcornRadius == VISION_FOV_HEIGHT / 2.0) {
+            if (trackedPieceRadius == VISION_FOV_HEIGHT / 2.0) {
                 x1 = VISION_FOV_WIDTH;
                 y1 = 0;
                 x2 = VISION_FOV_WIDTH;
@@ -49,7 +49,7 @@ std::pair<int, int> AcornTracker::update(Pose pose) {
         }
 
         // Find the distance using linear interpolation. y = distances, x = radii.
-        float distance = y1 + (trackedAcornRadius - x1) * (y2 - y1) / (x2 - x1);
+        float distance = y1 + (trackedPieceRadius - x1) * (y2 - y1) / (x2 - x1);
     }
 
     // In case some weird bug happens where distance is negative, set it to 0 to stop the bot from going backwards.
@@ -63,7 +63,7 @@ std::pair<int, int> AcornTracker::update(Pose pose) {
     return acorncoords;
 }
 
-std::pair<int, int> AcornTracker::getAcornVisionCoords() {
+std::pair<int, int> VisionTracker::getAcornVisionCoords() {
     pros::vision_object acorns = visionSensor->get_by_sig(0, AcornSig.id);
 
     float trackedAcornRadius = acorns.height / 2.0;
