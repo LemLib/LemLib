@@ -3,14 +3,14 @@
 #include "pros/vision.hpp"
 
 /*
- *      Acorn Tracking, written by Bradley Fernandez (Uvuv)
+ *      Vision Tracking, written by Bradley Fernandez (Uvuv)
  *
  *
  */
 
 namespace lemlib {
 
-class AcornTracker { // : public Pose {
+class VisionTracker { // : public Pose {
     private:
     protected:
         std::vector<std::pair<float, float>> acornRadiusToDistance;
@@ -19,12 +19,12 @@ class AcornTracker { // : public Pose {
 
         pros::vision_signature AcornSig;
 
-        AcornTracker();
+        VisionTracker();
 
-        ~AcornTracker();
+        ~VisionTracker();
     public:
-        AcornTracker(std::shared_ptr<pros::Vision> visionSensor, pros::vision_signature AcornSig,
-                     std::vector<std::pair<float, float>> acornRadiusToDistance);
+        VisionTracker(std::shared_ptr<pros::Vision> visionSensor, pros::vision_signature AcornSig,
+                      std::vector<std::pair<float, float>> acornRadiusToDistance);
 
         bool setAcornRadiusToDistance(std::vector<std::pair<float, float>> acornRadiusToDistance);
 
