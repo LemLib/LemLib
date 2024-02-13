@@ -13,6 +13,7 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Inertial Sensor on port 2
 pros::Imu imu(2);
 =======
@@ -35,6 +36,8 @@ bool isButtonPressed() {
     }
 }
 
+=======
+>>>>>>> 94cb93f (Update main)
 // motor groups
 // left motors on ports 8, 20, and 19. Motors on ports 8 and 20 are reversed. Using blue gearbox
 auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
