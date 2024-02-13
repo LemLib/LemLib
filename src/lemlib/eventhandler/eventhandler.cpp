@@ -11,7 +11,7 @@ EventHandler::~EventHandler() {
 
 EventHandler::EventHandler(std::vector<std::shared_ptr<Event>> eventVector) { this->eventVector = eventVector; }
 
-std::vector<bool>& EventHandler::getCurrentEvents() { return eventStates; }
+std::vector<bool>& EventHandler::getCurrentEvents(uint id) { return eventStates; }
 
 void EventHandler::startAsyncTask() {
     pros::Task task {[this] {

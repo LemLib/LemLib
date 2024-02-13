@@ -12,7 +12,7 @@ class EventHandler {
         EventHandler(std::vector<std::shared_ptr<Event>> eventVector);
         ~EventHandler();
 
-        std::vector<bool>& getCurrentEvents();
+        std::vector<bool>& getCurrentEvents(uint id);
 
         void startAsyncTask();
 };
