@@ -4,7 +4,10 @@
 #include "lemlib/logger/stdout.hpp"
 #include "pros/misc.h"
 #include "lemlib/eventhandler/eventhandler.hpp"
+#include "lemlib/eventhandler/prosevents/buttonevents.hpp"
+#include "pros/misc.hpp"
 #include <memory>
+#include <vector>
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -225,8 +228,25 @@ void autonomous() {
  * Runs in driver control
  */
 void opcontrol() {
-    lemlib::EventHandler eventHandler(
-        {std::make_shared<lemlib::ButtonEvent>(std::function<bool()>(isButtonPressed))});
+    std::shared_ptr<pros::Controller> controlla = std::make_shared<pros::Controller>(pros::E_CONTROLLER_MASTER);
+
+    lemlib::PROSButtonEvent XEvent(controlla, pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_X);
+    lemlib::PROSButtonEvent BEvent(controlla, pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_B);
+    lemlib::PROSButtonEvent YEvent(controlla, pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_Y);
+    lemlib::PROSButtonEvent AEvent(controlla, pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_A);
+    lemlib::PROSButtonEvent L1Event(controlla, pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L1);
+    lemlib::PROSButtonEvent L2Event(controlla, pros::E_CONTROLLER_DIGITAL_L2, pros::E_CONTROLLER_DIGITAL_L2);
+    lemlib::PROSButtonEvent R1Event(controlla, pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R1);
+    lemlib::PROSButtonEvent R2Event(controlla, pros::E_CONTROLLER_DIGITAL_R2, pros::E_CONTROLLER_DIGITAL_R2);
+
+    std::vector<std::shared_ptr<lemlib::Event>> buttonsEvents(
+        {std::make_shared<lemlib::PROSButtonEvent>(L1Event), std::make_shared<lemlib::PROSButtonEvent>(L2Event),
+         std::make_shared<lemlib::PROSButtonEvent>(BEvent), std::make_shared<lemlib::PROSButtonEvent>(YEvent),
+         std::make_shared<lemlib::PROSButtonEvent>(L1Event), std::make_shared<lemlib::PROSButtonEvent>(L2Event),
+         std::make_shared<lemlib::PROSButtonEvent>(R1Event), std::make_shared<lemlib::PROSButtonEvent>(R2Event)});
+
+    lemlib::EventHandler eventHandler(buttonsEvents);
+
     // controller
     // loop to continuously update motors
     while (true) {
@@ -234,6 +254,9 @@ void opcontrol() {
 <<<<<<< HEAD
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+
+        eventHandler.getCurrentEvents(pros::E_CONTROLLER_DIGITAL_A);
+
         // move the chassis with curvature drive
         chassis.curvature(leftY, rightX);
 =======
