@@ -1,5 +1,6 @@
 #include "lemlib/pidtuner.hpp"
 #include "pros/motor_group.hpp"
+#include <cmath>
 #include <memory>
 
 namespace lemlib {
@@ -22,7 +23,7 @@ void PIDTuner::tuneFlywheel(int targetRPM, float gearRatio) {
 
     std::vector<float> filteredVelocity;
 
-    if (gains.kF == 0) {
+    if (gains.kF != 0) {
         // While kF's value is not reaching around 100 RPM of the target RPM and its not overheating
         while ((avgVelocity < targetRPM - 200 || avgVelocity > targetRPM) &&
                motorGroups->at(0).get_temperature(0) > 55) {
@@ -61,7 +62,7 @@ void PIDTuner::tuneFlywheel(int targetRPM, float gearRatio) {
 
     // kF is done!
 
-    if (gains.kP == 0) {
+    if (gains.kP != 0) {
         // While the average velocity is outside of 5 RPM of the target RPM
         while ((avgVelocity > targetRPM + 5 || avgVelocity < targetRPM - 5) &&
                motorGroups->at(0).get_temperature(0) > 55) {
@@ -95,6 +96,8 @@ void PIDTuner::tuneFlywheel(int targetRPM, float gearRatio) {
         }
     }
 
+    // kP is done!
+
     /*
      * While kP average velocity goes to within 5 RPM of the target value
      *
@@ -102,6 +105,122 @@ void PIDTuner::tuneFlywheel(int targetRPM, float gearRatio) {
      *
      *
      */
+
+    if (gains.kD != 0) {
+        // While the average velocity is outside of 5 RPM of the target RPM
+        std::vector<float> dataPoints;
+        std::vector<std::vector<bool>> boxesSizeA;
+        std::vector<std::vector<bool>> boxesSizeB;
+        std::vector<std::vector<bool>> boxesSizeC;
+        std::vector<std::vector<bool>> boxesSizeD;
+
+        float dimensions = 1;
+
+        while ((avgVelocity > targetRPM + 5 || avgVelocity < targetRPM - 5) &&
+               motorGroups->at(0).get_temperature(0) > 55) {
+            dataPoints.resize(500);
+
+            boxesSizeA.resize(dataPoints.size());
+            boxesSizeB.resize(dataPoints.size());
+            boxesSizeC.resize(dataPoints.size());
+            boxesSizeD.resize(dataPoints.size());
+
+            float AboxW, AboxH = 3.0f;
+            float BboxW, BboxH = 2.0f;
+            float CboxW, CboxH = 1.0f;
+            float DboxW, DboxH = 0.5f;
+
+            float gridX, gridY = (float)motorGroups->at(0).get_gearing() * gearRatio;
+
+            dataPoints[0] = motorGroups->at(0).get_actual_velocity() * gearRatio;
+
+            // Find the largest boxes.
+            for (int i = 0; i < boxesSizeA.size(); i++) {
+                float leftBox = AboxW * i;
+                float rightBox = AboxW * (i + 1);
+                float topBox = AboxH * i;
+                float bottomBox = AboxH * (i + 1);
+
+                for (int j = 0; j < dataPoints.size(); j++) {
+                    // If the datapoint is between the top and bottom of the box
+                    if (dataPoints.at(j) < topBox && dataPoints.at(j) > bottomBox) {
+                        boxesSizeA.at(i).at(j) = true; // Box is filled.
+                    } else {
+                        boxesSizeA.at(i).at(j) = false; // Box is not filled.
+                    }
+                }
+            }
+
+            // Find the second largest boxes.
+            for (int i = 0; i < boxesSizeB.size(); i++) {
+                float leftBox = BboxW * i;
+                float rightBox = BboxW * (i + 1);
+                float topBox = BboxH * i;
+                float bottomBox = BboxH * (i + 1);
+
+                for (int j = 0; j < dataPoints.size(); j++) {
+                    // If the datapoint is between the top and bottom of the box
+                    if (dataPoints.at(j) < topBox && dataPoints.at(j) > bottomBox) {
+                        boxesSizeB.at(i).at(j) = true; // Box is filled.
+                    } else {
+                        boxesSizeB.at(i).at(j) = false; // Box is not filled.
+                    }
+                }
+            }
+
+            // Find the third largest boxes.
+            for (int i = 0; i < boxesSizeC.size(); i++) {
+                float leftBox = CboxW * i;
+                float rightBox = CboxW * (i + 1);
+                float topBox = CboxH * i;
+                float bottomBox = CboxH * (i + 1);
+
+                for (int j = 0; j < dataPoints.size(); j++) {
+                    // If the datapoint is between the top and bottom of the box
+                    if (dataPoints.at(j) < topBox && dataPoints.at(j) > bottomBox) {
+                        boxesSizeC.at(i).at(j) = true; // Box is filled.
+                    } else {
+                        boxesSizeC.at(i).at(j) = false; // Box is not filled.
+                    }
+                }
+            }
+
+            // Find the smallest boxes.
+            for (int i = 0; i < boxesSizeD.size(); i++) {
+                float leftBox = DboxW * i;
+                float rightBox = DboxW * (i + 1);
+                float topBox = DboxH * i;
+                float bottomBox = DboxH * (i + 1);
+
+                for (int j = 0; j < dataPoints.size(); j++) {
+                    // If the datapoint is between the top and bottom of the box
+                    if (dataPoints.at(j) < topBox && dataPoints.at(j) > bottomBox) {
+                        boxesSizeD.at(i).at(j) = true; // Box is filled.
+                    } else {
+                        boxesSizeD.at(i).at(j) = false; // Box is not filled.
+                    }
+                }
+            }
+
+            float dimensionsA = std::log(1 / boxesSizeA.size()) / std::log(1 / AboxH);
+            float dimensionsB = std::log(1 / boxesSizeB.size()) / std::log(1 / BboxH);
+            float dimensionsC = std::log(1 / boxesSizeC.size()) / std::log(1 / CboxH);
+            float dimensionsD = std::log(1 / boxesSizeD.size()) / std::log(1 / DboxH);
+
+            static constexpr float flatDimension = 2.05f;
+            static constexpr float curvyDimension = 2.4f;
+
+            if (dimensionsA > curvyDimension && dimensionsB > curvyDimension && dimensionsC > curvyDimension &&
+                dimensionsD > curvyDimension) {
+                gains.kD *= 2;
+            } else if (dimensionsA < flatDimension && dimensionsB < flatDimension && dimensionsC < flatDimension &&
+                       dimensionsD < flatDimension) {
+                gains.kD += .1;
+            } else {
+                break;
+            }
+        }
+    }
 }
 
 void PIDTuner::tuneCatapult(int targetRPM) {}
