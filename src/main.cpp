@@ -12,25 +12,6 @@
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-namespace lemlib {
-class ButtonEvent : public Event {
-    protected:
-        std::function<bool()> function = nullptr;
-    public:
-        ButtonEvent(std::function<bool()> function) { this->function = function; };
-
-        bool check() override { return function(); }
-};
-} // namespace lemlib
-
-bool isButtonPressed() {
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 // motor groups
 // left motors on ports 8, 20, and 19. Motors on ports 8 and 20 are reversed. Using blue gearbox
 auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);

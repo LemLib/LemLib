@@ -17,16 +17,11 @@ class Event {
             try {
                 if (id > -1) {
                     std::cout << "Proper identification.";
-                } 
-                else {
+                } else {
                     std::cout << "Negative ID Value not allowed. Throwing exception. ";
                     throw std::exception();
                 }
-            }
-            catch (std::exception& e) {
-                std::cout << "Improper identification. Add ID Parameter to the Event.";
-            
-            }
+            } catch (std::exception& e) { std::cout << "Improper identification. Add ID Parameter to the Event."; }
         }
     public:
         virtual bool check() = 0;
