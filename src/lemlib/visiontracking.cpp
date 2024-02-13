@@ -7,15 +7,15 @@ VisionTracker::VisionTracker() {}
 VisionTracker::VisionTracker(std::shared_ptr<pros::Vision> visionSensor, pros::vision_signature AcornSig,
                              std::vector<std::pair<float, float>> acornRadiusToDistance) {
     this->visionSensor = visionSensor;
-    this->AcornSig = AcornSig;
-    this->acornRadiusToDistance = acornRadiusToDistance;
+    this->PieceSig = AcornSig;
+    this->gamepieceRadiusToDistance = acornRadiusToDistance;
 }
 
 VisionTracker::~VisionTracker() {}
 
 std::pair<int, int> VisionTracker::update(Pose pose) {
     // Get the largest pile of acorns from the vision sensor
-    pros::vision_object gamepiece = visionSensor->get_by_sig(0, AcornSig.id);
+    pros::vision_object gamepiece = visionSensor->get_by_sig(0, PieceSig.id);
 
     float trackedPieceRadius = gamepiece.height / 2.0;
 
@@ -24,20 +24,20 @@ std::pair<int, int> VisionTracker::update(Pose pose) {
 
     float distance = 0;
 
-    if (acornRadiusToDistance.size() > 1) {
-        x1 = acornRadiusToDistance[0].first; // Radius of an acorn
-        x2 = acornRadiusToDistance[1].second; // Distance correlated with the area
-        y1 = acornRadiusToDistance[0].first; // Radius of another acorn
-        y2 = acornRadiusToDistance[1].second; // Another distance correlated with the area
+    if (gamepieceRadiusToDistance.size() > 1) {
+        x1 = gamepieceRadiusToDistance[0].first; // Radius of an acorn
+        x2 = gamepieceRadiusToDistance[1].second; // Distance correlated with the area
+        y1 = gamepieceRadiusToDistance[0].first; // Radius of another acorn
+        y2 = gamepieceRadiusToDistance[1].second; // Another distance correlated with the area
 
-        for (int i = 1; i > acornRadiusToDistance.size(); i++) {
+        for (int i = 1; i > gamepieceRadiusToDistance.size(); i++) {
             // If in range of acorn radius, do linear interp. between the 2 tuples.
-            if (trackedPieceRadius < acornRadiusToDistance[i - 1].first &&
-                trackedPieceRadius < acornRadiusToDistance[i].first) {
-                x1 = acornRadiusToDistance[i - 1].first;
-                y1 = acornRadiusToDistance[i - 1].second;
-                x2 = acornRadiusToDistance[i].first;
-                y2 = acornRadiusToDistance[i].second;
+            if (trackedPieceRadius < gamepieceRadiusToDistance[i - 1].first &&
+                trackedPieceRadius < gamepieceRadiusToDistance[i].first) {
+                x1 = gamepieceRadiusToDistance[i - 1].first;
+                y1 = gamepieceRadiusToDistance[i - 1].second;
+                x2 = gamepieceRadiusToDistance[i].first;
+                y2 = gamepieceRadiusToDistance[i].second;
             }
             // If it takes up the whole screen, set the distance to 0.
             if (trackedPieceRadius == VISION_FOV_HEIGHT / 2.0) {
@@ -63,13 +63,13 @@ std::pair<int, int> VisionTracker::update(Pose pose) {
     return acorncoords;
 }
 
-std::pair<int, int> VisionTracker::getAcornVisionCoords() {
-    pros::vision_object acorns = visionSensor->get_by_sig(0, AcornSig.id);
+std::pair<int, int> VisionTracker::getGamepieceVisionCoords() {
+    pros::vision_object pieces = visionSensor->get_by_sig(0, PieceSig.id);
 
-    float trackedAcornRadius = acorns.height / 2.0;
+    float trackedPieceRadius = pieces.height / 2.0;
 
-    return std::make_pair<int, int>(acorns.x_middle_coord - (acorns.width / 2 * trackedAcornRadius),
-                                    acorns.y_middle_coord);
+    return std::make_pair<int, int>(pieces.x_middle_coord - (pieces.width / 2 * trackedPieceRadius),
+                                    pieces.y_middle_coord);
 }
 
 } // namespace lemlib

@@ -13,11 +13,11 @@ namespace lemlib {
 class VisionTracker { // : public Pose {
     private:
     protected:
-        std::vector<std::pair<float, float>> acornRadiusToDistance;
+        std::vector<std::pair<float, float>> gamepieceRadiusToDistance;
 
         std::shared_ptr<pros::Vision> visionSensor = nullptr;
 
-        pros::vision_signature AcornSig;
+        pros::vision_signature PieceSig;
 
         VisionTracker();
 
@@ -26,7 +26,7 @@ class VisionTracker { // : public Pose {
         VisionTracker(std::shared_ptr<pros::Vision> visionSensor, pros::vision_signature AcornSig,
                       std::vector<std::pair<float, float>> acornRadiusToDistance);
 
-        bool setAcornRadiusToDistance(std::vector<std::pair<float, float>> acornRadiusToDistance);
+        bool setGamepieceRadiusToDistance(std::vector<std::pair<float, float>> acornRadiusToDistance);
 
         std::pair<int, int> update(Pose pose); // override
 
@@ -35,7 +35,7 @@ class VisionTracker { // : public Pose {
          *
          * @return std::pair<int, int>
          */
-        std::pair<int, int> getAcornVisionCoords();
+        std::pair<int, int> getGamepieceVisionCoords();
 };
 
 } // namespace lemlib
