@@ -1,5 +1,6 @@
 #include "pros/device.hpp"
 #include "pros/misc.h"
+#include "lemlib/eventhandler/eventhandler.hpp"
 #include <memory>
 #include <unordered_map>
 
@@ -14,8 +15,7 @@ class AbstractGamepad {
         // std::vector<std::unique_ptr<ButtonMapping>> buttonsToFunctions;
         // std::vector<std::unique_ptr<JoystickMapping>> joysticksToFunctions;
 
-        std::unordered_map<int, bool> buttonStates;
-        std::unordered_map<int, int> joystickStates;
+        std::unique_ptr<EventHandler> evHandler;
 
         // ControllerValues controllerValues;
 
