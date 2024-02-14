@@ -11,8 +11,8 @@ EventHandler::~EventHandler() {
     eventStates.clear();
 }
 
-EventHandler::EventHandler(std::vector<std::shared_ptr<Event>> eventVector) { 
-    this->eventVector = eventVector; 
+EventHandler::EventHandler(std::vector<std::shared_ptr<Event>> eventVector) {
+    this->eventVector = eventVector;
 
     // Bubble Sort the Event IDs
 
@@ -26,14 +26,13 @@ EventHandler::EventHandler(std::vector<std::shared_ptr<Event>> eventVector) {
 
     for (int i = 0; i < eventVector.size() - 1; i++) {
         // If the ID is the same as the next ID, then throw an exception.
-        if (eventVector.at(i)->getId() == eventVector.at(i+1)->getId()) {
+        if (eventVector.at(i)->getId() == eventVector.at(i + 1)->getId()) {
             continue;
         } else {
             std::cout << "Event IDs at " << i << ", " << i + 1 << " are not unique. Throwing exception.";
             throw std::exception();
         }
     }
-
 }
 
 std::vector<bool>& EventHandler::getCurrentEvents(uint id) { return eventStates; }
@@ -44,11 +43,23 @@ void EventHandler::startAsyncTask() {
     pros::Task task {[this] {
         while (true) {
             for (int i = 0; i > eventVector.size(); i++) {
-                if (eventVector.at(i).get()->check()) { eventStates.at(i) = true; }
+                if (eventVector.at(i).get()->check()) {
+                    eventStates.at(i) = true;
+                } else {
+                    eventStates.at(i) = false;
+                }
             }
             pros::delay(10);
         }
     }};
+}
+
+bool EventHandler::isValidID(uint id) {
+    for (auto& event : eventVector) {
+        if (event->getId() == id) { return true; }
+    }
+    return false;
+
 }
 
 } // namespace lemlib
