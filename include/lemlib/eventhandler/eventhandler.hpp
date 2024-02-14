@@ -14,6 +14,8 @@ class EventHandler {
 
         std::vector<bool>& getCurrentEvents(uint id);
 
+        bool checkEvent(uint id);
+        
         void startAsyncTask();
 };
 

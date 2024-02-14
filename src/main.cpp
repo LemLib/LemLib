@@ -1,6 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/eventhandler/testevents.hpp"
 #include "lemlib/logger/stdout.hpp"
 #include "pros/misc.h"
 #include "lemlib/eventhandler/eventhandler.hpp"
@@ -8,7 +9,7 @@
 #include "pros/misc.hpp"
 #include <memory>
 #include <vector>
-
+/*
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
@@ -64,7 +65,7 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 
 // create the chassis
 lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
-
+*/
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -73,10 +74,10 @@ lemlib::Differential chassis(drivetrain, linearController, angularController, se
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    chassis.initialize(); // calibrate sensors
+    //chassis.initialize(); // calibrate sensors
 
     // thread to for brain screen and position logging
-    pros::Task screenTask([&]() {
+    /*pros::Task screenTask([&]() {
         lemlib::Pose pose(0, 0, 0);
         while (true) {
             pose = chassis.getPose();
@@ -86,7 +87,7 @@ void initialize() {
             // delay to save resources
             pros::delay(10);
         }
-    });
+    });*/
 }
 
 /**
@@ -109,30 +110,14 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
 void autonomous() {
-    // example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4000 ms
-    chassis.moveTo(20, 15, 90, 4000);
-    // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
-    // dont turn faster than 60 (out of a maximum of 127)
-    chassis.turnToPose(45, -45, 1000, true, 60);
-    // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
-    // following the path with the back of the robot (forwards = false)
-    // see line 116 to see how to define a path
-    chassis.follow(example_txt, 15, 4000, false);
-    // wait until the chassis has travelled 10 inches. Otherwise the code directly after
-    // the movement will run immediately
-    // Unless its another movement, in which case it will wait
-    chassis.waitUntil(10);
-    pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
-    // wait until the movement is done
-    chassis.waitUntilDone();
-    pros::lcd::print(4, "pure pursuit finished!");
+    
 }
 
 /**
  * Runs in driver control
  */
 void opcontrol() {
-    std::shared_ptr<pros::Controller> controlla = std::make_shared<pros::Controller>(pros::E_CONTROLLER_MASTER);
+    std::shared_ptr<pros::Controller> controlla = std::make_shared<pros::Controller>(pros::E_CONTROLLER_MASTER); 
 
     lemlib::PROSButtonEvent XEvent(controlla, pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_X);
     lemlib::PROSButtonEvent BEvent(controlla, pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_B);
@@ -151,18 +136,49 @@ void opcontrol() {
 
     lemlib::EventHandler eventHandler(buttonsEvents);
 
+    lemlib::TESTEvent testEventA(false, 0);
+    lemlib::TESTEvent testEventB(false, 1);
+    lemlib::TESTEvent testEventC(true, 2);
+    lemlib::TESTEvent testEventD(false, 3);
+    lemlib::TESTEvent testEventE(true, 4);
+
+    std::vector<std::shared_ptr<lemlib::Event>> testEvents(
+        {std::make_shared<lemlib::TESTEvent>(testEventA), std::make_shared<lemlib::TESTEvent>(testEventB),
+         std::make_shared<lemlib::TESTEvent>(testEventC), std::make_shared<lemlib::TESTEvent>(testEventD),
+         std::make_shared<lemlib::TESTEvent>(testEventE)});
+
+    lemlib::EventHandler testEventHandler(testEvents);
+
+    std::cout << "Started" << std::endl;
+
     // controller
     // loop to continuously update motors
     while (true) {
-        // get joystick positions
-        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        
+        if (testEventHandler.checkEvent(0)) {
+            std::cout << " Event A triggered. " << std::endl;
+        }
 
-        eventHandler.getCurrentEvents(pros::E_CONTROLLER_DIGITAL_A);
+        if (testEventHandler.checkEvent(1)) {
+            std::cout << " Event B triggered. " << std::endl;
+        }
 
+        if (testEventHandler.checkEvent(2)) {
+            std::cout << " Event C triggered. " << std::endl;
+        }
+
+        if (testEventHandler.checkEvent(3)) {
+            std::cout << " Event D triggered. " << std::endl;
+        }
+
+        if (testEventHandler.checkEvent(4)) {
+            std::cout << " Event E triggered. " << std::endl;
+        }
+
+        std::cout << "Looped through" << std::endl;
         // move the chassis with curvature drive
-        chassis.curvature(leftY, rightX);
         // delay to save resources
         pros::delay(10);
+
     }
 }
