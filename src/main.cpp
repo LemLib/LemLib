@@ -114,6 +114,7 @@ lemlib::Differential chassis(drivetrain, linearController, angularController, se
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
+<<<<<<< HEAD
     //chassis.initialize(); // calibrate sensors
 
     // the default rate is 50. however, if you need to change the rate, you
@@ -157,6 +158,9 @@ void initialize() {
             pros::delay(10);
         }
     });*/
+=======
+    
+>>>>>>> ff56656 (Unit tests for constructor, for checkEvent())
 }
 
 /**
