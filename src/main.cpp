@@ -1,6 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/eventhandler/testevents.hpp"
 #include "lemlib/logger/stdout.hpp"
 #include "pros/misc.h"
 #include "lemlib/eventhandler/eventhandler.hpp"
@@ -8,7 +9,7 @@
 #include "pros/misc.hpp"
 #include <memory>
 #include <vector>
-
+/*
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
@@ -92,6 +93,7 @@ lemlib::OdomSensors_t sensors {
     &imu // inertial sensor (AKA imu)
 };
 
+<<<<<<< HEAD
 // chassis
 lemlib::Differential chassis(drivetrain, // drivetrain struct
                              lateralController, // forwards/backwards PID struct
@@ -99,6 +101,11 @@ lemlib::Differential chassis(drivetrain, // drivetrain struct
                              sensors // sensors struct
 );
 
+=======
+// create the chassis
+lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
+*/
+>>>>>>> cbebf76 (Added Exception handling for diff IDs)
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -107,7 +114,7 @@ lemlib::Differential chassis(drivetrain, // drivetrain struct
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    chassis.initialize(); // calibrate sensors
+    //chassis.initialize(); // calibrate sensors
 
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
@@ -122,7 +129,11 @@ void initialize() {
     // thread to for brain screen and position logging
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     pros::Task screenTask([&]() {
+=======
+    /*pros::Task screenTask([&]() {
+>>>>>>> cbebf76 (Added Exception handling for diff IDs)
         lemlib::Pose pose(0, 0, 0);
         while (true) {
             // print robot location to the brain screen
@@ -145,7 +156,7 @@ void initialize() {
             // delay to save resources
             pros::delay(10);
         }
-    });
+    });*/
 }
 
 /**
@@ -176,6 +187,7 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
 void autonomous() {
+<<<<<<< HEAD
 <<<<<<< HEAD
     // example movement: Move to x: 20 and y: 15, and face heading 90. Timeout set to 4000 ms
     chassis.moveToPose(20, 15, 90, 4000);
@@ -225,13 +237,16 @@ void autonomous() {
 =======
     pros::lcd::print(4, "pure pursuit finished!");
 >>>>>>> f312d9b (Rename arcOdom.cpp to differentialArc.cpp)
+=======
+    
+>>>>>>> cbebf76 (Added Exception handling for diff IDs)
 }
 
 /**
  * Runs in driver control
  */
 void opcontrol() {
-    std::shared_ptr<pros::Controller> controlla = std::make_shared<pros::Controller>(pros::E_CONTROLLER_MASTER);
+    std::shared_ptr<pros::Controller> controlla = std::make_shared<pros::Controller>(pros::E_CONTROLLER_MASTER); 
 
     lemlib::PROSButtonEvent XEvent(controlla, pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_X);
     lemlib::PROSButtonEvent BEvent(controlla, pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_B);
@@ -250,21 +265,62 @@ void opcontrol() {
 
     lemlib::EventHandler eventHandler(buttonsEvents);
 
+    lemlib::TESTEvent testEventA(false, 0);
+    lemlib::TESTEvent testEventB(false, 1);
+    lemlib::TESTEvent testEventC(true, 2);
+    lemlib::TESTEvent testEventD(false, 3);
+    lemlib::TESTEvent testEventE(true, 4);
+
+    std::vector<std::shared_ptr<lemlib::Event>> testEvents(
+        {std::make_shared<lemlib::TESTEvent>(testEventA), std::make_shared<lemlib::TESTEvent>(testEventB),
+         std::make_shared<lemlib::TESTEvent>(testEventC), std::make_shared<lemlib::TESTEvent>(testEventD),
+         std::make_shared<lemlib::TESTEvent>(testEventE)});
+
+    lemlib::EventHandler testEventHandler(testEvents);
+
+    std::cout << "Started" << std::endl;
+
     // controller
     // loop to continuously update motors
     while (true) {
+<<<<<<< HEAD
         // get joystick positions
 <<<<<<< HEAD
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+=======
+        
+        if (testEventHandler.checkEvent(0)) {
+            std::cout << " Event A triggered. " << std::endl;
+        }
+>>>>>>> cbebf76 (Added Exception handling for diff IDs)
 
-        eventHandler.getCurrentEvents(pros::E_CONTROLLER_DIGITAL_A);
+        if (testEventHandler.checkEvent(1)) {
+            std::cout << " Event B triggered. " << std::endl;
+        }
 
+        if (testEventHandler.checkEvent(2)) {
+            std::cout << " Event C triggered. " << std::endl;
+        }
+
+        if (testEventHandler.checkEvent(3)) {
+            std::cout << " Event D triggered. " << std::endl;
+        }
+
+        if (testEventHandler.checkEvent(4)) {
+            std::cout << " Event E triggered. " << std::endl;
+        }
+
+        std::cout << "Looped through" << std::endl;
         // move the chassis with curvature drive
+<<<<<<< HEAD
         chassis.curvature(leftY, rightX);
 =======
 >>>>>>> c6869de (improve main.cpp documentation)
+=======
+>>>>>>> cbebf76 (Added Exception handling for diff IDs)
         // delay to save resources
         pros::delay(10);
+
     }
 }
