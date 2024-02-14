@@ -74,20 +74,7 @@ lemlib::Differential chassis(drivetrain, linearController, angularController, se
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    //chassis.initialize(); // calibrate sensors
-
-    // thread to for brain screen and position logging
-    /*pros::Task screenTask([&]() {
-        lemlib::Pose pose(0, 0, 0);
-        while (true) {
-            pose = chassis.getPose();
-            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            // delay to save resources
-            pros::delay(10);
-        }
-    });*/
+    
 }
 
 /**

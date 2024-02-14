@@ -1,4 +1,4 @@
-#include "lemlib/devices/gamepad.hpp"
+#include "lemlib/devices/gamepad/gamepad.hpp"
 #include "pros/misc.h"
 #include <gtest/gtest.h>
 #include <string>
