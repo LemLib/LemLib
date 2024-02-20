@@ -1,3 +1,5 @@
+#pragma once
+
 #include "odom.hpp"
 #include "pros/gps.hpp"
 #include "pros/imu.hpp"

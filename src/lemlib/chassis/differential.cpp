@@ -42,8 +42,7 @@ Differential::Differential(const Drivetrain& drivetrain, const ControllerSetting
     std::vector<std::shared_ptr<TrackingWheel>> verticals;
     std::vector<std::shared_ptr<TrackingWheel>> horizontals;
     std::vector<std::shared_ptr<TrackingWheel>> drive;
-    std::vector<std::shared_ptr<pros::GPS>> gpssensors;
-    std::vector<std::shared_ptr<pros::IMU>> imus;
+    std::vector<std::shared_ptr<GPS>> gpssensors;
     std::vector<std::shared_ptr<Gyro>> gyros;
 
     // configure vertical tracking wheels
@@ -63,14 +62,11 @@ Differential::Differential(const Drivetrain& drivetrain, const ControllerSetting
     // configure gps
     if (sensors.gps != nullptr) gpssensors.push_back(sensors.gps);
 
-    // configure imu
-    if (sensors.imu != nullptr) imus.push_back(sensors.imu);
-
     // configure gyros
     if (sensors.gyro != nullptr) gyros.push_back(sensors.gyro);
 
     // create odom instance
-    this->odom = std::make_unique<DifferentialArc>(verticals, horizontals, drive, gpssensors, imus, gyros);
+    this->odom = std::make_unique<DifferentialArc>(verticals, horizontals, drive, gpssensors, gyros);
 }
 
 /**

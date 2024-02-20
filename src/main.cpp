@@ -57,7 +57,6 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
                             std::make_shared<lemlib::TrackingWheel>(horizontal), // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             nullptr, // no GPS
-                            std::make_shared<pros::IMU>(11), // inertial sensor
                             nullptr);
 
 // create the chassis
