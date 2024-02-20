@@ -19,14 +19,12 @@ namespace lemlib {
 DifferentialArc::DifferentialArc(const std::vector<std::shared_ptr<TrackingWheel>>& verticals,
                                  const std::vector<std::shared_ptr<TrackingWheel>>& horizontals,
                                  const std::vector<std::shared_ptr<TrackingWheel>>& drivetrain,
-                                 const std::vector<std::shared_ptr<pros::GPS>>& gps,
-                                 const std::vector<std::shared_ptr<pros::IMU>>& imus,
+                                 const std::vector<std::shared_ptr<GPS>>& gps,
                                  const std::vector<std::shared_ptr<Gyro>>& gyros)
     : verticals(verticals),
       horizontals(horizontals),
       drivetrain(drivetrain),
       gps(gps),
-      imus(imus),
       gyros(gyros) {}
 
 /**
@@ -40,8 +38,8 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
     std::vector<std::shared_ptr<TrackingWheel>> newHorizontals = {};
     std::vector<std::shared_ptr<TrackingWheel>> newDrivetrain = {};
     std::vector<std::shared_ptr<Gyro>> newGyros = {};
-    std::vector<std::shared_ptr<pros::GPS>> gps = {};
-    std::vector<std::shared_ptr<pros::IMU>> imus = {};
+    std::vector<std::shared_ptr<GPS>> gps = {};
+    //std::vector<std::shared_ptr<pros::IMU>> imus = {};
 
     // calibrate vertical tracking wheels
     for (auto it = this->verticals.begin(); it != this->verticals.end(); it++) {
@@ -84,7 +82,7 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
         }
     }
 
-    // calibrate imus
+    /*// calibrate imus
     for (auto& it : this->imus) it.reset();
     Timer imutimer(3000); // try calibrating gyros for 3000 ms
     while (!imutimer.isDone()) {
@@ -92,7 +90,7 @@ void DifferentialArc::calibrate(bool calibrateGyros) {
             if (!imu->is_calibrating()) imu.reset();
         }
         pros::delay(10);
-    }
+    }*/
 
     this->verticals = newVerticals;
     this->horizontals = newHorizontals;
@@ -129,9 +127,9 @@ float calcDeltaTheta(std::vector<std::shared_ptr<Gyro>>& gyros) {
     return deltaTheta;
 }
 
-float calcDeltaTheta(std::vector<std::shared_ptr<pros::GPS>>& gpsArg) {
+float calcDeltaTheta(std::vector<std::shared_ptr<GPS>>& gpsArg) {
     float deltaTheta = 0;
-    for (const auto& gps : gpsArg) deltaTheta += gps->get_heading() / gpsArg.size();
+    for (const auto& gps : gpsArg) deltaTheta += gps->getPose().theta / gpsArg.size();
     return deltaTheta;
 }
 
@@ -190,7 +188,7 @@ void DifferentialArc::update() {
         }
     } else if (gps.size() > 0) {
         float totalypos = 0;
-        for (auto& gps : this->gps) { totalypos += gps->get_position().y; }
+        for (auto& gps : this->gps) { totalypos += gps->getPose().y; }
         float averageYPos = totalypos / this->gps.size();
         local.y = averageYPos;
     } else { // output a warning if there are no available sensors to calculate local y
@@ -212,7 +210,7 @@ void DifferentialArc::update() {
         }
     } else if (this->gps.size() > 0) {
         float totalxpos = 0;
-        for (auto& gps : this->gps) { totalxpos += gps->get_position().x; }
+        for (auto& gps : this->gps) { totalxpos += gps->getPose().x; }
         float averageXPos = totalxpos / this->gps.size();
         local.x = averageXPos;
     } else { // output a warning if there are no available sensors to calculate local x

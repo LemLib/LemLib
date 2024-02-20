@@ -119,12 +119,15 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             nullptr, // no GPS
 <<<<<<< HEAD
+<<<<<<< HEAD
                             std::make_unique<pros::IMU>(11), // inertial sensor
                             nullptr
 >>>>>>> cbd5330 (Began making everything a shared ptr)
 );
 =======
                             std::make_shared<pros::IMU>(11), // inertial sensor
+=======
+>>>>>>> 6c17e3b (Decoupled LemLib from PROS GPS and IMUs)
                             nullptr);
 >>>>>>> f548303 (Reverted to Shared Ptr, added calcDeltaTheta function for GPS)
 

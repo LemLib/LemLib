@@ -22,6 +22,7 @@
 #include "lemlib/asset.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
 #include "lemlib/devices/gyro/imu.hpp"
+#include "lemlib/odom/gps.hpp"
 
 namespace lemlib {
 /**
@@ -60,21 +61,19 @@ struct OdomSensors {
          */
         OdomSensors(std::shared_ptr<TrackingWheel> vertical1, std::shared_ptr<TrackingWheel> vertical2,
                     std::shared_ptr<TrackingWheel> horizontal1, std::shared_ptr<TrackingWheel> horizontal2,
-                    std::shared_ptr<pros::GPS> gps, std::shared_ptr<pros::IMU> imu, std::shared_ptr<Gyro> gyro)
+                    std::shared_ptr<GPS> gps, std::shared_ptr<Gyro> gyro)
             : vertical1(vertical1),
               vertical2(vertical2),
               horizontal1(horizontal1),
               horizontal2(horizontal2),
               gps(gps),
-              imu(imu),
               gyro(gyro) {}
 
         std::shared_ptr<TrackingWheel> vertical1;
         std::shared_ptr<TrackingWheel> vertical2;
         std::shared_ptr<TrackingWheel> horizontal1;
         std::shared_ptr<TrackingWheel> horizontal2;
-        std::shared_ptr<pros::GPS> gps;
-        std::shared_ptr<pros::IMU> imu;
+        std::shared_ptr<GPS> gps;
         std::shared_ptr<Gyro> gyro;
 };
 >>>>>>> 475d619 (add support for generic gyros for differential)
