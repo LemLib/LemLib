@@ -299,9 +299,9 @@ void opcontrol() {
 
     lemlib::PROS_Gamepad gamepad(pros::E_CONTROLLER_MASTER, {"Driver", "Debug"}, "Driver",
                                  std::make_unique<lemlib::EventHandler>(buttonEventHandler));
-    
+
     gamepad.startMainLoop();
-    
+
     // controller
     // loop to continuously update motors
     while (true) {
