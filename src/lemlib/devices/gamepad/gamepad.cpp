@@ -9,12 +9,8 @@ namespace lemlib {
 
 
 bool AbstractGamepad::startMainLoop() {
-    pros::Task task {[this] {
-        while (true) {
-            autoButtonFunctions();
-            pros::delay(20);
-        }
-    }};
+
+    evHandler->startAsyncTask();
 
     return true;
 }
@@ -74,8 +70,8 @@ bool AbstractGamepad::toggleButton(int button) {
     }
 }
 
-int AbstractGamepad::getJoystick(int joystick) {
-    int joystickValue = joystickStates[joystick];
+int AbstractGamepad::getJoystick(int joystickID) {
+    int joystickValue = evHandler->checkEvent(joystickID);
     return joystickValue;
 }
 
