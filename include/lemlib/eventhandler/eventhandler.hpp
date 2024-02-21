@@ -1,3 +1,4 @@
+#pragma once
 
 #include "lemlib/logger/logger.hpp"
 #include "lemlib/eventhandler/event.hpp"

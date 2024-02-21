@@ -12,19 +12,12 @@ class AbstractGamepad {
         std::string currentMode = "DEFAULT";
         std::vector<std::string> modes = {"DEFAULT"};
 
-        // std::vector<std::unique_ptr<ButtonMapping>> buttonsToFunctions;
-        // std::vector<std::unique_ptr<JoystickMapping>> joysticksToFunctions;
+        std::unordered_map<int, bool> buttonStates;
 
         std::unique_ptr<EventHandler> evHandler;
 
         // ControllerValues controllerValues;
 
-        /**
-         * @brief When the main loop starts, this function gets called and uses function pointers/modes info to run
-         * user-made functions automaically.
-         *
-         */
-        virtual void autoButtonFunctions() = 0;
     public:
         
         bool startMainLoop();
@@ -38,7 +31,7 @@ class AbstractGamepad {
          * @return true
          * @return false
          */
-        bool getButton(std::vector<int> buttons);
+        bool getButton(std::vector<int> buttonIDs);
 
         /**
          * @brief Checks if there was a new button press.
@@ -47,7 +40,7 @@ class AbstractGamepad {
          * @return true
          * @return false
          */
-        bool newButtonPress(int button);
+        bool newButtonPress(int buttonID);
 
         /**
          * @brief Grabs the value of a button, acting as a toggle. Click once to turn on, it'll return true until you
@@ -57,15 +50,15 @@ class AbstractGamepad {
          * @return true
          * @return false
          */
-        bool toggleButton(int button);
+        bool toggleButton(int buttonID);
 
         /**
          * @brief Get valaue of a joystick.
          *
-         * @param whichJoystick
+         * @param joystickID ID of the joystick event
          * @return int
          */
-        int getJoystick(int whichJoystick);
+        int getJoystick(int joystickID);
 
 
         /*================ MODES ================*/

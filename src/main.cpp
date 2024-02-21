@@ -6,9 +6,11 @@
 #include "pros/misc.h"
 #include "lemlib/eventhandler/eventhandler.hpp"
 #include "lemlib/eventhandler/prosevents/buttonevents.hpp"
+#include "lemlib/devices/gamepad/prosgamepad.hpp"
 #include "pros/misc.hpp"
 #include <memory>
 #include <vector>
+
 /*
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -66,6 +68,7 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 // create the chassis
 lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
 */
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -74,7 +77,6 @@ lemlib::Differential chassis(drivetrain, linearController, angularController, se
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    
 }
 
 /**
@@ -96,15 +98,13 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  *
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
-void autonomous() {
-    
-}
+void autonomous() {}
 
 /**
  * Runs in driver control
  */
 void opcontrol() {
-    std::shared_ptr<pros::Controller> controlla = std::make_shared<pros::Controller>(pros::E_CONTROLLER_MASTER); 
+    std::shared_ptr<pros::Controller> controlla = std::make_shared<pros::Controller>(pros::E_CONTROLLER_MASTER);
 
     lemlib::PROSButtonEvent XEvent(controlla, pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_X);
     lemlib::PROSButtonEvent BEvent(controlla, pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_B);
@@ -121,7 +121,7 @@ void opcontrol() {
          std::make_shared<lemlib::PROSButtonEvent>(L1Event), std::make_shared<lemlib::PROSButtonEvent>(L2Event),
          std::make_shared<lemlib::PROSButtonEvent>(R1Event), std::make_shared<lemlib::PROSButtonEvent>(R2Event)});
 
-    lemlib::EventHandler eventHandler(buttonsEvents);
+    lemlib::EventHandler buttonEventHandler(buttonsEvents);
 
     lemlib::TESTEvent testEventA(false, 0);
     lemlib::TESTEvent testEventB(false, 1);
@@ -138,34 +138,28 @@ void opcontrol() {
 
     std::cout << "Started" << std::endl;
 
+    lemlib::PROS_Gamepad gamepad(pros::E_CONTROLLER_MASTER, {"Driver", "Debug"}, "Driver",
+                                 std::make_unique<lemlib::EventHandler>(buttonEventHandler));
+    
+    gamepad.startMainLoop();
+    
     // controller
     // loop to continuously update motors
     while (true) {
-        
-        if (testEventHandler.checkEvent(0)) {
-            std::cout << " Event A triggered. " << std::endl;
-        }
+        if (testEventHandler.checkEvent(0)) { std::cout << " Event A triggered. " << std::endl; }
 
-        if (testEventHandler.checkEvent(1)) {
-            std::cout << " Event B triggered. " << std::endl;
-        }
+        if (testEventHandler.checkEvent(1)) { std::cout << " Event B triggered. " << std::endl; }
 
-        if (testEventHandler.checkEvent(2)) {
-            std::cout << " Event C triggered. " << std::endl;
-        }
+        if (testEventHandler.checkEvent(2)) { std::cout << " Event C triggered. " << std::endl; }
 
-        if (testEventHandler.checkEvent(3)) {
-            std::cout << " Event D triggered. " << std::endl;
-        }
+        if (testEventHandler.checkEvent(3)) { std::cout << " Event D triggered. " << std::endl; }
 
-        if (testEventHandler.checkEvent(4)) {
-            std::cout << " Event E triggered. " << std::endl;
-        }
+        if (testEventHandler.checkEvent(4)) { std::cout << " Event E triggered. " << std::endl; }
 
         std::cout << "Looped through" << std::endl;
+
         // move the chassis with curvature drive
         // delay to save resources
         pros::delay(10);
-
     }
 }
