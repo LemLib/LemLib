@@ -54,6 +54,7 @@ std::vector<bool>& EventHandler::getCurrentEvents(uint id) { return eventStates;
 bool EventHandler::checkEvent(uint id) { 
 
     bool eventResult = false;
+    int index = 0;
 
     for (auto event : eventVector) {
         if (id == event->getId()) {
@@ -61,6 +62,18 @@ bool EventHandler::checkEvent(uint id) {
         }
         
     }
+
+    // { 0, 3, 5, 6 }
+    // ID = 3, index = 1
+
+    for (int i = 0; i < eventVector.size(); i++) {
+        if (id <= eventVector.at(i)->getId()) {
+            index = i;
+        }
+    }
+
+    eventStates[id] = eventResult;
+    
 
     return eventResult; 
 }

@@ -4,7 +4,7 @@
 namespace lemlib {
 
 PROSJoystickEvent::PROSJoystickEvent(std::shared_ptr<pros::Controller> controller, pros::controller_analog_e_t joystick,
-                                     uint id, std::function<int(pros::controller_analog_e_t)> joystickFunction) {
+                                     uint id, std::function<int(int)> joystickFunction) {
     this->controller = controller;
     this->joystick = joystick;
     this->id = id;

@@ -1,6 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/eventhandler/prosevents/joystickevents.hpp"
 #include "lemlib/eventhandler/testevents.hpp"
 #include "lemlib/logger/stdout.hpp"
 #include "pros/misc.h"
@@ -69,6 +70,11 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 lemlib::Differential chassis(drivetrain, linearController, angularController, sensors);
 */
 
+// left motors on ports 8, 20, and 19. Motors on ports 8 and 20 are reversed. Using blue gearbox
+auto leftBottomMotors = lemlib::makeMotorGroup({-12, -13}, pros::v5::MotorGears::blue);
+// right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
+auto rightBottomMotors = lemlib::makeMotorGroup({4, 3}, pros::v5::MotorGears::blue);
+
 pros::Motor flywheelMotor(7);
 pros::Motor intakeMotor(9);
 
@@ -80,6 +86,16 @@ bool ifAIsPressed() {
 bool ifAIsNotPressed() {
     std::cout << "Damn. A's not pressed. Timestamp: " << pros::millis() << std::endl;
     return true;
+}
+
+int lefttank(int left) {
+    leftBottomMotors->move(left);
+    return 1;
+}
+
+int righttank(int right) {
+    rightBottomMotors->move(right);
+    return 1;
 }
 
 /**
@@ -126,8 +142,7 @@ void opcontrol() {
     lemlib::PROSButtonEvent XEvent(controlla, pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_X);
     lemlib::PROSButtonEvent BEvent(controlla, pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_B);
     lemlib::PROSButtonEvent YEvent(controlla, pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_Y);
-    lemlib::PROSButtonEvent AEvent(controlla, pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_A,
-                                   ifAIsPressed, ifAIsNotPressed);
+    lemlib::PROSButtonEvent AEvent(controlla, pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_A);
     lemlib::PROSButtonEvent L1Event(controlla, pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L1);
     lemlib::PROSButtonEvent L2Event(controlla, pros::E_CONTROLLER_DIGITAL_L2, pros::E_CONTROLLER_DIGITAL_L2);
     lemlib::PROSButtonEvent R1Event(controlla, pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R1);
@@ -143,36 +158,48 @@ void opcontrol() {
 
     lemlib::EventHandler buttonEventHandler(buttonsEvents);
 
+    lemlib::PROSJoystickEvent leftYJoystickEvent(controlla, pros::E_CONTROLLER_ANALOG_LEFT_Y,
+                                                 pros::E_CONTROLLER_ANALOG_LEFT_Y, lefttank);
+    lemlib::PROSJoystickEvent rightYJoystickEvent(controlla, pros::E_CONTROLLER_ANALOG_RIGHT_Y,
+                                                  pros::E_CONTROLLER_ANALOG_RIGHT_Y, righttank);
+
+    std::vector<std::shared_ptr<lemlib::Event>> joystickEvents(
+        {std::make_shared<lemlib::PROSJoystickEvent>(leftYJoystickEvent),
+         std::make_shared<lemlib::PROSJoystickEvent>(rightYJoystickEvent)});
 
     std::cout << "Started" << std::endl;
 
     lemlib::PROS_Gamepad gamepad(pros::E_CONTROLLER_MASTER);
-    //                             std::make_unique<lemlib::EventHandler>(buttonEventHandler), "Driver");
+    std::make_unique<lemlib::EventHandler>(buttonEventHandler), std::make_unique<lemlib::EventHandler>(joystickEvents);
 
     gamepad.startMainLoop();
 
     // controller
     // loop to continuously update motors
 
-    //buttonEventHandler.startAsyncTask();
+    // buttonEventHandler.startAsyncTask();
 
     while (true) {
         // move the chassis with curvature drive
 
         if (gamepad.toggleButton(pros::E_CONTROLLER_DIGITAL_A)) {
             flywheelMotor.move(20);
-        } 
-        else {
+        } else {
             flywheelMotor.move(0);
         }
 
         if (gamepad.toggleButton(pros::E_CONTROLLER_DIGITAL_B)) {
             intakeMotor.move(127);
             std::cout << "Button B Toggled On: " << pros::millis() << std::endl;
-        } 
-        else {
+        } else {
             intakeMotor.move(0);
         }
+
+        int leftY = gamepad.getJoystick(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rightY = gamepad.getJoystick(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+
+        leftBottomMotors->move(leftY);
+        rightBottomMotors->move(rightY);
 
         // delay to save resources
         pros::delay(10);
