@@ -111,7 +111,23 @@ lemlib::Differential chassis(drivetrain, linearController, angularController, se
 >>>>>>> cbebf76 (Added Exception handling for diff IDs)
 =======
 
+<<<<<<< HEAD
 >>>>>>> 7cf2073 (Refactored Gamepad, added std::functions to PROS button events)
+=======
+pros::Motor flywheelMotor(7);
+pros::Motor intakeMotor(9);
+
+bool ifAIsPressed() {
+    std::cout << "Hey! A's pressed, and this might be working. Timestamp: " << pros::millis() << std::endl;
+    return true;
+}
+
+bool ifAIsNotPressed() {
+    std::cout << "Damn. A's not pressed. Timestamp: " << pros::millis() << std::endl;
+    return true;
+}
+
+>>>>>>> 2b3e57f (Bug Fixes, Tested Event Handler and Gamepad)
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -263,48 +279,49 @@ void autonomous() {}
  * Runs in driver control
  */
 void opcontrol() {
+    std::cout << "Began OP Control" << std::endl;
+
     std::shared_ptr<pros::Controller> controlla = std::make_shared<pros::Controller>(pros::E_CONTROLLER_MASTER);
+
+    std::cout << "Made Controller" << std::endl;
 
     lemlib::PROSButtonEvent XEvent(controlla, pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_X);
     lemlib::PROSButtonEvent BEvent(controlla, pros::E_CONTROLLER_DIGITAL_B, pros::E_CONTROLLER_DIGITAL_B);
     lemlib::PROSButtonEvent YEvent(controlla, pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_Y);
-    lemlib::PROSButtonEvent AEvent(controlla, pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_A);
+    lemlib::PROSButtonEvent AEvent(controlla, pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_A,
+                                   ifAIsPressed, ifAIsNotPressed);
     lemlib::PROSButtonEvent L1Event(controlla, pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L1);
     lemlib::PROSButtonEvent L2Event(controlla, pros::E_CONTROLLER_DIGITAL_L2, pros::E_CONTROLLER_DIGITAL_L2);
     lemlib::PROSButtonEvent R1Event(controlla, pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R1);
     lemlib::PROSButtonEvent R2Event(controlla, pros::E_CONTROLLER_DIGITAL_R2, pros::E_CONTROLLER_DIGITAL_R2);
 
+    std::cout << "Made Button Events" << std::endl;
+
     std::vector<std::shared_ptr<lemlib::Event>> buttonsEvents(
-        {std::make_shared<lemlib::PROSButtonEvent>(L1Event), std::make_shared<lemlib::PROSButtonEvent>(L2Event),
+        {std::make_shared<lemlib::PROSButtonEvent>(XEvent), std::make_shared<lemlib::PROSButtonEvent>(AEvent),
          std::make_shared<lemlib::PROSButtonEvent>(BEvent), std::make_shared<lemlib::PROSButtonEvent>(YEvent),
          std::make_shared<lemlib::PROSButtonEvent>(L1Event), std::make_shared<lemlib::PROSButtonEvent>(L2Event),
          std::make_shared<lemlib::PROSButtonEvent>(R1Event), std::make_shared<lemlib::PROSButtonEvent>(R2Event)});
 
     lemlib::EventHandler buttonEventHandler(buttonsEvents);
 
-    lemlib::TESTEvent testEventA(false, 0);
-    lemlib::TESTEvent testEventB(false, 1);
-    lemlib::TESTEvent testEventC(true, 2);
-    lemlib::TESTEvent testEventD(false, 3);
-    lemlib::TESTEvent testEventE(true, 4);
-
-    std::vector<std::shared_ptr<lemlib::Event>> testEvents(
-        {std::make_shared<lemlib::TESTEvent>(testEventA), std::make_shared<lemlib::TESTEvent>(testEventB),
-         std::make_shared<lemlib::TESTEvent>(testEventC), std::make_shared<lemlib::TESTEvent>(testEventD),
-         std::make_shared<lemlib::TESTEvent>(testEventE)});
-
-    lemlib::EventHandler testEventHandler(testEvents);
 
     std::cout << "Started" << std::endl;
 
-    lemlib::PROS_Gamepad gamepad(pros::E_CONTROLLER_MASTER, {"Driver", "Debug"}, "Driver",
-                                 std::make_unique<lemlib::EventHandler>(buttonEventHandler));
+    lemlib::PROS_Gamepad gamepad(pros::E_CONTROLLER_MASTER, {"Driver", "Debug"});
+    //                             std::make_unique<lemlib::EventHandler>(buttonEventHandler), "Driver");
 
     gamepad.startMainLoop();
 
+    
+
     // controller
     // loop to continuously update motors
+
+    //buttonEventHandler.startAsyncTask();
+
     while (true) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         // get joystick positions
@@ -338,6 +355,25 @@ void opcontrol() {
 >>>>>>> c6869de (improve main.cpp documentation)
 =======
 >>>>>>> cbebf76 (Added Exception handling for diff IDs)
+=======
+        // move the chassis with curvature drive
+
+        if (gamepad.toggleButton(pros::E_CONTROLLER_DIGITAL_A)) {
+            flywheelMotor.move(20);
+        } 
+        else {
+            flywheelMotor.move(0);
+        }
+
+        if (gamepad.toggleButton(pros::E_CONTROLLER_DIGITAL_B)) {
+            intakeMotor.move(127);
+            std::cout << "Button B Toggled On: " << pros::millis() << std::endl;
+        } 
+        else {
+            intakeMotor.move(0);
+        }
+
+>>>>>>> 2b3e57f (Bug Fixes, Tested Event Handler and Gamepad)
         // delay to save resources
         pros::delay(10);
     }

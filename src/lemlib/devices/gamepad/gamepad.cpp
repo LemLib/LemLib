@@ -7,10 +7,9 @@
 
 namespace lemlib {
 
-
 bool AbstractGamepad::startMainLoop() {
-
-    evHandler->startAsyncTask();
+    for (uint id : butHandler->getAllIDs()) { buttonStates[id] = getButton({(int)id}); }
+    butHandler->startAsyncTask();
 
     return true;
 }
@@ -20,20 +19,27 @@ bool AbstractGamepad::startMainLoop() {
 bool AbstractGamepad::getButton(std::vector<int> buttons) {
     // If all buttons are pressed, then return false will never run, and the function will return true once for loop
     // exists. If any button is pressed, then return false will run. Used in auto button functions.
-    for (int i = 0; i > buttons.size(); i++) {
-        if (buttonStates[buttons[i]] == true) {
+
+    for (uint id : buttons) {
+        buttonStates[id] = butHandler->checkEvent(id);
+        // std::cout << butHandler->checkEvent(id) << std::endl;
+    }
+
+    for (uint id : buttons) {
+        if (buttonStates[id] == true) {
             continue;
         } else {
             return false;
         }
     }
+
     return true;
 }
 
 // REDO !!!!!!!!!!!!!!!!!!!!!!!!!!
 bool AbstractGamepad::newButtonPress(int button) {
-    bool buttonState = buttonStates[button];
     bool buttonStateLastTick = buttonStates[button];
+    bool buttonState = getButton({button});
 
     bool diffState = false;
 
@@ -57,30 +63,38 @@ bool AbstractGamepad::newButtonPress(int button) {
 }
 
 bool AbstractGamepad::toggleButton(int button) {
+    bool isButtonPressed = newButtonPress(button);
 
-    if (newButtonPress(button)) { buttonStates[button] = !buttonStates[button]; }
-
-    // - 6 offsets the button int value to match the array index
-    if (buttonStates[button] % 2 == 0) {
+    if (!buttonToggleStates[button] && isButtonPressed) {
+        // std::cout << buttonToggleStates[button] << " <- buttonstates | buttonPress -> " << !newButtonPress(button) <<
+        // std::endl;
+        buttonToggleStates[button] = true;
         return true;
-    }
-
-    else {
+    } else if (buttonToggleStates[button] && isButtonPressed) {
+        buttonToggleStates[button] = false;
+        // std::cout << buttonToggleStates[button] << " <- buttonstates | buttonPress -> " << !newButtonPress(button) <<
+        // std::endl;
+        return false;
+    } else if (buttonToggleStates[button] && !isButtonPressed) {
+        return true;
+    } else if (!buttonToggleStates[button] && !isButtonPressed) {
+        return false;
+    } else {
         return false;
     }
 }
 
 int AbstractGamepad::getJoystick(int joystickID) {
-    int joystickValue = evHandler->checkEvent(joystickID);
+    int joystickValue = joyHandler->checkEvent(joystickID);
     return joystickValue;
 }
 
 /*================ MODES ================*/
 
-void AbstractGamepad::addMode(const std::string& mode) { modes.push_back(mode); }
+// void AbstractGamepad::addMode(const std::string& mode) { modes.push_back(mode); }
 
-const std::vector<std::string> AbstractGamepad::getModes() { return modes; }
+// const std::vector<std::string> AbstractGamepad::getModes() { return modes; }
 
-void AbstractGamepad::changeMode(const std::string& mode) { currentMode = mode; }
+// void AbstractGamepad::changeMode(const std::string& mode) { currentMode = mode; }
 
-}
+} // namespace lemlib

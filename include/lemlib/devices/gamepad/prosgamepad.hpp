@@ -8,12 +8,11 @@ namespace lemlib {
 
 class PROS_Gamepad : public AbstractGamepad {
     protected:
-        pros::Controller controller;
+        std::shared_ptr<pros::Controller> controller;
     public:
         PROS_Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> modes,
-                     std::string currentMode = "DEFAULT",
-                     std::unique_ptr<EventHandler> evHandler =
-                         std::make_unique<EventHandler>(EventHandler({std::make_shared<PROSButtonEvent>(nullptr, pros::E_CONTROLLER_DIGITAL_DOWN, 0)})));
+                     std::unique_ptr<EventHandler> butHandler = nullptr,
+                     std::unique_ptr<JoystickEventHandler> joyHandler = nullptr, std::string currentMode = "DEFAULT");
 };
 
 } // namespace lemlib
