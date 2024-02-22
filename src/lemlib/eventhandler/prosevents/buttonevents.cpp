@@ -11,24 +11,16 @@ PROSButtonEvent::PROSButtonEvent(std::shared_ptr<pros::Controller> controller, p
     this->functionTrue = functionTrue;
     this->functionFalse = functionFalse;
 
-    try {
-        if (this->id > -1) {
-            std::cout << "Proper identification.";
-        } else {
-            std::cout << "Negative ID Value not allowed. Throwing exception. ";
-            throw std::exception();
-        }
-    } catch (std::exception& e) { std::cout << "Improper identification. Add ID Parameter to the Event."; }
 };
 
 bool PROSButtonEvent::check() { 
 
     bool buttonState = controller->get_digital(button);
 
-    if (buttonState) {
+    if (buttonState && functionTrue != nullptr) {
         functionTrue();
     }
-    else {
+    else if (!buttonState && functionFalse != nullptr)  {
         functionFalse();
     }
     

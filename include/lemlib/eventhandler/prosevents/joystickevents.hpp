@@ -1,12 +1,12 @@
 
-#include "lemlib/eventhandler/event.hpp"
+#include "lemlib/eventhandler/joystickevent.hpp"
 #include "pros/misc.h"
 #include "pros/rtos.h"
 #include "pros/device.hpp"
 
 namespace lemlib {
 
-class PROSJoystickEvent : public Event {
+class PROSJoystickEvent : public JoystickEvent {
     protected:
         std::shared_ptr<pros::Controller> controller;
         pros::controller_analog_e_t joystick;
@@ -17,7 +17,7 @@ class PROSJoystickEvent : public Event {
                           
         bool check() override;
 
-        int getJoystickValue();
+        int getJoystickValue() override;
 };
 
 } // namespace lemlib
