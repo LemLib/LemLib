@@ -11,10 +11,10 @@ class PROSJoystickEvent : public JoystickEvent {
     protected:
         std::shared_ptr<pros::Controller> controller;
         pros::controller_analog_e_t joystick;
-        std::function<int(pros::controller_analog_e_t)> joystickFunction;
+        std::function<int(int)> joystickFunction;
     public:
         PROSJoystickEvent(std::shared_ptr<pros::Controller> controller, pros::controller_analog_e_t joystick, uint id,
-                          std::function<int(pros::controller_analog_e_t)> joystickFunction = nullptr);
+                          std::function<int(int)> joystickFunction = nullptr);
 
         bool check() override;
 
