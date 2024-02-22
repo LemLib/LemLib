@@ -6,20 +6,24 @@ namespace lemlib {
 
 PROSMotorGroup::PROSMotorGroup(std::vector<std::unique_ptr<PROSMotor>> motorContainerArg) {
     std::cout << motorContainerArg.size() << std::endl;
-    for (int i = 0; i < motorContainerArg.size(); i++) { motorContainer.push_back((motorContainerArg).at(i)); }
+    for (int i = 0; i < motorContainerArg.size(); i++) {
+        int port = motorContainerArg.at(i)->getPort();
+        bool isReversed = motorContainerArg.at(i)->getIsReversed();
+        float gearRatio = motorContainerArg.at(i)->getGearRatio();
+        pros::v5::MotorGears gearset = motorContainerArg.at(i)->getGearset();
+
+        motorContainer.emplace_back(std::make_unique<PROSMotor>(port, isReversed, gearRatio, gearset));
+    }
 }
 
 PROSMotorGroup::PROSMotorGroup(std::vector<std::pair<MotorInfo, const pros::v5::MotorGears>> motorParameters) {
     for (int i = 0; i < motorParameters.size(); i++) {
-
-        float port = motorParameters.at(i).first.port;
+        int port = motorParameters.at(i).first.port;
         float gearRatio = motorParameters.at(i).first.gearRatio;
         bool isReversed = motorParameters.at(i).first.reversed;
-
         pros::v5::MotorGears gearset = motorParameters.at(i).second;
-        
-        motorContainer.emplace_back(
-            std::make_unique<PROSMotor>(port, isReversed, gearRatio, gearset, nullptr, nullptr));
+
+        motorContainer.emplace_back(std::make_unique<PROSMotor>(port, isReversed, gearRatio, gearset));
     }
 }
 
@@ -63,18 +67,6 @@ void PROSMotorGroup::spinJoystick(int joystickValue) {
 
     if (!isAnyBroken) {
         for (int i = 0; i < motorContainer.size(); i++) { motorContainer.at(i)->spinJoystick(joystickValue); }
-    }
-}
-
-void PROSMotorGroup::spinPercVEXPID(int percent) {
-    static bool isAnyBroken = false;
-
-    for (int i = 0; i < motorContainer.size(); i++) {
-        if (motorContainer.at(i)->getIsBroken()) { isAnyBroken = true; }
-    }
-
-    if (!isAnyBroken) {
-        for (int i = 0; i < motorContainer.size(); i++) { motorContainer.at(i)->spinPercVEXPID(percent); }
     }
 }
 
@@ -141,7 +133,9 @@ bool PROSMotorGroup::isOverheated() {
 std::vector<bool> PROSMotorGroup::getIsBroken() {
     std::vector<bool> isBrokenContainer;
 
-    for (int i = 0; i < motorContainer.size(); i++) { isBrokenContainer.push_back(motorContainer.at(i)->getIsBroken()); }
+    for (int i = 0; i < motorContainer.size(); i++) {
+        isBrokenContainer.push_back(motorContainer.at(i)->getIsBroken());
+    }
 
     return isBrokenContainer;
 }
@@ -177,7 +171,9 @@ float PROSMotorGroup::getVoltage() {
 float PROSMotorGroup::getAvgIMEPos() {
     float averageEncoderPositions = 0;
 
-    for (int i = 0; i < motorContainer.size(); i++) { averageEncoderPositions += motorContainer.at(i)->getEncoderPos(); }
+    for (int i = 0; i < motorContainer.size(); i++) {
+        averageEncoderPositions += motorContainer.at(i)->getEncoderPos();
+    }
 
     averageEncoderPositions /= motorContainer.size();
 

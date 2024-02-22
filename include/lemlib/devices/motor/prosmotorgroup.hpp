@@ -19,8 +19,6 @@ class PROSMotorGroup : public Abstract_Motor {
 
         void spinJoystick(int joystickValue) override;
 
-        void spinPercVEXPID(int percent) override;
-
         void spinAtRPM(int RPM) override;
 
         void spinUntilDegree(int degree, int speedInVoltage) override;

@@ -25,8 +25,6 @@ protected:
 
     float gearRatio = 0;
 
-    pros::motor_gearset_e gearset = pros::E_MOTOR_GEAR_GREEN;
-
 public:
 
     virtual void spinAtVoltage(int voltage) = 0;
@@ -34,8 +32,6 @@ public:
     virtual void spinPerc(int percent) = 0;
  
     virtual void spinJoystick(int joystickValue) = 0;
- 
-    virtual void spinPercVEXPID(int percent) = 0;
  
     virtual void spinAtRPM(int RPM) = 0;
  
