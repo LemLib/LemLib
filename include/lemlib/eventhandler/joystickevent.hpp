@@ -1,3 +1,4 @@
+#pragma once
 
 #include "lemlib/eventhandler/event.hpp"
 #include "pros/misc.h"

@@ -9,9 +9,8 @@
 
 namespace lemlib {
 
-PROS_Gamepad::PROS_Gamepad(pros::controller_id_e_t controllerID, std::vector<std::string> modes,
-                           std::unique_ptr<EventHandler> butHandler, std::unique_ptr<JoystickEventHandler> joyHandler,
-                           std::string currentMode) {
+PROS_Gamepad::PROS_Gamepad(pros::controller_id_e_t controllerID, std::unique_ptr<EventHandler> butHandler,
+                           std::unique_ptr<JoystickEventHandler> joyHandler) {
     this->controller = std::make_shared<pros::Controller>(controllerID);
 
     if (butHandler != nullptr) {
