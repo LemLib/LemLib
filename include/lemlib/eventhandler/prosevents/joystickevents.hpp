@@ -18,7 +18,7 @@ class PROSJoystickEvent : public JoystickEvent {
 
         bool check() override;
 
-        int getJoystickValue() override;
+        int checkJoystick() override;
 };
 
 } // namespace lemlib

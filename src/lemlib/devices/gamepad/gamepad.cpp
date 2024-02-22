@@ -17,6 +17,14 @@ bool AbstractGamepad::startMainLoop() {
 /*================ BUTTONS/JOYSTICK ================*/
 
 bool AbstractGamepad::getButton(std::vector<int> buttons) {
+
+    for (auto id : buttons) {
+        if (!butHandler->isValidID(id)) {
+            std::cout << "Invalid Button ID " << id << ": Returning false by default. " << std::endl;
+            return false;
+        }
+    }    
+
     // If all buttons are pressed, then return false will never run, and the function will return true once for loop
     // exists. If any button is pressed, then return false will run. Used in auto button functions.
 
@@ -38,6 +46,11 @@ bool AbstractGamepad::getButton(std::vector<int> buttons) {
 
 // REDO !!!!!!!!!!!!!!!!!!!!!!!!!!
 bool AbstractGamepad::newButtonPress(int button) {
+    if (!butHandler->isValidID(button)) {
+        std::cout << "Invalid Button ID " << button << ": Returning false by default. " << std::endl;
+        return false;
+    }
+
     bool buttonStateLastTick = buttonStates[button];
     bool buttonState = getButton({button});
 
@@ -63,6 +76,11 @@ bool AbstractGamepad::newButtonPress(int button) {
 }
 
 bool AbstractGamepad::toggleButton(int button) {
+    if (!butHandler->isValidID(button)) {
+        std::cout << "Invalid Button ID " << button << ": Returning false by default. " << std::endl;
+        return false;
+    }
+
     bool isButtonPressed = newButtonPress(button);
 
     if (!buttonToggleStates[button] && isButtonPressed) {
