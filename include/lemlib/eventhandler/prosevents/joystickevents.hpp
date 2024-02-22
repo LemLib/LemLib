@@ -1,3 +1,4 @@
+#pragma once
 
 #include "lemlib/eventhandler/joystickevent.hpp"
 #include "pros/misc.h"
@@ -14,7 +15,7 @@ class PROSJoystickEvent : public JoystickEvent {
     public:
         PROSJoystickEvent(std::shared_ptr<pros::Controller> controller, pros::controller_analog_e_t joystick, uint id,
                           std::function<int(pros::controller_analog_e_t)> joystickFunction = nullptr);
-                          
+
         bool check() override;
 
         int getJoystickValue() override;

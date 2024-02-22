@@ -1,3 +1,4 @@
+#pragma once
 
 #include "lemlib/eventhandler/eventhandler.hpp"
 #include "lemlib/eventhandler/joystickevent.hpp"
