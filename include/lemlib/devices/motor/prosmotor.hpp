@@ -27,7 +27,7 @@ class PROSMotor : public Abstract_Motor {
         pros::motor_gearset_e gearset = pros::E_MOTOR_GEAR_GREEN;
     public:
         /**
-         * @brief Construct a new Uvuv Motor object
+         * @brief Construct a new Motor object
          *
          * @param port V5 Smart Port number
          * @param isReversedArg Defines direction of the motor spinning. True is reversed, false is normal.
@@ -45,8 +45,6 @@ class PROSMotor : public Abstract_Motor {
         void spinPerc(int percent) override;
 
         void spinJoystick(int joystickValue) override;
-
-        void spinPercVEXPID(int percent) override;
 
         void spinAtRPM(int RPM) override;
 
@@ -71,6 +69,31 @@ class PROSMotor : public Abstract_Motor {
         float getVoltage();
 
         float getEncoderPos();
+
+        int getPort();
+
+        void setGearset(pros::v5::MotorGears gearset);
+
+        pros::v5::MotorGears getGearset();
+
+        void setReversed(bool isReversed);
+
+        bool getIsReversed();
+
+        void setPairMotor(std::shared_ptr<PROSMotor> pairMotor);
+
+        std::shared_ptr<PROSMotor> getPairMotor();
+
+        void setPID(std::shared_ptr<FAPID> pid);
+
+        std::shared_ptr<FAPID> getPID();
+
+        void setGearRatio(float gearRatio);
+
+        float getGearRatio();
+
+
+
 };
 
 } // namespace lemlib

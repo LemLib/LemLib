@@ -51,11 +51,6 @@ void PROSMotor::spinJoystick(int joystickValue) {
     }
 }
 
-void PROSMotor::spinPercVEXPID(int percent) {
-    if (!isBroken) {
-        motor->move(voltage);
-    }
-}
 
 void PROSMotor::spinAtRPM(int RPM) {
     if (!isBroken) {
@@ -110,6 +105,50 @@ bool PROSMotor::isOverheated() {
     else {
         return false;
     }
+}
+
+int PROSMotor::getPort() {
+    return motor->get_port();
+}
+
+void PROSMotor::setGearset(pros::v5::MotorGears gearset) {
+    motor->set_gearing(gearset);
+}
+
+pros::v5::MotorGears PROSMotor::getGearset() {
+    return motor->get_gearing();
+}
+
+void PROSMotor::setReversed(bool isReversed) {
+    motor->set_reversed(isReversed);
+}
+
+bool PROSMotor::getIsReversed() {
+    return isReversed;
+}
+
+void PROSMotor::setPairMotor(std::shared_ptr<PROSMotor> pairMotor) {
+    this->pairMotor = pairMotor;
+}
+
+std::shared_ptr<PROSMotor> PROSMotor::getPairMotor() {
+    return pairMotor;
+}
+
+void PROSMotor::setPID(std::shared_ptr<FAPID> pid) {
+    this->pid = pid;
+}
+
+std::shared_ptr<FAPID> PROSMotor::getPID() {
+    return pid;
+}
+
+void PROSMotor::setGearRatio(float gearRatio) {
+    this->gearRatio = gearRatio;
+}
+
+float PROSMotor::getGearRatio() {
+    return gearRatio;
 }
 
 } // namespace lemlib
