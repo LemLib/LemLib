@@ -11,9 +11,8 @@ class JoystickEvent : public Event {
     protected:
         uint id;
     public:
-        bool check() override;
-
-        virtual int getJoystickValue() = 0;
+        
+        virtual int checkJoystick() = 0;
 };
 
 } // namespace lemlib

@@ -21,7 +21,7 @@ bool PROSJoystickEvent::check() {
     }
 }
 
-int PROSJoystickEvent::getJoystickValue() {
+int PROSJoystickEvent::checkJoystick() {
     return controller->get_analog(joystick);
 }
 
