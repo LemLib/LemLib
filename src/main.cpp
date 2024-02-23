@@ -2,11 +2,18 @@
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "lemlib/eventhandler/joystickeventhandler.hpp"
 #include "lemlib/eventhandler/prosevents/joystickevents.hpp"
 #include "lemlib/eventhandler/testevents.hpp"
+=======
+#include "lemlib/devices/motor/prosmotor.hpp"
+>>>>>>> f2ac31a (Safety things)
 #include "lemlib/logger/stdout.hpp"
+#include "lemlib/devices/motor/prosmotorgroup.hpp"
+#include "pros/abstract_motor.hpp"
 #include "pros/misc.h"
+<<<<<<< HEAD
 #include "lemlib/eventhandler/eventhandler.hpp"
 #include "lemlib/eventhandler/prosevents/buttonevents.hpp"
 #include "lemlib/devices/gamepad/prosgamepad.hpp"
@@ -19,6 +26,9 @@
 #include "pros/misc.h"
 #include <memory>
 >>>>>>> cbd5330 (Began making everything a shared ptr)
+=======
+#include "pros/motors.h"
+>>>>>>> f2ac31a (Safety things)
 
 /*
 // controller
@@ -58,12 +68,16 @@ auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::bl
 >>>>>>> a4d44aa (Event Handler restructuring)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // tracking wheels
 // horizontal tracking wheel encoder. Rotation sensor, port 15, reversed (negative signs don't work due to a pros bug)
 pros::Rotation horizontalEnc(15, true);
 // horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot (negative)
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
 =======
+=======
+lemlib::PROSMotor testMotor(7, false, 3, pros::v5::MotorGears::rpm_600);
+>>>>>>> f2ac31a (Safety things)
 // Inertial Sensor on port 11
 pros::Imu imu(11);
 pros::GPS gps(20);
@@ -449,6 +463,7 @@ void opcontrol() {
         // move the chassis with curvature drive
 <<<<<<< HEAD
         chassis.curvature(leftY, rightX);
+<<<<<<< HEAD
 =======
 >>>>>>> c6869de (improve main.cpp documentation)
 =======
@@ -484,6 +499,12 @@ void opcontrol() {
         // move the chassis with curvature drive
         chassis.tank(leftY, rightY);
 >>>>>>> c6c8c76 (Final commit)
+=======
+
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+            testMotor.spinPerc(50);
+        }
+>>>>>>> f2ac31a (Safety things)
         // delay to save resources
         pros::delay(10);
     }
