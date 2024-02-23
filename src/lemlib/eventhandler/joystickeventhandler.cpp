@@ -18,7 +18,7 @@ JoystickEventHandler::JoystickEventHandler(std::vector<std::shared_ptr<JoystickE
         }
     }
 
-    std::cout << "    Event Vector:  ";
+    std::cout << "    Joystick Vector:  ";
     for (auto& event : this->joyVector) { std::cout << " " << event->getId() << ", "; }
     std::cout << std::endl;
     for (int i = 0; i < this->joyVector.size() - 1; i++) {
@@ -45,9 +45,9 @@ int JoystickEventHandler::checkEvent(uint id) {
     int eventResult = 0;
     int index = 0;
 
-    for (auto event : eventVector) {
+    for (auto event : joyVector) {
         if (id == event->getId()) {
-            eventResult = event->check();
+            eventResult = event->checkJoystick();
         }
         
     }
@@ -61,9 +61,10 @@ int JoystickEventHandler::checkEvent(uint id) {
         }
     }
 
-    joystickStates[id] = eventResult;
+    joystickStates[index] = eventResult;
     
-    return joystickStates[id];
+    std::cout << "Event Result : " << eventResult << " VS joyState : " << joystickStates[index] << std::endl;
+    return joystickStates[index];
 }
 
 void JoystickEventHandler::startAsyncTask() {

@@ -1,6 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/eventhandler/joystickeventhandler.hpp"
 #include "lemlib/eventhandler/prosevents/joystickevents.hpp"
 #include "lemlib/eventhandler/testevents.hpp"
 #include "lemlib/logger/stdout.hpp"
@@ -163,14 +164,17 @@ void opcontrol() {
     lemlib::PROSJoystickEvent rightYJoystickEvent(controlla, pros::E_CONTROLLER_ANALOG_RIGHT_Y,
                                                   pros::E_CONTROLLER_ANALOG_RIGHT_Y, righttank);
 
-    std::vector<std::shared_ptr<lemlib::Event>> joystickEvents(
+    std::vector<std::shared_ptr<lemlib::JoystickEvent>> joystickEvents(
         {std::make_shared<lemlib::PROSJoystickEvent>(leftYJoystickEvent),
          std::make_shared<lemlib::PROSJoystickEvent>(rightYJoystickEvent)});
 
+    lemlib::JoystickEventHandler joystickEventHandler(joystickEvents);
+
     std::cout << "Started" << std::endl;
 
-    lemlib::PROS_Gamepad gamepad(pros::E_CONTROLLER_MASTER);
-    std::make_unique<lemlib::EventHandler>(buttonEventHandler), std::make_unique<lemlib::EventHandler>(joystickEvents);
+    lemlib::PROS_Gamepad gamepad(pros::E_CONTROLLER_MASTER, 
+        std::make_unique<lemlib::EventHandler>(buttonEventHandler),
+        std::make_unique<lemlib::JoystickEventHandler>(joystickEventHandler));
 
     gamepad.startMainLoop();
 
@@ -198,8 +202,8 @@ void opcontrol() {
         int leftY = gamepad.getJoystick(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightY = gamepad.getJoystick(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 
-        leftBottomMotors->move(leftY);
-        rightBottomMotors->move(rightY);
+        //leftBottomMotors->move(leftY);
+        //rightBottomMotors->move(rightY);
 
         // delay to save resources
         pros::delay(10);

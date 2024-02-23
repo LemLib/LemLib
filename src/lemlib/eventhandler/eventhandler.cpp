@@ -23,25 +23,25 @@ EventHandler::EventHandler(std::vector<std::shared_ptr<Event>>& eventVector) {
 
     // Bubble Sort the Event IDs
 
-    for (int i = 0; i < eventVector.size(); i++) {
-        for (int j = 0; j < eventVector.size() - i - 1; j++) {
-            if (eventVector.at(j)->getId() > eventVector.at(j + 1)->getId()) {
-                std::swap(eventVector.at(j), eventVector.at(j + 1));
+    for (int i = 0; i < this->eventVector.size(); i++) {
+        for (int j = 0; j < this->eventVector.size() - i - 1; j++) {
+            if (this->eventVector.at(j)->getId() > this->eventVector.at(j + 1)->getId()) {
+                std::swap(this->eventVector.at(j), this->eventVector.at(j + 1));
             }
         }
     }
 
     std::cout << "    Event Vector:  ";
-    for (auto& event : eventVector) { std::cout << " " << event->getId() << ", "; }
+    for (auto& event : this->eventVector) { std::cout << " " << event->getId() << ", "; }
     std::cout << std::endl;
-    for (int i = 0; i < eventVector.size() - 1; i++) {
+    for (int i = 0; i < this->eventVector.size() - 1; i++) {
         // If the ID is the same as the next ID, then throw an exception.
-        if (eventVector.at(i)->getId() != eventVector.at(i + 1)->getId()) {
-            std::cout << "Valid IDs: " << eventVector.at(i)->getId() << " != " << eventVector.at(i + 1)->getId()
+        if (this->eventVector.at(i)->getId() != this->eventVector.at(i + 1)->getId()) {
+            std::cout << "Valid IDs: " << this->eventVector.at(i)->getId() << " != " << this->eventVector.at(i + 1)->getId()
                       << std::endl;
         } else {
-            std::cout << "Event IDs at " << i << ", " << i + 1 << " of " << eventVector.at(i)->getId() << " = "
-                      << eventVector.at(i + 1)->getId() << " are not unique. ";
+            std::cout << "Event IDs at " << i << ", " << i + 1 << " of " << this->eventVector.at(i)->getId() << " = "
+                      << this->eventVector.at(i + 1)->getId() << " are not unique. ";
             std::cout << "Throwing exception." << std::endl;
             throw std::exception();
             pros::delay(200);

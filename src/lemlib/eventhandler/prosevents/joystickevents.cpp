@@ -9,19 +9,19 @@ PROSJoystickEvent::PROSJoystickEvent(std::shared_ptr<pros::Controller> controlle
     this->joystick = joystick;
     this->id = id;
     this->joystickFunction = joystickFunction;
-
    
 };
 
 bool PROSJoystickEvent::check() {
-    if (joystickFunction != nullptr) {
-        return joystickFunction(joystick);
-    } else {
-        return controller->get_analog(joystick);
-    }
+    
+    return joystickFunction(joystick);
+    
 }
 
 int PROSJoystickEvent::checkJoystick() {
+    
+    int x = joystickFunction(controller->get_analog(joystick));
+
     return controller->get_analog(joystick);
 }
 
