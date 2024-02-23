@@ -6,7 +6,7 @@ namespace lemlib {
 
 PROSMotor::PROSMotor(const uint8_t port, const bool isReversed, float gearRatioArg, const pros::v5::MotorGears gearset, 
     std::shared_ptr<PROSMotor> pairMotor, std::shared_ptr<FAPID> pid) {
-        this->motor = std::make_unique<pros::Motor>(port, gearset);
+        this->motor = std::move(std::make_unique<pros::Motor>(port, gearset));
         this->motor->set_reversed(isReversed);
         this->isReversed = isReversed;
         this->gearRatio = gearRatioArg;
@@ -33,6 +33,10 @@ float PROSMotor::getEncoderPos() {
 }
 
 void PROSMotor::spinAtVoltage(int voltage) {
+
+    if (voltage > 12000) voltage = 12000;
+    if (voltage < -12000) voltage = -12000;
+    
     if (!isBroken) {
         motor->move_voltage(voltage);
     }
@@ -40,9 +44,15 @@ void PROSMotor::spinAtVoltage(int voltage) {
 }
 
 void PROSMotor::spinPerc(int percent) {
+
+    if (percent > 100) percent = 100;
+    if (percent < -100) percent = -100;
+
     if (!isBroken) {
-        motor->move_voltage(percent / 100 * 12000);
+        motor->move(percent / 100 * 127);
     }
+    std::cout << " Port Value: " << motor->get_port() << std::endl;
+    //motor->move(127);
 }
 
 void PROSMotor::spinJoystick(int joystickValue) {

@@ -1,8 +1,12 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/devices/motor/prosmotor.hpp"
 #include "lemlib/logger/stdout.hpp"
+#include "lemlib/devices/motor/prosmotorgroup.hpp"
+#include "pros/abstract_motor.hpp"
 #include "pros/misc.h"
+#include "pros/motors.h"
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -13,6 +17,7 @@ auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::bl
 // right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
 auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 
+lemlib::PROSMotor testMotor(7, false, 3, pros::v5::MotorGears::rpm_600);
 // Inertial Sensor on port 11
 pros::Imu imu(11);
 
@@ -135,6 +140,10 @@ void opcontrol() {
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         // move the chassis with curvature drive
         chassis.curvature(leftY, rightX);
+
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+            testMotor.spinPerc(50);
+        }
         // delay to save resources
         pros::delay(10);
     }
