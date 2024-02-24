@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 
+#include "lemlib/path/path.hpp"
 #include "pros/rtos.hpp"
 #include "pros/motors.hpp"
 
@@ -255,14 +256,14 @@ class Differential : public Chassis {
         /**
          * @brief Move the chassis along a path
          *
-         * @param filePath the filename of the path to follow
+         * @param path  the path to follow
          * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
          * will follow the path less accurately
          * @param timeout the maximum time the robot can spend moving
          * @param reversed whether the robot should follow the path in reverse. false by default
          * @param maxSpeed the maximum speed the robot can move at
          */
-        void follow(const asset& path, float lookahead, int timeout, bool reversed = false, int maxSpeed = 127);
+        void follow(Path path, float lookahead, int timeout, bool reversed = true, int maxSpeed = 127);
 
         /**
          * @brief Control the robot during the driver control period using the tank drive control scheme. In this
