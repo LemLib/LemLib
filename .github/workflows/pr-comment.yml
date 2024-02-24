@@ -22,9 +22,11 @@ jobs:
               const {data: comments} = await github.rest.issues.listComments(
                 {owner, repo, issue_number});
                 
-              const marker = `<!-- DO NOT REMOVE!! -->\n<!-- bot: ${purpose} -->\n`;
-            
-              body = old_body.split(marker)[0] + marker + body;
+              const marker = `\r\n<!-- DO NOT REMOVE!! -->\r\n<!-- bot: ${purpose} -->\r\n`;
+
+              const old_marker = new RegExp(marker.replace("\r\n", "\r?\n")).exec(old_body)?.[0] ?? marker;
+              
+              body = old_body.split(old_marker)[0] + marker + body;
               await github.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
                 owner: owner,
                 repo: repo,
@@ -52,6 +54,7 @@ jobs:
                   }
                 }
               }
+              return {};  
             })();            
             if (issue_number) {
               core.info(`Using pull request ${issue_number}`);

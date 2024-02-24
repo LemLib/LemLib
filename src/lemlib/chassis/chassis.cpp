@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2023
  *
  */
-#include <math.h>
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/chassis.hpp"
 
@@ -20,7 +19,7 @@ namespace lemlib {
  */
 void Chassis::setPose(float x, float y, float theta, bool radians) {
     Pose pose(x, y, theta);
-    setPose(pose, radians);
+    this->setPose(pose, radians);
 }
 
 /**
@@ -32,7 +31,7 @@ void Chassis::setPose(float x, float y, float theta, bool radians) {
 void Chassis::setPose(Pose pose, bool radians) {
     if (!radians) pose.theta = degToRad(pose.theta);
     pose.theta = M_PI_2 - pose.theta;
-    odom->setPose(pose);
+    this->odom->setPose(pose);
 }
 
 /**
@@ -41,8 +40,8 @@ void Chassis::setPose(Pose pose, bool radians) {
  * This function is a wrapper for the Odometry::getPose() function
  * but it also transforms the pose to the format needed by the user
  */
-Pose Chassis::getPose(bool radians) {
-    Pose pose = odom->getPose();
+Pose Chassis::getPose(bool radians) const {
+    Pose pose = this->odom->getPose();
     pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
     return pose;
@@ -60,12 +59,12 @@ void Chassis::waitUntil(float dist) {
     // give the movement time to start
     pros::delay(10);
     // wait until the robot has travelled a certain distance
-    while (movement != nullptr && movement->getDist() < dist && movement->getDist() >= prevDist) {
-        prevDist = movement->getDist(); // update previous distance
+    while (this->movement != nullptr && this->movement->getDist() < dist && this->movement->getDist() >= prevDist) {
+        this->prevDist = this->movement->getDist(); // update previous distance
         pros::delay(10);
     }
     // set prevDist to 0
-    prevDist = 0;
+    this->prevDist = 0;
 }
 
 /**
@@ -75,12 +74,12 @@ void Chassis::waitUntilDone() {
     // give the movement time to start
     pros::delay(10);
     // wait until the movement is done
-    while (movement != nullptr && movement->getDist() >= prevDist) {
-        prevDist = movement->getDist(); // update previous distance
+    while (this->movement != nullptr && this->movement->getDist() >= prevDist) {
+        this->prevDist = this->movement->getDist(); // update previous distance
         pros::delay(10);
     }
     // set prevDist to 0
-    prevDist = 0;
+    this->prevDist = 0;
 }
 
 /**

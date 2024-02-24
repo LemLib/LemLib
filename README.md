@@ -1,4 +1,13 @@
-# LemLib
+<img src="docs/assets/LemLib_background_v2.2.png">
+<p align="center">
+    <img src="https://img.shields.io/github/contributors/LemLib/LemLib?style=for-the-badge">
+    <img src="https://img.shields.io/github/stars/LemLib/LemLib?style=for-the-badge">
+    <img src="https://img.shields.io/github/downloads/LemLib/LemLib/total?style=for-the-badge">
+    <img src="https://img.shields.io/github/actions/workflow/status/LemLib/LemLib/pros-build.yml?style=for-the-badge">
+    <img src="https://img.shields.io/badge/version-v0.4.7-blue?style=for-the-badge">
+    <img src="https://img.shields.io/badge/pre_release-v0.5.0-blue?style=for-the-badge">
+</p>
+<hr>
 Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.
 
 The creation of this template was inspired by [EZ-Template](https://github.com/EZ-Robotics/EZ-Template) and [OkapiLib](https://github.com/OkapiLib/OkapiLib). We aim to develop a library that strikes a balance between ease-of-use, akin to that of EZ-Template, and comprehensive functionality, similar to that of OkapiLib.
