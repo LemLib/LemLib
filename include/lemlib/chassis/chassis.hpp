@@ -396,7 +396,7 @@ class Chassis {
          * @brief Resets the x and y position of the robot
          * without interfering with the heading.
          */
-         void resetLocalPosition();
+        void resetLocalPosition();
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
