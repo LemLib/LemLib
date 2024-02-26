@@ -3,13 +3,11 @@
 
 namespace lemlib {
 
-TESTEvent::TESTEvent(bool state, uint id)  {
+TESTEvent::TESTEvent(bool state, uint id) {
     this->state = state;
     this->id = id;
 }
 
-bool TESTEvent::check() {
-    return state;
-}
+bool TESTEvent::check() { return state; }
 
 } // namespace lemlib

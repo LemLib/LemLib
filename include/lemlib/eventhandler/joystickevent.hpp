@@ -9,9 +9,7 @@ namespace lemlib {
 
 class JoystickEvent : public Event {
     protected:
-    
     public:
-        
         virtual int checkJoystick() = 0;
 };
 

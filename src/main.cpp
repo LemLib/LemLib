@@ -172,9 +172,8 @@ void opcontrol() {
 
     std::cout << "Started" << std::endl;
 
-    lemlib::PROS_Gamepad gamepad(pros::E_CONTROLLER_MASTER, 
-        std::make_unique<lemlib::EventHandler>(buttonEventHandler),
-        std::make_unique<lemlib::JoystickEventHandler>(joystickEventHandler));
+    lemlib::PROS_Gamepad gamepad(pros::E_CONTROLLER_MASTER, std::make_unique<lemlib::EventHandler>(buttonEventHandler),
+                                 std::make_unique<lemlib::JoystickEventHandler>(joystickEventHandler));
 
     gamepad.startMainLoop();
 
@@ -202,8 +201,8 @@ void opcontrol() {
         int leftY = gamepad.getJoystick(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightY = gamepad.getJoystick(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 
-        //leftBottomMotors->move(leftY);
-        //rightBottomMotors->move(rightY);
+        // leftBottomMotors->move(leftY);
+        // rightBottomMotors->move(rightY);
 
         // delay to save resources
         pros::delay(10);
