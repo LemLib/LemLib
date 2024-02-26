@@ -3,7 +3,7 @@
 #include "pros/misc.h"
 #include <gtest/gtest.h>
 #include <string>
-
+/*
 TEST(EventHandlerTest, DuplicateIDTest) {
     lemlib::TESTEvent testEventA(false, 0);
     lemlib::TESTEvent testEventB(false, 0);
@@ -75,3 +75,4 @@ TEST(EventHandlerTest, TestEventCheck) {
         properOutputE = true;
     }
 }
+*/

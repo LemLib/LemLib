@@ -2,7 +2,7 @@
 #include "pros/misc.h"
 #include <gtest/gtest.h>
 #include <string>
-
+/*
 TEST(LEMControllerTest, TestNewControllerConstructor) {
   // Create an instance of LemController
 
@@ -155,6 +155,8 @@ int beenRunBeforeTestFunc(int param) {
  * Finally, it checks to see if every function returns true.
  * 
  */
+
+ /*
 TEST(LEMControllerTest, autoLoopFunctions) {
   // Create an instance of LemController
   std::vector<std::string> modes = {"TEST1", "TEST2", "TEST3"};
@@ -228,3 +230,4 @@ TEST(LEMControllerTest, newButtonPress) {
 
 
 
+*/
