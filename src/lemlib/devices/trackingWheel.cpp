@@ -63,7 +63,7 @@ TrackingWheel::TrackingWheel(int port, float diameter, float offset, float ratio
 /**
  * Reset the tracking wheel.
  */
-bool TrackingWheel::reset() { return this->encoder->reset(); }
+bool TrackingWheel::reset() { return this->encoder->tare(); }
 
 /**
  * Get the distance travelled by the tracking wheel, in inches

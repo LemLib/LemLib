@@ -183,6 +183,14 @@ std::vector<std::unique_ptr<Abstract_Motor>>& PROSMotorGroup::getMotorContainer(
     return motorContainer;
 }
 
+std::vector<int> PROSMotorGroup::getBaseRPMs() {
+    std::vector<int> baseRPMs;
 
+    for (int i = 0; i < motorContainer.size(); i++) {
+        baseRPMs.push_back(motorContainer.at(i)->getGearset());
+    }
+
+    return baseRPMs;
+}
 
 } // namespace lemlib

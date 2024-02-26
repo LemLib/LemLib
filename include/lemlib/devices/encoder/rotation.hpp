@@ -27,7 +27,7 @@ class RotationEncoder : public Encoder {
          * @return true calibration failed
          * @return false calibration succeeded
          */
-        bool reset() override;
+        bool tare() override;
     private:
         pros::Rotation rotation;
         const float ratio;

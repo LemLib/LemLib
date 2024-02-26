@@ -41,6 +41,8 @@ class PROSMotorGroup : public Abstract_MotorGroup {
 
         std::vector<float> getAllRPM();
 
+        std::vector<int> getBaseRPMs() override;
+
         std::vector<double> getPositions() override;
 
         float getAverageRPM();

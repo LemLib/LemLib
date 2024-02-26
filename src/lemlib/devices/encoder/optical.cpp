@@ -28,5 +28,5 @@ float OpticalEncoder::getAngle() {
 /**
  * Reset/calibrate the optical encoder
  */
-bool OpticalEncoder::reset() { return (this->optical.reset()) ? 0 : 1; }
+bool OpticalEncoder::tare() { return (this->optical.reset()) ? 0 : 1; }
 }; // namespace lemlib
