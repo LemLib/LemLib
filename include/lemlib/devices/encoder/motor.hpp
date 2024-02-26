@@ -29,7 +29,7 @@ class MotorEncoder : public Encoder {
          * @return true calibration failed
          * @return false calibration succeeded
          */
-        bool reset() override;
+        bool tare() override;
     private:
         std::shared_ptr<Abstract_MotorGroup> motors;
         const float rpm;

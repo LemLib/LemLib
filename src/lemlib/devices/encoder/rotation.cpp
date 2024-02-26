@@ -32,7 +32,7 @@ float RotationEncoder::getAngle() {
 /**
  * Reset/calibrate the optical encoder
  */
-bool RotationEncoder::reset() {
+bool RotationEncoder::tare() {
     this->lastAngle = 0;
     return (this->rotation.reset_position()) ? 0 : 1;
 }

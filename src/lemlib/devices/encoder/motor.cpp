@@ -45,8 +45,10 @@ float MotorEncoder::getAngle() {
 /**
  * Reset the motor encoders.
  */
-bool MotorEncoder::reset() {
+bool MotorEncoder::tare() {
     this->lastAngle = 0;
-    return (this->motors->tare_position()) ? 0 : 1;
+    int lastPos = this->motors->getPositions().at(0);
+    this->motors->set_zero_position(motors->getPositions().at(0));
+    return (lastPos != motors->getPositions().at(0));
 }
 }; // namespace lemlib

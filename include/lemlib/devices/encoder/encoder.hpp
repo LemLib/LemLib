@@ -34,7 +34,7 @@ class Encoder {
          * @return true encoder calibration failed
          * @return false encoder calibration succeeded
          */
-        virtual bool reset() = 0;
+        virtual bool tare() = 0;
     protected:
         float lastAngle = 0;
 };

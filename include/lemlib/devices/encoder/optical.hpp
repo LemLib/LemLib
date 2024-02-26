@@ -28,7 +28,7 @@ class OpticalEncoder : public Encoder {
          * @return true calibration failed
          * @return false calibration succeeded
          */
-        bool reset() override;
+        bool tare() override;
     private:
         pros::adi::Encoder optical;
         const float ratio;

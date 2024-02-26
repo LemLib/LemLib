@@ -55,31 +55,31 @@ public:
     
     virtual bool isOverheated() = 0;
 
-    virtual bool getIsBroken();
+    virtual bool getIsBroken() = 0;
 
-    virtual float getRPM();
+    virtual float getRPM() = 0;
 
-    virtual float getVoltage();
+    virtual float getVoltage() = 0;
 
-    virtual int getPort();
+    virtual int getPort() = 0;
 
-    virtual void setGearset(int gearset);
+    virtual void setGearset(int gearset) = 0;
 
-    virtual int getGearset();
+    virtual int getGearset() = 0;
 
-    virtual void setReversed(bool isReversed);
+    virtual void setReversed(bool isReversed) = 0;
 
-    virtual bool getIsReversed();
+    virtual bool getIsReversed() = 0;
 
-    virtual std::shared_ptr<Abstract_Motor> getPairMotor();
+    virtual std::shared_ptr<Abstract_Motor> getPairMotor() = 0;
 
-    virtual void setPID(std::shared_ptr<FAPID> pid);
+    virtual void setPID(std::shared_ptr<FAPID> pid) = 0;
 
-    virtual std::shared_ptr<FAPID> getPID();
+    virtual std::shared_ptr<FAPID> getPID() = 0;
 
-    virtual void setGearRatio(float gearRatio);
+    virtual void setGearRatio(float gearRatio) = 0;
 
-    virtual float getGearRatio();
+    virtual float getGearRatio() = 0;
     
 };
 
