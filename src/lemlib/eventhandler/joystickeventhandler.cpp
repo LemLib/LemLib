@@ -41,28 +41,22 @@ JoystickEventHandler::~JoystickEventHandler() {
 }
 
 int JoystickEventHandler::checkEvent(uint id) {
-
     int eventResult = 0;
     int index = 0;
 
     for (auto event : joyVector) {
-        if (id == event->getId()) {
-            eventResult = event->checkJoystick();
-        }
-        
+        if (id == event->getId()) { eventResult = event->checkJoystick(); }
     }
 
     // { 0, 3, 5, 6 }
     // ID = 3, index = 1
 
     for (int i = 0; i < joyVector.size(); i++) {
-        if (id <= joyVector.at(i)->getId()) {
-            index = i;
-        }
+        if (id <= joyVector.at(i)->getId()) { index = i; }
     }
 
     joystickStates[index] = eventResult;
-    
+
     std::cout << "Event Result : " << eventResult << " VS joyState : " << joystickStates[index] << std::endl;
     return joystickStates[index];
 }

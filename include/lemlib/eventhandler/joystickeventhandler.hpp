@@ -6,20 +6,16 @@
 namespace lemlib {
 
 class JoystickEventHandler : public EventHandler {
-protected:
-    
-    std::vector<int> joystickStates;
-    std::vector<std::shared_ptr<JoystickEvent>> joyVector;
+    protected:
+        std::vector<int> joystickStates;
+        std::vector<std::shared_ptr<JoystickEvent>> joyVector;
+    public:
+        JoystickEventHandler(std::vector<std::shared_ptr<JoystickEvent>>& joyVector);
+        ~JoystickEventHandler();
 
-public: 
+        int checkEvent(uint id);
 
-    JoystickEventHandler(std::vector<std::shared_ptr<JoystickEvent>>& joyVector);
-    ~JoystickEventHandler();
-
-    int checkEvent(uint id);
-
-    void startAsyncTask();
-
+        void startAsyncTask();
 };
 
-}
+} // namespace lemlib

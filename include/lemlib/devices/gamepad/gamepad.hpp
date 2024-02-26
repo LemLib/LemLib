@@ -9,7 +9,6 @@ namespace lemlib {
 
 class AbstractGamepad {
     protected:
-        
         std::unordered_map<int, bool> buttonStates;
         std::unordered_map<int, bool> buttonToggleStates;
 
@@ -17,9 +16,7 @@ class AbstractGamepad {
         std::unique_ptr<JoystickEventHandler> joyHandler;
 
         // ControllerValues controllerValues;
-
     public:
-        
         bool startMainLoop();
 
         /*================ BUTTONS/JOYSTICK ================*/
@@ -60,7 +57,6 @@ class AbstractGamepad {
          */
         int getJoystick(int joystickID);
 
-
         /*================ MODES ================*/
 
         /**
@@ -69,14 +65,14 @@ class AbstractGamepad {
          *
          * @param mode
          */
-        //void addMode(const std::string& mode);
+        // void addMode(const std::string& mode);
 
         /**
          * @brief Get a vector of all modes.
          *
          * @return std::vector<std::string>
          */
-        //const std::vector<std::string> getModes();
+        // const std::vector<std::string> getModes();
 
         /**
          * @brief Changes the mode of the controller to something else. Can be automated using the setFuncToButton
@@ -84,11 +80,9 @@ class AbstractGamepad {
          *
          * @param mode
          */
-        //void changeMode(const std::string& mode);
+        // void changeMode(const std::string& mode);
 
         /*================ MISC. ================*/
-
-
 };
 
 } // namespace lemlib

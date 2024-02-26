@@ -11,7 +11,6 @@ class EventHandler {
         std::vector<bool> eventStates;
 
         EventHandler();
-        
     public:
         EventHandler(std::vector<std::shared_ptr<Event>>& eventVector);
         ~EventHandler();
@@ -23,7 +22,7 @@ class EventHandler {
         bool isValidID(uint id);
 
         std::vector<uint> getAllIDs();
-        
+
         void startAsyncTask();
 };
 

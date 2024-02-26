@@ -12,7 +12,6 @@ namespace lemlib {
 class Event {
     protected:
         uint id;
-
     public:
         virtual bool check() = 0;
 

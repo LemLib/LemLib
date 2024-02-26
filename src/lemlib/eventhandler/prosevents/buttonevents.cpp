@@ -10,21 +10,17 @@ PROSButtonEvent::PROSButtonEvent(std::shared_ptr<pros::Controller> controller, p
     this->id = id;
     this->functionTrue = functionTrue;
     this->functionFalse = functionFalse;
-
 };
 
-bool PROSButtonEvent::check() { 
-
+bool PROSButtonEvent::check() {
     bool buttonState = controller->get_digital(button);
 
     if (buttonState && functionTrue != nullptr) {
         functionTrue();
-    }
-    else if (!buttonState && functionFalse != nullptr)  {
+    } else if (!buttonState && functionFalse != nullptr) {
         functionFalse();
     }
-    
-    return buttonState; 
-    
+
+    return buttonState;
 }
 } // namespace lemlib
