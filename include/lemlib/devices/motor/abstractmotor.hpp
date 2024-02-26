@@ -10,6 +10,8 @@ struct MotorInfo {
     int port;
     bool reversed;
     float gearRatio;
+
+    MotorInfo(int port, bool reversed, float gearRatio) : port(port), reversed(reversed), gearRatio(gearRatio) {}
 };
 
 class Abstract_Motor {
@@ -24,6 +26,8 @@ protected:
     int voltage = 0;
 
     float gearRatio = 0;
+
+    float baseRPM = 0;
 
 public:
 
@@ -42,12 +46,40 @@ public:
     virtual void logMotorPerformance() = 0; // Stuff like wattage and temperature, RPM, etc, along with Port Number
 
     virtual void set_zero_position(int position) = 0;
+
+    virtual int getPosition() = 0;
  
     virtual void shutDown() = 0;
  
     virtual void revive() = 0;
     
     virtual bool isOverheated() = 0;
+
+    virtual bool getIsBroken();
+
+    virtual float getRPM();
+
+    virtual float getVoltage();
+
+    virtual int getPort();
+
+    virtual void setGearset(int gearset);
+
+    virtual int getGearset();
+
+    virtual void setReversed(bool isReversed);
+
+    virtual bool getIsReversed();
+
+    virtual std::shared_ptr<Abstract_Motor> getPairMotor();
+
+    virtual void setPID(std::shared_ptr<FAPID> pid);
+
+    virtual std::shared_ptr<FAPID> getPID();
+
+    virtual void setGearRatio(float gearRatio);
+
+    virtual float getGearRatio();
     
 };
 

@@ -3,10 +3,14 @@
 #include "lemlib/chassis/chassis.hpp"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "lemlib/eventhandler/joystickeventhandler.hpp"
 #include "lemlib/eventhandler/prosevents/joystickevents.hpp"
 #include "lemlib/eventhandler/testevents.hpp"
 =======
+=======
+#include "lemlib/devices/motor/abstractmotor.hpp"
+>>>>>>> 2d1abe3 (Changed abstract motors to not depend on PROS, made things more abstract, changed classes to use abstract motors)
 #include "lemlib/devices/motor/prosmotor.hpp"
 >>>>>>> f2ac31a (Safety things)
 #include "lemlib/logger/stdout.hpp"
@@ -28,12 +32,17 @@
 >>>>>>> cbd5330 (Began making everything a shared ptr)
 =======
 #include "pros/motors.h"
+<<<<<<< HEAD
 >>>>>>> f2ac31a (Safety things)
+=======
+#include <memory>
+>>>>>>> 2d1abe3 (Changed abstract motors to not depend on PROS, made things more abstract, changed classes to use abstract motors)
 
 /*
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 // Inertial Sensor on port 2
@@ -79,6 +88,22 @@ lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.
 lemlib::PROSMotor testMotor(7, false, 3, pros::v5::MotorGears::rpm_600);
 >>>>>>> f2ac31a (Safety things)
 // Inertial Sensor on port 11
+=======
+std::shared_ptr<lemlib::PROSMotorGroup> leftMotors = std::make_shared<lemlib::PROSMotorGroup>(
+    std::vector<lemlib::MotorInfo>(
+        {lemlib::MotorInfo(1, true, 1), 
+        lemlib::MotorInfo(2, true, 1), 
+        lemlib::MotorInfo(3, true, 1)}),
+    std::vector({600, 600, 600}));
+
+std::shared_ptr<lemlib::PROSMotorGroup> rightMotors = std::make_shared<lemlib::PROSMotorGroup>(
+    std::vector<lemlib::MotorInfo>(
+        {lemlib::MotorInfo(4, true, 1), 
+        lemlib::MotorInfo(5, true, 1), 
+        lemlib::MotorInfo(6, true, 1)}),
+    std::vector({600, 600, 600}));
+
+>>>>>>> 2d1abe3 (Changed abstract motors to not depend on PROS, made things more abstract, changed classes to use abstract motors)
 pros::Imu imu(11);
 pros::GPS gps(20);
 >>>>>>> c6c8c76 (Final commit)
@@ -501,10 +526,14 @@ void opcontrol() {
 >>>>>>> c6c8c76 (Final commit)
 =======
 
+<<<<<<< HEAD
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
             testMotor.spinPerc(50);
         }
 >>>>>>> f2ac31a (Safety things)
+=======
+        //if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { testMotor->spinPerc(50); }
+>>>>>>> 2d1abe3 (Changed abstract motors to not depend on PROS, made things more abstract, changed classes to use abstract motors)
         // delay to save resources
         pros::delay(10);
     }

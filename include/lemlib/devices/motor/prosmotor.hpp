@@ -37,7 +37,7 @@ class PROSMotor : public Abstract_Motor {
          * @param pid Built-in PID Controller for the motor.
          */
         PROSMotor(const uint8_t port, const bool isReversed, const float gearRatio,
-                  const pros::v5::MotorGears gearset = pros::v5::MotorGears::rpm_600,
+                  const int baseRPM = 600,
                   std::shared_ptr<PROSMotor> pairMotor = nullptr, std::shared_ptr<FAPID> pid = nullptr);
 
         void spinAtVoltage(int voltage) override;
@@ -55,6 +55,8 @@ class PROSMotor : public Abstract_Motor {
         void logMotorPerformance() override; // Stuff like wattage and temperature, RPM, etc, along with Port Number
 
         void set_zero_position(int position) override;
+        
+        int getPosition() override;
 
         void shutDown() override;
 
@@ -62,35 +64,31 @@ class PROSMotor : public Abstract_Motor {
 
         bool isOverheated() override;
 
-        bool getIsBroken();
+        bool getIsBroken() override;
 
-        float getRPM();
+        float getRPM() override;
 
-        float getVoltage();
+        float getVoltage() override;
 
-        float getEncoderPos();
+        int getPort() override;
 
-        int getPort();
+        void setGearset(int gearset) override;
 
-        void setGearset(pros::v5::MotorGears gearset);
+        int getGearset() override;
 
-        pros::v5::MotorGears getGearset();
+        void setReversed(bool isReversed) override;
 
-        void setReversed(bool isReversed);
+        bool getIsReversed() override;
 
-        bool getIsReversed();
+        std::shared_ptr<Abstract_Motor> getPairMotor() override;
 
-        void setPairMotor(std::shared_ptr<PROSMotor> pairMotor);
+        void setPID(std::shared_ptr<FAPID> pid) override;
 
-        std::shared_ptr<PROSMotor> getPairMotor();
+        std::shared_ptr<FAPID> getPID() override;
 
-        void setPID(std::shared_ptr<FAPID> pid);
+        void setGearRatio(float gearRatio) override;
 
-        std::shared_ptr<FAPID> getPID();
-
-        void setGearRatio(float gearRatio);
-
-        float getGearRatio();
+        float getGearRatio() override;
 
 
 
