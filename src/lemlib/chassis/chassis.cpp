@@ -235,7 +235,7 @@ bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
  * @brief Resets the x and y position of the robot
  * without interfering with the heading.
  */
-void lemlib::Chassis::resetLocalPosition() { 
+void lemlib::Chassis::resetLocalPosition() {
     float theta = this->getPose().theta;
     lemlib::setPose(lemlib::Pose(0, 0, theta), false);
 }
