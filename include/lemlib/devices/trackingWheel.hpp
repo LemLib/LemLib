@@ -13,7 +13,7 @@
 
 #include <memory>
 #include <cstdint>
-#include "pros/motor_group.hpp"
+#include "lemlib/devices/motor/abstractgroup.hpp"
 #include "pros/adi.hpp"
 #include "pros/rotation.hpp"
 #include "lemlib/devices/encoder/encoder.hpp"
@@ -56,7 +56,7 @@ class TrackingWheel {
          * @param offset distance between the wheel and the tracking center, in inches
          * @param rpm of the rpm of the wheels the motor group is driving
          */
-        TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, float diameter, float offset, float rpm);
+        TrackingWheel(std::shared_ptr<Abstract_MotorGroup> motors, float diameter, float offset, float rpm);
         /**
          * @brief Create a new optical encoder tracking wheel
          *

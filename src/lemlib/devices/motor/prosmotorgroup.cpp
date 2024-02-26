@@ -10,18 +10,18 @@ PROSMotorGroup::PROSMotorGroup(std::vector<std::unique_ptr<PROSMotor>> motorCont
         int port = motorContainerArg.at(i)->getPort();
         bool isReversed = motorContainerArg.at(i)->getIsReversed();
         float gearRatio = motorContainerArg.at(i)->getGearRatio();
-        pros::v5::MotorGears gearset = motorContainerArg.at(i)->getGearset();
+        int gearset = motorContainerArg.at(i)->getGearset();
 
         motorContainer.emplace_back(std::make_unique<PROSMotor>(port, isReversed, gearRatio, gearset));
     }
 }
 
-PROSMotorGroup::PROSMotorGroup(std::vector<std::pair<MotorInfo, const pros::v5::MotorGears>> motorParameters) {
+PROSMotorGroup::PROSMotorGroup(std::vector<std::pair<MotorInfo, const int>> motorParameters) {
     for (int i = 0; i < motorParameters.size(); i++) {
         int port = motorParameters.at(i).first.port;
         float gearRatio = motorParameters.at(i).first.gearRatio;
         bool isReversed = motorParameters.at(i).first.reversed;
-        pros::v5::MotorGears gearset = motorParameters.at(i).second;
+        int gearset = motorParameters.at(i).second;
 
         motorContainer.emplace_back(std::make_unique<PROSMotor>(port, isReversed, gearRatio, gearset));
     }
@@ -168,16 +168,21 @@ float PROSMotorGroup::getVoltage() {
     return voltage;
 }
 
-float PROSMotorGroup::getAvgIMEPos() {
-    float averageEncoderPositions = 0;
-
+std::vector<double> PROSMotorGroup::getPositions() {
+    
+    std::vector<double> positions;
     for (int i = 0; i < motorContainer.size(); i++) {
-        averageEncoderPositions += motorContainer.at(i)->getEncoderPos();
+        positions.push_back(motorContainer.at(i)->getPosition());
     }
+    return positions;
 
-    averageEncoderPositions /= motorContainer.size();
-
-    return averageEncoderPositions;
 }
+
+std::vector<std::unique_ptr<Abstract_Motor>>& PROSMotorGroup::getMotorContainer() {
+    
+    return motorContainer;
+}
+
+
 
 } // namespace lemlib

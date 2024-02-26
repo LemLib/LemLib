@@ -21,21 +21,9 @@
 #include "lemlib/asset.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
 #include "lemlib/devices/gyro/imu.hpp"
+#include "lemlib/devices/motor/abstractgroup.hpp"
 
 namespace lemlib {
-/**
- * @brief Construct a shared pointer to a tracking wheel.
- *
- * This function exists to reduce complexity for the client. The client could make their own
- * shared pointer to a motor group, but this function makes it easy
- *
- * @param ports array of signed ports. Negative ports mean the motor should be reversed
- * @param gears the gearbox used by the motors
- * @return std::shared_ptr<pros::MotorGroup> a shared pointer to the motor group
- */
-[[nodiscard("makeMotorGroup function returns a shared_ptr of pros::MotorGroup, you can use "
-            "std::shared_ptr<pros::MotorGroup> or auto to get the returned pointer")]] std::shared_ptr<pros::MotorGroup>
-makeMotorGroup(const std::initializer_list<int8_t>& ports, const pros::v5::MotorGears& gears);
 
 /**
  * @brief Struct containing all the sensors used for odometry
@@ -148,8 +136,8 @@ struct Drivetrain {
          * @param rpm the rpm of the wheels
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns
          */
-        Drivetrain(const std::shared_ptr<pros::MotorGroup>& leftMotors,
-                   const std::shared_ptr<pros::MotorGroup>& rightMotors, float trackWidth, float wheelDiameter,
+        Drivetrain(const std::shared_ptr<Abstract_MotorGroup>& leftMotors,
+                   const std::shared_ptr<Abstract_MotorGroup>& rightMotors, float trackWidth, float wheelDiameter,
                    float rpm, float chasePower)
             : leftMotors(leftMotors),
               rightMotors(rightMotors),
@@ -158,8 +146,8 @@ struct Drivetrain {
               rpm(rpm),
               chasePower(chasePower) {}
 
-        std::shared_ptr<pros::MotorGroup> leftMotors;
-        std::shared_ptr<pros::MotorGroup> rightMotors;
+        std::shared_ptr<Abstract_MotorGroup> leftMotors;
+        std::shared_ptr<Abstract_MotorGroup> rightMotors;
         float trackWidth;
         float wheelDiameter;
         float rpm;

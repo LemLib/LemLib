@@ -10,6 +10,7 @@
  */
 
 #include <math.h>
+#include "lemlib/devices/motor/abstractgroup.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/devices/trackingWheel.hpp"
 #include "lemlib/devices/encoder/motor.hpp"
@@ -35,7 +36,7 @@ TrackingWheel::TrackingWheel(std::shared_ptr<Encoder> encoder, float diameter, f
  * We pass a pointer to a motor group instead of a reference motor group due to a
  * limitation of PROS 3. This is fixed in PROS 4, but its not ready for release yet
  */
-TrackingWheel::TrackingWheel(std::shared_ptr<pros::MotorGroup> motors, float diameter, float offset, float rpm)
+TrackingWheel::TrackingWheel(std::shared_ptr<Abstract_MotorGroup> motors, float diameter, float offset, float rpm)
     : encoder(std::make_shared<MotorEncoder>(MotorEncoder(motors, rpm))),
       diameter(diameter),
       offset(offset) {}

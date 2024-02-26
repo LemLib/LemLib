@@ -1,17 +1,19 @@
 #pragma once
 
+#include "abstractgroup.hpp"
+#include "lemlib/devices/motor/abstractmotor.hpp"
 #include "prosmotor.hpp"
 #include <memory>
 
 namespace lemlib {
 
-class PROSMotorGroup : public Abstract_Motor {
+class PROSMotorGroup : public Abstract_MotorGroup {
     private:
-        std::vector<std::unique_ptr<PROSMotor>> motorContainer;
+        
     public:
         PROSMotorGroup(std::vector<std::unique_ptr<PROSMotor>> motorContainerArg);
 
-        PROSMotorGroup(std::vector<std::pair<MotorInfo, const pros::v5::MotorGears>> motorParameters);
+        PROSMotorGroup(std::vector<std::pair<MotorInfo, const int>> motorParameters);
 
         void spinAtVoltage(int voltage) override;
 
@@ -39,11 +41,13 @@ class PROSMotorGroup : public Abstract_Motor {
 
         std::vector<float> getAllRPM();
 
+        std::vector<double> getPositions() override;
+
         float getAverageRPM();
 
         float getVoltage();
 
-        float getAvgIMEPos();
+        std::vector<std::unique_ptr<Abstract_Motor>>& getMotorContainer() override;
 };
 
 } // namespace lemlib

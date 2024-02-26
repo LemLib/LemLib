@@ -1,24 +1,32 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/devices/motor/abstractmotor.hpp"
 #include "lemlib/devices/motor/prosmotor.hpp"
 #include "lemlib/logger/stdout.hpp"
 #include "lemlib/devices/motor/prosmotorgroup.hpp"
 #include "pros/abstract_motor.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
+#include <memory>
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-// motor groups
-// left motors on ports 8, 20, and 19. Motors on ports 8 and 20 are reversed. Using blue gearbox
-auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::blue);
-// right motors on ports 2, 11, and 13. Motor on port 13 is reversed. Using blue gearbox
-auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
+std::shared_ptr<lemlib::PROSMotorGroup> leftMotors = std::make_shared<lemlib::PROSMotorGroup>(
+    std::vector<lemlib::MotorInfo>(
+        {lemlib::MotorInfo(1, true, 1), 
+        lemlib::MotorInfo(2, true, 1), 
+        lemlib::MotorInfo(3, true, 1)}),
+    std::vector({600, 600, 600}));
 
-lemlib::PROSMotor testMotor(7, false, 3, pros::v5::MotorGears::rpm_600);
-// Inertial Sensor on port 11
+std::shared_ptr<lemlib::PROSMotorGroup> rightMotors = std::make_shared<lemlib::PROSMotorGroup>(
+    std::vector<lemlib::MotorInfo>(
+        {lemlib::MotorInfo(4, true, 1), 
+        lemlib::MotorInfo(5, true, 1), 
+        lemlib::MotorInfo(6, true, 1)}),
+    std::vector({600, 600, 600}));
+
 pros::Imu imu(11);
 
 // horizontal tracking wheel. Port 4, 2.75" diameter, 3.7" offset, back of the robot
@@ -141,9 +149,7 @@ void opcontrol() {
         // move the chassis with curvature drive
         chassis.curvature(leftY, rightX);
 
-        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-            testMotor.spinPerc(50);
-        }
+        //if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { testMotor->spinPerc(50); }
         // delay to save resources
         pros::delay(10);
     }

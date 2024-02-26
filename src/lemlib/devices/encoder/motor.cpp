@@ -1,5 +1,6 @@
 #include <cmath>
 #include <numeric>
+#include "lemlib/devices/motor/abstractgroup.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/devices/encoder/motor.hpp"
 
@@ -12,7 +13,7 @@ namespace lemlib {
  * a reference, due to limitations in PROS 3. This is fixed in PROS 4, but
  * we have to deal with this for now.
  */
-MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm)
+MotorEncoder::MotorEncoder(std::shared_ptr<Abstract_MotorGroup> motors, float rpm)
     : motors(std::move(motors)),
       rpm(rpm) {}
 
@@ -27,19 +28,13 @@ MotorEncoder::MotorEncoder(std::shared_ptr<pros::MotorGroup> motors, float rpm)
  */
 float MotorEncoder::getAngle() {
     // get gearboxes and encoder position for each motor in the group
-    std::vector<pros::MotorGears> gearsets = this->motors->get_gearing_all();
-    std::vector<double> positions = this->motors->get_position_all();
+    std::vector<int> gearsets = this->motors->getBaseRPMs();
+    std::vector<double> positions = this->motors->getPositions();
     std::vector<float> angles;
     // calculate ratio'd output for each motor
-    for (int i = 0; i < this->motors->size(); i++) {
-        float in;
-        switch (gearsets[i]) {
-            case pros::MotorGears::rpm_100: in = 100; break;
-            case pros::MotorGears::rpm_200: in = 200; break;
-            case pros::MotorGears::rpm_600: in = 600; break;
-            default: in = 200; break;
-        }
-        angles.push_back(positions[i] * (rpm / in) * 2 * M_PI);
+    for (int i = 0; i < this->motors->getMotorContainer().size(); i++) {
+        float in = gearsets.at(i);
+        angles.push_back(positions.at(i) * (rpm / in) * 2 * M_PI);
     }
     // calc average of the angles
     float angle = avg(angles);
