@@ -52,8 +52,8 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
       rpm(rpm),
       chasePower(chasePower) {}
 
-void lemlib::Drivetrain::movePowers(int leftPower, int rightPower, bool useBrakeMode) {
-    auto processPower = [useBrakeMode](pros::MotorGroup* motorGroup, int power) {
+void lemlib::Drivetrain::movePowers(float leftPower, float rightPower, bool useBrakeMode) {
+    auto processPower = [useBrakeMode](pros::MotorGroup* motorGroup, float power) {
         if (useBrakeMode && power == 0) motorGroup->move_velocity(0);
         else motorGroup->move(power);
     };

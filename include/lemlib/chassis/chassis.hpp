@@ -97,7 +97,7 @@ struct Drivetrain {
         Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth, float wheelDiameter,
                    float rpm, float chasePower);
 
-        void movePowers(int leftPower, int rightPower, bool useBrakeMode = false);
+        void movePowers(float leftPower, float rightPower, bool useBrakeMode = false);
 
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
