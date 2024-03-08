@@ -164,7 +164,7 @@ void DifferentialArc::update() {
         theta += calcDeltaTheta(this->verticals.at(0), this->verticals.at(1));
     } else if (drivetrain.size() > 1) { // calculate heading with drivetrain motor encoders
         theta += calcDeltaTheta(this->drivetrain.at(0), this->drivetrain.at(1));
-    } else if (gps.size() > 0) { // calculate heading with GPS if we have enough
+    } else if (gps.size() > 0) { // calculate heading with GPS if we have one
         theta += calcDeltaTheta(this->gps);
     } else {
         infoSink()->error("Odom calculation failure! Not enough sensors to calculate heading");
