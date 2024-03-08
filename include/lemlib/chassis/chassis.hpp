@@ -392,6 +392,11 @@ class Chassis {
          * @return whether a motion is currently running
          */
         bool isInMotion() const;
+        /**
+         * @brief Resets the x and y position of the robot
+         * without interfering with the heading.
+         */
+        void resetLocalPosition();
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
