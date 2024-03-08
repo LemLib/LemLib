@@ -16,12 +16,12 @@ PROSMotorGroup::PROSMotorGroup(std::vector<std::unique_ptr<PROSMotor>> motorCont
     }
 }
 
-PROSMotorGroup::PROSMotorGroup(std::vector<std::pair<MotorInfo, const int>> motorParameters) {
+PROSMotorGroup::PROSMotorGroup(std::vector<MotorInfo> motorParameters) {
     for (int i = 0; i < motorParameters.size(); i++) {
-        int port = motorParameters.at(i).first.port;
-        float gearRatio = motorParameters.at(i).first.gearRatio;
-        bool isReversed = motorParameters.at(i).first.reversed;
-        int gearset = motorParameters.at(i).second;
+        int port = motorParameters.at(i).port;
+        float gearRatio = motorParameters.at(i).gearRatio;
+        bool isReversed = motorParameters.at(i).reversed;
+        int gearset = motorParameters.at(i).cartrpm;
 
         motorContainer.emplace_back(std::make_unique<PROSMotor>(port, isReversed, gearRatio, gearset));
     }

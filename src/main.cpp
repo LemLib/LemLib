@@ -45,6 +45,7 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Inertial Sensor on port 2
 pros::Imu imu(2);
 =======
@@ -95,13 +96,22 @@ std::shared_ptr<lemlib::PROSMotorGroup> leftMotors = std::make_shared<lemlib::PR
         lemlib::MotorInfo(2, true, 1), 
         lemlib::MotorInfo(3, true, 1)}),
     std::vector({600, 600, 600}));
+=======
+lemlib::MotorInfo leftFrontInfo(1, true, 1, 600);
+lemlib::MotorInfo leftMidInfo(2, true, 1, 600);
+lemlib::MotorInfo leftBackInfo(3, true, 1, 600);
+lemlib::MotorInfo leftStackInfo(4, true, 1, 600);
+>>>>>>> e62cfc8 (Redid Constructors to be simpler)
 
-std::shared_ptr<lemlib::PROSMotorGroup> rightMotors = std::make_shared<lemlib::PROSMotorGroup>(
-    std::vector<lemlib::MotorInfo>(
-        {lemlib::MotorInfo(4, true, 1), 
-        lemlib::MotorInfo(5, true, 1), 
-        lemlib::MotorInfo(6, true, 1)}),
-    std::vector({600, 600, 600}));
+lemlib::MotorInfo rightFrontInfo(5, true, 1, 600);
+lemlib::MotorInfo rightMidInfo(6, true, 1, 600);
+lemlib::MotorInfo rightBackInfo(7, true, 1, 600);
+lemlib::MotorInfo rightStackInfo(8, true, 1, 600);
+
+lemlib::PROSMotorGroup
+    leftMotors({leftFrontInfo, leftMidInfo, leftBackInfo, leftStackInfo});
+lemlib::PROSMotorGroup
+    rightMotors({rightBackInfo, rightMidInfo, rightFrontInfo, rightStackInfo});
 
 >>>>>>> 2d1abe3 (Changed abstract motors to not depend on PROS, made things more abstract, changed classes to use abstract motors)
 pros::Imu imu(11);
@@ -131,11 +141,16 @@ lemlib::ChassisController_t lateralController {
 };
 =======
 // drivetrain settings
-lemlib::Drivetrain drivetrain(leftMotors, // left motor group
-                              rightMotors, // right motor group
+lemlib::Drivetrain drivetrain(std::make_shared<lemlib::PROSMotorGroup>(std::move(leftMotors)), // left motor group
+                              std::make_shared<lemlib::PROSMotorGroup>(std::move(rightMotors)), // right motor group
                               10, // 10 inch track width
+<<<<<<< HEAD
                               lemlib::Omniwheel::NEW_275, // using new 3.25" omnis
                               600, // drivetrain rpm is 360
+=======
+                              lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
+                              450, // drivetrain rpm is 360
+>>>>>>> e62cfc8 (Redid Constructors to be simpler)
                               2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
@@ -343,6 +358,7 @@ ASSET(closesiderush_txt); // '.' replaced with "_" to make c++ happy
 void autonomous() {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     // example movement: Move to x: 20 and y: 15, and face heading 90. Timeout set to 4000 ms
     chassis.moveToPose(20, 15, 90, 4000);
     // example movement: Move to x: 0 and y: 0 and face heading 270, going backwards. Timeout set to 4000ms
@@ -399,6 +415,11 @@ void autonomous() {
 =======
     
 >>>>>>> cbebf76 (Added Exception handling for diff IDs)
+=======
+    chassis.follow(example_txt, 1.0, 15000);
+
+
+>>>>>>> e62cfc8 (Redid Constructors to be simpler)
 }
 =======
 void autonomous() {}
@@ -453,6 +474,7 @@ void opcontrol() {
 
     // controller
     // loop to continuously update motors
+<<<<<<< HEAD
 
     // buttonEventHandler.startAsyncTask();
 
@@ -535,6 +557,20 @@ void opcontrol() {
         //if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { testMotor->spinPerc(50); }
 >>>>>>> 2d1abe3 (Changed abstract motors to not depend on PROS, made things more abstract, changed classes to use abstract motors)
         // delay to save resources
+=======
+    while (true) {
+        // get joystick positions
+        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rightY = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+        // move the chassis with curvature drive
+        // chassis.curvature(leftY, rightX);
+
+        leftMotors.spinJoystick(leftY);
+        rightMotors.spinJoystick(rightY);
+
+        // if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { testMotor->spinPerc(50); }
+        //  delay to save resources
+>>>>>>> e62cfc8 (Redid Constructors to be simpler)
         pros::delay(10);
     }
 }
