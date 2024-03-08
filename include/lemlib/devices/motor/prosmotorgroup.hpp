@@ -13,7 +13,7 @@ class PROSMotorGroup : public Abstract_MotorGroup {
     public:
         PROSMotorGroup(std::vector<std::unique_ptr<PROSMotor>> motorContainerArg);
 
-        PROSMotorGroup(std::vector<std::pair<MotorInfo, const int>> motorParameters);
+        PROSMotorGroup(std::vector<MotorInfo> motorParameters);
 
         void spinAtVoltage(int voltage) override;
 

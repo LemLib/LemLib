@@ -37,7 +37,7 @@ class PROSMotor : public Abstract_Motor {
          * @param pid Built-in PID Controller for the motor.
          */
         PROSMotor(const uint8_t port, const bool isReversed, const float gearRatio,
-                  const int baseRPM = 600,
+                  const int cartRPM = 600,
                   std::shared_ptr<PROSMotor> pairMotor = nullptr, std::shared_ptr<FAPID> pid = nullptr);
 
         void spinAtVoltage(int voltage) override;
