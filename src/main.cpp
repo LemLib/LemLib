@@ -57,11 +57,17 @@ auto leftMotors = lemlib::makeMotorGroup({-8, -20, 19}, pros::v5::MotorGears::bl
 auto rightMotors = lemlib::makeMotorGroup({2, 11, -13}, pros::v5::MotorGears::blue);
 >>>>>>> a4d44aa (Event Handler restructuring)
 
+<<<<<<< HEAD
 // tracking wheels
 // horizontal tracking wheel encoder. Rotation sensor, port 15, reversed (negative signs don't work due to a pros bug)
 pros::Rotation horizontalEnc(15, true);
 // horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot (negative)
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
+=======
+// Inertial Sensor on port 11
+pros::Imu imu(11);
+pros::GPS gps(20);
+>>>>>>> c6c8c76 (Final commit)
 
 // drivetrain
 lemlib::Drivetrain_t drivetrain {
@@ -73,6 +79,7 @@ lemlib::Drivetrain_t drivetrain {
     8 // chase power. Higher values result in sharper turns
 };
 
+<<<<<<< HEAD
 // lateral motion controller
 lemlib::ChassisController_t lateralController {
     10, // kP
@@ -83,6 +90,26 @@ lemlib::ChassisController_t lateralController {
     500, // large error timeout
     20 // acceleration cap
 };
+=======
+// drivetrain settings
+lemlib::Drivetrain drivetrain(leftMotors, // left motor group
+                              rightMotors, // right motor group
+                              10, // 10 inch track width
+                              lemlib::Omniwheel::NEW_275, // using new 3.25" omnis
+                              600, // drivetrain rpm is 360
+                              2 // chase power is 2. If we had traction wheels, it would have been 8
+);
+
+// linear motion controller
+lemlib::ControllerSettings linearController(10, // proportional gain (kP)
+                                            30, // derivative gain (kD)
+                                            1, // small error range, in inches
+                                            100, // small error range timeout, in milliseconds
+                                            3, // large error range, in inches
+                                            500, // large error range timeout, in milliseconds
+                                            20 // maximum acceleration (slew)
+);
+>>>>>>> c6c8c76 (Final commit)
 
 // angular motion controller
 lemlib::ChassisController_t angularController {
@@ -115,8 +142,9 @@ lemlib::Differential chassis(drivetrain, // drivetrain struct
 // note that in this example we use internal motor encoders, so we don't pass vertical tracking wheels
 lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullptr as we don't have one
                             nullptr, // vertical tracking wheel 2, set to nullptr as we don't have one
-                            std::make_shared<lemlib::TrackingWheel>(horizontal), // horizontal tracking wheel 1
+                            nullptr, // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+<<<<<<< HEAD
                             nullptr, // no GPS
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -130,6 +158,10 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullpt
 >>>>>>> 6c17e3b (Decoupled LemLib from PROS GPS and IMUs)
                             nullptr);
 >>>>>>> f548303 (Reverted to Shared Ptr, added calcDeltaTheta function for GPS)
+=======
+                            std::make_shared<lemlib::GPS>(gps), // no GPS
+                            std::make_shared<lemlib::Gyro>(imu));
+>>>>>>> c6c8c76 (Final commit)
 
 =======
 // create the chassis
@@ -251,6 +283,7 @@ void competition_initialize() {}
 // this needs to be put outside a function
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 =======
 ASSET(path_txt); // '.' replaced with "_" to make c++ happy
@@ -258,6 +291,9 @@ ASSET(path_txt); // '.' replaced with "_" to make c++ happy
 =======
 ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 >>>>>>> 170c6ec (Abstract chassis class)
+=======
+ASSET(closesiderush_txt); // '.' replaced with "_" to make c++ happy
+>>>>>>> c6c8c76 (Final commit)
 
 /**
  * Runs during auto
@@ -287,12 +323,13 @@ void autonomous() {
     chassis.follow(example_txt, 15, 4000, false);
 =======
     // example movement: Move to x: 20 and y:15, and face heading 90. Timeout set to 4000 ms
-    chassis.moveTo(20, 15, 90, 4000);
+    //chassis.moveTo(20, 15, 90, 4000);
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
-    chassis.turnToPose(45, -45, 1000, true, 60);
+    //chassis.turnToPose(45, -45, 1000, true, 60);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
+<<<<<<< HEAD
     // see line 110 to see how to define a path
 <<<<<<< HEAD
     chassis.follow(path_txt, 15, 4000, false);
@@ -300,10 +337,14 @@ void autonomous() {
 =======
     chassis.follow(example_txt, 15, 4000, false);
 >>>>>>> 170c6ec (Abstract chassis class)
+=======
+    // see line 116 to see how to define a path
+    chassis.follow(closesiderush_txt, 15, 4000, false);
+>>>>>>> c6c8c76 (Final commit)
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait
-    chassis.waitUntil(10);
+    //chassis.waitUntil(10);
     pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
     // wait until the movement is done
     chassis.waitUntilDone();
@@ -383,6 +424,7 @@ void opcontrol() {
         // get joystick positions
 <<<<<<< HEAD
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+<<<<<<< HEAD
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 =======
         
@@ -437,6 +479,11 @@ void opcontrol() {
         // rightBottomMotors->move(rightY);
 
 >>>>>>> d8f36c1 (Bug Fixes)
+=======
+        int rightY = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+        // move the chassis with curvature drive
+        chassis.tank(leftY, rightY);
+>>>>>>> c6c8c76 (Final commit)
         // delay to save resources
         pros::delay(10);
     }
