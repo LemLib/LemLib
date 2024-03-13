@@ -25,7 +25,7 @@ Now we can install LemLib!
 ## Installation - LemLib Template
 
 
-To install LemLib, you need to download the `LemLib@0.4.7.zip` from [here](https://github.com/LemLib/LemLib/releases/tag/v0.4.7). Next you need to drag the zip file into your pros project folder. Once you have done that, open the pros integrated terminal by selecting the pros icon on the left, and clicking `Integrated Terminal`.
+To install LemLib, you need to download the `LemLib@0.4.8.zip` from [here](https://github.com/LemLib/LemLib/releases/tag/v0.4.8). Next you need to drag the zip file into your pros project folder. Once you have done that, open the pros integrated terminal by selecting the pros icon on the left, and clicking `Integrated Terminal`.
 <br>
 <img src="./assets/1_getting_started/integrated_terminal.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
 
@@ -33,8 +33,8 @@ To install LemLib, you need to download the `LemLib@0.4.7.zip` from [here](https
 Next, you need to run the following commands in your PROS terminal:
 
 ```bash
-pros c fetch LemLib@0.4.7.zip
-pros c apply LemLib@0.4.7
+pros c fetch LemLib@0.4.8.zip
+pros c apply LemLib@0.4.8
 ```
 
 Finally, put the following at the top of your `main.cpp` file:
