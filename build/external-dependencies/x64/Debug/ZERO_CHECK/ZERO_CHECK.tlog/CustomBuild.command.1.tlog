@@ -1,0 +1,10 @@
+^C:\USERS\MAVERICKS\DESKTOP\LEMLIB\BUILD\EXTERNAL-DEPENDENCIES\CMAKEFILES\1695EB3512E56F2A9B7D3CFBACE1FA0D\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Mavericks/Desktop/LemLib/build/external-dependencies -BC:/Users/Mavericks/Desktop/LemLib/build/external-dependencies --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/external-dependencies.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

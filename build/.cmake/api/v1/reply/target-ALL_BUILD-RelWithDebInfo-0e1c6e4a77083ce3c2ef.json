@@ -1,0 +1,39 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"build/googletest-src/googletest/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "gtest::@32fe1c6cd3a65a2fab56"
+		},
+		{
+			"id" : "gtest_main::@32fe1c6cd3a65a2fab56"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"id" : "ALL_BUILD::@32fe1c6cd3a65a2fab56",
+	"isGeneratorProvided" : true,
+	"name" : "ALL_BUILD",
+	"paths" : 
+	{
+		"build" : "googletest-build/googletest",
+		"source" : "build/googletest-src/googletest"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

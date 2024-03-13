@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Mavericks\Desktop\LemLib\build\CMakeFiles\b07860e9b331110c81dda9faae694fc6\RUN_TESTS_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{0C4C449C-22A4-3EE3-9B75-AA622CC95D4D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

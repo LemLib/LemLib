@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/googletest"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/1695eb3512e56f2a9b7d3cfbace1fa0d/googletest.rule"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/0dcb0fc29fcfcb6967d543e35c206597/googletest-complete.rule"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/69bdbd36e9d26d5f3b6d076013c67e84/googletest-build.rule"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/69bdbd36e9d26d5f3b6d076013c67e84/googletest-configure.rule"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/69bdbd36e9d26d5f3b6d076013c67e84/googletest-download.rule"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/69bdbd36e9d26d5f3b6d076013c67e84/googletest-install.rule"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/69bdbd36e9d26d5f3b6d076013c67e84/googletest-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/69bdbd36e9d26d5f3b6d076013c67e84/googletest-patch.rule"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/69bdbd36e9d26d5f3b6d076013c67e84/googletest-test.rule"
+		},
+		{
+			"file" : "C:/Users/Mavericks/Desktop/LemLib/build/external-dependencies/CMakeFiles/69bdbd36e9d26d5f3b6d076013c67e84/googletest-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"googletest"
+		],
+		"name" : "googletest"
+	}
+}
