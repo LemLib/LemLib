@@ -1,5 +1,0 @@
-if(EXISTS "C:/Users/Mavericks/Desktop/LemLib/build/LemLib[1]_tests.cmake")
-  include("C:/Users/Mavericks/Desktop/LemLib/build/LemLib[1]_tests.cmake")
-else()
-  add_test(LemLib_NOT_BUILT LemLib_NOT_BUILT)
-endif()

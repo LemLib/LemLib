@@ -1,4 +1,4 @@
-<img src="docs/assets/LemLib_background_v2.2.png">
+<img src="docs/assets/LemLib_Banner_V3.png">
 <p align="center">
     <img src="https://img.shields.io/github/contributors/LemLib/LemLib?style=for-the-badge">
     <img src="https://img.shields.io/github/stars/LemLib/LemLib?style=for-the-badge">

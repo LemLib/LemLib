@@ -3,7 +3,7 @@
 #include "lemlib/logger/stdout.hpp"
 
 namespace lemlib {
-InfoSink::InfoSink() { this->setFormat("[LemLib] {level}: {message}"); }
+InfoSink::InfoSink() { setFormat("[LemLib] {level}: {message}"); }
 
 static std::string getColor(Level level) {
     switch (level) {

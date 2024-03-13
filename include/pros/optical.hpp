@@ -1,19 +1,19 @@
 /**
  * \file pros/optical.hpp
- * \ingroup cpp-optical
  *
  * Contains prototypes for functions related to the VEX Optical sensor.
+ *
+ * Visit https://pros.cs.purdue.edu/v5/tutorials/topical/imu.html to learn
+ * more.
  *
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * \copyright (c) 2017-2023, Purdue University ACM SIGBots.
+ * \copyright Copyright (c) 2017-2023, Purdue University ACM SIGBots.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
- * \defgroup cpp-optical VEX Optical Sensor C++ API
  */
 
 #ifndef _PROS_OPTICAL_HPP_
@@ -22,21 +22,11 @@
 #include <stdbool.h>
 
 #include <cstdint>
-#include <iostream>
 
 #include "pros/optical.h"
-#include "pros/device.hpp"
 
 namespace pros {
-inline namespace v5 {
-/**
- * \ingroup cpp-optical
- */
-class Optical : public Device {
-	/**
-	 * \addtogroup cpp-optical
-	 *  @{
-	 */
+class Optical {
 	public:
 	/**
 	 * Creates an Optical Sensor object for the given port.
@@ -48,13 +38,10 @@ class Optical : public Device {
 	 *
 	 * \param port
 	 *        The V5 port number from 1-21
-	 * 
-	 * \b Example: 
-	 * \code{.cpp}
-	 * pros::Optical optical(1);
-	 * \endcode
 	 */
 	explicit Optical(const std::uint8_t port);
+
+	explicit Optical(std::uint8_t port, double time);
 
 	/**
 	 * Get the detected color hue
@@ -69,14 +56,6 @@ class Optical : public Device {
 	 *
 	 * \return hue value if the operation was successful or PROS_ERR_F if the operation
 	 * failed, setting errno.
-	 *
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 * 		std::cout << "Hue: " << optical.get_hue() << std::endl;
-	 * }
-	 * \endcode
 	 */
 	virtual double get_hue();
 
@@ -93,14 +72,6 @@ class Optical : public Device {
 	 *
 	 * \return saturation value if the operation was successful or PROS_ERR_F if
 	 * the operation failed, setting errno.
-	 * 
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 * 		std::cout << "Saturation: " << optical.get_saturation() << std::endl;
-	 * }
-	 * \endcode
 	 */
 	virtual double get_saturation();
 
@@ -117,13 +88,6 @@ class Optical : public Device {
 	 *
 	 * \return brightness value if the operation was successful or PROS_ERR_F if
 	 * the operation failed, setting errno.
-	 *
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 * 		std::cout << "Brightness: " << optical.get_brightness() << std::endl;
-	 * }
 	 */
 	virtual double get_brightness();
 
@@ -138,16 +102,8 @@ class Optical : public Device {
 	 * ENXIO - The given value is not within the range of V5 ports (1-21).
 	 * ENODEV - The port cannot be configured as an Optical Sensor
 	 *
-	 * \return Proximity value if the operation was successful or PROS_ERR if
+	 * \return poximity value if the operation was successful or PROS_ERR if
 	 * the operation failed, setting errno.
-	 *
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 * 		std::cout << "Proximity: " << optical.get_proximity() << std::endl;
-	 * }
-	 * \endcode
 	 */
 	virtual std::int32_t get_proximity();
 
@@ -161,15 +117,7 @@ class Optical : public Device {
 	 * ENXIO - The given value is not within the range of V5 ports (1-21).
 	 * ENODEV - The port cannot be configured as an Optical Sensor
 	 *
-	 * \return The Error code encountered or PROS_SUCCESS. 
-	 * 
-	 * \b Example:
-	 * \code{.cpp}
-	 * void initialize() {
-	 * 		pros::Optical optical(1);
-	 * 		optical.set_led_pwm(100);
-	 * }
-	 * \endcode
+	 * \return The Error code encountered
 	 */
 	virtual std::int32_t set_led_pwm(uint8_t value);
 
@@ -185,15 +133,6 @@ class Optical : public Device {
 	 *
 	 * \return LED pwm value if the operation was successful or PROS_ERR if
 	 * the operation failed, setting errno.
-	 *
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 *		optical.set_led_pwm(100);
-	 * 		std::cout << "LED PWM: " << optical.get_led_pwm() << std::endl;
-	 * }
-	 * \endcode
 	 */
 	virtual std::int32_t get_led_pwm();
 
@@ -207,21 +146,6 @@ class Optical : public Device {
 	 *
 	 * \return rgb value if the operation was successful or an optical_rgb_s_t 
 	 * with all fields set to PROS_ERR if the operation failed, setting errno.
-	 * 
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 * 		pros::c::optical_rgb_s_t rgb = optical.get_rgb();
-	 * 		while(1) {
-	 * 			std::cout << "Red: " << rgb.red << std::endl;
-	 * 			std::cout << "Green: " << rgb.green << std::endl;
-	 * 			std::cout << "Blue: " << rgb.blue << std::endl;
-	 * 			std::cout << "Brightness: " << rgb.brightness << std::endl;
-	 * 			pros::delay(20);
-	 * 		}
-	 * }
-	 * \endcode
 	 */
 	virtual pros::c::optical_rgb_s_t get_rgb();
 
@@ -255,17 +179,6 @@ class Optical : public Device {
 	 *
 	 * \return gesture value if the operation was successful or PROS_ERR if
 	 * the operation failed, setting errno.
-	 *
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 * 		while(1) {
-	 * 			std::cout << "Gesture: " << optical.get_gesture() << std::endl;
-	 * 			pros::delay(20);
-	 * 		}
-	 * }
-	 * \endcode
 	 */
 	virtual pros::c::optical_direction_e_t get_gesture();
 
@@ -279,26 +192,6 @@ class Optical : public Device {
 	 *
 	 * \return gesture value if the operation was successful or an optical_gesture_s_t 
 	 * with all fields set to PROS_ERR if the operation failed, setting errno.
-	 *
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 *		optical.enable_gesture();
-	 * 		while(1) {
-	 * 			pros::c::optical_gesture_s_t gesture = optical.get_gesture_raw();
-	 * 			std::cout << "Gesture raw data: " << std::endl;
-	 * 			std::cout << "Up data: " << gesture.udata << std::endl;
-	 * 			std::cout << "Down data: " << gesture.ddata << std::endl;
-	 * 			std::cout << "Left data: " << gesture.ldata << std::endl;
-	 * 			std::cout << "Right data: " << gesture.rdata << std::endl;
-	 * 			std::cout << "Type: " << gesture.type << std::endl;
-	 * 			std::cout << "Count: " << gesture.count << std::endl;
-	 * 			std::cout << "Time: " << gesture.time << std::endl;
-	 * 			pros::delay(20);
-	 * 		}
-	 * }
-	 * \endcode
 	 */
 	virtual pros::c::optical_gesture_s_t get_gesture_raw();
 
@@ -312,25 +205,6 @@ class Optical : public Device {
 	 *
 	 * \return 1 if the operation is successful or PROS_ERR if the operation failed,
  	 * setting errno.
-	 * 
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 *		optical.enable_gesture();
-	 * 		while(1) {
-	 * 			pros::c::optical_gesture_s_t gesture = optical.get_gesture_raw();
-	 * 			std::cout << "Gesture raw data: " << std::endl;
-	 * 			std::cout << "Up data: " << gesture.udata << std::endl;
-	 * 			std::cout << "Down data: " << gesture.ddata << std::endl;
-	 * 			std::cout << "Left data: " << gesture.ldata << std::endl;
-	 * 			std::cout << "Right data: " << gesture.rdata << std::endl;
-	 * 			std::cout << "Type: " << gesture.type << std::endl;
-	 * 			std::cout << "Count: " << gesture.count << std::endl;
-	 * 			std::cout << "Time: " << gesture.time << std::endl;
-	 * 			pros::delay(20);
-	 * 		}
-	 * }
 	 */
 	virtual std::int32_t enable_gesture();
 
@@ -344,48 +218,49 @@ class Optical : public Device {
 	 *
 	 * \return 1 if the operation is successful or PROS_ERR if the operation failed,
  	 * setting errno.
-	 *
-	 * \b Example:
-	 * \code{.cpp}
-	 * void opcontrol() {
-	 * 		pros::Optical optical(1);
-	 *		optical.enable_gesture();
-	 * 		while(1) {
-	 * 			if(optical.get_gesture() != 0) {
-	 * 				std::cout << "Gesture detected!"<< std::endl;
-	 * 				optical.disable_gesture();
-	 * 			}
-	 * 			pros::delay(20);
-	 * 		}
-	 * }
-	 * \endcode
 	 */
 	virtual std::int32_t disable_gesture();
 
+	/**
+	 * Set integration time (update rate) of the optical sensor in milliseconds, with
+	 * minimum time being 3 ms and maximum time being 712 ms. Default is 100 ms, with the 
+	 * optical sensor communciating with the V5 brain every 20 ms. 
+	 *
+	 * This function uses the following values of errno when an error state is
+	 * reached:
+	 * ENXIO - The given value is not within the range of V5 ports (1-21).
+	 * ENODEV - The port cannot be configured as an Optical Sensor
+ 	 *
+	 * \return 1 if the operation is successful or PROS_ERR_F if the operation failed,
+	 * setting errno.
+	 */
+	double get_integration_time();
 
 	/**
-     * This is the overload for the << operator for printing to streams
-     *
-     * Prints in format(this below is all in one line with no new line):
-	 * Optical [port: (port number), hue: (hue), saturation: (saturation), 
-	 * brightness: (brightness), proximity: (proximity), rgb: {red, green, blue}]
+	 * Get integration time (update rate) of the optical sensor in milliseconds.
 	 *
-	 * \b Example:
-	 * \code{.cpp}
-	 * pros::Optical optical(1);
-	 * std::cout << optical << std::endl;
-	 * \endcode
+	 * This function uses the following values of errno when an error state is
+	 * reached:
+	 * ENXIO - The given value is not within the range of V5 ports (1-21).
+	 * ENODEV - The port cannot be configured as an Optical Sensor
+	 *
+	 * \param time
+	 *        The desired integration time in milliseconds
+	 * \return Integration time in milliseconds if the operation is successful 
+	 *  or PROS_ERR if the operation failed, setting errno.
 	 */
-	friend std::ostream& operator<<(std::ostream& os, pros::Optical& optical);
-  
-	private:
-	///@}
-};
+	std::int32_t set_integration_time(double time);
 
-namespace literals {
-const pros::Optical operator"" _opt(const unsigned long long int o);
-}  // namespace literals
-}
+	/**
+	 * Gets the port number of the Optical Sensor.
+	 *
+	 * \return The Optical Sensor's port number.
+	 */
+	virtual std::uint8_t get_port();
+
+	private:
+	const std::uint8_t _port;
+};
 }  // namespace pros
 
 #endif
