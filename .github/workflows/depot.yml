@@ -20,5 +20,7 @@ jobs:
           token: ${{ github.token }}
           # target repo for depots
           repo: LemLib/LemLib
+          # where to read releases from (can be omitted if repo is also the repo from which to read releases from, but it doesn't sem to be working at the moment)
+          source-repo: LemLib/LemLib
           # makes the json output human readable
           readable-json: true
