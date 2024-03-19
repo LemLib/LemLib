@@ -30,14 +30,18 @@ In Visual Studio Code, press the PROS button on the sidebar and click `Open Inte
 <br>
 <img src="./assets/1_getting_started/integrated_terminal.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
 
-Then copy and paste the following into the terminal, and hit enter.
-```bash
-curl -o LemLib@0.5.0.zip <placeholder_link>;
-pros c fetch LemLib@0.5.0.zip;
-pros c apply LemLib@0.5.0;
-rm LemLib@0.5.0.zip;
-```
-
+Then copy and paste one of the following into the terminal, and hit enter.
+- latest stable version:
+  ```bash
+  pros c add-depot LemLib https://raw.githubusercontent.com/LemLib/LemLib/depot/stable.json # adds LemLib's stable depot
+  pros c apply LemLib # applies latest stable version of LemLib
+  ```
+- latest beta version:
+  ```bash
+  pros c add-depot LemLib https://raw.githubusercontent.com/LemLib/LemLib/depot/stable.json # adds LemLib's stable depot
+  pros c add-depot LemLib-beta https://raw.githubusercontent.com/LemLib/LemLib/depot/beta.json # adds LemLib's beta depot
+  pros c apply LemLib # applies latest beta version of LemLib
+  ```
 Finally, put the following at the top of your `main.cpp` file:
 ```cpp
 #include "lemlib/api.hpp"
