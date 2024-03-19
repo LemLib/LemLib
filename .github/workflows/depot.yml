@@ -14,7 +14,7 @@ jobs:
       contents: write
     steps:
         # where to find gh action and what version to use
-      - uses: LemLib/pros-depot@0.1.0-beta.1
+      - uses: LemLib/pros-depot@v0.1.0-beta.1
         with:
           # gives the github action the permissions specified above
           token: ${{ github.token }}
