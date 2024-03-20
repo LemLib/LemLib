@@ -70,8 +70,8 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
 // opcontrol settings
 // see https://www.desmos.com/calculator/umicbymbnl for a visualization
 lemlib::OpcontrolSettings opcontrolSettings(3, // joystick deadband out of 127
-10, // minimum output where drivetrain will move out of 127
-1.019 // expo curve gain
+                                            10, // minimum output where drivetrain will move out of 127
+                                            1.019 // expo curve gain
 );
 
 // create the chassis
