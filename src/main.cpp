@@ -75,7 +75,7 @@ lemlib::OpcontrolSettings opcontrolSettings(3, // joystick deadband out of 127
 );
 
 // create the chassis
-lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors);
+lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, opcontrolSettings);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
