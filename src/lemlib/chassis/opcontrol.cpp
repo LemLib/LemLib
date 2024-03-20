@@ -1,24 +1,46 @@
 #include "lemlib/chassis/chassis.hpp"
-#include <algorithm>
+#include "lemlib/util.hpp"
 #include <math.h>
 
 namespace lemlib {
 
+    /**
+         * @brief These settings are used to optimize drivetrain control during Operator control.
+         *
+         * https://www.desmos.com/calculator/umicbymbnl
+         * 
+         * @param deadband range where inputs will be ignored
+         * @param minOutput minimum output required to make the drivetrain move
+         * @param curve how curved the graph is. Set to 0 for linear
+         */
+        OpcontrolSettings::OpcontrolSettings(float deadband, float minOutput, float curve, DriveCurveFunction_t driveCurve)
+        : deadband(deadband), minOutput(minOutput), curve(curve), driveCurve(driveCurve) {}
+
+OpcontrolSettings defaultOpcontrolSettings = OpcontrolSettings(0, 0, 0);
+
 /**
- * @brief  Default drive curve. Modifies the input with an exponential curve. If the input is 127, the function
- * will always output 127, no matter the value of scale, likewise for -127. A scale of zero disable the curve
- * entirely. This curve was inspired by team 5225, the Pilons. A Desmos graph of this curve can be found
- * here: https://www.desmos.com/calculator/rcfjjg83zx
+ * @brief Exponential drive curve. Allows for fine control at low speeds while maintaining the same maximum speed.
+ *
+ * Interactive Graph: https://www.desmos.com/calculator/umicbymbnl
+ *
  * @param input value from -127 to 127
+ * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
+ * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
  * @param scale how steep the curve should be.
  * @return The new value to be used.
  */
-float defaultDriveCurve(float input, float scale) {
-    if (scale != 0) {
-        return (powf(2.718, -(scale / 10)) + powf(2.718, (fabs(input) - 127) / 10) * (1 - powf(2.718, -(scale / 10)))) *
-               input;
-    }
-    return input;
+float expoDriveCurve(float input, float inputDeadband, float minOutput, float scale) {
+    if (fabs(input) < inputDeadband) return 0;
+    if (scale < 1) scale = 1;
+    // g is the output of g(x) as defined in the Desmos graph
+    const float g = fabs(input) - inputDeadband;
+    // g127 is the output of g(127) as defined in the Desmos graph
+    const float g127 = 127 - inputDeadband;
+    // i is the output of i(x) as defined in the Desmos graph
+    const float i = pow(scale, g - 127) * g * sgn(input);
+    // i127 is the output of i(127) as defined in the Desmos graph
+    const float i127 = pow(scale, g127 - 127) * g127 * sgn(input);
+    return (127.0 - minOutput)/(127) * i * 127 / i127 + minOutput * sgn(input);
 }
 
 /**
@@ -27,26 +49,26 @@ float defaultDriveCurve(float input, float scale) {
  * controls  the robot's turning
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
- * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
- * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Chassis::tank(int left, int right, float curveGain) {
-    drivetrain.leftMotors->move(driveCurve(left, curveGain));
-    drivetrain.rightMotors->move(driveCurve(right, curveGain));
+void Chassis::tank(int left, int right) {
+    drivetrain.leftMotors->move(opcontrolSettings.driveCurve(left, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve));
+    drivetrain.rightMotors->move(opcontrolSettings.driveCurve(right, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve));
 }
 
 /**
  * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
  * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
- * controls  the robot's turning
+ * controls the robot's turning
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
- * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
- * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Chassis::arcade(int throttle, int turn, float curveGain) {
-    int leftPower = driveCurve(throttle + turn, curveGain);
-    int rightPower = driveCurve(throttle - turn, curveGain);
+void Chassis::arcade(int throttle, int turn) {
+    int leftPowerRaw = opcontrolSettings.driveCurve(throttle + turn, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve);
+    int rightPowerRaw = opcontrolSettings.driveCurve(throttle - turn, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve);
+    // desaturate output
+    int leftPower = leftPowerRaw / (fabs(leftPowerRaw) + fabs(rightPowerRaw)) * 127;
+    int rightPower = rightPowerRaw / (fabs(leftPowerRaw) + fabs(rightPowerRaw)) * 127;
+    // move drive
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
 }
@@ -58,21 +80,19 @@ void Chassis::arcade(int throttle, int turn, float curveGain) {
  * the radius of that turn. This control scheme defaults to arcade when forward is zero.
  * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
  * @param turn speed to turn. Takes an input from -127 to 127.
- * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
- * curve, refer to the `defaultDriveCurve` documentation.
  */
-void Chassis::curvature(int throttle, int turn, float curveGain) {
+void Chassis::curvature(int throttle, int turn) {
     // If we're not moving forwards change to arcade drive
     if (throttle == 0) {
-        arcade(throttle, turn, curveGain);
+        arcade(throttle, turn);
         return;
     }
 
     float leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
     float rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
 
-    leftPower = driveCurve(leftPower, curveGain);
-    rightPower = driveCurve(rightPower, curveGain);
+    leftPower = opcontrolSettings.driveCurve(leftPower, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve);
+    rightPower = opcontrolSettings.driveCurve(rightPower, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve);
 
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);

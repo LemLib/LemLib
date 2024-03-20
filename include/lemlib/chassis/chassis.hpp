@@ -11,6 +11,30 @@
 #include "lemlib/exitcondition.hpp"
 
 namespace lemlib {
+
+/**
+ * @brief Function pointer type for drive curve functions.
+ * @param input The control input in the range [-127, 127].
+ * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
+ * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
+ * @param scale The scaling factor, which can be optionally ignored.
+ * @return The new value to be used.
+ */
+typedef std::function<float(float, float, float, float)> DriveCurveFunction_t;
+
+/**
+ * @brief Exponential drive curve. Allows for fine control at low speeds while maintaining the same maximum speed.
+ *
+ * Interactive Graph: https://www.desmos.com/calculator/umicbymbnl
+ *
+ * @param input value from -127 to 127
+ * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
+ * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
+ * @param scale how steep the curve should be.
+ * @return The new value to be used.
+ */
+float expoDriveCurve(float input, float inputDeadband = 0, float minOutput = 0, float scale = 0);
+
 /**
  * @brief Struct containing all the sensors used for odometry
  *
@@ -105,6 +129,30 @@ struct Drivetrain {
 };
 
 /**
+ * @brief Struct containing settings for driver control
+ * 
+ */
+struct OpcontrolSettings {
+        /**
+         * @brief These settings are used to optimize drivetrain control during Operator control.
+         *
+         * https://www.desmos.com/calculator/umicbymbnl
+         * 
+         * @param deadband range where inputs will be ignored
+         * @param minOutput minimum output required to make the drivetrain move
+         * @param curve how curved the graph is. Set to 0 for linear
+         */
+        OpcontrolSettings(float deadband, float minOutput, float curve, DriveCurveFunction_t driveCurve = &expoDriveCurve);
+        float deadband;
+        float minOutput;
+        float curve;
+        DriveCurveFunction_t driveCurve;
+};
+
+// default settings for opcontrol
+extern OpcontrolSettings defaultOpcontrolSettings;
+
+/**
  * @brief Parameters for Chassis::turnTo
  *
  * We use a struct to simplify customization. Chassis::turnTo has many
@@ -184,25 +232,6 @@ struct MoveToPointParams {
 };
 
 /**
- * @brief Function pointer type for drive curve functions.
- * @param input The control input in the range [-127, 127].
- * @param scale The scaling factor, which can be optionally ignored.
- * @return The new value to be used.
- */
-typedef std::function<float(float, float)> DriveCurveFunction_t;
-
-/**
- * @brief  Default drive curve. Modifies  the input with an exponential curve. If the input is 127, the function
- * will always output 127, no matter the value of scale, likewise for -127. This curve was inspired by team
- * 5225, the Pilons. A Desmos graph of this curve can be found here:
- * https://www.desmos.com/calculator/rcfjjg83zx
- * @param input value from -127 to 127
- * @param scale how steep the curve should be.
- * @return The new value to be used.
- */
-float defaultDriveCurve(float input, float scale);
-
-/**
  * @brief Chassis class
  *
  */
@@ -215,10 +244,10 @@ class Chassis {
          * @param lateralSettings settings for the lateral controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
-         * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
+         * @param opcontrolSettings settings for driver control. defaultOpcontrolSettings by default
          */
         Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
-                OdomSensors sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
+                OdomSensors sensors, OpcontrolSettings opcontrolSettings = defaultOpcontrolSettings);
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -352,20 +381,16 @@ class Chassis {
          * controls another.
          * @param left speed of the left side of the drivetrain. Takes an input from -127 to 127.
          * @param right speed of the right side of the drivetrain. Takes an input from -127 to 127.
-         * @param curveGain control how steep the drive curve is. The larger the number, the steeper the curve.
-         * A value of 0 disables the curve entirely.
          */
-        void tank(int left, int right, float curveGain = 0.0);
+        void tank(int left, int right);
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control
          * scheme one joystick axis controls the forwards and backwards movement of the robot, while the other
-         * joystick axis controls  the robot's turning
+         * joystick axis controls the robot's turning
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
-         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
-         * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void arcade(int throttle, int turn, float curveGain = 0.0);
+        void arcade(int throttle, int turn);
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control
          * scheme is very similar to arcade drive, except the second joystick axis controls the radius of the
@@ -374,10 +399,8 @@ class Chassis {
          * is zero.
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
-         * @param curveGain the scale inputted into the drive curve function. If you are using the default drive
-         * curve, refer to the `defaultDriveCurve` documentation.
          */
-        void curvature(int throttle, int turn, float cureGain = 0.0);
+        void curvature(int throttle, int turn);
         /**
          * @brief Cancels the currently running motion.
          * If there is a queued motion, then that queued motion will run.
@@ -416,7 +439,7 @@ class Chassis {
         ControllerSettings angularSettings;
         Drivetrain drivetrain;
         OdomSensors sensors;
-        DriveCurveFunction_t driveCurve;
+        OpcontrolSettings opcontrolSettings;
 
         PID lateralPID;
         PID angularPID;
