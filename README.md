@@ -4,7 +4,7 @@
     <img src="https://img.shields.io/github/stars/LemLib/LemLib?style=for-the-badge">
     <img src="https://img.shields.io/github/downloads/LemLib/LemLib/total?style=for-the-badge">
     <img src="https://img.shields.io/github/actions/workflow/status/LemLib/LemLib/pros-build.yml?style=for-the-badge">
-    <img src="https://img.shields.io/badge/version-v0.4.7-blue?style=for-the-badge">
+    <img src="https://img.shields.io/badge/version-v0.4.8-blue?style=for-the-badge">
     <img src="https://img.shields.io/badge/pre_release-v0.5.0-blue?style=for-the-badge">
 </p>
 <hr>
