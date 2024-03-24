@@ -275,21 +275,21 @@ class Chassis {
          * @param x x location
          * @param y y location
          * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToPoint(float x, float y, int timeout, bool async = true);
+        void turnToPoint(float x, float y, int timeout, TurnToParams params = {}, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target point
          *
          * The PID logging id is "angularPID"
          *
-         * @param x x location
-         * @param y y location
+         * @param pose LemLib pose
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToPoint(float x, float y, int timeout, TurnToParams params, bool async = true);
+        void turnToPoint(Pose targetPose, int timeout, TurnToParams params = {}, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target heading
          *
@@ -300,18 +300,7 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToHeading(float theta, int timeout, bool async = true);
-        /**
-         * @brief Turn the chassis so it is facing the target heading
-         *
-         * The PID logging id is "angularPID"
-         *
-         * @param theta heading location
-         * @param timeout longest time the robot can spend moving
-         * @param params struct to simulate named parameters
-         * @param async whether the function should be run asynchronously. true by default
-         */
-        void turnToHeading(float theta, int timeout, TurnToParams params, bool async = true);
+        void turnToHeading(float theta, int timeout, TurnToParams params = {}, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *
@@ -326,6 +315,17 @@ class Chassis {
          */
         void moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params = {}, bool async = true);
         /**
+         * @brief Move the chassis towards the target pose
+         *
+         * Uses the boomerang controller
+         *
+         * @param targetPose LemLib pose
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         */
+        void moveToPose(Pose targetPose, int timeout, MoveToPoseParams params = {}, bool async = true);
+        /**
          * @brief Move the chassis towards a target point
          *
          * @param x x location
@@ -335,6 +335,15 @@ class Chassis {
          * @param async whether the function should be run asynchronously. true by default
          */
         void moveToPoint(float x, float y, int timeout, MoveToPointParams params = {}, bool async = true);
+        /**
+         * @brief Move the chassis towards a target point
+         *
+         * @param targetPose LemLib pose
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         */
+        void moveToPoint(Pose targetPose, int timeout, MoveToPointParams params = {}, bool async = true);
         /**
          * @brief Move the chassis along a path
          *
