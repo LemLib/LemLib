@@ -52,6 +52,16 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
       rpm(rpm),
       chasePower(chasePower) {}
 
+void lemlib::Drivetrain::movePowers(float leftPower, float rightPower, bool useBrakeMode) {
+    auto processPower = [useBrakeMode](pros::MotorGroup* motorGroup, float power) {
+        if (useBrakeMode && power == 0) motorGroup->move_velocity(0);
+        else motorGroup->move(power);
+    };
+
+    processPower(leftMotors, leftPower);
+    processPower(rightMotors, rightPower);
+}
+
 /**
  * @brief Construct a new Chassis
  *
@@ -312,15 +322,13 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, bool async) {
         infoSink()->debug("Turn Motor Power: {} ", motorPower);
 
         // move the drivetrain
-        drivetrain.leftMotors->move(motorPower);
-        drivetrain.rightMotors->move(-motorPower);
+        drivetrain.movePowers(motorPower, -motorPower);
 
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.movePowers(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
@@ -399,15 +407,13 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToParams pa
         infoSink()->debug("Turn Motor Power: {} ", motorPower);
 
         // move the drivetrain
-        drivetrain.leftMotors->move(motorPower);
-        drivetrain.rightMotors->move(-motorPower);
+        drivetrain.movePowers(motorPower, -motorPower);
 
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.movePowers(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
@@ -474,15 +480,13 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, bool async) {
         infoSink()->debug("Turn Motor Power: {} ", motorPower);
 
         // move the drivetrain
-        drivetrain.leftMotors->move(motorPower);
-        drivetrain.rightMotors->move(-motorPower);
+        drivetrain.movePowers(motorPower, -motorPower);
 
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.movePowers(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
@@ -558,15 +562,13 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToParams param
         infoSink()->debug("Turn Motor Power: {} ", motorPower);
 
         // move the drivetrain
-        drivetrain.leftMotors->move(motorPower);
-        drivetrain.rightMotors->move(-motorPower);
+        drivetrain.movePowers(motorPower, -motorPower);
 
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.movePowers(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
@@ -724,16 +726,13 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         }
 
         // move the drivetrain
-        drivetrain.leftMotors->move(leftPower);
-        drivetrain.rightMotors->move(rightPower);
-
+        drivetrain.movePowers(leftPower, rightPower);
         // delay to save resources
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.movePowers(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
@@ -858,16 +857,14 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
         }
 
         // move the drivetrain
-        drivetrain.leftMotors->move(leftPower);
-        drivetrain.rightMotors->move(rightPower);
+        drivetrain.movePowers(leftPower, rightPower);
 
         // delay to save resources
         pros::delay(10);
     }
 
     // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    drivetrain.movePowers(0, 0);
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
