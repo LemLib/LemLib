@@ -1,0 +1,26 @@
+name: Populate Depot json
+
+on: 
+  # runs when this repository's releases are modified
+  release: 
+  # allows for manual dispatching of the workflow
+  workflow_dispatch: 
+
+jobs:
+  populate:
+    runs-on: ubuntu-latest
+    permissions: 
+      # permits reading of releases and writing to the depot branch
+      contents: write
+    steps:
+        # where to find gh action and what version to use
+      - uses: LemLib/pros-depot@v0.1.0-beta.1
+        with:
+          # gives the github action the permissions specified above
+          token: ${{ github.token }}
+          # target repo for depots
+          repo: LemLib/LemLib
+          # where to read releases from (can be omitted if repo is also the repo from which to read releases from, but it doesn't sem to be working at the moment)
+          source-repo: LemLib/LemLib
+          # makes the json output human readable
+          readable-json: true
