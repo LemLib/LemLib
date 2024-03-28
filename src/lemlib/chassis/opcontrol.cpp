@@ -4,17 +4,20 @@
 
 namespace lemlib {
 
-    /**
-         * @brief These settings are used to optimize drivetrain control during Operator control.
-         *
-         * https://www.desmos.com/calculator/umicbymbnl
-         * 
-         * @param deadband range where inputs will be ignored
-         * @param minOutput minimum output required to make the drivetrain move
-         * @param curve how curved the graph is. Set to 0 for linear
-         */
-        OpcontrolSettings::OpcontrolSettings(float deadband, float minOutput, float curve, DriveCurveFunction_t driveCurve)
-        : deadband(deadband), minOutput(minOutput), curve(curve), driveCurve(driveCurve) {}
+/**
+ * @brief These settings are used to optimize drivetrain control during Operator control.
+ *
+ * https://www.desmos.com/calculator/umicbymbnl
+ *
+ * @param deadband range where inputs will be ignored
+ * @param minOutput minimum output required to make the drivetrain move
+ * @param curve how curved the graph is. Set to 0 for linear
+ */
+OpcontrolSettings::OpcontrolSettings(float deadband, float minOutput, float curve, DriveCurveFunction_t driveCurve)
+    : deadband(deadband),
+      minOutput(minOutput),
+      curve(curve),
+      driveCurve(driveCurve) {}
 
 OpcontrolSettings defaultOpcontrolSettings = OpcontrolSettings(0, 0, 0);
 
@@ -26,21 +29,21 @@ OpcontrolSettings defaultOpcontrolSettings = OpcontrolSettings(0, 0, 0);
  * @param input value from -127 to 127
  * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
  * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
- * @param scale how steep the curve should be.
+ * @param curve how steep the curve should be.
  * @return The new value to be used.
  */
-float expoDriveCurve(float input, float inputDeadband, float minOutput, float scale) {
+float expoDriveCurve(float input, float inputDeadband, float minOutput, float curve) {
     if (fabs(input) < inputDeadband) return 0;
-    if (scale < 1) scale = 1;
+    if (curve < 1) curve = 1;
     // g is the output of g(x) as defined in the Desmos graph
     const float g = fabs(input) - inputDeadband;
     // g127 is the output of g(127) as defined in the Desmos graph
     const float g127 = 127 - inputDeadband;
     // i is the output of i(x) as defined in the Desmos graph
-    const float i = pow(scale, g - 127) * g * sgn(input);
+    const float i = pow(curve, g - 127) * g * sgn(input);
     // i127 is the output of i(127) as defined in the Desmos graph
-    const float i127 = pow(scale, g127 - 127) * g127 * sgn(input);
-    return (127.0 - minOutput)/(127) * i * 127 / i127 + minOutput * sgn(input);
+    const float i127 = pow(curve, g127 - 127) * g127;
+    return (127.0 - minOutput) / (127) * i * 127 / i127 + minOutput * sgn(input);
 }
 
 /**
@@ -51,8 +54,10 @@ float expoDriveCurve(float input, float inputDeadband, float minOutput, float sc
  * @param turn speed to turn. Takes an input from -127 to 127.
  */
 void Chassis::tank(int left, int right) {
-    drivetrain.leftMotors->move(opcontrolSettings.driveCurve(left, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve));
-    drivetrain.rightMotors->move(opcontrolSettings.driveCurve(right, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve));
+    drivetrain.leftMotors->move(opcontrolSettings.driveCurve(left, opcontrolSettings.deadband,
+                                                             opcontrolSettings.minOutput, opcontrolSettings.curve));
+    drivetrain.rightMotors->move(opcontrolSettings.driveCurve(right, opcontrolSettings.deadband,
+                                                              opcontrolSettings.minOutput, opcontrolSettings.curve));
 }
 
 /**
@@ -63,8 +68,10 @@ void Chassis::tank(int left, int right) {
  * @param turn speed to turn. Takes an input from -127 to 127.
  */
 void Chassis::arcade(int throttle, int turn) {
-    int leftPowerRaw = opcontrolSettings.driveCurve(throttle + turn, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve);
-    int rightPowerRaw = opcontrolSettings.driveCurve(throttle - turn, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve);
+    int leftPowerRaw = opcontrolSettings.driveCurve(throttle + turn, opcontrolSettings.deadband,
+                                                    opcontrolSettings.minOutput, opcontrolSettings.curve);
+    int rightPowerRaw = opcontrolSettings.driveCurve(throttle - turn, opcontrolSettings.deadband,
+                                                     opcontrolSettings.minOutput, opcontrolSettings.curve);
     // desaturate output
     int leftPower = leftPowerRaw / (fabs(leftPowerRaw) + fabs(rightPowerRaw)) * 127;
     int rightPower = rightPowerRaw / (fabs(leftPowerRaw) + fabs(rightPowerRaw)) * 127;
@@ -91,8 +98,10 @@ void Chassis::curvature(int throttle, int turn) {
     float leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
     float rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
 
-    leftPower = opcontrolSettings.driveCurve(leftPower, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve);
-    rightPower = opcontrolSettings.driveCurve(rightPower, opcontrolSettings.deadband, opcontrolSettings.minOutput, opcontrolSettings.curve);
+    leftPower = opcontrolSettings.driveCurve(leftPower, opcontrolSettings.deadband, opcontrolSettings.minOutput,
+                                             opcontrolSettings.curve);
+    rightPower = opcontrolSettings.driveCurve(rightPower, opcontrolSettings.deadband, opcontrolSettings.minOutput,
+                                              opcontrolSettings.curve);
 
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);

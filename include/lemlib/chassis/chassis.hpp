@@ -17,7 +17,7 @@ namespace lemlib {
  * @param input The control input in the range [-127, 127].
  * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
  * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
- * @param scale The scaling factor, which can be optionally ignored.
+ * @param curve how curved the graph is, which can be optionally ignored.
  * @return The new value to be used.
  */
 typedef std::function<float(float, float, float, float)> DriveCurveFunction_t;
@@ -30,10 +30,10 @@ typedef std::function<float(float, float, float, float)> DriveCurveFunction_t;
  * @param input value from -127 to 127
  * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
  * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
- * @param scale how steep the curve should be.
+ * @param curve how steep the curve should be.
  * @return The new value to be used.
  */
-float expoDriveCurve(float input, float inputDeadband = 0, float minOutput = 0, float scale = 0);
+float expoDriveCurve(float input, float inputDeadband = 0, float minOutput = 0, float curve = 0);
 
 /**
  * @brief Struct containing all the sensors used for odometry
@@ -130,19 +130,20 @@ struct Drivetrain {
 
 /**
  * @brief Struct containing settings for driver control
- * 
+ *
  */
 struct OpcontrolSettings {
         /**
          * @brief These settings are used to optimize drivetrain control during Operator control.
          *
          * https://www.desmos.com/calculator/umicbymbnl
-         * 
+         *
          * @param deadband range where inputs will be ignored
          * @param minOutput minimum output required to make the drivetrain move
          * @param curve how curved the graph is. Set to 0 for linear
          */
-        OpcontrolSettings(float deadband, float minOutput, float curve, DriveCurveFunction_t driveCurve = &expoDriveCurve);
+        OpcontrolSettings(float deadband, float minOutput, float curve,
+                          DriveCurveFunction_t driveCurve = &expoDriveCurve);
         float deadband;
         float minOutput;
         float curve;
