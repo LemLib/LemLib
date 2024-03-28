@@ -33,7 +33,7 @@ OpcontrolSettings defaultOpcontrolSettings = OpcontrolSettings(0, 0, 0);
  * @return The new value to be used.
  */
 float expoDriveCurve(float input, float inputDeadband, float minOutput, float curve) {
-    if (fabs(input) < inputDeadband) return 0;
+    if (fabs(input) <= inputDeadband) return 0;
     if (curve < 1) curve = 1;
     // g is the output of g(x) as defined in the Desmos graph
     const float g = fabs(input) - inputDeadband;
