@@ -22,9 +22,9 @@ pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 pros::Imu imu(10);
 
 // tracking wheels
-// horizontal tracking wheel encoder. Rotation sensor, port 15, reversed (negative signs don't work due to a pros bug)
+// horizontal tracking wheel encoder. Rotation sensor, port 20, reversed (negative signs don't work due to a pros bug)
 pros::Rotation horizontalEnc(20, true);
-// vertical tracking wheel encoder. Rotation sensor, port 15, reversed (negative signs don't work due to a pros bug)
+// vertical tracking wheel encoder. Rotation sensor, port 11, reversed (negative signs don't work due to a pros bug)
 pros::Rotation verticalEnc(11, true);
 // horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -5.75);
