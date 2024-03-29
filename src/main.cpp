@@ -74,14 +74,12 @@ lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel 1, set to null
 );
 
 // input curve for throttle input during driver control
-// see https://www.desmos.com/calculator/umicbymbnl for a visualization
 lemlib::ExpoDriveCurve throttleCurve(3, // joystick deadband out of 127
                                      10, // minimum output where drivetrain will move out of 127
                                      1.019 // expo curve gain
 );
 
 // input curve for steer input during driver control
-// see https://www.desmos.com/calculator/umicbymbnl for a visualization
 lemlib::ExpoDriveCurve steerCurve(3, // joystick deadband out of 127
                                   10, // minimum output where drivetrain will move out of 127
                                   1.019 // expo curve gain

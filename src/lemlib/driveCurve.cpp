@@ -11,8 +11,6 @@ ExpoDriveCurve::ExpoDriveCurve(float deadband, float minOutput, float curve)
 /**
  * @brief Exponential drive curve. Allows for fine control at low speeds while maintaining the same maximum speed.
  *
- * Interactive Graph: https://www.desmos.com/calculator/umicbymbnl
- *
  * @param input value from -127 to 127
  * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
  * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
