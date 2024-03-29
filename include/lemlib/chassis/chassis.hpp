@@ -185,6 +185,38 @@ struct MoveToPointParams {
         float earlyExitRange = 0;
 };
 
+/**
+ * @brief Enum class DriveSide
+ *
+ * When using swing turns, the user needs to specify what side of the drivetrain should be locked
+ * we could just use an integer or boolean for this, but using an enum class improves readability
+ *
+ * This enum class only has 2 values, LEFT and RIGHT
+ */
+enum class DriveSide { LEFT, RIGHT };
+
+/**
+ * @brief Parameters for Chassis::swingTurn
+ *
+ * We use a struct to simplify customization. Chassis::swingTurn has many
+ * parameters and specifying them all just to set one optional param harms
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange angle between the robot and target heading where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct SwingTurnParams {
+        float maxSpeed = 127;
+        float minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
 // default drive curve
 extern ExpoDriveCurve defaultDriveCurve;
 
@@ -270,14 +302,22 @@ class Chassis {
         /**
          * @brief Turn the chassis so it is facing the target heading
          *
-         * The PID logging id is "angularPID"
-         *
          * @param theta heading location
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
         void turnToHeading(float theta, int timeout, TurnToParams params, bool async = true);
+        /**
+         * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
+         *
+         * @param theta heading location
+         * @param lockedSide side of the drivetrain that is locked
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         */
+        void swingTurn(float theta, DriveSide lockedSide, int timeout, SwingTurnParams params, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *
