@@ -1,36 +1,42 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "lemlib/chassis/chassis.hpp"
+#include "pros/misc.h"
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drive motors
-pros::Motor lF(-12, pros::E_MOTOR_GEARSET_06); // left front motor. port 12, reversed
-pros::Motor lM(-11, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
-pros::Motor lB(-1, pros::E_MOTOR_GEARSET_06); // left back motor. port 1, reversed
-pros::Motor rF(19, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
-pros::Motor rM(20, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
-pros::Motor rB(9, pros::E_MOTOR_GEARSET_06); // right back motor. port 13
+pros::Motor lF(-5, pros::E_MOTOR_GEARSET_06); // left front motor. port 5, reversed
+pros::Motor lM(4, pros::E_MOTOR_GEARSET_06); // left middle motor. port 4
+pros::Motor lB(-3, pros::E_MOTOR_GEARSET_06); // left back motor. port 3, reversed
+pros::Motor rF(6, pros::E_MOTOR_GEARSET_06); // right front motor. port 6
+pros::Motor rM(-9, pros::E_MOTOR_GEARSET_06); // right middle motor. port 9, reversed
+pros::Motor rB(7, pros::E_MOTOR_GEARSET_06); // right back motor. port 7
 
 // motor groups
 pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
 pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
 // Inertial Sensor on port 2
-pros::Imu imu(2);
+pros::Imu imu(10);
 
 // tracking wheels
-// horizontal tracking wheel encoder. Rotation sensor, port 15, reversed (negative signs don't work due to a pros bug)
-pros::Rotation horizontalEnc(15, true);
-// horizontal tracking wheel. 2.75" diameter, 3.7" offset, back of the robot (negative)
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -3.7);
+// horizontal tracking wheel encoder. Rotation sensor, port 20, reversed (negative signs don't work due to a pros bug)
+pros::Rotation horizontalEnc(20, true);
+// vertical tracking wheel encoder. Rotation sensor, port 11, reversed (negative signs don't work due to a pros bug)
+pros::Rotation verticalEnc(11, true);
+// horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
+lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -5.75);
+// vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
+lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
                               10, // 10 inch track width
-                              lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-                              360, // drivetrain rpm is 360
+                              lemlib::Omniwheel::NEW_4, // using new 3.25" omnis
+                              343, // drivetrain rpm is 343
                               2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
@@ -60,15 +66,27 @@ lemlib::ControllerSettings angularController(2, // proportional gain (kP)
 
 // sensors for odometry
 // note that in this example we use internal motor encoders (IMEs), so we don't pass vertical tracking wheels
-lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
+lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel 1, set to null
                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
                             &horizontal, // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
 
+// input curve for throttle input during driver control
+lemlib::ExpoDriveCurve throttleCurve(3, // joystick deadband out of 127
+                                     10, // minimum output where drivetrain will move out of 127
+                                     1.019 // expo curve gain
+);
+
+// input curve for steer input during driver control
+lemlib::ExpoDriveCurve steerCurve(3, // joystick deadband out of 127
+                                  10, // minimum output where drivetrain will move out of 127
+                                  1.019 // expo curve gain
+);
+
 // create the chassis
-lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors);
+lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -162,7 +180,7 @@ void opcontrol() {
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         // move the chassis with curvature drive
-        chassis.curvature(leftY, rightX);
+        chassis.arcade(leftY, rightX);
         // delay to save resources
         pros::delay(10);
     }

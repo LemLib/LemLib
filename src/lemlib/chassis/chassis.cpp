@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <math.h>
 #include <optional>
-#include "lemlib/logger/baseSink.hpp"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
@@ -59,15 +58,17 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
  * @param lateralSettings settings for the lateral controller
  * @param angularSettings settings for the angular controller
  * @param sensors sensors to be used for odometry
- * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
+ * @param throttleCurve curve applied to throttle input during driver control
+ * @param turnCurve curve applied to steer input during driver control
  */
-lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings lateralSettings, ControllerSettings angularSettings,
-                         OdomSensors sensors, DriveCurveFunction_t driveCurve)
+lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
+                         OdomSensors sensors, DriveCurve* throttleCurve, DriveCurve* steerCurve)
     : drivetrain(drivetrain),
-      lateralSettings(lateralSettings),
+      lateralSettings(linearSettings),
       angularSettings(angularSettings),
       sensors(sensors),
-      driveCurve(driveCurve),
+      throttleCurve(throttleCurve),
+      steerCurve(steerCurve),
       lateralPID(lateralSettings.kP, lateralSettings.kI, lateralSettings.kD, lateralSettings.windupRange, true),
       angularPID(angularSettings.kP, angularSettings.kI, angularSettings.kD, angularSettings.windupRange, true),
       lateralLargeExit(lateralSettings.largeError, lateralSettings.largeErrorTimeout),
