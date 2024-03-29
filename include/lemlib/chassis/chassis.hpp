@@ -245,10 +245,14 @@ class Chassis {
          * @param lateralSettings settings for the lateral controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
-         * @param opcontrolSettings settings for driver control. defaultOpcontrolSettings by default
+         * @param throttleOpcontrolSettings settings for driver control when using throttle. defaultOpcontrolSettings by
+         * default
+         * @param turnOpcontrolSettings settings for driver control when using turn. defaultOpcontrolSettings by
+         * default
          */
         Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
-                OdomSensors sensors, OpcontrolSettings opcontrolSettings = defaultOpcontrolSettings);
+                OdomSensors sensors, OpcontrolSettings throttleOpcontrolSettings = defaultOpcontrolSettings,
+                OpcontrolSettings turnOpcontrolSettings = defaultOpcontrolSettings);
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -440,7 +444,8 @@ class Chassis {
         ControllerSettings angularSettings;
         Drivetrain drivetrain;
         OdomSensors sensors;
-        OpcontrolSettings opcontrolSettings;
+        OpcontrolSettings throttleOpcontrolSettings;
+        OpcontrolSettings turnOpcontrolSettings;
 
         PID lateralPID;
         PID angularPID;

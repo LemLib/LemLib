@@ -54,10 +54,12 @@ float expoDriveCurve(float input, float inputDeadband, float minOutput, float cu
  * @param turn speed to turn. Takes an input from -127 to 127.
  */
 void Chassis::tank(int left, int right) {
-    drivetrain.leftMotors->move(opcontrolSettings.driveCurve(left, opcontrolSettings.deadband,
-                                                             opcontrolSettings.minOutput, opcontrolSettings.curve));
-    drivetrain.rightMotors->move(opcontrolSettings.driveCurve(right, opcontrolSettings.deadband,
-                                                              opcontrolSettings.minOutput, opcontrolSettings.curve));
+    drivetrain.leftMotors->move(throttleOpcontrolSettings.driveCurve(left, throttleOpcontrolSettings.deadband,
+                                                                     throttleOpcontrolSettings.minOutput,
+                                                                     throttleOpcontrolSettings.curve));
+    drivetrain.rightMotors->move(throttleOpcontrolSettings.driveCurve(right, throttleOpcontrolSettings.deadband,
+                                                                      throttleOpcontrolSettings.minOutput,
+                                                                      throttleOpcontrolSettings.curve));
 }
 
 /**
@@ -68,13 +70,19 @@ void Chassis::tank(int left, int right) {
  * @param turn speed to turn. Takes an input from -127 to 127.
  */
 void Chassis::arcade(int throttle, int turn) {
-    int leftPowerRaw = opcontrolSettings.driveCurve(throttle + turn, opcontrolSettings.deadband,
-                                                    opcontrolSettings.minOutput, opcontrolSettings.curve);
-    int rightPowerRaw = opcontrolSettings.driveCurve(throttle - turn, opcontrolSettings.deadband,
-                                                     opcontrolSettings.minOutput, opcontrolSettings.curve);
+    throttle =
+        throttleOpcontrolSettings.driveCurve(throttle, throttleOpcontrolSettings.deadband,
+                                             throttleOpcontrolSettings.minOutput, throttleOpcontrolSettings.curve);
+    turn = turnOpcontrolSettings.driveCurve(turn, turnOpcontrolSettings.deadband, turnOpcontrolSettings.minOutput,
+                                            turnOpcontrolSettings.curve);
+    int leftPower = throttle + turn;
+    int rightPower = throttle - turn;
     // desaturate output
-    int leftPower = leftPowerRaw / (fabs(leftPowerRaw) + fabs(rightPowerRaw)) * 127;
-    int rightPower = rightPowerRaw / (fabs(leftPowerRaw) + fabs(rightPowerRaw)) * 127;
+    float max = std::max(std::fabs(leftPower), std::fabs(rightPower)) / 127;
+    if (max > 1) {
+        leftPower /= max;
+        rightPower /= max;
+    }
     // move drive
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
@@ -95,14 +103,21 @@ void Chassis::curvature(int throttle, int turn) {
         return;
     }
 
-    float leftPower = throttle + (std::abs(throttle) * turn) / 127.0;
-    float rightPower = throttle - (std::abs(throttle) * turn) / 127.0;
+    throttle =
+        throttleOpcontrolSettings.driveCurve(throttle, throttleOpcontrolSettings.deadband,
+                                             throttleOpcontrolSettings.minOutput, throttleOpcontrolSettings.curve);
+    turn = turnOpcontrolSettings.driveCurve(turn, turnOpcontrolSettings.deadband, turnOpcontrolSettings.minOutput,
+                                            turnOpcontrolSettings.curve);
 
-    leftPower = opcontrolSettings.driveCurve(leftPower, opcontrolSettings.deadband, opcontrolSettings.minOutput,
-                                             opcontrolSettings.curve);
-    rightPower = opcontrolSettings.driveCurve(rightPower, opcontrolSettings.deadband, opcontrolSettings.minOutput,
-                                              opcontrolSettings.curve);
+    float leftPower = throttle + (std::fabs(throttle) * turn / 127.0);
+    float rightPower = throttle - (std::fabs(throttle) * turn / 127.0);
 
+    // desaturate output
+    float max = std::max(std::fabs(leftPower), std::fabs(rightPower)) / 127;
+    if (max > 1) {
+        leftPower /= max;
+        rightPower /= max;
+    }
     drivetrain.leftMotors->move(leftPower);
     drivetrain.rightMotors->move(rightPower);
 }
