@@ -262,7 +262,7 @@ void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
  * @param params struct to simulate named parameters
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToParams params, bool async) {
+void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointParams params, bool async) {
     params.minSpeed = fabs(params.minSpeed);
     this->requestMotionStart();
     // were all motions cancelled?
@@ -291,7 +291,6 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToParams pa
     while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
         // update variables
         Pose pose = getPose();
-        pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
 
         // update completion vars
         distTravelled = fabs(angleError(pose.theta, startTheta));
@@ -348,7 +347,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToParams pa
  * @param params struct to simulate named parameters
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToParams params, bool async) {
+void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParams params, bool async) {
     params.minSpeed = fabs(params.minSpeed);
     this->requestMotionStart();
     // were all motions cancelled?

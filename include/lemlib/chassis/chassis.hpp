@@ -107,9 +107,9 @@ struct Drivetrain {
 };
 
 /**
- * @brief Parameters for Chassis::turnTo
+ * @brief Parameters for Chassis::turnToHeading
  *
- * We use a struct to simplify customization. Chassis::turnTo has many
+ * We use a struct to simplify customization. Chassis::turnToHeading has many
  * parameters and specifying them all just to set one optional param ruins
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
@@ -124,8 +124,32 @@ struct Drivetrain {
  * @param earlyExitRange angle between the robot and target point where the movement will
  *  exit. Only has an effect if minSpeed is non-zero.
  */
-struct TurnToParams {
+struct TurnToHeadingParams {
         bool forwards = true;
+        int maxSpeed = 127;
+        int minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
+/**
+ * @brief Parameters for Chassis::turnToPoint
+ *
+ * We use a struct to simplify customization. Chassis::turnToPoint has many
+ * parameters and specifying them all just to set one optional param ruins
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param forwards whether the robot should turn to face the point with the front of the robot.
+ * True by default
+ * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
+ *  the `it conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange angle between the robot and target point where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct TurnToPointParams {
         int maxSpeed = 127;
         int minSpeed = 0;
         float earlyExitRange = 0;
@@ -217,6 +241,28 @@ struct SwingToHeadingParams {
         float earlyExitRange = 0;
 };
 
+/**
+ * @brief Parameters for Chassis::swingTurn
+ *
+ * We use a struct to simplify customization. Chassis::swingTurn has many
+ * parameters and specifying them all just to set one optional param harms
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange angle between the robot and target heading where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct SwingToPointParams {
+        float maxSpeed = 127;
+        float minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
 // default drive curve
 extern ExpoDriveCurve defaultDriveCurve;
 
@@ -298,7 +344,7 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToPoint(float x, float y, int timeout, TurnToParams params, bool async = true);
+        void turnToPoint(float x, float y, int timeout, TurnToPointParams params, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target heading
          *
@@ -307,7 +353,7 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToHeading(float theta, int timeout, TurnToParams params, bool async = true);
+        void turnToHeading(float theta, int timeout, TurnToHeadingParams params, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
          *
