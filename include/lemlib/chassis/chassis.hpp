@@ -211,7 +211,7 @@ enum class DriveSide { LEFT, RIGHT };
  * @param earlyExitRange angle between the robot and target heading where the movement will
  *  exit. Only has an effect if minSpeed is non-zero.
  */
-struct SwingTurnParams {
+struct SwingToHeadingParams {
         float maxSpeed = 127;
         float minSpeed = 0;
         float earlyExitRange = 0;
@@ -317,7 +317,8 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void swingTurn(float theta, DriveSide lockedSide, int timeout, SwingTurnParams params = {}, bool async = true);
+        void swingToHeading(float theta, DriveSide lockedSide, int timeout, SwingToHeadingParams params = {},
+                            bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *

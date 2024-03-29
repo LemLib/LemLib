@@ -431,14 +431,15 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToParams param
  * @param params struct to simulate named parameters
  * @param async whether the function should be run asynchronously. true by default
  */
-void lemlib::Chassis::swingTurn(float theta, DriveSide lockedSide, int timeout, SwingTurnParams params, bool async) {
+void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int timeout, SwingToHeadingParams params,
+                                     bool async) {
     params.minSpeed = fabs(params.minSpeed);
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { swingTurn(theta, lockedSide, timeout, params, false); });
+        pros::Task task([&]() { swingToHeading(theta, lockedSide, timeout, params, false); });
         this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
