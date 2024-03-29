@@ -499,9 +499,10 @@ void lemlib::Chassis::swingTurn(float theta, DriveSide lockedSide, int timeout, 
         // move the drivetrain
         if (lockedSide == DriveSide::LEFT) {
             drivetrain.rightMotors->move(-motorPower);
-            drivetrain.leftMotors->move(0);
+            drivetrain.leftMotors->brake();
         } else {
             drivetrain.leftMotors->move(motorPower);
+            drivetrain.rightMotors->brake();
         }
 
         // delay to save resources

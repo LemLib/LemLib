@@ -317,7 +317,7 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void swingTurn(float theta, DriveSide lockedSide, int timeout, SwingTurnParams params, bool async = true);
+        void swingTurn(float theta, DriveSide lockedSide, int timeout, SwingTurnParams params = {}, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *
