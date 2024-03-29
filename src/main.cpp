@@ -18,12 +18,12 @@ pros::Motor rB(7, pros::E_MOTOR_GEARSET_06); // right back motor. port 7
 pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
 pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
-// Inertial Sensor on port 2
+// Inertial Sensor on port 10
 pros::Imu imu(10);
 
 // tracking wheels
-// horizontal tracking wheel encoder. Rotation sensor, port 20, reversed (negative signs don't work due to a pros bug)
-pros::Rotation horizontalEnc(20, true);
+// horizontal tracking wheel encoder. Rotation sensor, port 20, not reversed
+pros::Rotation horizontalEnc(20, false);
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed (negative signs don't work due to a pros bug)
 pros::Rotation verticalEnc(11, true);
 // horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
