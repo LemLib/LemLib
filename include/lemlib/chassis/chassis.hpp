@@ -381,31 +381,39 @@ class Chassis {
          */
         void follow(const asset& path, float lookahead, int timeout, bool forwards = true, bool async = true);
         /**
-         * @brief Control the robot during the driver control period using the tank drive control scheme. In
-         * this control scheme one joystick axis controls one half of the robot, and another joystick axis
-         * controls another.
-         * @param left speed of the left side of the drivetrain. Takes an input from -127 to 127.
-         * @param right speed of the right side of the drivetrain. Takes an input from -127 to 127.
-         */
-        void tank(int left, int right);
-        /**
-         * @brief Control the robot during the driver using the arcade drive control scheme. In this control
-         * scheme one joystick axis controls the forwards and backwards movement of the robot, while the other
-         * joystick axis controls the robot's turning
+         * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
+         * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
+
+         * controls  the robot's turning
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
+         * @param disableDriveCurve whether to disable the drive curve or not. If disabled, uses a linear curve with no
+         * deadzone or minimum power
          */
-        void arcade(int throttle, int turn);
+        void tank(int left, int right, bool disableDriveCurve = false);
         /**
-         * @brief Control the robot during the driver using the curvature drive control scheme. This control
-         * scheme is very similar to arcade drive, except the second joystick axis controls the radius of the
-         * curve that the drivetrain makes, rather than the speed. This means that the driver can accelerate in
-         * a turn without changing the radius of that turn. This control scheme defaults to arcade when forward
-         * is zero.
+         * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
+         * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
+         * controls the robot's turning
+         *
          * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
          * @param turn speed to turn. Takes an input from -127 to 127.
+         * @param disableDriveCurve whether to disable the drive curve or not. If disabled, uses a linear curve with no
+         * deadzone or minimum power
          */
-        void curvature(int throttle, int turn);
+        void arcade(int throttle, int turn, bool disableDriveCurve = false);
+        /**
+         * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
+         * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
+         * drivetrain makes, rather than the speed. This means that the driver can accelerate in a turn without changing
+         * the radius of that turn. This control scheme defaults to arcade when forward is zero.
+         *
+         * @param throttle speed to move forward or backward. Takes an input from -127 to 127.
+         * @param turn speed to turn. Takes an input from -127 to 127.
+         * @param disableDriveCurve whether to disable the drive curve or not. If disabled, uses a linear curve with no
+         * deadzone or minimum power
+         */
+        void curvature(int throttle, int turn, bool disableDriveCurve = false);
         /**
          * @brief Cancels the currently running motion.
          * If there is a queued motion, then that queued motion will run.
