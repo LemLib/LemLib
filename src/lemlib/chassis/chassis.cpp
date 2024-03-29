@@ -58,20 +58,17 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
  * @param lateralSettings settings for the lateral controller
  * @param angularSettings settings for the angular controller
  * @param sensors sensors to be used for odometry
- * @param throttleOpcontrolSettings settings for driver control when using throttle. defaultOpcontrolSettings by
- * default
- * @param turnOpcontrolSettings settings for driver control when using turn. defaultOpcontrolSettings by
- * default
+ * @param throttleCurve curve applied to throttle input during driver control
+ * @param turnCurve curve applied to steer input during driver control
  */
 lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
-                         OdomSensors sensors, OpcontrolSettings throttleOpcontrolSettings,
-                         OpcontrolSettings turnOpcontrolSettings)
+                         OdomSensors sensors, DriveCurve* throttleCurve, DriveCurve* steerCurve)
     : drivetrain(drivetrain),
       lateralSettings(linearSettings),
       angularSettings(angularSettings),
       sensors(sensors),
-      throttleOpcontrolSettings(throttleOpcontrolSettings),
-      turnOpcontrolSettings(turnOpcontrolSettings),
+      throttleCurve(throttleCurve),
+      steerCurve(steerCurve),
       lateralPID(lateralSettings.kP, lateralSettings.kI, lateralSettings.kD, lateralSettings.windupRange, true),
       angularPID(angularSettings.kP, angularSettings.kI, angularSettings.kD, angularSettings.windupRange, true),
       lateralLargeExit(lateralSettings.largeError, lateralSettings.largeErrorTimeout),

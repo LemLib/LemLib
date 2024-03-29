@@ -9,31 +9,9 @@
 #include "lemlib/pose.hpp"
 #include "lemlib/pid.hpp"
 #include "lemlib/exitcondition.hpp"
+#include "lemlib/driveCurve.hpp"
 
 namespace lemlib {
-
-/**
- * @brief Function pointer type for drive curve functions.
- * @param input The control input in the range [-127, 127].
- * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
- * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
- * @param curve how curved the graph is, which can be optionally ignored.
- * @return The new value to be used.
- */
-typedef std::function<float(float, float, float, float)> DriveCurveFunction_t;
-
-/**
- * @brief Exponential drive curve. Allows for fine control at low speeds while maintaining the same maximum speed.
- *
- * Interactive Graph: https://www.desmos.com/calculator/umicbymbnl
- *
- * @param input value from -127 to 127
- * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
- * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
- * @param curve how steep the curve should be.
- * @return The new value to be used.
- */
-float expoDriveCurve(float input, float inputDeadband = 0, float minOutput = 0, float curve = 0);
 
 /**
  * @brief Struct containing all the sensors used for odometry
@@ -129,31 +107,6 @@ struct Drivetrain {
 };
 
 /**
- * @brief Struct containing settings for driver control
- *
- */
-struct OpcontrolSettings {
-        /**
-         * @brief These settings are used to optimize drivetrain control during Operator control.
-         *
-         * https://www.desmos.com/calculator/umicbymbnl
-         *
-         * @param deadband range where inputs will be ignored
-         * @param minOutput minimum output required to make the drivetrain move
-         * @param curve how curved the graph is. Set to 0 for linear
-         */
-        OpcontrolSettings(float deadband, float minOutput, float curve,
-                          DriveCurveFunction_t driveCurve = &expoDriveCurve);
-        float deadband;
-        float minOutput;
-        float curve;
-        DriveCurveFunction_t driveCurve;
-};
-
-// default settings for opcontrol
-extern OpcontrolSettings defaultOpcontrolSettings;
-
-/**
  * @brief Parameters for Chassis::turnTo
  *
  * We use a struct to simplify customization. Chassis::turnTo has many
@@ -166,7 +119,7 @@ extern OpcontrolSettings defaultOpcontrolSettings;
  * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
  *  127 by default
  * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
- *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  the `it conditions will switch to less accurate but smoother ones. Value between 0-127.
  *  0 by default
  * @param earlyExitRange angle between the robot and target point where the movement will
  *  exit. Only has an effect if minSpeed is non-zero.
@@ -232,6 +185,9 @@ struct MoveToPointParams {
         float earlyExitRange = 0;
 };
 
+// default drive curve
+extern ExpoDriveCurve defaultDriveCurve;
+
 /**
  * @brief Chassis class
  *
@@ -245,14 +201,12 @@ class Chassis {
          * @param lateralSettings settings for the lateral controller
          * @param angularSettings settings for the angular controller
          * @param sensors sensors to be used for odometry
-         * @param throttleOpcontrolSettings settings for driver control when using throttle. defaultOpcontrolSettings by
-         * default
-         * @param turnOpcontrolSettings settings for driver control when using turn. defaultOpcontrolSettings by
-         * default
+         * @param throttleCurve curve applied to throttle input during driver control
+         * @param turnCurve curve applied to steer input during driver control
          */
         Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
-                OdomSensors sensors, OpcontrolSettings throttleOpcontrolSettings = defaultOpcontrolSettings,
-                OpcontrolSettings turnOpcontrolSettings = defaultOpcontrolSettings);
+                OdomSensors sensors, DriveCurve* throttleCurve = &defaultDriveCurve,
+                DriveCurve* steerCurve = &defaultDriveCurve);
         /**
          * @brief Calibrate the chassis sensors
          *
@@ -452,8 +406,8 @@ class Chassis {
         ControllerSettings angularSettings;
         Drivetrain drivetrain;
         OdomSensors sensors;
-        OpcontrolSettings throttleOpcontrolSettings;
-        OpcontrolSettings turnOpcontrolSettings;
+        DriveCurve* throttleCurve;
+        DriveCurve* steerCurve;
 
         PID lateralPID;
         PID angularPID;

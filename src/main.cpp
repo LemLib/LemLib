@@ -73,23 +73,22 @@ lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel 1, set to null
                             &imu // inertial sensor
 );
 
-// opcontrol settings for throttle
+// input curve for throttle input during driver control
 // see https://www.desmos.com/calculator/umicbymbnl for a visualization
-lemlib::OpcontrolSettings throttleOpcontrolSettings(3, // joystick deadband out of 127
-                                                    10, // minimum output where drivetrain will move out of 127
-                                                    1.019 // expo curve gain
+lemlib::ExpoDriveCurve throttleCurve(3, // joystick deadband out of 127
+                                     10, // minimum output where drivetrain will move out of 127
+                                     1.019 // expo curve gain
 );
 
-// opcontrol settings for turn
+// input curve for steer input during driver control
 // see https://www.desmos.com/calculator/umicbymbnl for a visualization
-lemlib::OpcontrolSettings turnOpcontrolSettings(3, // joystick deadband out of 127
-                                                10, // minimum output where drivetrain will move out of 127
-                                                1.019 // expo curve gain
+lemlib::ExpoDriveCurve steerCurve(3, // joystick deadband out of 127
+                                  10, // minimum output where drivetrain will move out of 127
+                                  1.019 // expo curve gain
 );
 
 // create the chassis
-lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, throttleOpcontrolSettings,
-                        turnOpcontrolSettings);
+lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
