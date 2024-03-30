@@ -170,7 +170,7 @@ void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, r
  * @param radians whether theta should be in radians (true) or degrees (false). false by default
  * @return Pose
  */
-lemlib::Pose lemlib::Chassis::getPose(bool radians, bool standardPos) {
+lemlib::Pose lemlib::Chassis::getPose(bool radians, bool standardPos) const {
     Pose pose = lemlib::getPose(true);
     if (standardPos) pose.theta = M_PI_2 - pose.theta;
     if (!radians) pose.theta = radToDeg(pose.theta);
@@ -251,57 +251,112 @@ void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
     drivetrain.rightMotors->set_brake_modes(mode);
 }
 
-/**
- * @brief Turn the chassis so it is facing the target point
- *
- * The PID logging id is "angularPID"
- *
- * @param x x location
- * @param y y location
- * @param timeout longest time the robot can spend moving
- * @param params struct to simulate named parameters
- * @param async whether the function should be run asynchronously. true by default
- */
-void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointParams params, bool async) {
+lemlib::Chassis::TurnToAnyParams::TurnToAnyParams(lemlib::TurnToHeadingParams params,
+                                                  std::optional<DriveSide> lockedSide)
+    : maxSpeed(params.maxSpeed),
+      minSpeed(params.minSpeed),
+      earlyExitRange(params.earlyExitRange),
+      lockedSide(lockedSide) {}
+
+lemlib::Chassis::TurnToAnyParams::TurnToAnyParams(lemlib::TurnToPointParams params, std::optional<DriveSide> lockedSide)
+    : maxSpeed(params.maxSpeed),
+      minSpeed(params.minSpeed),
+      earlyExitRange(params.earlyExitRange),
+      lockedSide(lockedSide) {}
+
+lemlib::Chassis::TurnToAnyParams::TurnToAnyParams(lemlib::SwingToHeadingParams params,
+                                                  std::optional<DriveSide> lockedSide)
+    : maxSpeed(params.maxSpeed),
+      minSpeed(params.minSpeed),
+      earlyExitRange(params.earlyExitRange),
+      lockedSide(lockedSide) {}
+
+lemlib::Chassis::TurnToAnyParams::TurnToAnyParams(lemlib::SwingToPointParams params,
+                                                  std::optional<DriveSide> lockedSide)
+    : maxSpeed(params.maxSpeed),
+      minSpeed(params.minSpeed),
+      earlyExitRange(params.earlyExitRange),
+      lockedSide(lockedSide) {}
+
+float lemlib::Chassis::headingToPoint(Pose target, bool radians) const {
+    // borrowed from:
+    // https://github.com/LemLib/LemLib/blob/66d14db8547889b16e4688eb4087e31f6d46fbcd/src/lemlib/chassis/chassis.cpp#L301
+    Pose delta = target - getPose();
+    const float angleInRadians = atan2(delta.y, delta.x);
+
+    if (radians) return angleInRadians;
+    // convert to degrees
+    return fmod(radToDeg(M_PI_2 - angleInRadians), 360);
+}
+
+void lemlib::Chassis::turnToAny(std::function<float(void)> headingProvider, int timeout, TurnToAnyParams params,
+                                bool async) {
+    // Represents the mode of the turn.
+    // Answers these questions: Should we do a swing turn? If so, which side is locked?
+    enum class MODE { LOCK_LEFT, LOCK_RIGHT, TURN_IN_PLACE };
+
     params.minSpeed = fabs(params.minSpeed);
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
     // if the function is async, run it in a new task
     if (async) {
-        pros::Task task([&]() { turnToPoint(x, y, timeout, params, false); });
+        pros::Task task([&]() { this->turnToAny(headingProvider, timeout, params, false); });
         this->endMotion();
         pros::delay(10); // delay to give the task time to start
         return;
     }
     float targetTheta;
-    float deltaX, deltaY, deltaTheta;
+    float deltaTheta;
     float motorPower;
     float prevMotorPower = 0;
     float startTheta = getPose().theta;
     std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
+    this->distTravelled = 0;
     Timer timer(timeout);
     angularLargeExit.reset();
     angularSmallExit.reset();
     angularPID.reset();
 
+    // store original brake mode of the side of the drivetrain that is to be braked
+    // this is so we can set it back to its original value after the motion ends
+    std::optional<pros::motor_brake_mode_e> originalBrakeMode = std::nullopt;
+
+    MODE mode = MODE::TURN_IN_PLACE;
+    // if a side is locked, then we are in swing mode
+    // if not, then default to turn in place
+    if (params.lockedSide.has_value()) {
+        pros::MotorGroup* brakedSide = nullptr;
+
+        // set brakedSide to the side of the drivetrain that is to be braked
+        // and set mode to swing with the correct side locked
+        switch (params.lockedSide.value()) {
+            case DriveSide::LEFT:
+                brakedSide = this->drivetrain.leftMotors;
+                mode = MODE::LOCK_LEFT;
+                break;
+            case DriveSide::RIGHT:
+                brakedSide = this->drivetrain.rightMotors;
+                mode = MODE::LOCK_RIGHT;
+                break;
+        }
+        // brakedSide should now be set to the side of the drivetrain that is to be braked
+        originalBrakeMode = brakedSide->get_brake_modes().at(0); // store original brake mode to set back later
+        brakedSide->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD); // brake specified side
+    }
     // main loop
     while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
         // update variables
         Pose pose = getPose();
-        pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
+
+        targetTheta = headingProvider();
+        deltaTheta = angleError(targetTheta, pose.theta, false);
 
         // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
-
-        deltaX = x - pose.x;
-        deltaY = y - pose.y;
-        targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
+        this->distTravelled += deltaTheta;
 
         // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta, false);
         if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
 
         // motion chaining
@@ -324,10 +379,27 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
         infoSink()->debug("Turn Motor Power: {} ", motorPower);
 
         // move the drivetrain
-        drivetrain.leftMotors->move(motorPower);
-        drivetrain.rightMotors->move(-motorPower);
+        if (mode == MODE::LOCK_LEFT) this->drivetrain.leftMotors->brake();
+        else this->drivetrain.leftMotors->move(motorPower);
+
+        if (mode == MODE::LOCK_RIGHT) this->drivetrain.rightMotors->brake();
+        else this->drivetrain.rightMotors->move(-motorPower);
 
         pros::delay(10);
+    }
+    // reset the brake mode of the braked side to its original mode
+    if (originalBrakeMode.has_value()) {
+        switch (mode) {
+            case MODE::LOCK_LEFT: this->drivetrain.leftMotors->set_brake_modes(originalBrakeMode.value()); break;
+            case MODE::LOCK_RIGHT: this->drivetrain.rightMotors->set_brake_modes(originalBrakeMode.value()); break;
+            default:
+                // exhaustive check that should never happen, but just in case
+                infoSink()->error("originalBrakeMode has value, but mode is not swing.\n\t"
+                                  "This error should never happen, so you must be tremendously lucky!\n\t"
+                                  "This is NOT a problem with your code. Please report this bug to the developers.");
+                throw "internal logic error; see log for details";
+                break;
+        }
     }
 
     // stop the drivetrain
@@ -336,6 +408,24 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
     // set distTraveled to -1 to indicate that the function has finished
     distTravelled = -1;
     this->endMotion();
+}
+
+float reverseHeading(float heading) { return fmod(heading - 180, 360); }
+
+/**
+ * @brief Turn the chassis so it is facing the target point
+ *
+ * The PID logging id is "angularPID"
+ *
+ * @param x x location
+ * @param y y location
+ * @param timeout longest time the robot can spend moving
+ * @param params struct to simulate named parameters
+ * @param async whether the function should be run asynchronously. true by default
+ */
+void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointParams params, bool async) {
+    Pose target(x, y, 0);
+    this->turnToAny([&target, this] { return reverseHeading(this->headingToPoint(target)); }, timeout, params, async);
 }
 
 /**
@@ -349,76 +439,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
  * @param async whether the function should be run asynchronously. true by default
  */
 void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParams params, bool async) {
-    params.minSpeed = fabs(params.minSpeed);
-    this->requestMotionStart();
-    // were all motions cancelled?
-    if (!this->motionRunning) return;
-    // if the function is async, run it in a new task
-    if (async) {
-        pros::Task task([&]() { turnToHeading(theta, timeout, params, false); });
-        this->endMotion();
-        pros::delay(10); // delay to give the task time to start
-        return;
-    }
-    float targetTheta;
-    float deltaTheta;
-    float motorPower;
-    float prevMotorPower = 0;
-    float startTheta = getPose().theta;
-    std::optional<float> prevDeltaTheta = std::nullopt;
-    std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
-    Timer timer(timeout);
-    angularLargeExit.reset();
-    angularSmallExit.reset();
-    angularPID.reset();
-
-    // main loop
-    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
-        // update variables
-        Pose pose = getPose();
-
-        // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
-
-        targetTheta = theta;
-
-        // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta, false);
-        if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
-
-        // motion chaining
-        if (params.minSpeed != 0 && fabs(deltaTheta) < params.earlyExitRange) break;
-        if (params.minSpeed != 0 && sgn(deltaTheta) != sgn(prevDeltaTheta)) break;
-
-        // calculate the speed
-        motorPower = angularPID.update(deltaTheta);
-        angularLargeExit.update(deltaTheta);
-        angularSmallExit.update(deltaTheta);
-
-        // cap the speed
-        if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
-        else if (motorPower < -params.maxSpeed) motorPower = -params.maxSpeed;
-        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
-        if (motorPower < 0 && motorPower > -params.minSpeed) motorPower = -params.minSpeed;
-        else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
-        prevMotorPower = motorPower;
-
-        infoSink()->debug("Turn Motor Power: {} ", motorPower);
-
-        // move the drivetrain
-        drivetrain.leftMotors->move(motorPower);
-        drivetrain.rightMotors->move(-motorPower);
-
-        pros::delay(10);
-    }
-
-    // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
-    // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
-    this->endMotion();
+    this->turnToAny([theta] { return theta; }, timeout, params, async);
 }
 
 /**
@@ -433,95 +454,9 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParam
  */
 void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int timeout, SwingToPointParams params,
                                    bool async) {
-    params.minSpeed = fabs(params.minSpeed);
-    this->requestMotionStart();
-    // were all motions cancelled?
-    if (!this->motionRunning) return;
-    // if the function is async, run it in a new task
-    if (async) {
-        pros::Task task([&]() { swingToPoint(x, y, lockedSide, timeout, params, false); });
-        this->endMotion();
-        pros::delay(10); // delay to give the task time to start
-        return;
-    }
-    float targetTheta;
-    float deltaX, deltaY, deltaTheta;
-    float motorPower;
-    float prevMotorPower = 0;
-    float startTheta = getPose().theta;
-    std::optional<float> prevDeltaTheta = std::nullopt;
-    std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
-    Timer timer(timeout);
-    angularLargeExit.reset();
-    angularSmallExit.reset();
-    angularPID.reset();
-    // get original braking mode of that side of the drivetrain so we can set it back to it after this motion ends
-    pros::motor_brake_mode_e brakeMode = (lockedSide == DriveSide::LEFT)
-                                             ? this->drivetrain.leftMotors->get_brake_modes().at(0)
-                                             : this->drivetrain.rightMotors->get_brake_modes().at(0);
-    // set brake mode of the locked side to hold
-    if (lockedSide == DriveSide::LEFT) this->drivetrain.leftMotors->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
-    else this->drivetrain.rightMotors->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
-
-    // main loop
-    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
-        // update variables
-        Pose pose = getPose();
-        pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
-
-        // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
-
-        deltaX = x - pose.x;
-        deltaY = y - pose.y;
-        targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
-
-        // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta, false);
-        if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
-
-        // motion chaining
-        if (params.minSpeed != 0 && fabs(deltaTheta) < params.earlyExitRange) break;
-        if (params.minSpeed != 0 && sgn(deltaTheta) != sgn(prevDeltaTheta)) break;
-
-        // calculate the speed
-        motorPower = angularPID.update(deltaTheta);
-        angularLargeExit.update(deltaTheta);
-        angularSmallExit.update(deltaTheta);
-
-        // cap the speed
-        if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
-        else if (motorPower < -params.maxSpeed) motorPower = -params.maxSpeed;
-        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
-        if (motorPower < 0 && motorPower > -params.minSpeed) motorPower = -params.minSpeed;
-        else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
-        prevMotorPower = motorPower;
-
-        infoSink()->debug("Turn Motor Power: {} ", motorPower);
-
-        // move the drivetrain
-        if (lockedSide == DriveSide::LEFT) {
-            drivetrain.rightMotors->move(-motorPower);
-            drivetrain.leftMotors->brake();
-        } else {
-            drivetrain.leftMotors->move(motorPower);
-            drivetrain.rightMotors->brake();
-        }
-
-        pros::delay(10);
-    }
-
-    // set the brake mode of the locked side of the drivetrain to its
-    // original value
-    if (lockedSide == DriveSide::LEFT) this->drivetrain.leftMotors->set_brake_modes(brakeMode);
-    else this->drivetrain.rightMotors->set_brake_modes(brakeMode);
-    // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
-    // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
-    this->endMotion();
+    Pose target(x, y, 0);
+    this->turnToAny([&target, this] { return reverseHeading(this->headingToPoint(target)); }, timeout,
+                    {params, lockedSide}, async);
 }
 
 /**
@@ -535,93 +470,7 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
  */
 void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int timeout, SwingToHeadingParams params,
                                      bool async) {
-    params.minSpeed = fabs(params.minSpeed);
-    this->requestMotionStart();
-    // were all motions cancelled?
-    if (!this->motionRunning) return;
-    // if the function is async, run it in a new task
-    if (async) {
-        pros::Task task([&]() { swingToHeading(theta, lockedSide, timeout, params, false); });
-        this->endMotion();
-        pros::delay(10); // delay to give the task time to start
-        return;
-    }
-    float targetTheta;
-    float deltaTheta;
-    float motorPower;
-    float prevMotorPower = 0;
-    float startTheta = getPose().theta;
-    std::optional<float> prevDeltaTheta = std::nullopt;
-    std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
-    Timer timer(timeout);
-    angularLargeExit.reset();
-    angularSmallExit.reset();
-    angularPID.reset();
-    // get original braking mode of that side of the drivetrain so we can set it back to it after this motion ends
-    pros::motor_brake_mode_e brakeMode = (lockedSide == DriveSide::LEFT)
-                                             ? this->drivetrain.leftMotors->get_brake_modes().at(0)
-                                             : this->drivetrain.rightMotors->get_brake_modes().at(0);
-    // set brake mode of the locked side to hold
-    if (lockedSide == DriveSide::LEFT) this->drivetrain.leftMotors->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
-    else this->drivetrain.rightMotors->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
-
-    // main loop
-    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
-        // update variables
-        Pose pose = getPose();
-        pose.theta = fmod(pose.theta, 360);
-
-        // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
-        targetTheta = theta;
-
-        // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta, false);
-        if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
-
-        // motion chaining
-        if (params.minSpeed != 0 && fabs(deltaTheta) < params.earlyExitRange) break;
-        if (params.minSpeed != 0 && sgn(deltaTheta) != sgn(prevDeltaTheta)) break;
-
-        // calculate the speed
-        motorPower = angularPID.update(deltaTheta);
-        angularLargeExit.update(deltaTheta);
-        angularSmallExit.update(deltaTheta);
-
-        // cap the speed
-        if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
-        else if (motorPower < -params.maxSpeed) motorPower = -params.maxSpeed;
-        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
-        if (motorPower < 0 && motorPower > -params.minSpeed) motorPower = -params.minSpeed;
-        else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
-        prevMotorPower = motorPower;
-
-        infoSink()->debug("Turn Motor Power: {} ", motorPower);
-
-        // move the drivetrain
-        if (lockedSide == DriveSide::LEFT) {
-            drivetrain.rightMotors->move(-motorPower);
-            drivetrain.leftMotors->brake();
-        } else {
-            drivetrain.leftMotors->move(motorPower);
-            drivetrain.rightMotors->brake();
-        }
-
-        // delay to save resources
-        pros::delay(10);
-    }
-
-    // set the brake mode of the locked side of the drivetrain to its
-    // original value
-    if (lockedSide == DriveSide::LEFT) this->drivetrain.leftMotors->set_brake_modes(brakeMode);
-    else this->drivetrain.rightMotors->set_brake_modes(brakeMode);
-    // stop the drivetrain
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
-    // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
-    this->endMotion();
+    this->turnToAny([theta] { return theta; }, timeout, {params, lockedSide}, async);
 }
 
 /**
