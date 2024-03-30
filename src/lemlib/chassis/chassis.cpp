@@ -354,7 +354,7 @@ void lemlib::Chassis::turnToAny(std::function<float(void)> headingProvider, int 
         deltaTheta = angleError(targetTheta, pose.theta, false);
 
         // update completion vars
-        this->distTravelled += deltaTheta;
+        this->distTravelled = fabs(angleError(startTheta, pose.theta, false));
 
         // calculate deltaTheta
         if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
