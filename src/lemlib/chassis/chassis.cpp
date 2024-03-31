@@ -76,11 +76,6 @@ lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSetting
       angularLargeExit(angularSettings.largeError, angularSettings.largeErrorTimeout),
       angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout) {}
 
-bool isDriverControl() {
-    return pros::competition::is_connected() && !pros::competition::is_autonomous() &&
-           !pros::competition::is_disabled();
-}
-
 /**
  * @brief calibrate the IMU given a sensors struct
  *
@@ -90,11 +85,11 @@ void calibrateIMU(lemlib::OdomSensors& sensors) {
     int attempt = 1;
     bool calibrated = false;
     // calibrate inertial, and if calibration fails, then repeat 5 times or until successful
-    while (attempt <= 5 && !isDriverControl()) {
+    while (attempt <= 5) {
         sensors.imu->reset();
         // wait until IMU is calibrated
         do pros::delay(10);
-        while (sensors.imu->get_status() != 0xFF && sensors.imu->is_calibrating() && !isDriverControl());
+        while (sensors.imu->get_status() != 0xFF && sensors.imu->is_calibrating());
         // exit if imu has been calibrated
         if (!isnanf(sensors.imu->get_heading()) && !isinf(sensors.imu->get_heading())) {
             calibrated = true;
@@ -104,12 +99,6 @@ void calibrateIMU(lemlib::OdomSensors& sensors) {
         pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
         lemlib::infoSink()->warn("IMU failed to calibrate! Attempt #{}", attempt);
         attempt++;
-    }
-    // check if its driver control through the comp switch
-    if (isDriverControl() && !calibrated) {
-        sensors.imu = nullptr;
-        lemlib::infoSink()->error(
-            "Driver control started, abandoning IMU calibration, defaulting to tracking wheels / motor encoders");
     }
     // check if calibration attempts were successful
     if (attempt > 5) {
