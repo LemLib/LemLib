@@ -283,7 +283,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
         pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
 
         // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
+        distTravelled = fabs(angleError(pose.theta, startTheta, false));
 
         deltaX = x - pose.x;
         deltaY = y - pose.y;
@@ -368,7 +368,7 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParam
         Pose pose = getPose();
 
         // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
+        distTravelled = fabs(angleError(pose.theta, startTheta, false));
 
         targetTheta = theta;
 
@@ -460,7 +460,7 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
         pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
 
         // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
+        distTravelled = fabs(angleError(pose.theta, startTheta, false));
 
         deltaX = x - pose.x;
         deltaY = y - pose.y;
@@ -562,7 +562,7 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int time
         pose.theta = fmod(pose.theta, 360);
 
         // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta));
+        distTravelled = fabs(angleError(pose.theta, startTheta, false));
         targetTheta = theta;
 
         // calculate deltaTheta
