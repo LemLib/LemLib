@@ -314,7 +314,7 @@ class Chassis {
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          */
-        Pose getPose(bool radians = false, bool standardPos = false);
+        Pose getPose(bool radians = false, bool standardPos = false) const;
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *
@@ -343,7 +343,7 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToPoint(float x, float y, int timeout, TurnToPointParams params, bool async = true);
+        void turnToPoint(float x, float y, int timeout, TurnToPointParams params = {}, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target heading
          *
@@ -352,7 +352,7 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToHeading(float theta, int timeout, TurnToHeadingParams params, bool async = true);
+        void turnToHeading(float theta, int timeout, TurnToHeadingParams params = {}, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
          *
@@ -463,7 +463,53 @@ class Chassis {
          * without interfering with the heading.
          */
         void resetLocalPosition();
+
+        /**
+         * @brief Calculates the angle between the chassis and a pose
+         *
+         * @param other the pose to get the angle to
+         * @param radians true if theta is in radians, false if not. False by default
+         * @return the angle between the chassis and the pose
+         */
+        float headingToPoint(lemlib::Pose other, bool radians = false) const;
     protected:
+        /**
+         * @brief params for Chassis::turnToAny()
+         *
+         * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
+         *  127 by default
+         * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
+         *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+         *  0 by default
+         * @param earlyExitRange angle between the robot and target heading where the movement will
+         *  exit. Only has an effect if minSpeed is non-zero.
+         * @param lockedSide side of the drivetrain that is locked. If set to nullopt, the robot will turn using both
+         * sides. nullopt by default
+         */
+        struct TurnToAnyParams {
+                float maxSpeed = 127;
+                float minSpeed = 0;
+                float earlyExitRange = 0;
+                std::optional<DriveSide> lockedSide = std::nullopt;
+
+                TurnToAnyParams(SwingToHeadingParams, std::optional<DriveSide> lockedSide = std::nullopt);
+                TurnToAnyParams(SwingToPointParams, std::optional<DriveSide> lockedSide = std::nullopt);
+                TurnToAnyParams(TurnToHeadingParams, std::optional<DriveSide> lockedSide = std::nullopt);
+                TurnToAnyParams(TurnToPointParams, std::optional<DriveSide> lockedSide = std::nullopt);
+        };
+
+        /**
+         * @brief Turn the chassis so it is facing the heading provided by headingProvider.
+         * This may be done by only moving one side of the drivetrain, or by moving both sides depending on
+         * params.lockedSide.
+         *
+         * @param headingProvider provides the target heading to turn to
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         */
+        void turnToAny(std::function<float(void)> headingProvider, int timeout, TurnToAnyParams params, bool async);
+
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
          */
