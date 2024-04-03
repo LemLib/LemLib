@@ -107,7 +107,7 @@ The program waits. But what if we want to wait until the robot has moved a certa
 ```c++
 pros::millis(); // returns 0000
 chassis.moveToPose(0, 20, 0, 1000);
-chassis.waitUntil(10); // wait until the chassis has travelled 10 inches
+chassis.waitUntil(10); // wait until the chassis has traveled 10 inches
 pros::millis(); // outputs 500
 chassis.waitUntilDone(); // wait until the movement has been completed
 pros::millis(); // outputs 1000

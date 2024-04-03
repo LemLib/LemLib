@@ -146,7 +146,7 @@ void autonomous() {
     chassis.moveToPose(20, 15, 90, 4000);
     // example movement: Move to x: 0 and y: 0 and face heading 270, going backwards. Timeout set to 4000ms
     chassis.moveToPose(0, 0, 270, 4000, {.forwards = false});
-    // cancel the movement after it has travelled 10 inches
+    // cancel the movement after it has traveled 10 inches
     chassis.waitUntil(10);
     chassis.cancelMotion();
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
@@ -163,7 +163,7 @@ void autonomous() {
     // the movement will run immediately
     // Unless its another movement, in which case it will wait
     chassis.waitUntil(10);
-    pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
+    pros::lcd::print(4, "Traveled 10 inches during pure pursuit!");
     // wait until the movement is done
     chassis.waitUntilDone();
     pros::lcd::print(4, "pure pursuit finished!");
