@@ -226,8 +226,8 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
     std::vector<lemlib::Pose> pathPoints = getData(path); // get list of path points
     if (pathPoints.size() == 0) {
         infoSink()->error("No points in path! Do you have the right format? Skipping motion");
-        // set distTravelled to -1 to indicate that the function has finished
-        distTravelled = -1;
+        // set distTraveled to -1 to indicate that the function has finished
+        distTraveled = -1;
         // give the mutex back
         this->endMotion();
         return;
@@ -246,7 +246,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
     float rightInput = 0;
     float prevVel = 0;
     int compState = pros::competition::get_status();
-    distTravelled = 0;
+    distTraveled = 0;
 
     // loop until the robot is within the end tolerance
     for (int i = 0; i < timeout / 10 && pros::competition::get_status() == compState && this->motionRunning; i++) {
@@ -255,7 +255,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
         if (!forwards) pose.theta -= M_PI;
 
         // update completion vars
-        distTravelled += pose.distance(lastPose);
+        distTraveled += pose.distance(lastPose);
         lastPose = pose;
 
         // find the closest point on the path to the robot
@@ -306,8 +306,8 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
     // stop the robot
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
-    // set distTravelled to -1 to indicate that the function has finished
-    distTravelled = -1;
+    // set distTraveled to -1 to indicate that the function has finished
+    distTraveled = -1;
     // give the mutex back
     this->endMotion();
 }
