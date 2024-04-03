@@ -176,7 +176,7 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians, bool standardPos) {
 void lemlib::Chassis::waitUntil(float dist) {
     // do while to give the thread time to start
     do pros::delay(10);
-    while (distTravelled <= dist && distTravelled != -1);
+    while (distTraveled <= dist && distTraveled != -1);
 }
 
 /**
@@ -185,7 +185,7 @@ void lemlib::Chassis::waitUntil(float dist) {
  */
 void lemlib::Chassis::waitUntilDone() {
     do pros::delay(10);
-    while (distTravelled != -1);
+    while (distTraveled != -1);
 }
 
 void lemlib::Chassis::requestMotionStart() {
@@ -270,7 +270,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
     float startTheta = getPose().theta;
     std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
+    distTraveled = 0;
     Timer timer(timeout);
     angularLargeExit.reset();
     angularSmallExit.reset();
@@ -283,7 +283,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
         pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
 
         // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta, false));
+        distTraveled = fabs(angleError(pose.theta, startTheta, false));
 
         deltaX = x - pose.x;
         deltaY = y - pose.y;
@@ -323,7 +323,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
+    distTraveled = -1;
     this->endMotion();
 }
 
@@ -356,7 +356,7 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParam
     float startTheta = getPose().theta;
     std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
+    distTraveled = 0;
     Timer timer(timeout);
     angularLargeExit.reset();
     angularSmallExit.reset();
@@ -368,7 +368,7 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParam
         Pose pose = getPose();
 
         // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta, false));
+        distTraveled = fabs(angleError(pose.theta, startTheta, false));
 
         targetTheta = theta;
 
@@ -406,7 +406,7 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParam
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
+    distTraveled = -1;
     this->endMotion();
 }
 
@@ -440,7 +440,7 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
     float startTheta = getPose().theta;
     std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
+    distTraveled = 0;
     Timer timer(timeout);
     angularLargeExit.reset();
     angularSmallExit.reset();
@@ -460,7 +460,7 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
         pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
 
         // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta, false));
+        distTraveled = fabs(angleError(pose.theta, startTheta, false));
 
         deltaX = x - pose.x;
         deltaY = y - pose.y;
@@ -509,7 +509,7 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
+    distTraveled = -1;
     this->endMotion();
 }
 
@@ -542,7 +542,7 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int time
     float startTheta = getPose().theta;
     std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
-    distTravelled = 0;
+    distTraveled = 0;
     Timer timer(timeout);
     angularLargeExit.reset();
     angularSmallExit.reset();
@@ -562,7 +562,7 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int time
         pose.theta = fmod(pose.theta, 360);
 
         // update completion vars
-        distTravelled = fabs(angleError(pose.theta, startTheta, false));
+        distTraveled = fabs(angleError(pose.theta, startTheta, false));
         targetTheta = theta;
 
         // calculate deltaTheta
@@ -609,7 +609,7 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int time
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
+    distTraveled = -1;
     this->endMotion();
 }
 
@@ -656,7 +656,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
 
     // initialize vars used between iterations
     Pose lastPose = getPose();
-    distTravelled = 0;
+    distTraveled = 0;
     Timer timer(timeout);
     bool close = false;
     bool lateralSettled = false;
@@ -673,7 +673,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         const Pose pose = getPose(true, true);
 
         // update distance travelled
-        distTravelled += pose.distance(lastPose);
+        distTraveled += pose.distance(lastPose);
         lastPose = pose;
 
         // calculate distance to the target point
@@ -777,7 +777,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
+    distTraveled = -1;
     this->endMotion();
 }
 
@@ -811,7 +811,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
 
     // initialize vars used between iterations
     Pose lastPose = getPose();
-    distTravelled = 0;
+    distTraveled = 0;
     Timer timer(timeout);
     bool close = false;
     float prevLateralOut = 0; // previous lateral power
@@ -830,7 +830,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
         const Pose pose = getPose(true, true);
 
         // update distance travelled
-        distTravelled += pose.distance(lastPose);
+        distTraveled += pose.distance(lastPose);
         lastPose = pose;
 
         // calculate distance to the target point
@@ -911,6 +911,6 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     drivetrain.leftMotors->move(0);
     drivetrain.rightMotors->move(0);
     // set distTraveled to -1 to indicate that the function has finished
-    distTravelled = -1;
+    distTraveled = -1;
     this->endMotion();
 }
