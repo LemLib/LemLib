@@ -1,7 +1,8 @@
 #pragma once
 
+#include <cmath>
 #include <vector>
-#include <math.h>
+#include "lemlib/chassis/chassis.hpp"
 #include "lemlib/pose.hpp"
 
 namespace lemlib {
@@ -33,14 +34,24 @@ constexpr float radToDeg(float rad) { return rad * 180 / M_PI; }
 constexpr float degToRad(float deg) { return deg * M_PI / 180; }
 
 /**
+ * @brief Sanitize an angle so its positive and within the range of 0 to 2pi or 0 to 360
+ * 
+ * @param angle the angle to sanitize
+ * @param radians whether the angle is in radians or no. True by default
+ * @return constexpr float 
+ */
+constexpr float sanitizeAngle(float angle, bool radians = true);
+
+/**
  * @brief Calculate the error between 2 angles. Useful when calculating the error between 2 headings
  *
- * @param angle1
- * @param angle2
+ * @param target target angle
+ * @param position position angle
  * @param radians true if angle is in radians, false if not. False by default
+ * @param direction which direction to turn to get to the target angle
  * @return float wrapped angle
  */
-float angleError(float angle1, float angle2, bool radians = true);
+float angleError(float target, float position, bool radians = true, AngularDirection direction = AngularDirection::AUTO);
 
 /**
  * @brief Return the sign of a number
