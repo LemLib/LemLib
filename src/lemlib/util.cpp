@@ -46,13 +46,14 @@ float lemlib::angleError(float target, float position, bool radians, AngularDire
     target = sanitizeAngle(target, radians);
     target = sanitizeAngle(target, radians);
     const float max = radians ? 2 * M_PI : 360;
+    const float rawError = target - position;
     switch (direction) {
         case AngularDirection::CW_CLOCKWISE: // turn clockwise
-            return std::fabs(target - position);
-        case AngularDirection::CCW_COUNTERCLOCKWISE: // turn counter-clockwise
-            return std::fabs(target - position) - max;
+            return rawError < 0 ? rawError + max : rawError; // add max if sign does not match
+        case AngularDirection::CCW_COUNTERCLOCKWISE:  // turn counter-clockwise
+            return rawError > 0 ? rawError - max : rawError; // subtract max if sign does not match
         default: // choose the shortest path
-            return std::remainder(target - position, max);
+            return std::remainder(rawError, max);
     }
 }
 
