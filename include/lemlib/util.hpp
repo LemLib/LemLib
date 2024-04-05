@@ -35,10 +35,10 @@ constexpr float degToRad(float deg) { return deg * M_PI / 180; }
 
 /**
  * @brief Sanitize an angle so its positive and within the range of 0 to 2pi or 0 to 360
- * 
+ *
  * @param angle the angle to sanitize
  * @param radians whether the angle is in radians or no. True by default
- * @return constexpr float 
+ * @return constexpr float
  */
 constexpr float sanitizeAngle(float angle, bool radians = true);
 
@@ -51,7 +51,8 @@ constexpr float sanitizeAngle(float angle, bool radians = true);
  * @param direction which direction to turn to get to the target angle
  * @return float wrapped angle
  */
-float angleError(float target, float position, bool radians = true, AngularDirection direction = AngularDirection::AUTO);
+float angleError(float target, float position, bool radians = true,
+                 AngularDirection direction = AngularDirection::AUTO);
 
 /**
  * @brief Return the sign of a number
