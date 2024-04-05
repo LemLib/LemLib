@@ -20,16 +20,14 @@ float lemlib::slew(float target, float current, float maxChange) {
 
 /**
  * @brief Sanitize an angle so its positive and within the range of 0 to 2pi or 0 to 360
- * 
+ *
  * @param angle the angle to sanitize
  * @param radians whether the angle is in radians or no. True by default
- * @return constexpr float 
+ * @return constexpr float
  */
 constexpr float lemlib::sanitizeAngle(float angle, bool radians) {
-    if (radians)
-        return std::fmod(std::fmod(angle, 2 * M_PI) + 2 * M_PI, 2 * M_PI);
-    else
-        return std::fmod(std::fmod(angle, 360) + 360, 360);
+    if (radians) return std::fmod(std::fmod(angle, 2 * M_PI) + 2 * M_PI, 2 * M_PI);
+    else return std::fmod(std::fmod(angle, 360) + 360, 360);
 }
 
 /**
@@ -50,7 +48,7 @@ float lemlib::angleError(float target, float position, bool radians, AngularDire
     switch (direction) {
         case AngularDirection::CW_CLOCKWISE: // turn clockwise
             return rawError < 0 ? rawError + max : rawError; // add max if sign does not match
-        case AngularDirection::CCW_COUNTERCLOCKWISE:  // turn counter-clockwise
+        case AngularDirection::CCW_COUNTERCLOCKWISE: // turn counter-clockwise
             return rawError > 0 ? rawError - max : rawError; // subtract max if sign does not match
         default: // choose the shortest path
             return std::remainder(rawError, max);
