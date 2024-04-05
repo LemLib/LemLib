@@ -42,6 +42,7 @@ constexpr float lemlib::sanitizeAngle(float angle, bool radians) {
  * @return float wrapped angle
  */
 float lemlib::angleError(float target, float position, bool radians, AngularDirection direction) {
+    // bound angles from 0 to 2pi or 0 to 360
     target = sanitizeAngle(target, radians);
     target = sanitizeAngle(target, radians);
     const float max = radians ? 2 * M_PI : 360;
