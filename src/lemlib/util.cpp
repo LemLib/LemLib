@@ -49,9 +49,9 @@ float lemlib::angleError(float target, float position, bool radians, AngularDire
         case AngularDirection::CW_CLOCKWISE: // turn clockwise
             return std::fabs(target - position);
         case AngularDirection::CCW_COUNTERCLOCKWISE: // turn counter-clockwise
-            return -std::fabs(std::remainder(target - position, max));
-        default: // choose the shortest path
             return std::fabs(target - position) - max;
+        default: // choose the shortest path
+            return std::remainder(target - position, max);
     }
 }
 
