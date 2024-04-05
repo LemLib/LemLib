@@ -155,7 +155,7 @@ void autonomous() {
     // Turn to face a direction of 90º. Timeout set to 1000
     // will always be faster than 100 (out of a maximum of 127)
     // also force it to turn clockwise, the long way around
-    chassis.turnToHeading(90, 1000, {.minSpeed = 100, .direction = AngularDirection::CW_CLOCKWISE});
+    chassis.turnToHeading(90, 1000, {.direction = AngularDirection::CW_CLOCKWISE, .minSpeed = 100});
     // Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
     // see line 116 to see how to define a path
