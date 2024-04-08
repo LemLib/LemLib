@@ -201,7 +201,7 @@ class BaseSink {
          */
         virtual fmt::dynamic_format_arg_store<fmt::format_context> getExtraFormattingArgs(const Message& messageInfo);
     private:
-        Level lowestLevel = Level::DEBUG;
+        Level lowestLevel = Level::WARN;
         std::string logFormat;
 
         std::vector<std::shared_ptr<BaseSink>> sinks {};

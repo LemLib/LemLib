@@ -107,9 +107,9 @@ struct Drivetrain {
 };
 
 /**
- * @brief Parameters for Chassis::turnTo
+ * @brief Parameters for Chassis::turnToPoint
  *
- * We use a struct to simplify customization. Chassis::turnTo has many
+ * We use a struct to simplify customization. Chassis::turnToPoint has many
  * parameters and specifying them all just to set one optional param ruins
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
@@ -124,10 +124,89 @@ struct Drivetrain {
  * @param earlyExitRange angle between the robot and target point where the movement will
  *  exit. Only has an effect if minSpeed is non-zero.
  */
-struct TurnToParams {
+struct TurnToPointParams {
         bool forwards = true;
         int maxSpeed = 127;
         int minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
+/**
+ * @brief Parameters for Chassis::turnToHeading
+ *
+ * We use a struct to simplify customization. Chassis::turnToHeading has many
+ * parameters and specifying them all just to set one optional param ruins
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
+ *  the `it conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange angle between the robot and target point where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct TurnToHeadingParams {
+        int maxSpeed = 127;
+        int minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
+/**
+ * @brief Enum class DriveSide
+ *
+ * When using swing turns, the user needs to specify what side of the drivetrain should be locked
+ * we could just use an integer or boolean for this, but using an enum class improves readability
+ *
+ * This enum class only has 2 values, LEFT and RIGHT
+ */
+enum class DriveSide { LEFT, RIGHT };
+
+/**
+ * @brief Parameters for Chassis::swingToPoint
+ *
+ * We use a struct to simplify customization. Chassis::swingToHeading has many
+ * parameters and specifying them all just to set one optional param harms
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param forwards whether the robot should turn to face the point with the front of the robot.
+ * True by default
+ * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange angle between the robot and target heading where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct SwingToPointParams {
+        bool forwards = true;
+        float maxSpeed = 127;
+        float minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
+/**
+ * @brief Parameters for Chassis::swingToHeading
+ *
+ * We use a struct to simplify customization. Chassis::swingToHeading has many
+ * parameters and specifying them all just to set one optional param harms
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange angle between the robot and target heading where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct SwingToHeadingParams {
+        float maxSpeed = 127;
+        float minSpeed = 0;
         float earlyExitRange = 0;
 };
 
@@ -258,48 +337,45 @@ class Chassis {
         /**
          * @brief Turn the chassis so it is facing the target point
          *
-         * The PID logging id is "angularPID"
-         *
-         * @param x x location
-         * @param y y location
-         * @param timeout longest time the robot can spend moving
-         * @param async whether the function should be run asynchronously. true by default
-         */
-        void turnToPoint(float x, float y, int timeout, bool async = true);
-        /**
-         * @brief Turn the chassis so it is facing the target point
-         *
-         * The PID logging id is "angularPID"
-         *
          * @param x x location
          * @param y y location
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToPoint(float x, float y, int timeout, TurnToParams params, bool async = true);
+        void turnToPoint(float x, float y, int timeout, TurnToPointParams params, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target heading
-         *
-         * The PID logging id is "angularPID"
          *
          * @param theta heading location
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToHeading(float theta, int timeout, bool async = true);
+        void turnToHeading(float theta, int timeout, TurnToHeadingParams params, bool async = true);
         /**
-         * @brief Turn the chassis so it is facing the target heading
-         *
-         * The PID logging id is "angularPID"
+         * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
          *
          * @param theta heading location
+         * @param lockedSide side of the drivetrain that is locked
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToHeading(float theta, int timeout, TurnToParams params, bool async = true);
+        void swingToHeading(float theta, DriveSide lockedSide, int timeout, SwingToHeadingParams params = {},
+                            bool async = true);
+        /**
+         * @brief Turn the chassis so it is facing the target point, but only by moving one half of the drivetrain
+         *
+         * @param x x location
+         * @param y y location
+         * @param lockedSide side of the drivetrain that is locked
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         */
+        void swingToPoint(float x, float y, DriveSide lockedSide, int timeout, SwingToPointParams params = {},
+                          bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *
@@ -400,7 +476,7 @@ class Chassis {
         bool motionRunning = false;
         bool motionQueued = false;
 
-        float distTravelled = 0;
+        float distTraveled = 0;
 
         ControllerSettings lateralSettings;
         ControllerSettings angularSettings;
