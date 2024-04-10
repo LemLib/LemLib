@@ -359,7 +359,7 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToPoint(float x, float y, int timeout, TurnToPointParams params, bool async = true);
+        void turnToPoint(float x, float y, int timeout, TurnToPointParams params = {}, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target heading
          *
@@ -368,7 +368,7 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToHeading(float theta, int timeout, TurnToHeadingParams params, bool async = true);
+        void turnToHeading(float theta, int timeout, TurnToHeadingParams params = {}, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
          *
