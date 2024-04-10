@@ -102,7 +102,7 @@ lemlib::Pose lemlib::Pose::rotate(float angle) const {
                         this->x * std::sin(angle) + this->y * std::cos(angle), this->theta);
 }
 
-std::string lemlib::format_as(const lemlib::Pose& pose) const {
+std::string lemlib::format_as(const lemlib::Pose& pose) {
     // the double brackets become single brackets
     return fmt::format("lemlib::Pose {{ x: {}, y: {}, theta: {} }}", pose.x, pose.y, pose.theta);
 }
