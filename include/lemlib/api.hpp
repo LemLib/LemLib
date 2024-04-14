@@ -7,5 +7,7 @@
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/logger/logger.hpp"
 
-// namespace to shorten lemlib::AngularDirection to just AngularDirection
+// using to shorten lemlib::AngularDirection to just AngularDirection
 using lemlib::AngularDirection;
+// using to shorten lemlib::DriveSide to just DriveSide
+using lemlib::DriveSide;
