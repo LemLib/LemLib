@@ -19,15 +19,40 @@ float lemlib::slew(float target, float current, float maxChange) {
 }
 
 /**
+ * @brief Sanitize an angle so its positive and within the range of 0 to 2pi or 0 to 360
+ *
+ * @param angle the angle to sanitize
+ * @param radians whether the angle is in radians or no. True by default
+ * @return constexpr float
+ */
+constexpr float lemlib::sanitizeAngle(float angle, bool radians) {
+    if (radians) return std::fmod(std::fmod(angle, 2 * M_PI) + 2 * M_PI, 2 * M_PI);
+    else return std::fmod(std::fmod(angle, 360) + 360, 360);
+}
+
+/**
  * @brief Calculate the error between 2 angles. Useful when calculating the error between 2 headings
  *
- * @param angle1
- * @param angle2
+ * @param target target angle
+ * @param position position angle
  * @param radians true if angle is in radians, false if not. False by default
+ * @param direction which direction to turn to get to the target angle
  * @return float wrapped angle
  */
-float lemlib::angleError(float angle1, float angle2, bool radians) {
-    return std::remainder(angle1 - angle2, radians ? 2 * M_PI : 360);
+float lemlib::angleError(float target, float position, bool radians, AngularDirection direction) {
+    // bound angles from 0 to 2pi or 0 to 360
+    target = sanitizeAngle(target, radians);
+    target = sanitizeAngle(target, radians);
+    const float max = radians ? 2 * M_PI : 360;
+    const float rawError = target - position;
+    switch (direction) {
+        case AngularDirection::CW_CLOCKWISE: // turn clockwise
+            return rawError < 0 ? rawError + max : rawError; // add max if sign does not match
+        case AngularDirection::CCW_COUNTERCLOCKWISE: // turn counter-clockwise
+            return rawError > 0 ? rawError - max : rawError; // subtract max if sign does not match
+        default: // choose the shortest path
+            return std::remainder(rawError, max);
+    }
 }
 
 /**

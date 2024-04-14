@@ -268,6 +268,8 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
     float motorPower;
     float prevMotorPower = 0;
     float startTheta = getPose().theta;
+    bool settling = false;
+    std::optional<float> prevRawDeltaTheta = std::nullopt;
     std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
     distTraveled = 0;
@@ -289,8 +291,15 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
         deltaY = y - pose.y;
         targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
 
+        // check if settling
+        const float rawDeltaTheta = angleError(targetTheta, pose.theta, false);
+        if (prevRawDeltaTheta == std::nullopt) prevRawDeltaTheta = rawDeltaTheta;
+        if (sgn(rawDeltaTheta) != sgn(prevRawDeltaTheta)) settling = true;
+        prevRawDeltaTheta = rawDeltaTheta;
+
         // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta, false);
+        if (settling) deltaTheta = angleError(targetTheta, pose.theta, false);
+        else deltaTheta = angleError(targetTheta, pose.theta, false, params.direction);
         if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
 
         // motion chaining
@@ -354,6 +363,8 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParam
     float motorPower;
     float prevMotorPower = 0;
     float startTheta = getPose().theta;
+    bool settling = false;
+    std::optional<float> prevRawDeltaTheta = std::nullopt;
     std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
     distTraveled = 0;
@@ -372,8 +383,15 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParam
 
         targetTheta = theta;
 
+        // check if settling
+        const float rawDeltaTheta = angleError(targetTheta, pose.theta, false);
+        if (prevRawDeltaTheta == std::nullopt) prevRawDeltaTheta = rawDeltaTheta;
+        if (sgn(rawDeltaTheta) != sgn(prevRawDeltaTheta)) settling = true;
+        prevRawDeltaTheta = rawDeltaTheta;
+
         // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta, false);
+        if (settling) deltaTheta = angleError(targetTheta, pose.theta, false);
+        else deltaTheta = angleError(targetTheta, pose.theta, false, params.direction);
         if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
 
         // motion chaining
@@ -438,6 +456,8 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
     float motorPower;
     float prevMotorPower = 0;
     float startTheta = getPose().theta;
+    bool settling = false;
+    std::optional<float> prevRawDeltaTheta = std::nullopt;
     std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
     distTraveled = 0;
@@ -466,8 +486,15 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
         deltaY = y - pose.y;
         targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
 
+        // check if settling
+        const float rawDeltaTheta = angleError(targetTheta, pose.theta, false);
+        if (prevRawDeltaTheta == std::nullopt) prevRawDeltaTheta = rawDeltaTheta;
+        if (sgn(rawDeltaTheta) != sgn(prevRawDeltaTheta)) settling = true;
+        prevRawDeltaTheta = rawDeltaTheta;
+
         // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta, false);
+        if (settling) deltaTheta = angleError(targetTheta, pose.theta, false);
+        else deltaTheta = angleError(targetTheta, pose.theta, false, params.direction);
         if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
 
         // motion chaining
@@ -540,6 +567,8 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int time
     float motorPower;
     float prevMotorPower = 0;
     float startTheta = getPose().theta;
+    bool settling = false;
+    std::optional<float> prevRawDeltaTheta = std::nullopt;
     std::optional<float> prevDeltaTheta = std::nullopt;
     std::uint8_t compState = pros::competition::get_status();
     distTraveled = 0;
@@ -565,8 +594,15 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int time
         distTraveled = fabs(angleError(pose.theta, startTheta, false));
         targetTheta = theta;
 
+        // check if settling
+        const float rawDeltaTheta = angleError(targetTheta, pose.theta, false);
+        if (prevRawDeltaTheta == std::nullopt) prevRawDeltaTheta = rawDeltaTheta;
+        if (sgn(rawDeltaTheta) != sgn(prevRawDeltaTheta)) settling = true;
+        prevRawDeltaTheta = rawDeltaTheta;
+
         // calculate deltaTheta
-        deltaTheta = angleError(targetTheta, pose.theta, false);
+        if (settling) deltaTheta = angleError(targetTheta, pose.theta, false);
+        else deltaTheta = angleError(targetTheta, pose.theta, false, params.direction);
         if (prevDeltaTheta == std::nullopt) prevDeltaTheta = deltaTheta;
 
         // motion chaining
