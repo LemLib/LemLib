@@ -22,7 +22,7 @@ lemlib::Pose::Pose(float x, float y, float theta) {
  * @param other other pose
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::operator+(const lemlib::Pose& other) {
+lemlib::Pose lemlib::Pose::operator+(const lemlib::Pose& other) const {
     return lemlib::Pose(this->x + other.x, this->y + other.y, this->theta);
 }
 
@@ -32,7 +32,7 @@ lemlib::Pose lemlib::Pose::operator+(const lemlib::Pose& other) {
  * @param other other pose
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::operator-(const lemlib::Pose& other) {
+lemlib::Pose lemlib::Pose::operator-(const lemlib::Pose& other) const {
     return lemlib::Pose(this->x - other.x, this->y - other.y, this->theta);
 }
 
@@ -42,7 +42,7 @@ lemlib::Pose lemlib::Pose::operator-(const lemlib::Pose& other) {
  * @param other other pose
  * @return Pose
  */
-float lemlib::Pose::operator*(const lemlib::Pose& other) { return this->x * other.x + this->y * other.y; }
+float lemlib::Pose::operator*(const lemlib::Pose& other) const { return this->x * other.x + this->y * other.y; }
 
 /**
  * @brief Multiply a pose by a float
@@ -50,7 +50,7 @@ float lemlib::Pose::operator*(const lemlib::Pose& other) { return this->x * othe
  * @param other float
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::operator*(const float& other) {
+lemlib::Pose lemlib::Pose::operator*(const float& other) const {
     return lemlib::Pose(this->x * other, this->y * other, this->theta);
 }
 
@@ -60,7 +60,7 @@ lemlib::Pose lemlib::Pose::operator*(const float& other) {
  * @param other float
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::operator/(const float& other) {
+lemlib::Pose lemlib::Pose::operator/(const float& other) const {
     return lemlib::Pose(this->x / other, this->y / other, this->theta);
 }
 
@@ -71,7 +71,7 @@ lemlib::Pose lemlib::Pose::operator/(const float& other) {
  * @param t t value
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::lerp(lemlib::Pose other, float t) {
+lemlib::Pose lemlib::Pose::lerp(lemlib::Pose other, float t) const {
     return lemlib::Pose(this->x + (other.x - this->x) * t, this->y + (other.y - this->y) * t, this->theta);
 }
 
@@ -97,7 +97,7 @@ float lemlib::Pose::angle(lemlib::Pose other) const { return std::atan2(other.y 
  * @param angle angle in radians
  * @return Pose
  */
-lemlib::Pose lemlib::Pose::rotate(float angle) {
+lemlib::Pose lemlib::Pose::rotate(float angle) const {
     return lemlib::Pose(this->x * std::cos(angle) - this->y * std::sin(angle),
                         this->x * std::sin(angle) + this->y * std::cos(angle), this->theta);
 }
