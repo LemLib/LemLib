@@ -20,8 +20,7 @@ void Chassis::tank(int left, int right, bool disableDriveCurve) {
     if (disableDriveCurve) {
         drivetrain.movePowers(left, right);
     } else {
-        drivetrain.movePowers(throttleCurve->curve(left),
-                              throttleCurve->curve(right));
+        drivetrain.movePowers(throttleCurve->curve(left), throttleCurve->curve(right));
     }
 }
 

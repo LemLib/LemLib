@@ -61,14 +61,19 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
  * @param brakeWithMoving whether to brake whenever a side moves with voltage 0
  *                        or only if the robot is fully stopping. false by default
  */
-void lemlib::Drivetrain::movePowers(int leftPower, int rightPower, bool useBrakeMode,
-                                    bool brakeWithMoving) const {
+void lemlib::Drivetrain::movePowers(int leftPower, int rightPower, bool useBrakeMode, bool brakeWithMoving) const {
     if (useBrakeMode && brakeWithMoving) {
-        if (leftPower == 0) { leftMotors->brake(); }
-        else { leftMotors->move(leftPower); }
+        if (leftPower == 0) {
+            leftMotors->brake();
+        } else {
+            leftMotors->move(leftPower);
+        }
 
-        if (rightPower == 0) { rightMotors->brake(); }
-        else { rightMotors->move(rightPower); }
+        if (rightPower == 0) {
+            rightMotors->brake();
+        } else {
+            rightMotors->move(rightPower);
+        }
     } else {
         if (useBrakeMode && leftPower == 0 && rightPower == 0) {
             leftMotors->brake();
