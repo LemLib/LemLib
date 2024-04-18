@@ -104,10 +104,12 @@ struct Drivetrain {
          * @param leftPower power to move the left side of the drivetrain
          * @param rightPower power to move the right side of the drivetrain
          * @param useBrakeMode whether to use brake mode or not. false by default
+         * @param deadzone the maximum output to still brake. 10 by default
          * @param brakeWithMoving whether to brake whenever a side moves with voltage 0
          *                                 or only if the robot is fully stopping. false by default
          */
-        void movePowers(int leftPower, int rightPower, bool useBrakeMode = true, bool brakeWhileMoving = false) const;
+        void movePowers(int leftPower, int rightPower, bool useBrakeMode = true, int deadzone = 10,
+                        bool brakeWhileMoving = false) const;
 
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;

@@ -58,24 +58,25 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
  * @param leftPower power to move the left side of the drivetrain
  * @param rightPower power to move the right side of the drivetrain
  * @param useBrakeMode whether to use brake mode or not. false by default
+ * @param deadzone the maximum output to still brake. 10 by default
  * @param brakeWithMoving whether to brake whenever a side moves with voltage 0
  *                        or only if the robot is fully stopping. false by default
  */
-void lemlib::Drivetrain::movePowers(int leftPower, int rightPower, bool useBrakeMode, bool brakeWithMoving) const {
+void lemlib::Drivetrain::movePowers(int leftPower, int rightPower, bool useBrakeMode, int deadzone, bool brakeWithMoving) const {
     if (useBrakeMode && brakeWithMoving) {
-        if (leftPower == 0) {
+        if (std::abs(leftPower) <= deadzone) {
             leftMotors->brake();
         } else {
             leftMotors->move(leftPower);
         }
 
-        if (rightPower == 0) {
+        if (std::abs(rightPower) <= 0) {
             rightMotors->brake();
         } else {
             rightMotors->move(rightPower);
         }
     } else {
-        if (useBrakeMode && leftPower == 0 && rightPower == 0) {
+        if (useBrakeMode && std::abs(leftPower) <= 0 && std::abs(rightPower) <= deadzone) {
             leftMotors->brake();
             rightMotors->brake();
         } else {
