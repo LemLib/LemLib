@@ -107,7 +107,7 @@ struct Drivetrain {
          * @param brakeWithMoving whether to brake whenever a side moves with voltage 0
          *                                 or only if the robot is fully stopping. false by default
          */
-        void movePowers(int leftPower, int rightPower, bool useBrakeMode = false, bool brakeWhileMoving = false) const;
+        void movePowers(int leftPower, int rightPower, bool useBrakeMode = true, bool brakeWhileMoving = false) const;
 
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
