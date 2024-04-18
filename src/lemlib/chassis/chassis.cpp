@@ -53,6 +53,33 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
       chasePower(chasePower) {}
 
 /**
+ * @brief Move the drivetrain
+ *
+ * @param leftPower power to move the left side of the drivetrain
+ * @param rightPower power to move the right side of the drivetrain
+ * @param useBrakeMode whether to use brake mode or not. false by default
+ * @param brakeWithMoving whether to brake whenever a side moves with voltage 0
+ *                        or only if the robot is fully stopping. false by default
+ */
+void lemlib::Drivetrain::movePowers(float leftPower, float rightPower, bool useBrakeMode, bool brakeWithMoving) {
+    if (useBrakeMode && brakeWithMoving) {
+        if (leftPower == 0) { leftMotors->brake(); }
+        else { leftMotors->move(leftPower); }
+
+        if (rightPower == 0) { rightMotors->brake(); }
+        else { rightMotors->move(rightPower); }
+    } else {
+        if (useBrakeMode && leftPower == 0 && rightPower == 0) {
+            leftMotors->brake();
+            rightMotors->brake();
+        } else {
+            leftMotors->move(leftPower);
+            rightMotors->move(rightPower);
+        }
+    }
+}
+
+/**
  * @brief Construct a new Chassis
  *
  * @param drivetrain drivetrain to be used for the chassis

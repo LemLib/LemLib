@@ -98,7 +98,16 @@ struct Drivetrain {
         Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth, float wheelDiameter,
                    float rpm, float chasePower);
 
-        void movePowers(float leftPower, float rightPower, bool useBrakeMode = false);
+        /**
+         * @brief Move the drivetrain
+         *
+         * @param leftPower power to move the left side of the drivetrain
+         * @param rightPower power to move the right side of the drivetrain
+         * @param useBrakeMode whether to use brake mode or not. false by default
+         * @param brakeWithMoving whether to brake whenever a side moves with voltage 0
+*                                 or only if the robot is fully stopping. false by default
+         */
+        void movePowers(float leftPower, float rightPower, bool useBrakeMode = false, bool brakeWhileMoving = false);
 
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
