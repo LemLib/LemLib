@@ -18,11 +18,10 @@ ExpoDriveCurve defaultDriveCurve = ExpoDriveCurve(0, 0, 1);
  */
 void Chassis::tank(int left, int right, bool disableDriveCurve) {
     if (disableDriveCurve) {
-        drivetrain.leftMotors->move(left);
-        drivetrain.rightMotors->move(right);
+        drivetrain.movePowers(left, right);
     } else {
-        drivetrain.leftMotors->move(throttleCurve->curve(left));
-        drivetrain.rightMotors->move(throttleCurve->curve(right));
+        drivetrain.movePowers(throttleCurve->curve(left),
+                              throttleCurve->curve(right));
     }
 }
 
@@ -51,8 +50,7 @@ void Chassis::arcade(int throttle, int turn, bool disableDriveCurve) {
         rightPower /= max;
     }
     // move drive
-    drivetrain.leftMotors->move(leftPower);
-    drivetrain.rightMotors->move(rightPower);
+    drivetrain.movePowers(leftPower, rightPower);
 }
 
 /**
