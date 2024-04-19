@@ -53,7 +53,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
         // update position
         const Pose pose = getPose(true, true);
 
-        // update distance travelled
+        // update distance traveled
         distTraveled += pose.distance(lastPose);
         lastPose = pose;
 
