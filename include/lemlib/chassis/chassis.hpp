@@ -479,6 +479,14 @@ class Chassis {
          * without interfering with the heading.
          */
         void resetLocalPosition();
+        /**
+         * PIDs are exposed so advanced users can implement things like gain scheduling
+         * Changes are immediate and will affect a motion in progress
+         *
+         * @warning Do not interact with these unless you know what you are doing
+         */
+        PID lateralPID;
+        PID angularPID;
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
@@ -501,8 +509,6 @@ class Chassis {
         DriveCurve* throttleCurve;
         DriveCurve* steerCurve;
 
-        PID lateralPID;
-        PID angularPID;
         ExitCondition lateralLargeExit;
         ExitCondition lateralSmallExit;
         ExitCondition angularLargeExit;
