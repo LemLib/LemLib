@@ -46,7 +46,7 @@ void Chassis::arcade(int throttle, int turn, bool disableDriveCurve, float joyBi
     }
     // desaturate motors based on joyBias
     throttle *= (1 - joyBias * std::abs(turn / 127));
-    turn *= (1 - (1 - joyBias) * std::abs(drive /127));
+    turn *= (1 - (1 - joyBias) * std::abs(throttle / 127));
 
     int leftPower = throttle + turn;
     int rightPower = throttle - turn;
