@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['theta_0',['theta',['../classlemlib_1_1Pose.html#a15d50588dd9e593a72a75e3d2d125150',1,'lemlib::Pose']]]
+  ['angularsettings_0',['angularSettings',['../classlemlib_1_1Chassis.html#a45515ad97e6fef9a2c36ff9e975c403a',1,'lemlib::Chassis']]]
 ];

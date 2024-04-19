@@ -4,7 +4,7 @@ var indexSectionsWithContent =
   1: "cdfopt",
   2: "acloptu",
   3: "acdefgilmoprstuw",
-  4: "txy",
+  4: "altxy",
   5: "l",
   6: "0l"
 };

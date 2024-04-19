@@ -7,5 +7,7 @@ var classlemlib_1_1Chassis =
     [ "moveTo", "classlemlib_1_1Chassis.html#a00edce017c843ba5080f6d7494dc52bd", null ],
     [ "setPose", "classlemlib_1_1Chassis.html#a9d272c748bcd8e42076f7bca68b4552c", null ],
     [ "setPose", "classlemlib_1_1Chassis.html#a9bbe7977ba4bafaf6cd10afc979264e7", null ],
-    [ "turnTo", "classlemlib_1_1Chassis.html#ab6bafad2ac9224ef669eb3a8caec7085", null ]
+    [ "turnTo", "classlemlib_1_1Chassis.html#ab6bafad2ac9224ef669eb3a8caec7085", null ],
+    [ "angularSettings", "classlemlib_1_1Chassis.html#a45515ad97e6fef9a2c36ff9e975c403a", null ],
+    [ "lateralSettings", "classlemlib_1_1Chassis.html#a503b65dff713bf29a3c7b0e9384757d7", null ]
 ];

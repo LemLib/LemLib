@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['x_0',['x',['../classlemlib_1_1Pose.html#af42d0fce9ed1ac418f8ea6353e4ba661',1,'lemlib::Pose']]]
+  ['lateralsettings_0',['lateralSettings',['../classlemlib_1_1Chassis.html#a503b65dff713bf29a3c7b0e9384757d7',1,'lemlib::Chassis']]]
 ];
