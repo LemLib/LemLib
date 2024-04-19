@@ -19,8 +19,5 @@ temp.errors
 # template files
 *.zip
 
-# Doxygen
-latex
-
 # MacOS
 .DS_Store
