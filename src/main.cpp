@@ -160,7 +160,7 @@ void autonomous() {
     // following the path with the back of the robot (forwards = false)
     // see line 116 to see how to define a path
     chassis.follow(example_txt, 15, 4000, false);
-    // wait until the chassis has travelled 10 inches. Otherwise the code directly after
+    // wait until the chassis has traveled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait
     chassis.waitUntil(10);
