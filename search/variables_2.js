@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['theta_0',['theta',['../classlemlib_1_1Pose.html#a15d50588dd9e593a72a75e3d2d125150',1,'lemlib::Pose']]]
+  ['y_0',['y',['../classlemlib_1_1Pose.html#a9dbf4b9c0a2a2569dd87e9a239a448c6',1,'lemlib::Pose']]]
 ];
