@@ -1,4 +1,3 @@
-#include "lemlib/driveCurve.hpp"
 #include "lemlib/util.hpp"
 #include <cmath>
 

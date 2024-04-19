@@ -25,35 +25,35 @@ class Pose {
          * @param other other pose
          * @return Pose
          */
-        Pose operator+(const Pose& other);
+        Pose operator+(const Pose& other) const;
         /**
          * @brief Subtract a pose from this pose
          *
          * @param other other pose
          * @return Pose
          */
-        Pose operator-(const Pose& other);
+        Pose operator-(const Pose& other) const;
         /**
          * @brief Multiply a pose by this pose
          *
          * @param other other pose
          * @return Pose
          */
-        float operator*(const Pose& other);
+        float operator*(const Pose& other) const;
         /**
          * @brief Multiply a pose by a float
          *
          * @param other float
          * @return Pose
          */
-        Pose operator*(const float& other);
+        Pose operator*(const float& other) const;
         /**
          * @brief Divide a pose by a float
          *
          * @param other float
          * @return Pose
          */
-        Pose operator/(const float& other);
+        Pose operator/(const float& other) const;
         /**
          * @brief Linearly interpolate between two poses
          *
@@ -61,7 +61,7 @@ class Pose {
          * @param t t value
          * @return Pose
          */
-        Pose lerp(Pose other, float t);
+        Pose lerp(Pose other, float t) const;
         /**
          * @brief Get the distance between two poses
          *
@@ -82,7 +82,7 @@ class Pose {
          * @param angle angle in radians
          * @return Pose
          */
-        Pose rotate(float angle);
+        Pose rotate(float angle) const;
 };
 
 /**
