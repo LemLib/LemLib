@@ -430,8 +430,10 @@ class Chassis {
          * @param turn speed to turn. Takes an input from -127 to 127.
          * @param disableDriveCurve whether to disable the drive curve or not. If disabled, uses a linear curve with no
          * deadzone or minimum power
+         * @param joyBias how much to favor turning over forward/backward motion or vice versa when motors are
+         * saturated. A value of 0 fully prioritizes driving, a value of 1 fully prioritizes turning
          */
-        void arcade(int throttle, int turn, bool disableDriveCurve = false);
+        void arcade(int throttle, int turn, bool disableDriveCurve = false, float joyBias = 0.5);
         /**
          * @brief Control the robot during the driver using the curvature drive control scheme. This control scheme is
          * very similar to arcade drive, except the second joystick axis controls the radius of the curve that the
