@@ -48,8 +48,8 @@ void Chassis::arcade(int throttle, int turn, bool disableDriveCurve, float desat
     {
         int oldThrottle = throttle;
         int oldTurn = turn;
-        throttle *= (1 - desaturateBias * std::abs(oldTurn / 127));
-        turn *= (1 - (1 - desaturateBias) * std::abs(oldThrottle / 127));
+        throttle *= (1 - desaturateBias * std::abs(oldTurn / 127.0));
+        turn *= (1 - (1 - desaturateBias) * std::abs(oldThrottle / 127.0));
     }
 
     int leftPower = throttle + turn;
