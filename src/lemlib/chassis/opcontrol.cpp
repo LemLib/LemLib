@@ -35,18 +35,22 @@ void Chassis::tank(int left, int right, bool disableDriveCurve) {
  * @param turn speed to turn. Takes an input from -127 to 127.
  * @param disableDriveCurve whether to disable the drive curve or not. If disabled, uses a linear curve with no
  * deadzone or minimum power
- * @param joyBias how much to favor turning over forward/backward motion or vice versa when motors are
+ * @param desaturateBias how much to favor turning over forward/backward motion or vice versa when motors are
  * saturated. A value of 0 fully prioritizes driving, a value of 1 fully prioritizes turning
  */
-void Chassis::arcade(int throttle, int turn, bool disableDriveCurve, float joyBias) {
+void Chassis::arcade(int throttle, int turn, bool disableDriveCurve, float desaturateBias) {
     // use drive curves if they have not been disabled
     if (!disableDriveCurve) {
         throttle = throttleCurve->curve(throttle);
         turn = throttleCurve->curve(turn);
     }
     // desaturate motors based on joyBias
-    throttle *= (1 - joyBias * std::abs(turn / 127));
-    turn *= (1 - (1 - joyBias) * std::abs(throttle / 127));
+    {
+        int oldThrottle = throttle;
+        int oldTurn = turn;
+        throttle *= (1 - desaturateBias * std::abs(oldTurn / 127));
+        turn *= (1 - (1 - desaturateBias) * std::abs(oldThrottle / 127));
+    }
 
     int leftPower = throttle + turn;
     int rightPower = throttle - turn;
