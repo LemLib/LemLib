@@ -5,17 +5,6 @@
 #include "lemlib/util.hpp"
 #include "pros/misc.hpp"
 
-/**
- * @brief Turn the chassis so it is facing the target point
- *
- * The PID logging id is "angularPID"
- *
- * @param x x location
- * @param y y location
- * @param timeout longest time the robot can spend moving
- * @param params struct to simulate named parameters
- * @param async whether the function should be run asynchronously. true by default
- */
 void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointParams params, bool async) {
     params.minSpeed = std::abs(params.minSpeed);
     this->requestMotionStart();

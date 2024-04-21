@@ -5,15 +5,6 @@
 #include "lemlib/util.hpp"
 #include "pros/misc.hpp"
 
-/**
- * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
- *
- * @param theta heading location
- * @param lockedSide side of the drivetrain that is locked
- * @param timeout longest time the robot can spend moving
- * @param params struct to simulate named parameters
- * @param async whether the function should be run asynchronously. true by default
- */
 void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int timeout, SwingToHeadingParams params,
                                      bool async) {
     params.minSpeed = fabs(params.minSpeed);

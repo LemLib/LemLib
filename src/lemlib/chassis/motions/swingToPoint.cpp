@@ -5,16 +5,6 @@
 #include "lemlib/util.hpp"
 #include "pros/misc.hpp"
 
-/**
- * @brief Turn the chassis so it is facing the target point, but only by moving one half of the drivetrain
- *
- * @param x x location
- * @param y y location
- * @param lockedSide side of the drivetrain that is locked
- * @param timeout longest time the robot can spend moving
- * @param params struct to simulate named parameters
- * @param async whether the function should be run asynchronously. true by default
- */
 void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int timeout, SwingToPointParams params,
                                    bool async) {
     params.minSpeed = fabs(params.minSpeed);

@@ -201,16 +201,6 @@ float findLookaheadCurvature(lemlib::Pose pose, float heading, lemlib::Pose look
     return side * ((2 * x) / (d * d));
 }
 
-/**
- * @brief Move the chassis along a path
- *
- * @param path the path asset to follow
- * @param lookahead the lookahead distance. Units in inches. Larger values will make the robot move faster but
- * will follow the path less accurately
- * @param timeout the maximum time the robot can spend moving
- * @param forwards whether the robot should follow the path going forwards. true by default
- * @param async whether the function should be run asynchronously. true by default
- */
 void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bool forwards, bool async) {
     this->requestMotionStart();
     // were all motions cancelled?

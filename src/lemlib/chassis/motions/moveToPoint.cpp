@@ -5,15 +5,6 @@
 #include "lemlib/util.hpp"
 #include "pros/misc.hpp"
 
-/**
- * @brief Move the chassis towards a target point
- *
- * @param x x location
- * @param y y location
- * @param timeout longest time the robot can spend moving
- * @param params struct to simulate named parameters
- * @param async whether the function should be run asynchronously. true by default
- */
 void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointParams params, bool async) {
     params.earlyExitRange = fabs(params.earlyExitRange);
     this->requestMotionStart();
