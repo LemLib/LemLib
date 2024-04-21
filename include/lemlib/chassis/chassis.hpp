@@ -16,7 +16,8 @@ namespace lemlib {
  * @brief Struct containing all the sensors used for odometry
  *
  */
-struct OdomSensors {
+class OdomSensors {
+    public:
         /**
          * The sensors are stored in a struct so that they can be easily passed to the chassis class
          * The variables are pointers so that they can be set to nullptr if they are not used
@@ -41,7 +42,8 @@ struct OdomSensors {
  * @brief Struct containing constants for a chassis controller
  *
  */
-struct ControllerSettings {
+class ControllerSettings {
+    public:
         /**
          * The constants are stored in a struct so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
@@ -83,7 +85,8 @@ struct ControllerSettings {
  * @brief Struct containing constants for a drivetrain
  *
  */
-struct Drivetrain {
+class Drivetrain {
+    public:
         /**
          * The constants are stored in a struct so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
