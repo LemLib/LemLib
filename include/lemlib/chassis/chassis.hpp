@@ -13,13 +13,13 @@
 namespace lemlib {
 
 /**
- * @brief Struct containing all the sensors used for odometry
+ * @brief class containing all the sensors used for odometry
  *
  */
 class OdomSensors {
     public:
         /**
-         * The sensors are stored in a struct so that they can be easily passed to the chassis class
+         * The sensors are stored in a class so that they can be easily passed to the chassis class
          * The variables are pointers so that they can be set to nullptr if they are not used
          * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
          *
@@ -39,13 +39,13 @@ class OdomSensors {
 };
 
 /**
- * @brief Struct containing constants for a chassis controller
+ * @brief class containing constants for a chassis controller
  *
  */
 class ControllerSettings {
     public:
         /**
-         * The constants are stored in a struct so that they can be easily passed to the chassis class
+         * The constants are stored in a class so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
          *
          * @param kP proportional constant for the chassis controller
@@ -82,13 +82,13 @@ class ControllerSettings {
 };
 
 /**
- * @brief Struct containing constants for a drivetrain
+ * @brief class containing constants for a drivetrain
  *
  */
 class Drivetrain {
     public:
         /**
-         * The constants are stored in a struct so that they can be easily passed to the chassis class
+         * The constants are stored in a class so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
          *
          * @param leftMotors pointer to the left motors

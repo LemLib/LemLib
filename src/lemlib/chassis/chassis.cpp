@@ -33,7 +33,7 @@ lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertic
       imu(imu) {}
 
 /**
- * @brief The constants are stored in a struct so that they can be easily passed to the chassis class
+ * @brief The constants are stored in a class so that they can be easily passed to the chassis class
  * Set a constant to 0 and it will be ignored
  *
  * @param leftMotors pointer to the left motors
