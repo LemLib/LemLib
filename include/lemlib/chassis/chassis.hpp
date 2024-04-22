@@ -27,6 +27,20 @@ class OdomSensors {
          * @param horizontal1 pointer to the first horizontal tracking wheel
          * @param horizontal2 pointer to the second horizontal tracking wheel
          * @param imu pointer to the IMU
+         *
+         * @example
+         * @code {.cpp}
+         * pros::Rotation vertical_rotation(1); // rotation sensor on port 1
+         * pros::Imu imu(2); // IMU on port 2
+         * // tracking wheel using a new 2.75" wheel, 0.5 inches to the right of the tracking center
+         * TrackingWheel vertical1(&vertical_rotation, lemlib::Omniwheel::NEW_275, 0.5);
+         * OdomSensors sensors(&vertical1, // vertical tracking wheel
+         *                     nullptr, // no second vertical tracking wheel, set to nullptr
+         *                     nullptr, // no horizontal tracking wheels, set to nullptr
+         *                     nullptr, // no second horizontal tracking wheel, set to nullptr
+         *                     &imu); // IMU
+         * @endcode
+         *
          */
         OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
                     TrackingWheel* horizontal2, pros::Imu* imu);
@@ -39,23 +53,41 @@ class OdomSensors {
 
 /**
  * @brief class containing constants for a chassis controller
- *
  */
 class ControllerSettings {
     public:
         /**
+         * @brief ControllerSettings constructor
+         *
          * The constants are stored in a class so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
          *
-         * @param kP proportional constant for the chassis controller
-         * @param kI integral constant for the chassis controller
-         * @param kD derivative constant for the chassis controller
-         * @param antiWindup
-         * @param smallError the error at which the chassis controller will switch to a slower control loop
-         * @param smallErrorTimeout the time the chassis controller will wait before switching to a slower control loop
-         * @param largeError the error at which the chassis controller will switch to a faster control loop
-         * @param largeErrorTimeout the time the chassis controller will wait before switching to a faster control loop
-         * @param slew the maximum acceleration of the chassis controller
+         * @param kP proportional gain
+         * @param kI integral gain
+         * @param kD derivative gain
+         * @param antiWindup integral anti windup range. If error is within this range, integral is set to 0
+         * @param smallError range of error at which the chassis controller will exit if the error is within this range
+         * for an amount of time determined by smallErrorTimeout
+         * @param smallErrorTimeout the time the chassis controller will wait before exiting if error is within a
+         * certain range determined by smallError
+         * @param largeError range of error at which the chassis controller will exit if the error is within this range
+         * for an amount of time determined by largeErrorTimeout
+         * @param largeErrorTimeout the time the chassis controller will wait before exiting if error is within a
+         * certain range determined by largeError
+         * @param slew maximum acceleration
+         *
+         * @example
+         * @code {.cpp}
+         * ControllerSettings lateralSettings(10, // proportional gain (kP)
+         *                                    0, // integral gain (kI), set to 0 to disable
+         *                                    3, // derivative gain (kD), set to 3
+         *                                    3, // integral anti windup range, set to 0 to disable
+         *                                    1, // small error range, in inches
+         *                                    100, // small error range timeout, in milliseconds
+         *                                    3, // large error range, in inches
+         *                                    500, // large error range timeout, in milliseconds
+         *                                    5); // maximum acceleration (slew)
+         * @endcode
          */
         ControllerSettings(float kP, float kI, float kD, float windupRange, float smallError, float smallErrorTimeout,
                            float largeError, float largeErrorTimeout, float slew)
