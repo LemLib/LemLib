@@ -13,12 +13,13 @@
 namespace lemlib {
 
 /**
- * @brief Struct containing all the sensors used for odometry
+ * @brief class containing all the sensors used for odometry
  *
  */
-struct OdomSensors {
+class OdomSensors {
+    public:
         /**
-         * The sensors are stored in a struct so that they can be easily passed to the chassis class
+         * The sensors are stored in a class so that they can be easily passed to the chassis class
          * The variables are pointers so that they can be set to nullptr if they are not used
          * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
          *
@@ -38,12 +39,13 @@ struct OdomSensors {
 };
 
 /**
- * @brief Struct containing constants for a chassis controller
+ * @brief class containing constants for a chassis controller
  *
  */
-struct ControllerSettings {
+class ControllerSettings {
+    public:
         /**
-         * The constants are stored in a struct so that they can be easily passed to the chassis class
+         * The constants are stored in a class so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
          *
          * @param kP proportional constant for the chassis controller
@@ -80,12 +82,13 @@ struct ControllerSettings {
 };
 
 /**
- * @brief Struct containing constants for a drivetrain
+ * @brief class containing constants for a drivetrain
  *
  */
-struct Drivetrain {
+class Drivetrain {
+    public:
         /**
-         * The constants are stored in a struct so that they can be easily passed to the chassis class
+         * The constants are stored in a class so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
          *
          * @param leftMotors pointer to the left motors
@@ -93,16 +96,16 @@ struct Drivetrain {
          * @param trackWidth the track width of the robot
          * @param wheelDiameter the diameter of the wheel used on the drivetrain
          * @param rpm the rpm of the wheels
-         * @param chasePower higher values make the robot move faster but causes more overshoot on turns
+         * @param horizontalDrift higher values make the robot move faster but causes more overshoot on turns
          */
         Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth, float wheelDiameter,
-                   float rpm, float chasePower);
+                   float rpm, float horizontalDrift);
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
         float trackWidth;
         float wheelDiameter;
         float rpm;
-        float chasePower;
+        float horizontalDrift;
 };
 
 /**
@@ -235,8 +238,8 @@ struct SwingToHeadingParams {
  * parameters, overcoming the c/c++ limitation
  *
  * @param forwards whether the robot should move forwards or backwards. True by default
- * @param chasePower how fast the robot will move around corners. Recommended value 2-15.
- *  0 means use chasePower set in chassis class. 0 by default.
+ * @param horizontalDrift how fast the robot will move around corners. Recommended value 2-15.
+ *  0 means use horizontalDrift set in chassis class. 0 by default.
  * @param lead carrot point multiplier. value between 0 and 1. Higher values result in
  *  curvier movements. 0.6 by default
  * @param maxSpeed the maximum speed the robot can travel at. Value between 0-127.
@@ -249,7 +252,7 @@ struct SwingToHeadingParams {
  */
 struct MoveToPoseParams {
         bool forwards = true;
-        float chasePower = 0;
+        float horizontalDrift = 0;
         float lead = 0.6;
         float maxSpeed = 127;
         float minSpeed = 0;
