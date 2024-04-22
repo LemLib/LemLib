@@ -1,9 +1,5 @@
+Lemlib: Documentation Home
 ==========================
-LemLib: Documentation Home
-==========================
-
-
-I'm losing my grip on reality
 
 .. toctree::
    :hidden:
@@ -11,11 +7,17 @@ I'm losing my grip on reality
    :caption: Home
 
    self
+   ./about.rst
+   ./download.rst
+   ./contribute.rst
+   ./support.rst
+
+
 
 .. toctree::
    :hidden:
    :maxdepth: 2
-   :caption: Is it changing?
+   :caption: Tutorials
 
    ./tutorials/1_getting_started.md
    ./tutorials/2_setting_up_the_chassis.md
@@ -30,3 +32,5 @@ I'm losing my grip on reality
 
    ./api.rst
 
+
+TODO: write content here:
