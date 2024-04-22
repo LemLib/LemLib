@@ -440,6 +440,7 @@ class Chassis {
          *     // print the x, y, and theta values of the pose
          *     printf("X: %f, Y: %f, Theta: %f\n", pose.x, pose.y, pose.theta);
          * }
+         * @endcode
          */
         Pose getPose(bool radians = false, bool standardPos = false);
         /**
@@ -448,6 +449,25 @@ class Chassis {
          * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
          *
          * @param dist the distance the robot needs to travel before returning
+         *
+         * @example
+         * @code {.cpp}
+         * void autonomous() {
+         *     // move the robot to x = 20, y = 15, and face heading 90
+         *     chassis.moveToPose(20, 15, 90, 4000);
+         *     // wait until the robot has traveled 10 inches
+         *     chassis.waitUntil(10);
+         *     // output "traveled 10 inches" to the console
+         *     printf("traveled 10 inches\n");
+         *     // turn the robot to face 270 degrees
+         *     // this will wait for the last motion to complete before running
+         *     chassis.turnToHeading(270, 4000);
+         *     // wait until the robot has traveled 45 degrees
+         *     chassis.waitUntil(45);
+         *     // output "traveled 45 degrees" to the console
+         *     printf("traveled 45 degrees\n");
+         * }
+         * @endcode
          */
         void waitUntil(float dist);
         /**
