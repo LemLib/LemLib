@@ -334,7 +334,7 @@ extern ExpoDriveCurve defaultDriveCurve;
 class Chassis {
     public:
         /**
-         * @brief Construct a new Chassis
+         * @brief Chassis constructor
          *
          * @param drivetrain drivetrain to be used for the chassis
          * @param lateralSettings settings for the lateral controller
@@ -342,6 +342,8 @@ class Chassis {
          * @param sensors sensors to be used for odometry
          * @param throttleCurve curve applied to throttle input during driver control
          * @param turnCurve curve applied to steer input during driver control
+         *
+         * @example main.cpp
          */
         Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
                 OdomSensors sensors, DriveCurve* throttleCurve = &defaultDriveCurve,
@@ -350,6 +352,21 @@ class Chassis {
          * @brief Calibrate the chassis sensors
          *
          * @param calibrateIMU whether the IMU should be calibrated. true by default
+         *
+         * @example
+         * @code {.cpp}
+         * // initialize function in your project. The first function that runs when the program is started
+         * void initialize() {
+         *     chassis.calibrate();
+         * }
+         * @code {.cpp}
+         * // initialize function in your project. The first function that runs when the program is started
+         * void initialize() {
+         *     // don't calibrate the IMU
+         *     // this should only be necessary if you are using a different library that calibrates the IMU
+         *     chassis.calibrate(false);
+         * }
+         * @endcode
          */
         void calibrate(bool calibrateIMU = true);
         /**
