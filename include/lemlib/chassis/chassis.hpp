@@ -508,6 +508,30 @@ class Chassis {
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
+         *
+         * @example
+         * @code {.cpp}
+         * void autonomous() {
+         *    chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
+         *    // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
+         *    chassis.turnToPoint(45, -45, 1000);
+         *    // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
+         *    // but face the point with the back of the robot
+         *    chassis.turnToPoint(45, -45, 1000, {.forwards = false});
+         *    // turn the robot to face the point x = -20, 32.5 with a timeout of 2000ms
+         *    // and a maximum speed of 60
+         *    chassis.turnToPoint(-20, 32.5, 2000, {.maxSpeed = 60});
+         *    // turn the robot to face the point x = -30, y = 22.5 with a timeout of 1500ms
+         *    // and turn counterclockwise
+         *    chassis.turnToPoint(-30, 22.5, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+         *    // turn the robot to face the point x = 10, y = 10 with a timeout of 500ms
+         *    // with a minSpeed of 20 and a maxSpeed of 60
+         *    chassis.turnToPoint(10, 10, 500, {.minSpeed = 20, .maxSpeed = 60});
+         *    // turn the robot to face the point x = 7.5, y = 7.5 with a timeout of 2000ms
+         *    // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
+         *    chassis.turnToPoint(7.5, 7.5, 2000, {.minSpeed = 60, .earlyExitRange = 5});
+         * }
+         * @endcode
          */
         void turnToPoint(float x, float y, int timeout, TurnToPointParams params = {}, bool async = true);
         /**
