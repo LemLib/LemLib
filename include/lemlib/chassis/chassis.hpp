@@ -28,7 +28,7 @@ class OdomSensors {
          * @param horizontal2 pointer to the second horizontal tracking wheel
          * @param imu pointer to the IMU
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * pros::Rotation vertical_rotation(1); // rotation sensor on port 1
          * pros::Imu imu(2); // IMU on port 2
@@ -75,7 +75,7 @@ class ControllerSettings {
          * certain range determined by largeError
          * @param slew maximum acceleration
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * ControllerSettings lateralSettings(10, // proportional gain (kP)
          *                                    0, // integral gain (kI), set to 0 to disable
@@ -131,7 +131,7 @@ class Drivetrain {
          * @param chasePower higher values make the robot move faster but causes more overshoot on turns. Recommended
          * value of 2 if not using traction wheels, 8 if using traction wheels
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * // drive motors
          * pros::Motor lF(-5, pros::E_MOTOR_GEARSET_06); // left front motor. port 5, reversed
@@ -352,12 +352,13 @@ class Chassis {
          *
          * @param calibrateIMU whether the IMU should be calibrated. true by default
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * // initialize function in your project. The first function that runs when the program is started
          * void initialize() {
          *     chassis.calibrate();
          * }
+         * @endcode
          * @code {.cpp}
          * // initialize function in your project. The first function that runs when the program is started
          * void initialize() {
@@ -376,7 +377,7 @@ class Chassis {
          * @param theta new theta value
          * @param radians true if theta is in radians, false if not. False by default
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * void autonomous() {
          *     // set the pose of the chassis to x = 0, y = 0, theta = 0
@@ -399,7 +400,7 @@ class Chassis {
          * @param pose the new pose
          * @param radians whether pose theta is in radians (true) or not (false). false by default
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * void autonomous() {
          *     // set the pose of the chassis to x = 0, y = 0, theta = 0
@@ -424,7 +425,7 @@ class Chassis {
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * void autonomous() {
          *     // get the pose of the chassis
@@ -450,7 +451,7 @@ class Chassis {
          *
          * @param dist the distance the robot needs to travel before returning
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * void autonomous() {
          *     // move the robot to x = 20, y = 15, and face heading 90
@@ -473,7 +474,7 @@ class Chassis {
         /**
          * @brief Wait until the robot has completed the path
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * void autonomous() {
          *     // move the robot to x = 20, y = 15, and face heading 90
@@ -491,7 +492,7 @@ class Chassis {
          *
          * @param mode Mode to set the drivetrain motors to
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * void autonomous() {
          *     // set the brake mode of the drivetrain motors to hold
@@ -509,7 +510,7 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * void autonomous() {
          *     chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
@@ -542,24 +543,24 @@ class Chassis {
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          *
-         * @example
+         * @b Example
          * @code {.cpp}
          * void autonomous() {
          *     chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
          *     // turn the robot to face heading 135, with a timeout of 1000ms
-         *     chassis.turnToPoint(135, 1000);
+         *     chassis.turnToHeading(135, 1000);
          *     // turn the robot to face heading 230.5 with a timeout of 2000ms
          *     // and a maximum speed of 60
-         *     chassis.turnToPoint(230.5, 2000, {.maxSpeed = 60});
+         *     chassis.turnToHeading(230.5, 2000, {.maxSpeed = 60});
          *     // turn the robot to face heading -90 with a timeout of 1500ms
          *     // and turn counterclockwise
-         *     chassis.turnToPoint(-90, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+         *     chassis.turnToHeading(-90, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
          *     // turn the robot to face heading 90 with a timeout of 500ms
          *     // with a minSpeed of 20 and a maxSpeed of 60
-         *     chassis.turnToPoint(90, 500, {.minSpeed = 20, .maxSpeed = 60});
+         *     chassis.turnToHeading(90, 500, {.minSpeed = 20, .maxSpeed = 60});
          *     // turn the robot to face heading 45 with a timeout of 2000ms
          *     // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
-         *     chassis.turnToPoint(45, 2000, {.minSpeed = 60, .earlyExitRange = 5});
+         *     chassis.turnToHeading(45, 2000, {.minSpeed = 60, .earlyExitRange = 5});
          * }
          * @endcode
          */
@@ -572,6 +573,29 @@ class Chassis {
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
+         *
+         * @b Example
+         * @code {.cpp}
+         * void autonomous() {
+         *     chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
+         *     // turn the robot to face heading 135, with a timeout of 1000ms
+         *     chassis.swingToHeading(135, DriveSide::LEFT, 1000);
+         *     // turn the robot to face heading 230.5 with a timeout of 2000ms
+         *     // and a maximum speed of 60
+         *     chassis.swingToHeading(230.5, DriveSide::RIGHT, 2000, {.maxSpeed = 60});
+         *     // turn the robot to face heading -90 with a timeout of 1500ms
+         *     // and turn counterclockwise
+         *     chassis.swingToHeading(-90, DriveSide::LEFT, 1500, {.direction =
+         * AngularDirection::CCW_COUNTERCLOCKWISE});
+         *     // turn the robot to face heading 90 with a timeout of 500ms
+         *     // with a minSpeed of 20 and a maxSpeed of 60
+         *     chassis.swingToHeading(90, DriveSide::RIGHT, 500, {.minSpeed = 20, .maxSpeed = 60});
+         *     // turn the robot to face heading 45 with a timeout of 2000ms
+         *     // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
+         *     chassis.swingToHeading(45, DriveSide::LEFT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
+         *
+         * }
+         * @endcode
          */
         void swingToHeading(float theta, DriveSide lockedSide, int timeout, SwingToHeadingParams params = {},
                             bool async = true);
