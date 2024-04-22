@@ -679,6 +679,7 @@ class Chassis {
          * @param async whether the function should be run asynchronously. true by default
          */
         void follow(const asset& path, float lookahead, int timeout, bool forwards = true, bool async = true);
+
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
          * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
@@ -688,6 +689,25 @@ class Chassis {
          * @param turn speed to turn. Takes an input from -127 to 127.
          * @param disableDriveCurve whether to disable the drive curve or not. If disabled, uses a linear curve with no
          * deadzone or minimum power
+         *
+         * @b Example
+         * @code {.cpp}
+         * // opcontrol function in your project. The function that runs during the driver control period
+         * void opcontrol() {
+         *     // controller
+         *     pros::Controller controller(pros::E_CONTROLLER_MASTER);
+         *     // loop to continuously update motors
+         *     while (true) {
+         *         // get joystick positions
+         *         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+         *         int rightY = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+         *         // move the chassis with tank controls
+         *         chassis.tank(leftY, rightY);
+         *         // delay to save resources
+         *         pros::delay(25);
+         *     }
+         * }
+         *@endcode
          */
         void tank(int left, int right, bool disableDriveCurve = false);
         /**
@@ -699,6 +719,24 @@ class Chassis {
          * @param turn speed to turn. Takes an input from -127 to 127.
          * @param disableDriveCurve whether to disable the drive curve or not. If disabled, uses a linear curve with no
          * deadzone or minimum power
+         *
+         * @b Example
+         * @code {.cpp}
+         * // opcontrol function in your project. The function that runs during the driver control period
+         * void opcontrol() {
+         *     // controller
+         *     pros::Controller controller(pros::E_CONTROLLER_MASTER);
+         *     // loop to continuously update motors
+         *     while (true) {
+         *         // get joystick positions
+         *         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+         *         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+         *         // move the chassis with arcade controls
+         *         chassis.arcade(leftY, rightX);
+         *         // delay to save resources
+         *         pros::delay(25);
+         *     }
+         * }
          */
         void arcade(int throttle, int turn, bool disableDriveCurve = false);
         /**
@@ -711,6 +749,24 @@ class Chassis {
          * @param turn speed to turn. Takes an input from -127 to 127.
          * @param disableDriveCurve whether to disable the drive curve or not. If disabled, uses a linear curve with no
          * deadzone or minimum power
+         *
+         * @b Example
+         * @code {.cpp}
+         * // opcontrol function in your project. The function that runs during the driver control period
+         * void opcontrol() {
+         *     // controller
+         *     pros::Controller controller(pros::E_CONTROLLER_MASTER);
+         *     // loop to continuously update motors
+         *     while (true) {
+         *         // get joystick positions
+         *         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+         *         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+         *         // move the chassis with curvature controls
+         *         chassis.curvature(leftY, rightX);
+         *         // delay to save resources
+         *         pros::delay(25);
+         *     }
+         * }
          */
         void curvature(int throttle, int turn, bool disableDriveCurve = false);
         /**
