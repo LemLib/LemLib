@@ -33,7 +33,7 @@ lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertic
       imu(imu) {}
 
 /**
- * @brief The constants are stored in a struct so that they can be easily passed to the chassis class
+ * @brief The constants are stored in a class so that they can be easily passed to the chassis class
  * Set a constant to 0 and it will be ignored
  *
  * @param leftMotors pointer to the left motors
@@ -70,7 +70,7 @@ lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSetting
       sensors(sensors),
       throttleCurve(throttleCurve),
       steerCurve(steerCurve),
-      lateralPID(lateralSettings.kP, lateralSettings.kI, lateralSettings.kD, lateralSettings.windupRange, true),
+      lateralPID(linearSettings.kP, linearSettings.kI, linearSettings.kD, linearSettings.windupRange, true),
       angularPID(angularSettings.kP, angularSettings.kI, angularSettings.kD, angularSettings.windupRange, true),
       lateralLargeExit(lateralSettings.largeError, lateralSettings.largeErrorTimeout),
       lateralSmallExit(lateralSettings.smallError, lateralSettings.smallErrorTimeout),

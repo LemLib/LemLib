@@ -13,12 +13,13 @@
 namespace lemlib {
 
 /**
- * @brief Struct containing all the sensors used for odometry
+ * @brief class containing all the sensors used for odometry
  *
  */
-struct OdomSensors {
+class OdomSensors {
+    public:
         /**
-         * The sensors are stored in a struct so that they can be easily passed to the chassis class
+         * The sensors are stored in a class so that they can be easily passed to the chassis class
          * The variables are pointers so that they can be set to nullptr if they are not used
          * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
          *
@@ -38,12 +39,13 @@ struct OdomSensors {
 };
 
 /**
- * @brief Struct containing constants for a chassis controller
+ * @brief class containing constants for a chassis controller
  *
  */
-struct ControllerSettings {
+class ControllerSettings {
+    public:
         /**
-         * The constants are stored in a struct so that they can be easily passed to the chassis class
+         * The constants are stored in a class so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
          *
          * @param kP proportional constant for the chassis controller
@@ -80,12 +82,13 @@ struct ControllerSettings {
 };
 
 /**
- * @brief Struct containing constants for a drivetrain
+ * @brief class containing constants for a drivetrain
  *
  */
-struct Drivetrain {
+class Drivetrain {
+    public:
         /**
-         * The constants are stored in a struct so that they can be easily passed to the chassis class
+         * The constants are stored in a class so that they can be easily passed to the chassis class
          * Set a constant to 0 and it will be ignored
          *
          * @param leftMotors pointer to the left motors
@@ -479,6 +482,14 @@ class Chassis {
          * without interfering with the heading.
          */
         void resetLocalPosition();
+        /**
+         * PIDs are exposed so advanced users can implement things like gain scheduling
+         * Changes are immediate and will affect a motion in progress
+         *
+         * @warning Do not interact with these unless you know what you are doing
+         */
+        PID lateralPID;
+        PID angularPID;
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
@@ -501,8 +512,6 @@ class Chassis {
         DriveCurve* throttleCurve;
         DriveCurve* steerCurve;
 
-        PID lateralPID;
-        PID angularPID;
         ExitCondition lateralLargeExit;
         ExitCondition lateralSmallExit;
         ExitCondition angularLargeExit;
