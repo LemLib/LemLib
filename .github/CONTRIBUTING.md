@@ -36,7 +36,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 
 > If you want to ask a question, we assume that you have read the available [Documentation](https://lemlib.github.io/LemLib/).
 
-Before you ask a question, it is best to search for existing [Issues](https://github.com/LemLib/LemLib/issues) that might help you. In case you have found a suitable issue and still need clarification, you can write your question in this issue. In addition, you can also search for existing questions in the [Vex Discord](https://discord.gg/VUStG8p), the [VEX Forum](https://www.vexforum.com/), or the our [Discord](https://discord.gg/pCHr7XZUTj).
+Before you ask a question, it is best to search for existing [Issues](https://github.com/LemLib/LemLib/issues) that might help you. In case you have found a suitable issue and still need clarification, you can write your question in this issue. In addition, you can also search for existing questions in the [Vex Discord](https://discord.gg/VUStG8p), the [VEX Forum](https://www.vexforum.com/), or our [Discord](https://discord.gg/pCHr7XZUTj).
 
 If you then still feel the need to ask a question and need clarification, we recommend the following:
 
@@ -76,7 +76,7 @@ A good bug report shouldn't leave others needing to chase you up for more inform
 <!-- omit in toc -->
 #### How Do I Submit a Good Bug Report?
 
-> You must never report security related issues, vulnerabilities or bugs including sensitive information to the issue tracker, or elsewhere in public. Instead sensitive bugs must be sent by email to <liamteale6@gmail.com>.
+> You must never report security-related issues, vulnerabilities, or bugs including sensitive information to the issue tracker, or elsewhere in public. Instead sensitive bugs must be sent by email to <liamteale6@gmail.com>.
 <!-- You may add a PGP key to allow the messages to be sent encrypted as well. -->
 
 We use GitHub issues to track bugs and errors. If you run into an issue with the project:
@@ -149,7 +149,7 @@ In order to contribute to LemLib, you will need to [fork](https://help.github.co
 
 
 ### Improving The Documentation
-> We use [Doxygen](http://www.doxygen.nl/) to generate the documentation. The documentation is hosted on [GitHub Pages](https://pages.github.com/). The documentation is generated automatically by Github Actions.
+> We use [Doxygen](http://www.doxygen.nl/) to generate the documentation. The documentation is hosted on [GitHub Pages](https://pages.github.com/). The documentation is generated automatically by GitHub Actions.
 
 You can improve the documentation by:
 - Editing the [README](../README.md)

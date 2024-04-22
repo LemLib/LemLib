@@ -128,7 +128,7 @@ class Drivetrain {
          * right wheels
          * @param wheelDiameter the diameter of the wheel used on the drivetrain, in inches
          * @param rpm the rpm of the wheels
-         * @param chasePower higher values make the robot move faster but causes more overshoot on turns. Recommended
+         * @param horizontalDrift higher values make the robot move faster but causes more overshoot on turns. Recommended
          * value of 2 if not using traction wheels, 8 if using traction wheels
          *
          * @b Example
@@ -150,17 +150,17 @@ class Drivetrain {
          *                               10, // 10 inch track width
          *                               lemlib::Omniwheel::NEW_4, // using new 4" omnis
          *                               360, // drivetrain rpm is 360
-         *                               2); // chase power is 2. If we had traction wheels, it would have been 8
+         *                               2); // horizontalDrift is 2. If we had traction wheels, it would have been 8
          * @endcode
          */
         Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth, float wheelDiameter,
-                   float rpm, float chasePower);
+                   float rpm, float horizontalDrift);
         pros::Motor_Group* leftMotors;
         pros::Motor_Group* rightMotors;
         float trackWidth;
         float wheelDiameter;
         float rpm;
-        float chasePower;
+        float horizontalDrift;
 };
 
 /**
@@ -288,9 +288,9 @@ struct SwingToHeadingParams {
 struct MoveToPoseParams {
         /** whether the robot should move forwards or backwards. True by default */
         bool forwards = true;
-        /** how fast the robot will move around corners. Recommended value 2-15. 0 means use chasePower set in chassis
+        /** how fast the robot will move around corners. Recommended value 2-15. 0 means use horizontalDrift set in chassis
          * class. 0 by default. */
-        float chasePower = 0;
+        float horizontalDrift = 0;
         /** carrot point multiplier. value between 0 and 1. Higher values result in curvier movements. 0.6 by default */
         float lead = 0.6;
         /** the maximum speed the robot can travel at. Value between 0-127. 127 by default */

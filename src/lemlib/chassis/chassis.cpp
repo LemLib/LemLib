@@ -23,13 +23,13 @@ lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertic
       imu(imu) {}
 
 lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth,
-                               float wheelDiameter, float rpm, float chasePower)
+                               float wheelDiameter, float rpm, float horizontalDrift)
     : leftMotors(leftMotors),
       rightMotors(rightMotors),
       trackWidth(trackWidth),
       wheelDiameter(wheelDiameter),
       rpm(rpm),
-      chasePower(chasePower) {}
+      horizontalDrift(horizontalDrift) {}
 
 lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
                          OdomSensors sensors, DriveCurve* throttleCurve, DriveCurve* steerCurve)
