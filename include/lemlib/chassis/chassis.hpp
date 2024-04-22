@@ -656,6 +656,28 @@ class Chassis {
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
+         *
+         * @b Example
+         * @code {.cpp}
+         * void autonomous() {
+         *     // move the robot to x = 20, y = 15, and face heading 90 with a timeout of 4000ms
+         *     chassis.moveToPose(20, 15, 90, 4000);
+         *     // move the robot to x = 20, y = 15, and face heading 90 with a timeout of 4000ms
+         *     // but face the point with the back of the robot
+         *     chassis.moveToPose(20, 15, 90, 4000, {.forwards = false});
+         *     // move the robot to x = -20, 32.5 and face heading 90 with a timeout of 4000ms
+         *     // with a maxSpeed of 60
+         *     chassis.moveToPose(-20, 32.5, 90, 4000, {.maxSpeed = 60});
+         *     // move the robot to x = 10, y = 10 and face heading 90
+         *     // with a minSpeed of 20 and a maxSpeed of 60
+         *     chassis.moveToPose(10, 10, 90, 4000, {.minSpeed = 20, .maxSpeed = 60});
+         *     // move the robot to x = 7.5, y = 7.5 and face heading 90 with a timeout of 4000ms
+         *     // with a minSpeed of 60, and exit the movement if the robot is within 5 inches of the target
+         *     chassis.moveToPose(7.5, 7.5, 90, 4000, {.minSpeed = 60, .earlyExitRange = 5});
+         *     // move the robot to 0, 0, and facing heading 0 with a timeout of 4000ms
+         *     // this motion should not be as curved as the others, so we set lead to a smaller value (0.3)
+         *     chassis.moveToPose(0, 0, 0, 4000, {.lead = 0.3});
+         * }
          */
         void moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params = {}, bool async = true);
         /**
