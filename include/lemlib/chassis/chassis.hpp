@@ -678,6 +678,7 @@ class Chassis {
          *     // this motion should not be as curved as the others, so we set lead to a smaller value (0.3)
          *     chassis.moveToPose(0, 0, 0, 4000, {.lead = 0.3});
          * }
+         * @endcode
          */
         void moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params = {}, bool async = true);
         /**
