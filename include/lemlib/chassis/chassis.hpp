@@ -40,7 +40,6 @@ class OdomSensors {
          *                     nullptr, // no second horizontal tracking wheel, set to nullptr
          *                     &imu); // IMU
          * @endcode
-         *
          */
         OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
                     TrackingWheel* horizontal2, pros::Imu* imu);
@@ -376,6 +375,22 @@ class Chassis {
          * @param y new y value
          * @param theta new theta value
          * @param radians true if theta is in radians, false if not. False by default
+         *
+         * @example
+         * @code {.cpp}
+         * void autonomous() {
+         *     // set the pose of the chassis to x = 0, y = 0, theta = 0
+         *     // the position should always be set at the start of the autonomous
+         *     chassis.setPose(0, 0, 0);
+         * }
+         * @endcode
+         * @code
+         * void autonomous() {
+         *     // set the pose of the chassis to x = 5.3, y = 12.2, theta = 3.14
+         *     // this time with theta in radians
+         *     chassis.setPose(5.3, 12.2, 3.14, true);
+         * }
+         * @endcode
          */
         void setPose(float x, float y, float theta, bool radians = false);
         /**
@@ -383,6 +398,24 @@ class Chassis {
          *
          * @param pose the new pose
          * @param radians whether pose theta is in radians (true) or not (false). false by default
+         *
+         * @example
+         * @code {.cpp}
+         * void autonomous() {
+         *     // set the pose of the chassis to x = 0, y = 0, theta = 0
+         *     // the position should always be set at the start of the autonomous
+         *     Pose pose(0, 0, 0);
+         *     chassis.setPose(pose);
+         * }
+         * @endcode
+         * @code
+         * void autonomous() {
+         *     // set the pose of the chassis to x = 5.3, y = 12.2, theta = 3.14
+         *     // this time with theta in radians
+         *     Pose pose(5.3, 12.2, 3.14);
+         *     chassis.setPose(pose, true);
+         * }
+         * @endcode
          */
         void setPose(Pose pose, bool radians = false);
         /**
@@ -390,6 +423,23 @@ class Chassis {
          *
          * @param radians whether theta should be in radians (true) or degrees (false). false by default
          * @return Pose
+         *
+         * @example
+         * @code {.cpp}
+         * void autonomous() {
+         *     // get the pose of the chassis
+         *     Pose pose = chassis.getPose();
+         *     // print the x, y, and theta values of the pose
+         *     printf("X: %f, Y: %f, Theta: %f\n", pose.x, pose.y, pose.theta);
+         * }
+         * @endcode
+         * @code {.cpp}
+         * void autonomous() {
+         *     // get the pose of the chassis in radians
+         *     Pose pose = chassis.getPose(true);
+         *     // print the x, y, and theta values of the pose
+         *     printf("X: %f, Y: %f, Theta: %f\n", pose.x, pose.y, pose.theta);
+         * }
          */
         Pose getPose(bool radians = false, bool standardPos = false);
         /**

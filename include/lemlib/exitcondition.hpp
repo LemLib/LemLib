@@ -10,7 +10,6 @@ class ExitCondition {
          * @param time how much time to wait while in range before exiting
          */
         ExitCondition(const float range, const int time);
-
         /**
          * @brief whether the exit condition has been met
          *
@@ -18,7 +17,6 @@ class ExitCondition {
          * @return false exit condition not met
          */
         bool getExit();
-
         /**
          * @brief update the exit condition
          *
@@ -27,7 +25,6 @@ class ExitCondition {
          * @return false exit condition not met
          */
         bool update(const float input);
-
         /**
          * @brief reset the exit condition timer
          *
