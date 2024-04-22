@@ -41,8 +41,8 @@ void Chassis::tank(int left, int right, bool disableDriveCurve) {
 void Chassis::arcade(int throttle, int turn, bool disableDriveCurve, float desaturateBias) {
     // use drive curves if they have not been disabled
     if (!disableDriveCurve) {
-        throttle = throttleCurve->curve(throttle);
-        turn = throttleCurve->curve(turn);
+        throttle = std::round(throttleCurve->curve(throttle));
+        turn = std::round(throttleCurve->curve(turn));
     }
     // desaturate motors based on joyBias
     // desaturate motors based on joyBias
