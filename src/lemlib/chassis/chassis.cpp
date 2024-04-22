@@ -41,16 +41,16 @@ lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertic
  * @param trackWidth the track width of the robot
  * @param wheelDiameter the diameter of the wheel used on the drivetrain
  * @param rpm the rpm of the wheels
- * @param chasePower higher values make the robot move faster but causes more overshoot on turns
+ * @param horizontalDrift higher values make the robot move faster but causes more overshoot on turns
  */
 lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth,
-                               float wheelDiameter, float rpm, float chasePower)
+                               float wheelDiameter, float rpm, float horizontalDrift)
     : leftMotors(leftMotors),
       rightMotors(rightMotors),
       trackWidth(trackWidth),
       wheelDiameter(wheelDiameter),
       rpm(rpm),
-      chasePower(chasePower) {}
+      horizontalDrift(horizontalDrift) {}
 
 /**
  * @brief Construct a new Chassis
