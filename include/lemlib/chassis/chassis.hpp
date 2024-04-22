@@ -739,6 +739,12 @@ class Chassis {
          * @warning Do not interact with these unless you know what you are doing
          */
         PID lateralPID;
+        /**
+         * PIDs are exposed so advanced users can implement things like gain scheduling
+         * Changes are immediate and will affect a motion in progress
+         *
+         * @warning Do not interact with these unless you know what you are doing
+         */
         PID angularPID;
     protected:
         /**
