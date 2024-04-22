@@ -45,7 +45,6 @@ void Chassis::arcade(int throttle, int turn, bool disableDriveCurve, float desat
         turn = std::round(throttleCurve->curve(turn));
     }
     // desaturate motors based on joyBias
-    // desaturate motors based on joyBias
     if (std::abs(throttle) + std::abs(turn) > 127) {
         int oldThrottle = throttle;
         int oldTurn = turn;
