@@ -52,9 +52,9 @@ void Chassis::arcade(int throttle, int turn, bool disableDriveCurve, float desat
         turn *= (1 - (1 - desaturateBias) * std::abs(oldThrottle / 127.0));
         // ensure the sum of the two values is equal to 127
         // this check is necessary because of integer division
-        if (turn + throttle == 126) {
-            if (desaturateBias < 0.5) throttle += 1;
-            else turn += 1;
+        if (std::abs(turn) + std::abs(throttle) == 126) {
+            if (desaturateBias < 0.5) throttle += sgn(throttle);
+            else turn += sgn(turn);
         }
     }
 
