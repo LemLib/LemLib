@@ -13,8 +13,7 @@
 namespace lemlib {
 
 /**
- * @brief class containing all the sensors used for odometry
- *
+ * @brief class containing the sensors used for odometry
  */
 class OdomSensors {
     public:
@@ -83,7 +82,6 @@ class ControllerSettings {
 
 /**
  * @brief class containing constants for a drivetrain
- *
  */
 class Drivetrain {
     public:
@@ -115,7 +113,11 @@ class Drivetrain {
  * This enum class has 3 values: CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, and AUTO
  * AUTO will make the robot turn in the shortest direction, and will be the most used value
  */
-enum class AngularDirection { CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, AUTO };
+enum class AngularDirection {
+    CW_CLOCKWISE, /** turn clockwise */
+    CCW_COUNTERCLOCKWISE, /** turn counter-clockwise */
+    AUTO /** turn in the direction with the shortest distance to target */
+};
 
 /**
  * @brief Parameters for Chassis::turnToPoint
@@ -124,23 +126,19 @@ enum class AngularDirection { CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, AUTO };
  * parameters and specifying them all just to set one optional param ruins
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
- *
- * @param forwards whether the robot should turn to face the point with the front of the robot.
- * True by default
- * @param direction the direction the robot should turn in. AUTO by default
- * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
- *  127 by default
- * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
- *  the `it conditions will switch to less accurate but smoother ones. Value between 0-127.
- *  0 by default
- * @param earlyExitRange angle between the robot and target point where the movement will
- *  exit. Only has an effect if minSpeed is non-zero.
  */
 struct TurnToPointParams {
+        /** whether the robot should turn to face the point with the front of the robot. True by default */
         bool forwards = true;
+        /** the direction the robot should turn in. AUTO by default */
         AngularDirection direction = AngularDirection::AUTO;
+        /** the maximum speed the robot can turn at. Value between 0-127. 127 by default */
         int maxSpeed = 127;
+        /** the minimum speed the robot can turn at. If set to a non-zero value, the `it conditions will switch to less
+         * accurate but smoother ones. Value between 0-127. 0 by default */
         int minSpeed = 0;
+        /** angle between the robot and target point where the movement will exit. Only has an effect if minSpeed is
+         * non-zero.*/
         float earlyExitRange = 0;
 };
 
@@ -151,20 +149,17 @@ struct TurnToPointParams {
  * parameters and specifying them all just to set one optional param ruins
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
- *
- * @param direction the direction the robot should turn in. AUTO by default
- * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
- *  127 by default
- * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
- *  the `it conditions will switch to less accurate but smoother ones. Value between 0-127.
- *  0 by default
- * @param earlyExitRange angle between the robot and target point where the movement will
- *  exit. Only has an effect if minSpeed is non-zero.
  */
 struct TurnToHeadingParams {
+        /** the direction the robot should turn in. AUTO by default */
         AngularDirection direction = AngularDirection::AUTO;
+        /** the maximum speed the robot can turn at. Value between 0-127. 127 by default */
         int maxSpeed = 127;
+        /** the minimum speed the robot can turn at. If set to a non-zero value, the `it conditions will switch to less
+         * accurate but smoother ones. Value between 0-127. 0 by default */
         int minSpeed = 0;
+        /** angle between the robot and target point where the movement will exit. Only has an effect if minSpeed is
+         * non-zero.*/
         float earlyExitRange = 0;
 };
 
@@ -176,7 +171,10 @@ struct TurnToHeadingParams {
  *
  * This enum class only has 2 values, LEFT and RIGHT
  */
-enum class DriveSide { LEFT, RIGHT };
+enum class DriveSide {
+    LEFT, /** lock the left side of the drivetrain */
+    RIGHT /** lock the right side of the drivetrain */
+};
 
 /**
  * @brief Parameters for Chassis::swingToPoint
@@ -185,23 +183,19 @@ enum class DriveSide { LEFT, RIGHT };
  * parameters and specifying them all just to set one optional param harms
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
- *
- * @param forwards whether the robot should turn to face the point with the front of the robot.
- * True by default
- * @param direction the direction the robot should turn in. AUTO by default
- * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
- *  127 by default
- * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
- *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
- *  0 by default
- * @param earlyExitRange angle between the robot and target heading where the movement will
- *  exit. Only has an effect if minSpeed is non-zero.
  */
 struct SwingToPointParams {
+        /** whether the robot should turn to face the point with the front of the robot. True by default */
         bool forwards = true;
+        /** the direction the robot should turn in. AUTO by default */
         AngularDirection direction = AngularDirection::AUTO;
+        /** the maximum speed the robot can turn at. Value between 0-127. 127 by default */
         float maxSpeed = 127;
+        /** the minimum speed the robot can turn at. If set to a non-zero value, the exit conditions will switch to less
+         * accurate but smoother ones. Value between 0-127. 0 by default */
         float minSpeed = 0;
+        /** angle between the robot and target heading where the movement will exit. Only has an effect if minSpeed is
+         * non-zero.*/
         float earlyExitRange = 0;
 };
 
@@ -212,20 +206,17 @@ struct SwingToPointParams {
  * parameters and specifying them all just to set one optional param harms
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
- *
- * @param direction the direction the robot should turn in. AUTO by default
- * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
- *  127 by default
- * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
- *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
- *  0 by default
- * @param earlyExitRange angle between the robot and target heading where the movement will
- *  exit. Only has an effect if minSpeed is non-zero.
  */
 struct SwingToHeadingParams {
+        /** the direction the robot should turn in. AUTO by default */
         AngularDirection direction = AngularDirection::AUTO;
+        /** the maximum speed the robot can turn at. Value between 0-127. 127 by default */
         float maxSpeed = 127;
+        /** the minimum speed the robot can turn at. If set to a non-zero value, the exit conditions will switch to less
+         * accurate but smoother ones. Value between 0-127. 0 by default */
         float minSpeed = 0;
+        /** angle between the robot and target heading where the movement will exit. Only has an effect if minSpeed is
+         * non-zero.*/
         float earlyExitRange = 0;
 };
 
@@ -236,26 +227,22 @@ struct SwingToHeadingParams {
  * parameters and specifying them all just to set one optional param ruins
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
- *
- * @param forwards whether the robot should move forwards or backwards. True by default
- * @param chasePower how fast the robot will move around corners. Recommended value 2-15.
- *  0 means use chasePower set in chassis class. 0 by default.
- * @param lead carrot point multiplier. value between 0 and 1. Higher values result in
- *  curvier movements. 0.6 by default
- * @param maxSpeed the maximum speed the robot can travel at. Value between 0-127.
- *  127 by default
- * @param minSpeed the minimum speed the robot can travel at. If set to a non-zero value,
- *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
- *  0 by default
- * @param earlyExitRange distance between the robot and target point where the movement will
- *  exit. Only has an effect if minSpeed is non-zero.
  */
 struct MoveToPoseParams {
+        /** whether the robot should move forwards or backwards. True by default */
         bool forwards = true;
+        /** how fast the robot will move around corners. Recommended value 2-15. 0 means use chasePower set in chassis
+         * class. 0 by default. */
         float chasePower = 0;
+        /** carrot point multiplier. value between 0 and 1. Higher values result in curvier movements. 0.6 by default */
         float lead = 0.6;
+        /** the maximum speed the robot can travel at. Value between 0-127. 127 by default */
         float maxSpeed = 127;
+        /** the minimum speed the robot can travel at. If set to a non-zero value, the exit conditions will switch to
+         * less accurate but smoother ones. Value between 0-127. 0 by default */
         float minSpeed = 0;
+        /** distance between the robot and target point where the movement will exit. Only has an effect if minSpeed is
+         * non-zero.*/
         float earlyExitRange = 0;
 };
 
@@ -266,20 +253,17 @@ struct MoveToPoseParams {
  * parameters and specifying them all just to set one optional param harms
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
- *
- * @param forwards whether the robot should move forwards or backwards. True by default
- * @param maxSpeed the maximum speed the robot can travel at. Value between 0-127.
- *  127 by default
- * @param minSpeed the minimum speed the robot can travel at. If set to a non-zero value,
- *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
- *  0 by default
- * @param earlyExitRange distance between the robot and target point where the movement will
- *  exit. Only has an effect if minSpeed is non-zero.
  */
 struct MoveToPointParams {
+        /** whether the robot should move forwards or backwards. True by default */
         bool forwards = true;
+        /** the maximum speed the robot can travel at. Value between 0-127. 127 by default */
         float maxSpeed = 127;
+        /** the minimum speed the robot can travel at. If set to a non-zero value, the exit conditions will switch to
+         * less accurate but smoother ones. Value between 0-127. 0 by default */
         float minSpeed = 0;
+        /** distance between the robot and target point where the movement will exit. Only has an effect if minSpeed is
+         * non-zero.*/
         float earlyExitRange = 0;
 };
 
@@ -288,7 +272,6 @@ extern ExpoDriveCurve defaultDriveCurve;
 
 /**
  * @brief Chassis class
- *
  */
 class Chassis {
     public:
