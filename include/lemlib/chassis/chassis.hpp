@@ -579,21 +579,25 @@ class Chassis {
          * void autonomous() {
          *     chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
          *     // turn the robot to face heading 135, with a timeout of 1000ms
+         *     // and lock the left side of the drivetrain
          *     chassis.swingToHeading(135, DriveSide::LEFT, 1000);
          *     // turn the robot to face heading 230.5 with a timeout of 2000ms
          *     // and a maximum speed of 60
+         *     // and lock the right side of the drivetrain
          *     chassis.swingToHeading(230.5, DriveSide::RIGHT, 2000, {.maxSpeed = 60});
          *     // turn the robot to face heading -90 with a timeout of 1500ms
          *     // and turn counterclockwise
+         *     // and lock the left side of the drivetrain
          *     chassis.swingToHeading(-90, DriveSide::LEFT, 1500, {.direction =
          * AngularDirection::CCW_COUNTERCLOCKWISE});
          *     // turn the robot to face heading 90 with a timeout of 500ms
          *     // with a minSpeed of 20 and a maxSpeed of 60
+         *     // and lock the right side of the drivetrain
          *     chassis.swingToHeading(90, DriveSide::RIGHT, 500, {.minSpeed = 20, .maxSpeed = 60});
          *     // turn the robot to face heading 45 with a timeout of 2000ms
          *     // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
+         *     // and lock the left side of the drivetrain
          *     chassis.swingToHeading(45, DriveSide::LEFT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
-         *
          * }
          * @endcode
          */
