@@ -33,3 +33,14 @@ html_static_path = ['_static']
 breathe_projects = {"LemLib": "xml/"}
 #breathe_projects = {"LemLib": "/home/battlechicken/Projects/LemLib/docs/xml"}
 breathe_default_project = "LemLib"
+
+
+
+# Run doxygen for the readthedocs build
+
+import subprocess, os
+
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
+if read_the_docs_build:
+     subprocess.call('cd ../doxygen; doxygen', shell=True)
