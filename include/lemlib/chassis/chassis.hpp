@@ -446,8 +446,8 @@ class Chassis {
          * @param turn speed to turn. Takes an input from -127 to 127.
          * @param disableDriveCurve whether to disable the drive curve or not. If disabled, uses a linear curve with no
          * deadzone or minimum power
-         * @param desaturateBias how much to favor turning over forward/backward motion or vice versa when motors are
-         * saturated. A value of 0 fully prioritizes driving, a value of 1 fully prioritizes turning
+         * @param desaturateBias how much to favor angular motion over lateral motion or vice versa when motors are
+         * saturated. A value of 0 fully prioritizes lateral motion, a value of 1 fully prioritizes angular motion
          */
         void arcade(int throttle, int turn, bool disableDriveCurve = false, float desaturateBias = 0.5);
         /**
