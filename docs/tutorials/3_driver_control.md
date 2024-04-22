@@ -148,5 +148,3 @@ void opcontrol() {
 ## Conclusion
 That's all for driver control. We will be covering autonomous motion and tuning in the next tutorial.
 
-[Previous Tutorial](2_setting_up_the_chassis.md) <br>
-[Next Tutorial](4_auto_and_tuning.md)

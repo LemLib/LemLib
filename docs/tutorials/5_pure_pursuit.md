@@ -63,5 +63,3 @@ That's it for the tutorials! I hope they were helpful. If you have any questions
  - [LemLib](https://github.com/LemLib/LemLib)
  - [path.jerryio](https://path.jerryio.com/)
 
-
-[Previous Tutorial](4_auto_and_moving.md)

@@ -196,5 +196,3 @@ Note that the origin of the field is in the middle, and the field coordinates ar
 Thats it! You now know how to move the robot around the field using the `lemlib::Chassis::turnTo()`,`lemlib::Chassis::moveToPoint()` and `lemlib::Chassis::moveToPose()` functions. In the next tutorial, we will be covering how to use the Path Generator to create a path for the robot to follow.
 
 
-[Previous Tutorial](3_driver_control.md) <br>
-[Next Tutorial](5_pure_pursuit.md)

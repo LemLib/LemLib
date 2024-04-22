@@ -210,5 +210,3 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
 Thats it! You have now set up the chassis. In the next tutorial, we will be making the chassis move during driver control
 
 
-[Previous Tutorial](1_getting_started.md) <br>
-[Next Tutorial](3_driver_control.md)

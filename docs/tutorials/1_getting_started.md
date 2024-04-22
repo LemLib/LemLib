@@ -49,4 +49,3 @@ Finally, put the following at the top of your `main.cpp` file:
 
 You are now ready to start using LemLib!
 
-[Next Tutorial](2_setting_up_the_chassis.md)
