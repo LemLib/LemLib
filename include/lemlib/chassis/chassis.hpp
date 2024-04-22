@@ -473,12 +473,31 @@ class Chassis {
         /**
          * @brief Wait until the robot has completed the path
          *
+         * @example
+         * @code {.cpp}
+         * void autonomous() {
+         *      // move the robot to x = 20, y = 15, and face heading 90
+         *      chassis.moveToPose(20, 15, 90, 4000);
+         *      // wait until the robot has completed the motion
+         *      chassis.waitUntilDone();
+         *      // output "motion completed" to the console
+         *      printf("motion completed\n");
+         * }
+         * @endcode
          */
         void waitUntilDone();
         /**
          * @brief Sets the brake mode of the drivetrain motors
          *
          * @param mode Mode to set the drivetrain motors to
+         *
+         * @example
+         * @code {.cpp}
+         * void autonomous() {
+         *     // set the brake mode of the drivetrain motors to hold
+         *     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+         * }
+         * @endcode
          */
         void setBrakeMode(pros::motor_brake_mode_e mode);
         /**
