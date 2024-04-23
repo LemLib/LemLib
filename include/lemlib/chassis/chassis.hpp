@@ -689,6 +689,26 @@ class Chassis {
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
+         *
+         * @b Example
+         * @code {.cpp}
+         * void autonomous() {
+         *     // move the robot to x = 20, y = 15 with a timeout of 4000ms
+         *     chassis.moveToPoint(20, 15, 4000);
+         *     // move the robot to x = 20, y = 15 with a timeout of 4000ms
+         *     // but face the point with the back of the robot
+         *     chassis.moveToPoint(20, 15, 4000, {.forwards = false});
+         *     // move the robot to x = -20, 32.5 with a timeout of 4000ms
+         *     // with a maxSpeed of 60
+         *     chassis.moveToPoint(-20, 32.5, 4000, {.maxSpeed = 60});
+         *     // move the robot to x = 10, y = 10 with a timeout of 4000ms
+         *     // with a minSpeed of 20 and a maxSpeed of 60
+         *     chassis.moveToPoint(10, 10, 4000, {.minSpeed = 20, .maxSpeed = 60});
+         *    // move the robot to x = 7.5, y = 7.5 with a timeout of 4000ms
+         *     // with a minSpeed of 60, and exit the movement if the robot is within 5 inches of the target
+         *     chassis.moveToPoint(7.5, 7.5, 4000, {.minSpeed = 60, .earlyExitRange = 5});
+         * }
+         * @endcode
          */
         void moveToPoint(float x, float y, int timeout, MoveToPointParams params = {}, bool async = true);
         /**
