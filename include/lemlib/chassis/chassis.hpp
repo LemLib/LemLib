@@ -823,11 +823,44 @@ class Chassis {
         /**
          * @brief Cancels the currently running motion.
          * If there is a queued motion, then that queued motion will run.
+         *
+         * @b Example
+         * @code {.cpp}
+         * void autonomous() {
+         *      // move the robot to x = 20, y = 20 with a timeout of 4000ms
+         *      chassis.moveToPoint(20, 20, 4000);
+         *      // wait 500 milliseconds
+         *      pros::delay(500);
+         *      // cancel the current motion. This stops it immediately
+         *      chassis.cancelMotion();
+         * }
+         * @endcode
+         * @b Example (advanced)
+         * @code {.cpp}
+         * void autonomous() {
+         *      // this example shows how the cancelMotion function behaves when a motion is queued
+         *      // this is an advanced example since we will be using tasks here
+         *      // move the robot to x = 20, y = 20 with a timeout of 4000ms
+         *      chassis.moveToPoint(20, 20, 4000);
+         *      // start a lambda task that will be used to cancel the motion after 500ms
+         *      pros::Task task([] {
+         *          // wait 500 milliseconds
+         *          pros::delay(500);
+         *          // cancel the current motion. This stops it immediately
+         *          chassis.cancelMotion();
+         *      });
+         *      // queue a motion to x = 10, y = 10 with a timeout of 4000ms
+         *      // this will run after the first motion is cancelled
+         *      chassis.moveToPoint(10, 10, 4000);
+         * }
+         * @endcode
          */
         void cancelMotion();
         /**
          * @brief Cancels all motions, even those that are queued.
          * After this, the chassis will not be in motion.
+         *
+         * @b Example
          */
         void cancelAllMotions();
         /**
