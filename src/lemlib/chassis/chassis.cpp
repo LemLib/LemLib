@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <math.h>
 #include <optional>
+#include "lemlib/pose.hpp"
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
@@ -949,4 +950,71 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     // set distTraveled to -1 to indicate that the function has finished
     distTraveled = -1;
     this->endMotion();
+}
+
+// protected
+/**
+ * @brief uses the lateralSettings and angularSettings to set the lateralPID and angularPID constants.
+ */
+void lemlib::Chassis::setPID() {
+    // ...
+};
+// protected
+/**
+ * @brief uses the lateralSettings and angularSettings to set the exit condition constants.
+ */
+void lemlib::Chassis::setExitConditions() {
+    // ...
+};
+
+// public
+/**
+ * @brief Should be used only when tuning PID. This function will prevent exit conditions from being met and
+ * ensure that only the timeout will stop the motion. This function will not use the angular PID.
+ *
+ * Differences from other motions:
+ * - This function is blocking and will not return until timeout milliseconds have passed.
+ * - This motion is relative to the current position of the robot. Meaning that it will not move to the same
+ *   position if the bot is moved.
+ *
+ * To do this the lateral small and large exit conditions are set to a range of 0 and the angular PID constants
+ * are set to 0. PID constants and exit conditions will be reset to the values stored in lateralSettings and
+ * angularSettings after the motion.
+ *
+ * @param distance the distance to travel in inches
+ * @param timeout the maximum time the robot can spend moving in milliseconds
+ * @return the distance traveled in the forward direction in inches
+ */
+float lemlib::Chassis::tuneLateralPID(float distance, int timeout) {
+    const lemlib::Pose startingPose = this->getPose();
+    const float startingRadians = this->getPose(true).theta;
+
+    // calculate the target pose
+    const lemlib::Pose unitVector = lemlib::Pose(cos(startingRadians), sin(startingRadians));
+    const lemlib::Pose targetPose = startingPose + unitVector * distance;
+
+    // prepare the PID and exit conditions
+    this->angularPID.kP = 0;
+    this->angularPID.kI = 0;
+    this->angularPID.kD = 0;
+
+    this->lateralSmallExit.range = 0;
+    this->lateralLargeExit.range = 0;
+
+    this->moveToPoint(targetPose.x, targetPose.y, timeout, {}, false);
+
+    // reset the PID and exit conditions
+    this->setPID();
+    this->setExitConditions();
+
+    // calculate distance traveled
+    // proof?: https://www.geogebra.org/geometry/ph7htrt6 (out variable is the calculation)
+    const lemlib::Pose endingPose = this->getPose();
+    const lemlib::Pose traveledVector = endingPose - startingPose;
+
+    const float traveledRadians = traveledVector.angle(unitVector);
+    const float distanceTraveledInAllDirection = startingPose.distance(endingPose);
+
+    const float distanceTraveledForward = cos(traveledRadians) * distanceTraveledInAllDirection;
+    return distanceTraveledForward;
 }

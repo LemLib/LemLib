@@ -479,7 +479,34 @@ class Chassis {
          * without interfering with the heading.
          */
         void resetLocalPosition();
+
+        /**
+         * @brief Should be used only when tuning PID. This function will prevent exit conditions from being met and
+         * ensure that only the timeout will stop the motion. This function will not use the angular PID.
+         *
+         * Differences from other motions:
+         * - This function is blocking and will not return until timeout milliseconds have passed.
+         * - This motion is relative to the current position of the robot. Meaning that it will not move to the same
+         *   position if the bot is moved.
+         *
+         * To do this the lateral small and large exit conditions are set to a range of 0 and the angular PID constants
+         * are set to 0. PID constants and exit conditions will be reset to the values stored in lateralSettings and
+         * angularSettings after the motion.
+         *
+         * @param distance the distance to travel in inches
+         * @param timeout the maximum time the robot can spend moving in milliseconds
+         */
+        float tuneLateralPID(float distance, int timeout);
+        float tuneAngularPID(float heading, int timeout);
     protected:
+        /**
+         * @brief uses the lateralSettings and angularSettings to set the lateralPID and angularPID constants.
+         */
+        void setPID();
+        /**
+         * @brief uses the lateralSettings and angularSettings to set the exit condition constants.
+         */
+        void setExitConditions();
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
          */
