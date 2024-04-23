@@ -1,6 +1,16 @@
 [
   {
     "metadata": {
+      "location": "https://github.com/LemLib/LemLib/releases/download/v0.4.9/LemLib%400.4.9.zip"
+    },
+    "name": "LemLib",
+    "py/object": "pros.conductor.templates.base_template.BaseTemplate",
+    "supported_kernels": "^3.8.3",
+    "target": "v5",
+    "version": "0.4.9"
+  },
+  {
+    "metadata": {
       "location": "https://github.com/LemLib/LemLib/releases/download/v0.4.8/LemLib%400.4.8.zip"
     },
     "name": "LemLib",
