@@ -239,3 +239,13 @@ void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
     drivetrain.leftMotors->set_brake_modes(mode);
     drivetrain.rightMotors->set_brake_modes(mode);
 }
+
+void lemlib::Chassis::setLateralPIDGains(PID::OptionalGains newGains) {
+    this->lateralPID.setGains(newGains);
+}
+void lemlib::Chassis::setAngularPIDGains(PID::OptionalGains newGains) {
+    this->angularPID.setGains(newGains);
+}
+
+lemlib::PID::Gains lemlib::Chassis::getLateralPIDGains() const { return this->lateralPID.getGains(); }
+lemlib::PID::Gains lemlib::Chassis::getAngularPIDGains() const { return this->lateralPID.getGains(); }

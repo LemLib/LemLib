@@ -482,14 +482,40 @@ class Chassis {
          * without interfering with the heading.
          */
         void resetLocalPosition();
+
         /**
-         * PIDs are exposed so advanced users can implement things like gain scheduling
-         * Changes are immediate and will affect a motion in progress
+         * @brief Modify the lateral PID gains object. This also contains the windupRange and signFlipReset settings.
+         * Intended for advanced users.
+         * @param newGains the new gains. May specify all the gains, none of them, or anywhere in between.
          *
-         * @warning Do not interact with these unless you know what you are doing
+         * @b Example
+         * @code {.cpp}
+         * chassis.setLateralPIDGains({.kP = 24});
          */
-        PID lateralPID;
-        PID angularPID;
+        void setLateralPIDGains(PID::OptionalGains newGains);
+        /**
+         * @brief Modify the angular PID gains object. This also contains the windupRange and signFlipReset settings.
+         * Intended for advanced users.
+         * @param newGains the new gains. May specify all the gains, none of them, or anywhere in between.
+         *
+         * @b Example
+         * @code {.cpp}
+         * chassis.setAngularPIDGains({.kP = 24});
+         */
+        void setAngularPIDGains(PID::OptionalGains newGains);
+
+        /**
+         * @brief Get the Lateral PID Gains object
+         *
+         * @return PID::Gains
+         */
+        PID::Gains getLateralPIDGains() const;
+        /**
+         * @brief Get the Angular PID Gains object
+         *
+         * @return PID::Gains
+         */
+        PID::Gains getAngularPIDGains() const;
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
@@ -516,6 +542,9 @@ class Chassis {
         ExitCondition lateralSmallExit;
         ExitCondition angularLargeExit;
         ExitCondition angularSmallExit;
+
+        PID lateralPID;
+        PID angularPID;
     private:
         pros::Mutex mutex;
 };

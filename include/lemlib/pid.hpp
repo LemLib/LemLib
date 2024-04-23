@@ -31,6 +31,8 @@ class PID {
                 std::optional<float> windupRange = 0;
                 /** @brief whether to reset integral when sign of error flips */
                 std::optional<bool> signFlipReset = false;
+
+                static OptionalGains fromGains(const Gains& gains);
         };
 
         /**

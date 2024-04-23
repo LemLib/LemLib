@@ -66,4 +66,12 @@ void PID::reset() {
     integral = 0;
     prevError = 0;
 }
+
+PID::OptionalGains PID::OptionalGains::fromGains(const PID::Gains& gains) {
+    return OptionalGains {.kP = gains.kP,
+                          .kI = gains.kI,
+                          .kD = gains.kD,
+                          .windupRange = gains.windupRange,
+                          .signFlipReset = gains.signFlipReset};
+}
 } // namespace lemlib
