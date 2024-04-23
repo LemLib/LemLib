@@ -16,6 +16,7 @@ author = 'Liam Teale'
 extensions = [
     'breathe',
     'myst_parser',
+    'sphinx_copybutton',
 ]
 
 templates_path = ['_templates']
@@ -57,7 +58,7 @@ myst_enable_extensions = [
     "fieldlist",
     "html_admonition",
     "html_image",
-    "linkify",
+    #"linkify",
     "replacements",
     "smartquotes",
     "strikethrough",
