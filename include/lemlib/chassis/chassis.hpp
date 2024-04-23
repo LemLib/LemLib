@@ -169,7 +169,7 @@ class Drivetrain {
  * When turning, the user may want to specify the direction the robot should turn in.
  * This enum class has 3 values: CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, and AUTO
  * AUTO will make the robot turn in the shortest direction, and will be the most used value
- */
+1 */
 enum class AngularDirection {
     CW_CLOCKWISE, /** turn clockwise */
     CCW_COUNTERCLOCKWISE, /** turn counter-clockwise */
@@ -861,15 +861,63 @@ class Chassis {
          * After this, the chassis will not be in motion.
          *
          * @b Example
+         * @code {.cpp}
+         * void autonomous() {
+         *      // move the robot to x = 20, y = 20 with a timeout of 4000ms
+         *      chassis.moveToPoint(20, 20, 4000);
+         *      // wait 500 milliseconds
+         *      pros::delay(500);
+         *      // cancel all motions. The robot will stop immediately
+         *      chassis.cancelAllMotions();
+         * }
+         * @endcode
+         * @b Example (advanced)
+         * @code {.cpp}
+         * void autonomous() {
+         *      // this example shows how the cancelMotion function behaves when a motion is queued
+         *      // this is an advanced example since we will be using tasks here
+         *      // move the robot to x = 20, y = 20 with a timeout of 4000ms
+         *      chassis.moveToPoint(20, 20, 4000);
+         *      // start a lambda task that will be used to cancel all motions after 500ms
+         *      pros::Task task([] {
+         *          // wait 500 milliseconds
+         *          pros::delay(500);
+         *          // cancels both motions
+         *          chassis.cancelAllMotions();
+         *      });
+         *      // queue a motion to x = 10, y = 10 with a timeout of 4000ms
+         *      // this will never run because cancelAllMotions will be called while this motion is in the queue
+         *      chassis.moveToPoint(10, 10, 4000);
+         * }
+         * @endcode
          */
         void cancelAllMotions();
         /**
          * @return whether a motion is currently running
+         *
+         * @b Example
+         * @code {.cpp}
+         * void autonomous() {
+         *     // move the robot to x = 20, y = 15, and face heading 90
+         *     chassis.moveToPose(20, 15, 90, 4000);
+         *     // delay for 500ms
+         *     // this returns true, since the robot is still in motion
+         *     chassis.isInMotion();
+         * }
+         * @endcode
          */
         bool isInMotion() const;
         /**
          * @brief Resets the x and y position of the robot
          * without interfering with the heading.
+         *
+         * void autonomous() {
+         *     // set robot position to x = 10, y = 15, and heading 90
+         *     chassis.setPose(10, 15, 90);
+         *     // reset the robot's x and y position
+         *     chassis.resetLocalPosition();
+         *     // the robot's position is now x = 0, y = 0, and heading 90
+         * }
          */
         void resetLocalPosition();
         /**
