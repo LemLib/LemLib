@@ -7,10 +7,10 @@ Lemlib: Documentation Home
    :caption: Home
 
    self
-   ./about.rst
-   ./download.rst
-   ./contribute.rst
-   ./support.rst
+   ./about
+   ./download
+   ./contribute
+   ./support
 
 
 
@@ -34,3 +34,4 @@ Lemlib: Documentation Home
 
 
 TODO: write content here:
+
