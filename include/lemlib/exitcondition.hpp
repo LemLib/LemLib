@@ -76,10 +76,6 @@ class ExitConditionGroup : public ExitCondition {
          * @brief Create a new Exit Condition Group
          */
         ExitConditionGroup(std::vector<std::shared_ptr<ExitCondition>> children);
-        /**
-         * @brief Destroys the children
-         */
-        ~ExitConditionGroup();
 
         /**
          * @brief whether the exit condition has been met
