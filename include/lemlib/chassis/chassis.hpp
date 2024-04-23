@@ -383,10 +383,6 @@ class Chassis {
          *     // set the pose of the chassis to x = 0, y = 0, theta = 0
          *     // the position should always be set at the start of the autonomous
          *     chassis.setPose(0, 0, 0);
-         * }
-         * @endcode
-         * @code
-         * void autonomous() {
          *     // set the pose of the chassis to x = 5.3, y = 12.2, theta = 3.14
          *     // this time with theta in radians
          *     chassis.setPose(5.3, 12.2, 3.14, true);
@@ -407,10 +403,6 @@ class Chassis {
          *     // the position should always be set at the start of the autonomous
          *     Pose pose(0, 0, 0);
          *     chassis.setPose(pose);
-         * }
-         * @endcode
-         * @code
-         * void autonomous() {
          *     // set the pose of the chassis to x = 5.3, y = 12.2, theta = 3.14
          *     // this time with theta in radians
          *     Pose pose(5.3, 12.2, 3.14);
@@ -739,7 +731,6 @@ class Chassis {
          * @endcode
          */
         void follow(const asset& path, float lookahead, int timeout, bool forwards = true, bool async = true);
-
         /**
          * @brief Control the robot during the driver using the arcade drive control scheme. In this control scheme one
          * joystick axis controls the forwards and backwards movement of the robot, while the other joystick axis
