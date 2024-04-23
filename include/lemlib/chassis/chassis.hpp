@@ -169,7 +169,7 @@ class Drivetrain {
  * When turning, the user may want to specify the direction the robot should turn in.
  * This enum class has 3 values: CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, and AUTO
  * AUTO will make the robot turn in the shortest direction, and will be the most used value
-1 */
+ */
 enum class AngularDirection {
     CW_CLOCKWISE, /** turn clockwise */
     CCW_COUNTERCLOCKWISE, /** turn counter-clockwise */
