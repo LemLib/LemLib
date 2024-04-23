@@ -27,7 +27,10 @@ pros::MotorGroup right_side_motors({right_front_motor, right_back_motor});
 
 Now that we have the motors set up, we need to tell LemLib about the track width, wheel diameter, and wheel rpm of the drivetrain. Let's start with the track width. The track width is the distance between the left and right drivetrain wheels, as shown in the image below:
 
-<img src="./assets/2_setting_up_the_chassis/track_width.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+```{image} ../assets/2_setting_up_the_chassis/track_width.png
+:align: center
+:height: 400
+```
 
 We also need to tell LemLib the diameter of the wheels. LemLib has wheel presets you can use for this (e.g `lemlib::Omniwheel::NEW_4` for the new 4 inch wheels) After that, we need to tell LemLib the rpm of the wheels. If your drivetrain is not geared, then the rpm of the wheels is the same as the rpm of the motor cartridge. If it is geared, refer to [this spreadsheet](https://docs.google.com/spreadsheets/d/1RSoLv3tnpiCgFyHb0QayxK-42r9MgVRD_4QQmeFM618/edit#gid=0) to find the rpm of the wheels. And finally, we need to tell the robot how fast it can go around corners. If you have at least two traction wheels, you can start at 8, but if you don't have traction wheels, start at 2. We will tune this later.
 
@@ -48,7 +51,10 @@ A crucial component of a consistent autonomous is position tracking, commonly kn
 
 Tracking Wheels are non-powered wheels that are used to track the movement of the robot. Below is a photo of a typical tracking wheel:
 
-<img src="./assets/2_setting_up_the_chassis/tracking_wheel.png" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+```{image} ../assets/2_setting_up_the_chassis/tracking_wheel.png
+:align: center
+:height: 400
+```
 
 A tracking wheel can rotate freely on a screw joint, and rubber bands pull it down so it makes consistent contact with the field tiles. Tracking wheels can be connected to either an Optical Shaft Encoder or a V5 Rotation Sensor. Both are supported by LemLib.
 
@@ -76,11 +82,15 @@ lemlib::TrackingWheel back_tracking_wheel(&back_enc, lemlib::Omniwheel::OLD_275,
 
 Hold on, how far away from the tracking center is the tracking wheel? Turns out, its not the straight distance to the center of the robot, but only one component of it. Below is a diagram which shows the relationship between the tracking center and the tracking wheel:
 
-<img src="./assets/2_setting_up_the_chassis/tracking_wheel_distance.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
+```{image} ../assets/2_setting_up_the_chassis/tracking_wheel_distance.png
+:align: center
+:height: 800
+```
 
 Remember, vertical tracking wheels should have a negative offset if on the left of the tracking center, and horizontal tracking wheels should have a negative offset if in front of the tracking center.
 
 Now, we can put all the tracking wheels together into a struct with `lemlib::OdomSensors_t`. This struct will be passed to the LemLib chassis. Below is an example of how to do this:
+
 ```cpp
 // left tracking wheel encoder
 pros::ADIEncoder left_enc('A', 'B', true); // ports A and B, reversed
@@ -113,6 +123,7 @@ You don't need all these sensors though. Even if you don't have any, you can sti
 ## PIDs
 
 Lemlib uses 2 PIDs to control the motion of the robot (except for pure pursuit). Every chassis will have different constants however, so you will need to tune them. More about that in the third tutorial. For now, just copy and paste the following code into your `main.cpp` file:
+
 ```cpp
 // forward/backward PID
 lemlib::ControllerSettings linearController(10, // proportional gain (kP)
@@ -138,6 +149,7 @@ lemlib::ControllerSettings angularController(2, // proportional gain (kP)
 ## Putting it all together
 
 Below is everything we have done so far, all passed to the `lemlib::Chassis` constructor:
+
 ```cpp
 // motors
 pros::Motor left_front_motor(1, pros::E_MOTOR_GEARSET_06, false); // port 1, blue gearbox, not reversed
