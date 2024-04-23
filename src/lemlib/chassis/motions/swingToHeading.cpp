@@ -82,7 +82,7 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int time
         // cap the speed
         if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
         else if (motorPower < -params.maxSpeed) motorPower = -params.maxSpeed;
-        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
+        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, this->getAngularSlew());
         if (motorPower < 0 && motorPower > -params.minSpeed) motorPower = -params.minSpeed;
         else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
         prevMotorPower = motorPower;

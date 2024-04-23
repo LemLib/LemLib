@@ -91,13 +91,13 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
 
         // apply restrictions on angular speed
         angularOut = std::clamp(angularOut, -params.maxSpeed, params.maxSpeed);
-        angularOut = slew(angularOut, prevAngularOut, angularSettings.slew);
+        angularOut = slew(angularOut, prevAngularOut, this->getAngularSlew());
 
         // apply restrictions on lateral speed
         lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
         // constrain lateral output by max accel
         // but not for decelerating, since that would interfere with settling
-        if (!close) lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
+        if (!close) lateralOut = slew(lateralOut, prevLateralOut, this->getLateralSlew());
 
         // prevent moving in the wrong direction
         if (params.forwards && !close) lateralOut = std::fmax(lateralOut, 0);

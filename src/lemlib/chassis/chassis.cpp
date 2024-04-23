@@ -65,17 +65,17 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
 lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
                          OdomSensors sensors, DriveCurve* throttleCurve, DriveCurve* steerCurve)
     : drivetrain(drivetrain),
-      lateralSettings(linearSettings),
-      angularSettings(angularSettings),
       sensors(sensors),
       throttleCurve(throttleCurve),
       steerCurve(steerCurve),
       lateralPID(linearSettings.kP, linearSettings.kI, linearSettings.kD, linearSettings.windupRange, true),
       angularPID(angularSettings.kP, angularSettings.kI, angularSettings.kD, angularSettings.windupRange, true),
-      lateralLargeExit(lateralSettings.largeError, lateralSettings.largeErrorTimeout),
-      lateralSmallExit(lateralSettings.smallError, lateralSettings.smallErrorTimeout),
+      lateralLargeExit(linearSettings.largeError, linearSettings.largeErrorTimeout),
+      lateralSmallExit(linearSettings.smallError, linearSettings.smallErrorTimeout),
       angularLargeExit(angularSettings.largeError, angularSettings.largeErrorTimeout),
-      angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout) {}
+      angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout),
+      lateralSlew(linearSettings.slew),
+      angularSlew(angularSettings.slew) {}
 
 /**
  * @brief calibrate the IMU given a sensors struct
@@ -240,12 +240,18 @@ void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
     drivetrain.rightMotors->set_brake_modes(mode);
 }
 
-void lemlib::Chassis::setLateralPIDGains(PID::OptionalGains newGains) {
-    this->lateralPID.setGains(newGains);
-}
-void lemlib::Chassis::setAngularPIDGains(PID::OptionalGains newGains) {
-    this->angularPID.setGains(newGains);
-}
+void lemlib::Chassis::setLateralPIDGains(PID::OptionalGains newGains) { this->lateralPID.setGains(newGains); }
+
+void lemlib::Chassis::setAngularPIDGains(PID::OptionalGains newGains) { this->angularPID.setGains(newGains); }
 
 lemlib::PID::Gains lemlib::Chassis::getLateralPIDGains() const { return this->lateralPID.getGains(); }
+
 lemlib::PID::Gains lemlib::Chassis::getAngularPIDGains() const { return this->lateralPID.getGains(); }
+
+void lemlib::Chassis::setLateralSlew(float slew) { this->angularSlew = slew; }
+
+void lemlib::Chassis::setAngularSlew(float slew) { this->angularSlew = slew; }
+
+float lemlib::Chassis::getLateralSlew() const { return this->lateralSlew; }
+
+float lemlib::Chassis::getAngularSlew() const { return this->angularSlew; }

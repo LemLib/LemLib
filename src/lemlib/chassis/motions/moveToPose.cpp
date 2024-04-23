@@ -122,7 +122,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
 
         // constrain lateral output by max accel
-        if (!close) lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
+        if (!close) lateralOut = slew(lateralOut, prevLateralOut, this->getLateralSlew());
 
         // constrain lateral output by the max speed it can travel at without
         // slipping

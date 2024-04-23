@@ -9,6 +9,7 @@
 #include "lemlib/pid.hpp"
 #include "lemlib/exitcondition.hpp"
 #include "lemlib/driveCurve.hpp"
+#include <atomic>
 
 namespace lemlib {
 
@@ -516,6 +517,12 @@ class Chassis {
          * @return PID::Gains
          */
         PID::Gains getAngularPIDGains() const;
+
+        void setLateralSlew(float newSlew);
+        void setAngularSlew(float newSlew);
+
+        float getLateralSlew() const;
+        float getAngularSlew() const;
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
@@ -531,8 +538,9 @@ class Chassis {
 
         float distTraveled = 0;
 
-        ControllerSettings lateralSettings;
-        ControllerSettings angularSettings;
+        std::atomic<float> lateralSlew;
+        std::atomic<float> angularSlew;
+
         Drivetrain drivetrain;
         OdomSensors sensors;
         DriveCurve* throttleCurve;

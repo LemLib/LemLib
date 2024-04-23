@@ -79,7 +79,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
         // cap the speed
         if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
         else if (motorPower < -params.maxSpeed) motorPower = -params.maxSpeed;
-        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
+        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, this->getAngularSlew());
         if (motorPower < 0 && motorPower > -params.minSpeed) motorPower = -params.minSpeed;
         else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
         prevMotorPower = motorPower;
