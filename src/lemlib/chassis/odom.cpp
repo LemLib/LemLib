@@ -28,68 +28,31 @@ float prevHorizontal1 = 0;
 float prevHorizontal2 = 0;
 float prevImu = 0;
 
-/**
- * @brief Set the sensors to be used for odometry
- *
- * @param sensors the sensors to be used
- * @param drivetrain drivetrain to be used
- */
 void lemlib::setSensors(lemlib::OdomSensors sensors, lemlib::Drivetrain drivetrain) {
     odomSensors = sensors;
     drive = drivetrain;
 }
 
-/**
- * @brief Get the pose of the robot
- *
- * @param radians true for theta in radians, false for degrees. False by default
- * @return Pose
- */
 lemlib::Pose lemlib::getPose(bool radians) {
     if (radians) return odomPose;
     else return lemlib::Pose(odomPose.x, odomPose.y, radToDeg(odomPose.theta));
 }
 
-/**
- * @brief Set the Pose of the robot
- *
- * @param pose the new pose
- * @param radians true if theta is in radians, false if in degrees. False by default
- */
 void lemlib::setPose(lemlib::Pose pose, bool radians) {
     if (radians) odomPose = pose;
     else odomPose = lemlib::Pose(pose.x, pose.y, degToRad(pose.theta));
 }
 
-/**
- * @brief Get the speed of the robot
- *
- * @param radians true for theta in radians, false for degrees. False by default
- * @return lemlib::Pose
- */
 lemlib::Pose lemlib::getSpeed(bool radians) {
     if (radians) return odomSpeed;
     else return lemlib::Pose(odomSpeed.x, odomSpeed.y, radToDeg(odomSpeed.theta));
 }
 
-/**
- * @brief Get the local speed of the robot
- *
- * @param radians true for theta in radians, false for degrees. False by default
- * @return lemlib::Pose
- */
 lemlib::Pose lemlib::getLocalSpeed(bool radians) {
     if (radians) return odomLocalSpeed;
     else return lemlib::Pose(odomLocalSpeed.x, odomLocalSpeed.y, radToDeg(odomLocalSpeed.theta));
 }
 
-/**
- * @brief Estimate the pose of the robot after a certain amount of time
- *
- * @param time time in seconds
- * @param radians False for degrees, true for radians. False by default
- * @return lemlib::Pose
- */
 lemlib::Pose lemlib::estimatePose(float time, bool radians) {
     // get current position and speed
     Pose curPose = getPose(true);
@@ -109,10 +72,6 @@ lemlib::Pose lemlib::estimatePose(float time, bool radians) {
     return futurePose;
 }
 
-/**
- * @brief Update the pose of the robot
- *
- */
 void lemlib::update() {
     // TODO: add particle filter
     // get the current sensor values
@@ -223,10 +182,6 @@ void lemlib::update() {
     odomLocalSpeed.theta = ema(deltaHeading / 0.01, odomLocalSpeed.theta, 0.95);
 }
 
-/**
- * @brief Initialize the odometry system
- *
- */
 void lemlib::init() {
     if (trackingTask == nullptr) {
         trackingTask = new pros::Task {[=] {

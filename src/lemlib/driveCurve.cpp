@@ -7,15 +7,6 @@ ExpoDriveCurve::ExpoDriveCurve(float deadband, float minOutput, float curve)
       minOutput(minOutput),
       curveGain(curve) {}
 
-/**
- * @brief Exponential drive curve. Allows for fine control at low speeds while maintaining the same maximum speed.
- *
- * @param input value from -127 to 127
- * @param inputDeadband range where inputs will be ignored (outputs 0), which can be optionally ignored
- * @param minOutput the minimum output required to make the drivetrain move, which can be optionally ignored
- * @param curve how steep the curve should be.
- * @return The new value to be used.
- */
 float ExpoDriveCurve::curve(float input) {
     // return 0 if input is within deadzone
     if (fabs(input) <= deadband) return 0;
