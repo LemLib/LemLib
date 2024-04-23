@@ -704,7 +704,7 @@ class Chassis {
          *     // move the robot to x = 10, y = 10 with a timeout of 4000ms
          *     // with a minSpeed of 20 and a maxSpeed of 60
          *     chassis.moveToPoint(10, 10, 4000, {.minSpeed = 20, .maxSpeed = 60});
-         *    // move the robot to x = 7.5, y = 7.5 with a timeout of 4000ms
+         *     // move the robot to x = 7.5, y = 7.5 with a timeout of 4000ms
          *     // with a minSpeed of 60, and exit the movement if the robot is within 5 inches of the target
          *     chassis.moveToPoint(7.5, 7.5, 4000, {.minSpeed = 60, .earlyExitRange = 5});
          * }
@@ -720,6 +720,23 @@ class Chassis {
          * @param timeout the maximum time the robot can spend moving
          * @param forwards whether the robot should follow the path going forwards. true by default
          * @param async whether the function should be run asynchronously. true by default
+         *
+         * @b Example
+         * @code {.cpp}
+         * // load "myPath.txt"
+         * // the file should be in the "static" folder in the project root directory
+         * // this should also be done outside of any functions, otherwise it won't compile
+         * ASSET(myPath_txt); // we replace "." with "_" to make the asset name valid
+         *
+         * // autonomous function in your project. The function that runs during the autonomous period
+         * void autonomous() {
+         *     // follow the path in "myPath.txt" with a lookahead of 10 inches and a timeout of 4000ms
+         *     chassis.follow(myPath_txt, 10, 4000);
+         *     // follow the path in "myPath.txt" with a lookahead of 10 inches and a timeout of 4000ms
+         *     // but follow the path backwards
+         *     chassis.follow(myPath_txt, 10, 4000, false);
+         * }
+         * @endcode
          */
         void follow(const asset& path, float lookahead, int timeout, bool forwards = true, bool async = true);
 
