@@ -33,11 +33,9 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
 
     // reset PIDs and exit conditions
     lateralPID.reset();
-    lateralLargeExit.reset();
-    lateralSmallExit.reset();
+    auto lateralExit = this->lateralExitConditionFactory.create();
     angularPID.reset();
-    angularLargeExit.reset();
-    angularSmallExit.reset();
+    auto angularExit = this->angularExitConditionFactory.create();
 
     // calculate target pose in standard form
     Pose target(x, y, M_PI_2 - degToRad(theta));
@@ -58,9 +56,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
     const int compState = pros::competition::get_status();
 
     // main loop
-    while (!timer.isDone() &&
-           ((!lateralSettled || (!angularLargeExit.getExit() && !angularSmallExit.getExit())) || !close) &&
-           this->motionRunning) {
+    while (!timer.isDone() && ((!lateralSettled || !angularExit->getExit()) || !close) && this->motionRunning) {
         // update position
         const Pose pose = getPose(true, true);
 
@@ -78,7 +74,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         }
 
         // check if the lateral controller has settled
-        if (lateralLargeExit.getExit() && lateralSmallExit.getExit()) lateralSettled = true;
+        if (lateralExit->getExit()) lateralSettled = true;
 
         // calculate the carrot point
         Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * params.lead * distTarget;
@@ -106,10 +102,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         else lateralError *= sgn(cos(angleError(pose.theta, pose.angle(carrot))));
 
         // update exit conditions
-        lateralSmallExit.update(lateralError);
-        lateralLargeExit.update(lateralError);
-        angularSmallExit.update(radToDeg(angularError));
-        angularLargeExit.update(radToDeg(angularError));
+        lateralExit->update(lateralError);
+        angularExit->update(radToDeg(angularError));
 
         // get output from PIDs
         float lateralOut = lateralPID.update(lateralError);

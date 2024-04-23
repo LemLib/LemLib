@@ -10,6 +10,7 @@
 #include "lemlib/exitcondition.hpp"
 #include "lemlib/driveCurve.hpp"
 #include <atomic>
+#include <vector>
 
 namespace lemlib {
 
@@ -523,9 +524,17 @@ class Chassis {
 
         float getLateralSlew() const;
         float getAngularSlew() const;
+
+        const ErrorExitConditionGroupFactory& getLateralExitConditionFactory() const;
+        ErrorExitConditionGroupFactory& getLateralExitConditionFactory();
+        const ErrorExitConditionGroupFactory& getAngularExitConditionFactory() const;
+        ErrorExitConditionGroupFactory& getAngularExitConditionFactory();
     protected:
+        ErrorExitConditionGroupFactory lateralExitConditionFactory;
+        ErrorExitConditionGroupFactory angularExitConditionFactory;
         /**
-         * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
+         * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of
+         * queue
          */
         void requestMotionStart();
         /**
@@ -545,11 +554,6 @@ class Chassis {
         OdomSensors sensors;
         DriveCurve* throttleCurve;
         DriveCurve* steerCurve;
-
-        ExitCondition lateralLargeExit;
-        ExitCondition lateralSmallExit;
-        ExitCondition angularLargeExit;
-        ExitCondition angularSmallExit;
 
         PID lateralPID;
         PID angularPID;

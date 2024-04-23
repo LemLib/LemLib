@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <math.h>
 #include <optional>
+#include "lemlib/exitcondition.hpp"
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
@@ -70,12 +71,12 @@ lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSetting
       steerCurve(steerCurve),
       lateralPID(linearSettings.kP, linearSettings.kI, linearSettings.kD, linearSettings.windupRange, true),
       angularPID(angularSettings.kP, angularSettings.kI, angularSettings.kD, angularSettings.windupRange, true),
-      lateralLargeExit(linearSettings.largeError, linearSettings.largeErrorTimeout),
-      lateralSmallExit(linearSettings.smallError, linearSettings.smallErrorTimeout),
-      angularLargeExit(angularSettings.largeError, angularSettings.largeErrorTimeout),
-      angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout),
       lateralSlew(linearSettings.slew),
-      angularSlew(angularSettings.slew) {}
+      angularSlew(angularSettings.slew),
+      lateralExitConditionFactory({{linearSettings.smallError, int(linearSettings.smallErrorTimeout)},
+                                   {linearSettings.largeError, int(linearSettings.largeErrorTimeout)}}),
+      angularExitConditionFactory({{angularSettings.smallError, int(angularSettings.smallErrorTimeout)},
+                                   {angularSettings.largeError, int(angularSettings.largeErrorTimeout)}}) {}
 
 /**
  * @brief calibrate the IMU given a sensors struct
@@ -255,3 +256,19 @@ void lemlib::Chassis::setAngularSlew(float slew) { this->angularSlew = slew; }
 float lemlib::Chassis::getLateralSlew() const { return this->lateralSlew; }
 
 float lemlib::Chassis::getAngularSlew() const { return this->angularSlew; }
+
+const lemlib::ErrorExitConditionGroupFactory& lemlib::Chassis::getAngularExitConditionFactory() const {
+    return this->angularExitConditionFactory;
+}
+
+lemlib::ErrorExitConditionGroupFactory& lemlib::Chassis::getAngularExitConditionFactory() {
+    return this->angularExitConditionFactory;
+}
+
+const lemlib::ErrorExitConditionGroupFactory& lemlib::Chassis::getLateralExitConditionFactory() const {
+    return this->lateralExitConditionFactory;
+}
+
+lemlib::ErrorExitConditionGroupFactory& lemlib::Chassis::getLateralExitConditionFactory() {
+    return this->lateralExitConditionFactory;
+}

@@ -39,12 +39,11 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
     std::uint8_t compState = pros::competition::get_status();
     distTraveled = 0;
     Timer timer(timeout);
-    angularLargeExit.reset();
-    angularSmallExit.reset();
+    auto angularExit = this->angularExitConditionFactory.create();
     angularPID.reset();
 
     // main loop
-    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
+    while (!timer.isDone() && !angularExit->getExit() && this->motionRunning) {
         // update variables
         Pose pose = getPose();
         pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
@@ -73,8 +72,7 @@ void lemlib::Chassis::turnToPoint(float x, float y, int timeout, TurnToPointPara
 
         // calculate the speed
         motorPower = angularPID.update(deltaTheta);
-        angularLargeExit.update(deltaTheta);
-        angularSmallExit.update(deltaTheta);
+        angularExit->update(deltaTheta);
 
         // cap the speed
         if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;

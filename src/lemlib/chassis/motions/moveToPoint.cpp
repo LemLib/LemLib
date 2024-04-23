@@ -29,8 +29,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
 
     // reset PIDs and exit conditions
     lateralPID.reset();
-    lateralLargeExit.reset();
-    lateralSmallExit.reset();
+    auto lateralExit = this->lateralExitConditionFactory.create();
     angularPID.reset();
 
     // initialize vars used between iterations
@@ -48,8 +47,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     target.theta = lastPose.angle(target);
 
     // main loop
-    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) &&
-           this->motionRunning) {
+    while (!timer.isDone() && (!lateralExit->getExit() || !close) && this->motionRunning) {
         // update position
         const Pose pose = getPose(true, true);
 
@@ -81,8 +79,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
         float lateralError = pose.distance(target) * cos(angleError(pose.theta, pose.angle(target)));
 
         // update exit conditions
-        lateralSmallExit.update(lateralError);
-        lateralLargeExit.update(lateralError);
+        lateralExit->update(lateralError);
 
         // get output from PIDs
         float lateralOut = lateralPID.update(lateralError);

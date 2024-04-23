@@ -39,8 +39,7 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
     std::uint8_t compState = pros::competition::get_status();
     distTraveled = 0;
     Timer timer(timeout);
-    angularLargeExit.reset();
-    angularSmallExit.reset();
+    auto angularExit = this->angularExitConditionFactory.create();
     angularPID.reset();
     // get original braking mode of that side of the drivetrain so we can set it back to it after this motion ends
     pros::motor_brake_mode_e brakeMode = (lockedSide == DriveSide::LEFT)
@@ -51,7 +50,7 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
     else this->drivetrain.rightMotors->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
 
     // main loop
-    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
+    while (!timer.isDone() && !angularExit->getExit() && this->motionRunning) {
         // update variables
         Pose pose = getPose();
         pose.theta = (params.forwards) ? fmod(pose.theta, 360) : fmod(pose.theta - 180, 360);
@@ -80,8 +79,7 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
 
         // calculate the speed
         motorPower = angularPID.update(deltaTheta);
-        angularLargeExit.update(deltaTheta);
-        angularSmallExit.update(deltaTheta);
+        angularExit->update(deltaTheta);
 
         // cap the speed
         if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
