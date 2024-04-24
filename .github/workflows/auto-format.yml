@@ -1,8 +1,10 @@
 name: format-code
 
 on: [push]
+
 permissions:
-    contents: write
+  contents: write
+
 jobs:
   format:
     runs-on: ubuntu-latest
@@ -13,8 +15,23 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+    - name: Cache clang-format
+      uses: actions/cache@v2
+      with:
+        path: /usr/lib/llvm-10/bin/clang-format
+        key: ${{ runner.os }}-clang-format-${{ steps.date.outputs.date }}
+        restore-keys: ${{ runner.os }}-clang-format-
+
     - name: Install clang-format
-      run: sudo apt-get install -y clang-format
+      run: |
+        if [ ! -f /usr/lib/llvm-10/bin/clang-format ]; then
+          sudo apt-get install -y clang-format
+        fi
+
     - name: Output clang-format version
       run: clang-format --version
 
@@ -44,8 +61,10 @@ jobs:
             fi
           done
         fi
+
     - name: Check for changes
       run: git diff
+
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
