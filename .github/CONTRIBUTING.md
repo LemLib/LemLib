@@ -149,7 +149,7 @@ In order to contribute to LemLib, you will need to [fork](https://help.github.co
 
 
 ### Improving The Documentation
-> We use [Doxygen](http://www.doxygen.nl/) to generate the documentation. The documentation is hosted on [GitHub Pages](https://pages.github.com/). The documentation is generated automatically by GitHub Actions.
+We use a combination of [Doxygen](http://www.doxygen.nl/), [Breathe](https://www.breathe-doc.org/), and [Sphinx](https://www.sphinx-doc.org/en/master/) to generate our documentation. The documentation is hosted on [Read The Docs](https://docs.readthedocs.io/en/stable/), which gives us both free hosting, and automatic versioning of the documentation. It automatically deploys after every commit.
 
 You can improve the documentation by:
 - Editing the [README](../README.md)
@@ -159,10 +159,16 @@ You can improve the documentation by:
 - Adding/Editing [Tutorials](../docs/tutorials)
 - Opening an [Issue](https://github.com/LemLib/LemLib/issues) to suggest a change or to report a bug
 
-Changes should be requested via a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](PULL_REQUEST_TEMPLATE.md) to structure your pull request. Additionally, you should verify that the documentation builds correctly on your machine. You can do so by running `doxygen` in the root directory of the project. The documentation will be generated in the `docs` folder. You can then open the `index.html` file in your browser to view the documentation.
+Changes should be requested via a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](PULL_REQUEST_TEMPLATE.md) to structure your pull request. Additionally, you should verify that the documentation builds correctly on your machine.
 
+You can do so by installing Doxygen, and all of the python dependencies listed in `docs/requirements.txt`. Once you've done that, run the following commands to render the documentation:
 
-
+```sh
+cd docs
+doxygen
+make html
+```
+Then you can view the documentation by pointing your browser at the `./_build/html/index.html` file.
 
 ## Styleguides
 
