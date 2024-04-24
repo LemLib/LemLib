@@ -37,11 +37,11 @@ jobs:
     - name: Output clang-format version
       run: clang-format --version
 
-    - name: Check for changes in .cpp, .hpp, .h files
+    - name: Check for changes in .cpp, .hpp, .h files in src/lemlib and include/lemlib
       id: check-changes
       run: |
         git fetch origin
-        changed_files=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }} -- '*.cpp' '*.hpp' '*.h')
+        changed_files=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }} -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h')
         if [ -z "$changed_files" ]; then
           echo "::set-output name=all_files::true"
         else
@@ -51,12 +51,12 @@ jobs:
     - name: Format code
       run: |
         if [ "${{ steps.check-changes.outputs.all_files }}" == "true" ]; then
-          echo "No .cpp, .hpp, or .h files were changed in the last commit. Formatting all .cpp, .hpp, and .h files in the repository."
-          find . -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | while read filename; do
+          echo "No .cpp, .hpp, or .h files were changed in the last commit in src/lemlib and include/lemlib. Formatting all .cpp, .hpp, and .h files in these directories."
+          find ./src/lemlib ./include/lemlib -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | while read filename; do
             clang-format -i $filename
           done
         else
-          changed_files=$(git diff --name-only HEAD^)
+          changed_files=$(git diff --name-only HEAD^ -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h')
           echo "$changed_files" | while read filename; do
             if [[ $filename == *.cpp || $filename == *.hpp || $filename == *.h ]]; then
               clang-format -i $filename
@@ -65,7 +65,7 @@ jobs:
         fi
 
     - name: Check for changes
-      run: git diff
+      run: git diff -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h'
 
     - name: Commit changes
       run: |
