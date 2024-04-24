@@ -38,7 +38,7 @@ jobs:
       run: clang-format --version
 
     - name: Check for changes in .cpp, .hpp, .h files in src/lemlib and include/lemlib
-      id: check-changes
+      id: check-file-changes
       run: |
         git fetch origin
         changed_files=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }} -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h')
@@ -51,13 +51,13 @@ jobs:
 
     - name: Format code
       run: |
-        if [ "${{ steps.check-changes.outputs.all_files }}" == "true" ]; then
+        if [ "${{ steps.check-file-changes.outputs.all_files }}" == "true" ]; then
           echo "No .cpp, .hpp, or .h files were changed in the last commit in src/lemlib and include/lemlib. Formatting all .cpp, .hpp, and .h files in these directories."
           find ./src/lemlib ./include/lemlib -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | while read filename; do
             clang-format -i $filename
           done
         else
-          echo "${{ steps.check-changes.outputs.changed_files }}" | while read filename; do
+          echo "${{ steps.check-file-changes.outputs.changed_files }}" | while read filename; do
             if [[ $filename == *.cpp || $filename == *.hpp || $filename == *.h ]]; then
               clang-format -i $filename
             fi
@@ -65,7 +65,7 @@ jobs:
         fi
 
     - name: Check for changes
-      id: check-changes-true
+      id: check-format-changes
       run: |
          git diff --exit-code -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h' || echo "::set-output name=changes::true"
       continue-on-error: true
