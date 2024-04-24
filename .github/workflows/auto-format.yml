@@ -17,7 +17,8 @@ jobs:
       run: sudo apt-get install -y clang-format
     - name: Output clang-format version
       run: clang-format --version
-     - name: Check for changes in .cpp, .hpp, .h files
+
+    - name: Check for changes in .cpp, .hpp, .h files
       id: check-changes
       run: |
         git fetch origin
@@ -27,8 +28,22 @@ jobs:
         else
           echo "::set-output name=all_files::false"
         fi
+
     - name: Format code
-      run:  find . -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | xargs clang-format -i
+      run: |
+        if [ "${{ steps.check-changes.outputs.all_files }}" == "true" ]; then
+          echo "No .cpp, .hpp, or .h files were changed in the last commit. Formatting all .cpp, .hpp, and .h files in the repository."
+          find . -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | while read filename; do
+            clang-format -i $filename
+          done
+        else
+          changed_files=$(git diff --name-only HEAD^)
+          echo "$changed_files" | while read filename; do
+            if [[ $filename == *.cpp || $filename == *.hpp || $filename == *.h ]]; then
+              clang-format -i $filename
+            fi
+          done
+        fi
 
     - name: Commit changes
       run: |
