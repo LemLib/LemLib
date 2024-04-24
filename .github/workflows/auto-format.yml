@@ -71,7 +71,5 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git diff --quiet || git commit -am "Automatically format code"
-        git push
-        git reset HEAD~1
-        git push origin +HEAD
+        git diff --quiet || (git add . && git commit --amend --no-edit)
+        git push -f
