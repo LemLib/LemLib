@@ -46,6 +46,7 @@ jobs:
           echo "::set-output name=all_files::true"
         else
           echo "::set-output name=all_files::false"
+          echo "::set-output name=changed_files::$changed_files"
         fi
 
     - name: Format code
@@ -56,8 +57,7 @@ jobs:
             clang-format -i $filename
           done
         else
-          changed_files=$(git diff --name-only HEAD^ -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h')
-          echo "$changed_files" | while read filename; do
+          echo "${{ steps.check-changes.outputs.changed_files }}" | while read filename; do
             if [[ $filename == *.cpp || $filename == *.hpp || $filename == *.h ]]; then
               clang-format -i $filename
             fi
