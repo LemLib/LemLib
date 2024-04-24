@@ -1,1 +1,29 @@
+name: format-code
 
+on: [push]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install clang-format
+      run: sudo apt-get install -y clang-format
+
+    - name: Output clang-format version
+      run: clang-format --version
+
+    - name: Format code
+      run:  xargs clang-format -i
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git diff --quiet || git commit -am "Automatically format code"
+        git push
