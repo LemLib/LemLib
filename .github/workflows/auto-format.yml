@@ -1,7 +1,8 @@
 name: format-code
 
 on: [push]
-
+permissions:
+    contents: write
 jobs:
   format:
     runs-on: ubuntu-latest
