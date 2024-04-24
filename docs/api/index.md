@@ -1,7 +1,7 @@
 # API Reference
 
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 3
 ./chassis.md
 ./odom.md
 ./utils.md
