@@ -32,9 +32,7 @@
 :members:
 ```
 
-
-
-## Helper Classes
+## Builder Classes
 
 ```{doxygenclass} lemlib::TrackingWheel
 :members:
@@ -68,13 +66,3 @@
 ```{doxygenclass} lemlib::ExpoDriveCurve
 :members:
 ```
-
-```{doxygendefine} ASSET
-```
-
-
-
-
-
-
-
