@@ -29,40 +29,41 @@ namespace c {
 #endif
 
 typedef enum imu_status_e {
-	E_IMU_STATUS_READY = 0,        // IMU is connected but not currently calibrating
-	E_IMU_STATUS_CALIBRATING = 1,  // IMU is calibrating
-	E_IMU_STATUS_ERROR = 0xFF,     // NOTE: used for returning an error from the get_status function, not that the IMU is
-	                               // necessarily in an error state
+    E_IMU_STATUS_READY = 0, // IMU is connected but not currently calibrating
+    E_IMU_STATUS_CALIBRATING = 1, // IMU is calibrating
+    E_IMU_STATUS_ERROR = 0xFF, // NOTE: used for returning an error from the get_status function, not that the IMU is
+                               // necessarily in an error state
 } imu_status_e_t;
 
 typedef enum imu_orientation_e {
-	E_IMU_Z_UP = 0,    // IMU has the Z axis UP (VEX Logo facing DOWN)
-	E_IMU_Z_DOWN = 1,  // IMU has the Z axis DOWN (VEX Logo facing UP)
-	E_IMU_X_UP = 2,    // IMU has the X axis UP
-	E_IMU_X_DOWN = 3,  // IMU has the X axis DOWN
-	E_IMU_Y_UP = 4,    // IMU has the Y axis UP
-	E_IMU_Y_DOWN = 5,  // IMU has the Y axis DOWN
+    E_IMU_Z_UP = 0, // IMU has the Z axis UP (VEX Logo facing DOWN)
+    E_IMU_Z_DOWN = 1, // IMU has the Z axis DOWN (VEX Logo facing UP)
+    E_IMU_X_UP = 2, // IMU has the X axis UP
+    E_IMU_X_DOWN = 3, // IMU has the X axis DOWN
+    E_IMU_Y_UP = 4, // IMU has the Y axis UP
+    E_IMU_Y_DOWN = 5, // IMU has the Y axis DOWN
 } imu_orientation_e_t;
+
 typedef struct __attribute__((__packed__)) quaternion_s {
-	double x;
-	double y;
-	double z;
-	double w;
+        double x;
+        double y;
+        double z;
+        double w;
 } quaternion_s_t;
 
 struct imu_raw_s {
-	double x;
-	double y;
-	double z;
+        double x;
+        double y;
+        double z;
 };
 
 typedef struct imu_raw_s imu_gyro_s_t;
 typedef struct imu_raw_s imu_accel_s_t;
 
 typedef struct __attribute__((__packed__)) euler_s {
-	double pitch;
-	double roll;
-	double yaw;
+        double pitch;
+        double roll;
+        double yaw;
 } euler_s_t;
 
 #ifdef PROS_USE_SIMPLE_NAMES

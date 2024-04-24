@@ -317,7 +317,8 @@ template <typename Streambuf> class formatbuf : public Streambuf {
 
         buffer<char_type>& buffer_;
     public:
-        explicit formatbuf(buffer<char_type>& buf) : buffer_(buf) {}
+        explicit formatbuf(buffer<char_type>& buf)
+            : buffer_(buf) {}
     protected:
         // The put area is always empty. This makes the implementation simpler and has
         // the advantage that the streambuf and the buffer are always in sync and
@@ -368,9 +369,13 @@ class uint128_fallback {
     private:
         uint64_t lo_, hi_;
     public:
-        constexpr uint128_fallback(uint64_t hi, uint64_t lo) : lo_(lo), hi_(hi) {}
+        constexpr uint128_fallback(uint64_t hi, uint64_t lo)
+            : lo_(lo),
+              hi_(hi) {}
 
-        constexpr uint128_fallback(uint64_t value = 0) : lo_(value), hi_(0) {}
+        constexpr uint128_fallback(uint64_t value = 0)
+            : lo_(value),
+              hi_(0) {}
 
         constexpr uint64_t high() const noexcept { return hi_; }
 
@@ -906,7 +911,8 @@ class basic_memory_buffer final : public detail::buffer<T> {
         using value_type = T;
         using const_reference = const T&;
 
-        FMT_CONSTEXPR20 explicit basic_memory_buffer(const Allocator& alloc = Allocator()) : alloc_(alloc) {
+        FMT_CONSTEXPR20 explicit basic_memory_buffer(const Allocator& alloc = Allocator())
+            : alloc_(alloc) {
             this->set(store_, SIZE);
             if (detail::is_constant_evaluated()) detail::fill_n(store_, SIZE, T());
         }
@@ -1051,7 +1057,9 @@ template <typename Locale> class format_facet : public Locale::facet {
 
         explicit format_facet(string_view sep = "", std::initializer_list<unsigned char> g = {3},
                               std::string decimal_point = ".")
-            : separator_(sep.data(), sep.size()), grouping_(g.begin(), g.end()), decimal_point_(decimal_point) {}
+            : separator_(sep.data(), sep.size()),
+              grouping_(g.begin(), g.end()),
+              decimal_point_(decimal_point) {}
 
         auto put(appender out, loc_value val, const format_specs<>& specs) const -> bool {
             return do_put(out, val, specs);
@@ -1555,9 +1563,13 @@ template <typename F> struct basic_fp {
 
         static constexpr const int num_significand_bits = static_cast<int>(sizeof(F) * num_bits<unsigned char>());
 
-        constexpr basic_fp() : f(0), e(0) {}
+        constexpr basic_fp()
+            : f(0),
+              e(0) {}
 
-        constexpr basic_fp(uint64_t f_val, int e_val) : f(f_val), e(e_val) {}
+        constexpr basic_fp(uint64_t f_val, int e_val)
+            : f(f_val),
+              e(e_val) {}
 
         // Constructs fp from an IEEE754 floating-point number.
         template <typename Float> FMT_CONSTEXPR basic_fp(Float n) { assign(n); }
@@ -1870,7 +1882,8 @@ template <typename Char> struct write_int_data {
         size_t padding;
 
         FMT_CONSTEXPR write_int_data(int num_digits, unsigned prefix, const format_specs<Char>& specs)
-            : size((prefix >> 24) + to_unsigned(num_digits)), padding(0) {
+            : size((prefix >> 24) + to_unsigned(num_digits)),
+              padding(0) {
             if (specs.align == align::numeric) {
                 auto width = to_unsigned(specs.width);
                 if (width > size) {
@@ -1935,7 +1948,8 @@ template <typename Char> class digit_grouping {
         }
 
         digit_grouping(std::string grouping, std::basic_string<Char> sep)
-            : grouping_(std::move(grouping)), thousands_sep_(std::move(sep)) {}
+            : grouping_(std::move(grouping)),
+              thousands_sep_(std::move(sep)) {}
 
         bool has_separator() const { return !thousands_sep_.empty(); }
 
@@ -2121,7 +2135,8 @@ class counting_iterator {
                 template <typename T> FMT_CONSTEXPR void operator=(const T&) {}
         };
 
-        FMT_CONSTEXPR counting_iterator() : count_(0) {}
+        FMT_CONSTEXPR counting_iterator()
+            : count_(0) {}
 
         FMT_CONSTEXPR size_t count() const { return count_; }
 
@@ -2621,7 +2636,8 @@ class bigint {
             exp_ = 0;
         }
     public:
-        FMT_CONSTEXPR20 bigint() : exp_(0) {}
+        FMT_CONSTEXPR20 bigint()
+            : exp_(0) {}
 
         explicit bigint(uint64_t n) { assign(n); }
 
@@ -3480,7 +3496,8 @@ template <typename Char> struct custom_formatter {
 
 template <typename ErrorHandler> class width_checker {
     public:
-        explicit FMT_CONSTEXPR width_checker(ErrorHandler& eh) : handler_(eh) {}
+        explicit FMT_CONSTEXPR width_checker(ErrorHandler& eh)
+            : handler_(eh) {}
 
         template <typename T, FMT_ENABLE_IF(is_integer<T>::value)> FMT_CONSTEXPR auto operator()(T value)
             -> unsigned long long {
@@ -3499,7 +3516,8 @@ template <typename ErrorHandler> class width_checker {
 
 template <typename ErrorHandler> class precision_checker {
     public:
-        explicit FMT_CONSTEXPR precision_checker(ErrorHandler& eh) : handler_(eh) {}
+        explicit FMT_CONSTEXPR precision_checker(ErrorHandler& eh)
+            : handler_(eh) {}
 
         template <typename T, FMT_ENABLE_IF(is_integer<T>::value)> FMT_CONSTEXPR auto operator()(T value)
             -> unsigned long long {
@@ -3550,7 +3568,8 @@ struct statically_named_arg : view {
 
         const T& value;
 
-        statically_named_arg(const T& v) : value(v) {}
+        statically_named_arg(const T& v)
+            : value(v) {}
 };
 
 template <typename T, typename Char, size_t N, fmt::detail_exported::fixed_string<Char, N> Str>
@@ -3659,17 +3678,23 @@ class format_int {
             return begin;
         }
     public:
-        explicit format_int(int value) : str_(format_signed(value)) {}
+        explicit format_int(int value)
+            : str_(format_signed(value)) {}
 
-        explicit format_int(long value) : str_(format_signed(value)) {}
+        explicit format_int(long value)
+            : str_(format_signed(value)) {}
 
-        explicit format_int(long long value) : str_(format_signed(value)) {}
+        explicit format_int(long long value)
+            : str_(format_signed(value)) {}
 
-        explicit format_int(unsigned value) : str_(format_unsigned(value)) {}
+        explicit format_int(unsigned value)
+            : str_(format_unsigned(value)) {}
 
-        explicit format_int(unsigned long value) : str_(format_unsigned(value)) {}
+        explicit format_int(unsigned long value)
+            : str_(format_unsigned(value)) {}
 
-        explicit format_int(unsigned long long value) : str_(format_unsigned(value)) {}
+        explicit format_int(unsigned long long value)
+            : str_(format_unsigned(value)) {}
 
         /** Returns the number of characters written to the output buffer. */
         auto size() const -> size_t { return detail::to_unsigned(buffer_ - str_ + buffer_size - 1); }
@@ -3770,7 +3795,8 @@ class bytes {
         string_view data_;
         friend struct formatter<bytes>;
     public:
-        explicit bytes(string_view data) : data_(data) {}
+        explicit bytes(string_view data)
+            : data_(data) {}
 };
 
 template <> struct formatter<bytes> {
@@ -3789,9 +3815,7 @@ template <> struct formatter<bytes> {
 };
 
 // group_digits_view is not derived from view because it copies the argument.
-template <typename T> struct group_digits_view {
-        T value;
-};
+template <typename T> struct group_digits_view { T value; };
 
 /**
   \rst
@@ -3851,7 +3875,10 @@ template <typename It, typename Sentinel, typename Char = char> struct join_view
         Sentinel end;
         basic_string_view<Char> sep;
 
-        join_view(It b, Sentinel e, basic_string_view<Char> s) : begin(b), end(e), sep(s) {}
+        join_view(It b, Sentinel e, basic_string_view<Char> s)
+            : begin(b),
+              end(e),
+              sep(s) {}
 };
 
 template <typename It, typename Sentinel, typename Char> struct formatter<join_view<It, Sentinel, Char>, Char> {
@@ -3976,7 +4003,8 @@ template <typename Char> void vformat_to(buffer<Char>& buf, basic_string_view<Ch
 
             format_handler(buffer_appender<Char> p_out, basic_string_view<Char> str,
                            basic_format_args<buffer_context<Char>> p_args, locale_ref p_loc)
-                : parse_context(str), context(p_out, p_args, p_loc) {}
+                : parse_context(str),
+                  context(p_out, p_args, p_loc) {}
 
             void on_text(const Char* begin, const Char* end) {
                 auto text = basic_string_view<Char>(begin, to_unsigned(end - begin));

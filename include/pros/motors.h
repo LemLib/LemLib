@@ -58,7 +58,7 @@ int32_t motor_move(uint8_t port, int32_t voltage);
 
 /**
  * Stops the motor using the currently configured brake mode.
- * 
+ *
  * This function sets motor velocity to zero, which will cause it to act
  * according to the set brake mode. If brake mode is set to MOTOR_BRAKE_HOLD,
  * this function may behave differently than calling motor_move_absolute(port, 0)
@@ -68,10 +68,10 @@ int32_t motor_move(uint8_t port, int32_t voltage);
  * reached:
  * ENXIO - The given value is not within the range of V5 ports (1-21).
  * ENODEV - The port cannot be configured as a motor
- * 
+ *
  * \param port
  *        The V5 port number from 1-21
- * 
+ *
  * \return 1 if the operation was successful or PROS_ERR if the operation
  * failed, setting errno.
  */
@@ -365,15 +365,15 @@ int32_t motor_is_stopped(uint8_t port);
 int32_t motor_get_zero_position_flag(uint8_t port);
 
 #ifdef __cplusplus
-}  // namespace c
+} // namespace c
 #endif
 
 typedef enum motor_fault_e {
-	E_MOTOR_FAULT_NO_FAULTS = 0x00,
-	E_MOTOR_FAULT_MOTOR_OVER_TEMP = 0x01,  // Analogous to motor_is_over_temp()
-	E_MOTOR_FAULT_DRIVER_FAULT = 0x02,     // Indicates a motor h-bridge fault
-	E_MOTOR_FAULT_OVER_CURRENT = 0x04,     // Analogous to motor_is_over_current()
-	E_MOTOR_FAULT_DRV_OVER_CURRENT = 0x08  // Indicates an h-bridge over current
+    E_MOTOR_FAULT_NO_FAULTS = 0x00,
+    E_MOTOR_FAULT_MOTOR_OVER_TEMP = 0x01, // Analogous to motor_is_over_temp()
+    E_MOTOR_FAULT_DRIVER_FAULT = 0x02, // Indicates a motor h-bridge fault
+    E_MOTOR_FAULT_OVER_CURRENT = 0x04, // Analogous to motor_is_over_current()
+    E_MOTOR_FAULT_DRV_OVER_CURRENT = 0x08 // Indicates an h-bridge over current
 } motor_fault_e_t;
 
 #ifdef PROS_USE_SIMPLE_NAMES
@@ -414,14 +414,14 @@ namespace c {
 uint32_t motor_get_faults(uint8_t port);
 
 #ifdef __cplusplus
-}  // namespace c
+} // namespace c
 #endif
 
 typedef enum motor_flag_e {
-	E_MOTOR_FLAGS_NONE = 0x00,
-	E_MOTOR_FLAGS_BUSY = 0x01,           // Cannot currently communicate to the motor
-	E_MOTOR_FLAGS_ZERO_VELOCITY = 0x02,  // Analogous to motor_is_stopped()
-	E_MOTOR_FLAGS_ZERO_POSITION = 0x04   // Analogous to motor_get_zero_position_flag()
+    E_MOTOR_FLAGS_NONE = 0x00,
+    E_MOTOR_FLAGS_BUSY = 0x01, // Cannot currently communicate to the motor
+    E_MOTOR_FLAGS_ZERO_VELOCITY = 0x02, // Analogous to motor_is_stopped()
+    E_MOTOR_FLAGS_ZERO_POSITION = 0x04 // Analogous to motor_get_zero_position_flag()
 } motor_flag_e_t;
 
 #ifdef PROS_USE_SIMPLE_NAMES
@@ -566,46 +566,46 @@ int32_t motor_get_voltage(uint8_t port);
 /******************************************************************************/
 
 #ifdef __cplusplus
-}  // namespace c
+} // namespace c
 #endif
 
 /**
  * Indicates the current 'brake mode' of a motor.
  */
 typedef enum motor_brake_mode_e {
-	E_MOTOR_BRAKE_COAST = 0,  // Motor coasts when stopped, traditional behavior
-	E_MOTOR_BRAKE_BRAKE = 1,  // Motor brakes when stopped
-	E_MOTOR_BRAKE_HOLD = 2,   // Motor actively holds position when stopped
-	E_MOTOR_BRAKE_INVALID = INT32_MAX
+    E_MOTOR_BRAKE_COAST = 0, // Motor coasts when stopped, traditional behavior
+    E_MOTOR_BRAKE_BRAKE = 1, // Motor brakes when stopped
+    E_MOTOR_BRAKE_HOLD = 2, // Motor actively holds position when stopped
+    E_MOTOR_BRAKE_INVALID = INT32_MAX
 } motor_brake_mode_e_t;
 
 /**
  * Indicates the units used by the motor encoders.
  */
 typedef enum motor_encoder_units_e {
-	E_MOTOR_ENCODER_DEGREES = 0,    // Position is recorded as angle in degrees
-	                                // as a floating point number
-	E_MOTOR_ENCODER_ROTATIONS = 1,  // Position is recorded as angle in rotations
-	                                // as a floating point number
-	E_MOTOR_ENCODER_COUNTS = 2,     // Position is recorded as raw encoder ticks
-	                                // as a whole number
-	E_MOTOR_ENCODER_INVALID = INT32_MAX
+    E_MOTOR_ENCODER_DEGREES = 0, // Position is recorded as angle in degrees
+                                 // as a floating point number
+    E_MOTOR_ENCODER_ROTATIONS = 1, // Position is recorded as angle in rotations
+                                   // as a floating point number
+    E_MOTOR_ENCODER_COUNTS = 2, // Position is recorded as raw encoder ticks
+                                // as a whole number
+    E_MOTOR_ENCODER_INVALID = INT32_MAX
 } motor_encoder_units_e_t;
 
 /**
  * Indicates the current internal gear ratio of a motor.
  */
 typedef enum motor_gearset_e {
-	E_MOTOR_GEARSET_36 = 0,  // 36:1, 100 RPM, Red gear set
-	E_MOTOR_GEAR_RED = E_MOTOR_GEARSET_36,
-	E_MOTOR_GEAR_100 = E_MOTOR_GEARSET_36,
-	E_MOTOR_GEARSET_18 = 1,  // 18:1, 200 RPM, Green gear set
-	E_MOTOR_GEAR_GREEN = E_MOTOR_GEARSET_18,
-	E_MOTOR_GEAR_200 = E_MOTOR_GEARSET_18,
-	E_MOTOR_GEARSET_06 = 2,  // 6:1, 600 RPM, Blue gear set
-	E_MOTOR_GEAR_BLUE  = E_MOTOR_GEARSET_06,
-	E_MOTOR_GEAR_600 = E_MOTOR_GEARSET_06,
-	E_MOTOR_GEARSET_INVALID = INT32_MAX
+    E_MOTOR_GEARSET_36 = 0, // 36:1, 100 RPM, Red gear set
+    E_MOTOR_GEAR_RED = E_MOTOR_GEARSET_36,
+    E_MOTOR_GEAR_100 = E_MOTOR_GEARSET_36,
+    E_MOTOR_GEARSET_18 = 1, // 18:1, 200 RPM, Green gear set
+    E_MOTOR_GEAR_GREEN = E_MOTOR_GEARSET_18,
+    E_MOTOR_GEAR_200 = E_MOTOR_GEARSET_18,
+    E_MOTOR_GEARSET_06 = 2, // 6:1, 600 RPM, Blue gear set
+    E_MOTOR_GEAR_BLUE = E_MOTOR_GEARSET_06,
+    E_MOTOR_GEAR_600 = E_MOTOR_GEARSET_06,
+    E_MOTOR_GEARSET_INVALID = INT32_MAX
 } motor_gearset_e_t;
 
 #ifdef PROS_USE_SIMPLE_NAMES
@@ -659,16 +659,16 @@ typedef enum motor_gearset_e {
  * 0x21 represents 2.0625, 0x22 represents 2.125, etc.
  */
 typedef struct motor_pid_full_s {
-	uint8_t kf;         // The feedforward constant
-	uint8_t kp;         // The proportional constant
-	uint8_t ki;         // The integral constants
-	uint8_t kd;         // The derivative constant
-	uint8_t filter;     // A constant used for filtering the profile acceleration
-	uint16_t limit;     // The integral limit
-	uint8_t threshold;  // The threshold for determining if a position movement has
-	                    // reached its goal. This has no effect for velocity PID
-	                    // calculations.
-	uint8_t loopspeed;  // The rate at which the PID computation is run in ms
+        uint8_t kf; // The feedforward constant
+        uint8_t kp; // The proportional constant
+        uint8_t ki; // The integral constants
+        uint8_t kd; // The derivative constant
+        uint8_t filter; // A constant used for filtering the profile acceleration
+        uint16_t limit; // The integral limit
+        uint8_t threshold; // The threshold for determining if a position movement has
+                           // reached its goal. This has no effect for velocity PID
+                           // calculations.
+        uint8_t loopspeed; // The rate at which the PID computation is run in ms
 } motor_pid_full_s_t;
 
 /**
@@ -678,10 +678,10 @@ typedef struct motor_pid_full_s {
  * 0x21 represents 2.0625, 0x22 represents 2.125, etc.
  */
 typedef struct motor_pid_s {
-	uint8_t kf;  // The feedforward constant
-	uint8_t kp;  // The proportional constant
-	uint8_t ki;  // The integral constants
-	uint8_t kd;  // The derivative constant
+        uint8_t kf; // The feedforward constant
+        uint8_t kp; // The proportional constant
+        uint8_t ki; // The integral constants
+        uint8_t kd; // The derivative constant
 } motor_pid_s_t;
 
 #ifdef __cplusplus
@@ -819,7 +819,9 @@ int32_t motor_set_gearing(uint8_t port, const motor_gearset_e_t gearset);
  *
  * \return A motor_pid_s_t struct formatted properly in 4.4.
  */
-motor_pid_s_t __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage."))) motor_convert_pid(double kf, double kp, double ki, double kd);
+motor_pid_s_t
+    __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage.")))
+    motor_convert_pid(double kf, double kp, double ki, double kd);
 
 /**
  * Takes in floating point values and returns a properly formatted pid struct.
@@ -853,8 +855,10 @@ motor_pid_s_t __attribute__((deprecated("Changing these values is not supported 
  *
  * \return A motor_pid_s_t struct formatted properly in 4.4.
  */
-motor_pid_full_s_t __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage."))) motor_convert_pid_full(double kf, double kp, double ki, double kd, double filter, double limit,
-                                          double threshold, double loopspeed);
+motor_pid_full_s_t
+    __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage.")))
+    motor_convert_pid_full(double kf, double kp, double ki, double kd, double filter, double limit, double threshold,
+                           double loopspeed);
 
 /**
  * Sets one of motor_pid_s_t for the motor. This intended to just modify the
@@ -878,7 +882,9 @@ motor_pid_full_s_t __attribute__((deprecated("Changing these values is not suppo
  * \return 1 if the operation was successful or PROS_ERR if the operation
  * failed, setting errno.
  */
-int32_t __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage."))) motor_set_pos_pid(uint8_t port, const motor_pid_s_t pid);
+int32_t
+    __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage.")))
+    motor_set_pos_pid(uint8_t port, const motor_pid_s_t pid);
 
 /**
  * Sets one of motor_pid_full_s_t for the motor.
@@ -901,7 +907,9 @@ int32_t __attribute__((deprecated("Changing these values is not supported by VEX
  * \return 1 if the operation was successful or PROS_ERR if the operation
  * failed, setting errno.
  */
-int32_t __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage."))) motor_set_pos_pid_full(uint8_t port, const motor_pid_full_s_t pid);
+int32_t
+    __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage.")))
+    motor_set_pos_pid_full(uint8_t port, const motor_pid_full_s_t pid);
 
 /**
  * Sets one of motor_pid_s_t for the motor. This intended to just modify the
@@ -925,7 +933,9 @@ int32_t __attribute__((deprecated("Changing these values is not supported by VEX
  * \return 1 if the operation was successful or PROS_ERR if the operation
  * failed, setting errno.
  */
-int32_t __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage."))) motor_set_vel_pid(uint8_t port, const motor_pid_s_t pid);
+int32_t
+    __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage.")))
+    motor_set_vel_pid(uint8_t port, const motor_pid_s_t pid);
 
 /**
  * Sets one of motor_pid_full_s_t for the motor.
@@ -948,7 +958,9 @@ int32_t __attribute__((deprecated("Changing these values is not supported by VEX
  * \return 1 if the operation was successful or PROS_ERR if the operation
  * failed, setting errno.
  */
-int32_t __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage."))) motor_set_vel_pid_full(uint8_t port, const motor_pid_full_s_t pid);
+int32_t
+    __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage.")))
+    motor_set_vel_pid_full(uint8_t port, const motor_pid_full_s_t pid);
 
 /**
  * Sets the reverse flag for the motor.
@@ -1073,7 +1085,9 @@ motor_gearset_e_t motor_get_gearing(uint8_t port);
  * \return A motor_pid_full_s_t containing the position PID constants last set
  * to the given motor
  */
-motor_pid_full_s_t __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage."))) motor_get_pos_pid(uint8_t port);
+motor_pid_full_s_t
+    __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage.")))
+    motor_get_pos_pid(uint8_t port);
 
 /**
  * Gets the velocity PID that was set for the motor. This function will return
@@ -1094,7 +1108,9 @@ motor_pid_full_s_t __attribute__((deprecated("Changing these values is not suppo
  * \return A motor_pid_full_s_t containing the velocity PID constants last set
  * to the given motor
  */
-motor_pid_full_s_t __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage."))) motor_get_vel_pid(uint8_t port);
+motor_pid_full_s_t
+    __attribute__((deprecated("Changing these values is not supported by VEX and may lead to permanent motor damage.")))
+    motor_get_vel_pid(uint8_t port);
 
 /**
  * Gets the operation direction of the motor as set by the user.
@@ -1132,9 +1148,9 @@ int32_t motor_is_reversed(uint8_t port);
 int32_t motor_get_voltage_limit(uint8_t port);
 
 #ifdef __cplusplus
-}  // namespace c
-}  // namespace pros
+} // namespace c
+} // namespace pros
 }
 #endif
 
-#endif  // _PROS_MOTORS_H_
+#endif // _PROS_MOTORS_H_

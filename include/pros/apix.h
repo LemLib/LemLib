@@ -367,19 +367,19 @@ void queue_reset(queue_t queue);
  * api.
  */
 typedef enum v5_device_e {
-	E_DEVICE_NONE = 0,
-	E_DEVICE_MOTOR = 2,
-	E_DEVICE_ROTATION = 4,
-	E_DEVICE_IMU = 6,
-	E_DEVICE_DISTANCE = 7,
-	E_DEVICE_RADIO = 8,
-	E_DEVICE_VISION = 11,
-	E_DEVICE_ADI = 12,
-	E_DEVICE_OPTICAL = 16,
-	E_DEVICE_GPS = 20,
-	E_DEVICE_SERIAL = 129,
-	E_DEVICE_GENERIC __attribute__((deprecated("use E_DEVICE_SERIAL instead"))) = E_DEVICE_SERIAL,
-	E_DEVICE_UNDEFINED = 255
+    E_DEVICE_NONE = 0,
+    E_DEVICE_MOTOR = 2,
+    E_DEVICE_ROTATION = 4,
+    E_DEVICE_IMU = 6,
+    E_DEVICE_DISTANCE = 7,
+    E_DEVICE_RADIO = 8,
+    E_DEVICE_VISION = 11,
+    E_DEVICE_ADI = 12,
+    E_DEVICE_OPTICAL = 16,
+    E_DEVICE_GPS = 20,
+    E_DEVICE_SERIAL = 129,
+    E_DEVICE_GENERIC __attribute__((deprecated("use E_DEVICE_SERIAL instead"))) = E_DEVICE_SERIAL,
+    E_DEVICE_UNDEFINED = 255
 } v5_device_e_t;
 
 /*
@@ -590,4 +590,4 @@ int32_t fdctl(int file, const uint32_t action, void* const extra_arg);
 }
 #endif
 
-#endif  // _PROS_API_EXTENDED_H_
+#endif // _PROS_API_EXTENDED_H_

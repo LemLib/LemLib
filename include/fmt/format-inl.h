@@ -74,7 +74,8 @@ inline void fwrite_fully(const void* ptr, size_t size, size_t count, FILE* strea
 }
 
 #ifndef FMT_STATIC_THOUSANDS_SEPARATOR
-template <typename Locale> locale_ref::locale_ref(const Locale& loc) : locale_(&loc) {
+template <typename Locale> locale_ref::locale_ref(const Locale& loc)
+    : locale_(&loc) {
     static_assert(std::is_same<Locale, std::locale>::value, "");
 }
 

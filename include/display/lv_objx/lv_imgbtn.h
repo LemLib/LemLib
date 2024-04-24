@@ -39,18 +39,17 @@ extern "C" {
  **********************/
 /*Data of image button*/
 typedef struct {
-    lv_btn_ext_t btn; /*Ext. of ancestor*/
-    /*New data for this type */
+        lv_btn_ext_t btn; /*Ext. of ancestor*/
+        /*New data for this type */
 #if LV_IMGBTN_TILED == 0
-    const void * img_src[LV_BTN_STATE_NUM];       /*Store images to each state*/
+        const void* img_src[LV_BTN_STATE_NUM]; /*Store images to each state*/
 #else
-    const void * img_src_left[LV_BTN_STATE_NUM];       /*Store left side images to each state*/
-    const void * img_src_mid[LV_BTN_STATE_NUM];        /*Store center images to each state*/
-    const void * img_src_right[LV_BTN_STATE_NUM];      /*Store right side images to each state*/
+        const void* img_src_left[LV_BTN_STATE_NUM]; /*Store left side images to each state*/
+        const void* img_src_mid[LV_BTN_STATE_NUM]; /*Store center images to each state*/
+        const void* img_src_right[LV_BTN_STATE_NUM]; /*Store right side images to each state*/
 #endif
-    lv_img_cf_t act_cf;           /*Color format of the currently active image*/
+        lv_img_cf_t act_cf; /*Color format of the currently active image*/
 } lv_imgbtn_ext_t;
-
 
 /*Styles*/
 enum {
@@ -60,8 +59,8 @@ enum {
     LV_IMGBTN_STYLE_TGL_PR,
     LV_IMGBTN_STYLE_INA,
 };
-typedef uint8_t lv_imgbtn_style_t;
 
+typedef uint8_t lv_imgbtn_style_t;
 
 /**********************
  * GLOBAL PROTOTYPES
@@ -73,12 +72,11 @@ typedef uint8_t lv_imgbtn_style_t;
  * @param copy pointer to a image button object, if not NULL then the new object will be copied from it
  * @return pointer to the created image button
  */
-lv_obj_t * lv_imgbtn_create(lv_obj_t * par, const lv_obj_t * copy);
+lv_obj_t* lv_imgbtn_create(lv_obj_t* par, const lv_obj_t* copy);
 
 /*======================
  * Add/remove functions
  *=====================*/
-
 
 /*=====================
  * Setter functions
@@ -91,17 +89,19 @@ lv_obj_t * lv_imgbtn_create(lv_obj_t * par, const lv_obj_t * copy);
  * @param state for which state set the new image (from `lv_btn_state_t`) `
  * @param src pointer to an image source (a C array or path to a file)
  */
-void lv_imgbtn_set_src(lv_obj_t * imgbtn, lv_btn_state_t state, const void * src);
+void lv_imgbtn_set_src(lv_obj_t* imgbtn, lv_btn_state_t state, const void* src);
 #else
 /**
  * Set images for a state of the image button
  * @param imgbtn pointer to an image button object
  * @param state for which state set the new image (from `lv_btn_state_t`) `
  * @param src_left pointer to an image source for the left side of the button (a C array or path to a file)
- * @param src_mid pointer to an image source for the middle of the button (ideally 1px wide) (a C array or path to a file)
+ * @param src_mid pointer to an image source for the middle of the button (ideally 1px wide) (a C array or path to a
+ * file)
  * @param src_right pointer to an image source for the right side of the button (a C array or path to a file)
  */
-void lv_imgbtn_set_src(lv_obj_t * imgbtn, lv_btn_state_t state, const void * src_left, const void * src_mid, const void * src_right);
+void lv_imgbtn_set_src(lv_obj_t* imgbtn, lv_btn_state_t state, const void* src_left, const void* src_mid,
+                       const void* src_right);
 
 #endif
 
@@ -110,37 +110,27 @@ void lv_imgbtn_set_src(lv_obj_t * imgbtn, lv_btn_state_t state, const void * src
  * @param imgbtn pointer to an image button object
  * @param tgl true: enable toggled states, false: disable
  */
-static inline void lv_imgbtn_set_toggle(lv_obj_t * imgbtn, bool tgl)
-{
-    lv_btn_set_toggle(imgbtn, tgl);
-}
+static inline void lv_imgbtn_set_toggle(lv_obj_t* imgbtn, bool tgl) { lv_btn_set_toggle(imgbtn, tgl); }
 
 /**
  * Set the state of the image button
  * @param imgbtn pointer to an image button object
  * @param state the new state of the button (from lv_btn_state_t enum)
  */
-static inline void lv_imgbtn_set_state(lv_obj_t * imgbtn, lv_btn_state_t state)
-{
-    lv_btn_set_state(imgbtn, state);
-}
+static inline void lv_imgbtn_set_state(lv_obj_t* imgbtn, lv_btn_state_t state) { lv_btn_set_state(imgbtn, state); }
 
 /**
  * Toggle the state of the image button (ON->OFF, OFF->ON)
  * @param imgbtn pointer to a image button object
  */
-static inline void lv_imgbtn_toggle(lv_obj_t * imgbtn)
-{
-    lv_btn_toggle(imgbtn);
-}
+static inline void lv_imgbtn_toggle(lv_obj_t* imgbtn) { lv_btn_toggle(imgbtn); }
 
 /**
  * Set a function to call when a button event happens
  * @param imgbtn pointer to an image button object
  * @param action type of event form 'lv_action_t' (press, release, long press, long press repeat)
  */
-static inline void lv_imgbtn_set_action(lv_obj_t * imgbtn, lv_btn_action_t type, lv_action_t action)
-{
+static inline void lv_imgbtn_set_action(lv_obj_t* imgbtn, lv_btn_action_t type, lv_action_t action) {
     lv_btn_set_action(imgbtn, type, action);
 }
 
@@ -150,12 +140,11 @@ static inline void lv_imgbtn_set_action(lv_obj_t * imgbtn, lv_btn_action_t type,
  * @param type which style should be set
  * @param style pointer to a style
  */
-void lv_imgbtn_set_style(lv_obj_t * imgbtn, lv_imgbtn_style_t type, lv_style_t *style);
+void lv_imgbtn_set_style(lv_obj_t* imgbtn, lv_imgbtn_style_t type, lv_style_t* style);
 
 /*=====================
  * Getter functions
  *====================*/
-
 
 #if LV_IMGBTN_TILED == 0
 /**
@@ -164,7 +153,7 @@ void lv_imgbtn_set_style(lv_obj_t * imgbtn, lv_imgbtn_style_t type, lv_style_t *
  * @param state the state where to get the image (from `lv_btn_state_t`) `
  * @return pointer to an image source (a C array or path to a file)
  */
-const void * lv_imgbtn_get_src(lv_obj_t * imgbtn, lv_btn_state_t state);
+const void* lv_imgbtn_get_src(lv_obj_t* imgbtn, lv_btn_state_t state);
 
 #else
 
@@ -174,7 +163,7 @@ const void * lv_imgbtn_get_src(lv_obj_t * imgbtn, lv_btn_state_t state);
  * @param state the state where to get the image (from `lv_btn_state_t`) `
  * @return pointer to the left image source (a C array or path to a file)
  */
-const void * lv_imgbtn_get_src_left(lv_obj_t * imgbtn, lv_btn_state_t state);
+const void* lv_imgbtn_get_src_left(lv_obj_t* imgbtn, lv_btn_state_t state);
 
 /**
  * Get the middle image in a given state
@@ -182,7 +171,7 @@ const void * lv_imgbtn_get_src_left(lv_obj_t * imgbtn, lv_btn_state_t state);
  * @param state the state where to get the image (from `lv_btn_state_t`) `
  * @return pointer to the middle image source (a C array or path to a file)
  */
-const void * lv_imgbtn_get_src_middle(lv_obj_t * imgbtn, lv_btn_state_t state);
+const void* lv_imgbtn_get_src_middle(lv_obj_t* imgbtn, lv_btn_state_t state);
 
 /**
  * Get the right image in a given state
@@ -190,7 +179,7 @@ const void * lv_imgbtn_get_src_middle(lv_obj_t * imgbtn, lv_btn_state_t state);
  * @param state the state where to get the image (from `lv_btn_state_t`) `
  * @return pointer to the left image source (a C array or path to a file)
  */
-const void * lv_imgbtn_get_src_right(lv_obj_t * imgbtn, lv_btn_state_t state);
+const void* lv_imgbtn_get_src_right(lv_obj_t* imgbtn, lv_btn_state_t state);
 
 #endif
 /**
@@ -198,28 +187,21 @@ const void * lv_imgbtn_get_src_right(lv_obj_t * imgbtn, lv_btn_state_t state);
  * @param imgbtn pointer to a image button object
  * @return the state of the button (from lv_btn_state_t enum)
  */
-static inline lv_btn_state_t lv_imgbtn_get_state(const lv_obj_t * imgbtn)
-{
-    return lv_btn_get_state(imgbtn);
-}
+static inline lv_btn_state_t lv_imgbtn_get_state(const lv_obj_t* imgbtn) { return lv_btn_get_state(imgbtn); }
 
 /**
  * Get the toggle enable attribute of the image button
  * @param imgbtn pointer to a image button object
  * @return ture: toggle enabled, false: disabled
  */
-static inline bool lv_imgbtn_get_toggle(const lv_obj_t * imgbtn)
-{
-    return lv_btn_get_toggle(imgbtn);
-}
+static inline bool lv_imgbtn_get_toggle(const lv_obj_t* imgbtn) { return lv_btn_get_toggle(imgbtn); }
 
 /**
  * Get the release action of a image button
  * @param imgbtn pointer to a image button object
  * @return pointer to the release action function
  */
-static inline lv_action_t lv_imgbtn_get_action(const lv_obj_t * imgbtn, lv_btn_action_t type)
-{
+static inline lv_action_t lv_imgbtn_get_action(const lv_obj_t* imgbtn, lv_btn_action_t type) {
     return lv_btn_get_action(imgbtn, type);
 }
 
@@ -229,7 +211,7 @@ static inline lv_action_t lv_imgbtn_get_action(const lv_obj_t * imgbtn, lv_btn_a
  * @param type which style should be get
  * @return style pointer to the style
  */
-lv_style_t * lv_imgbtn_get_style(const lv_obj_t * imgbtn, lv_imgbtn_style_t type);
+lv_style_t* lv_imgbtn_get_style(const lv_obj_t* imgbtn, lv_imgbtn_style_t type);
 
 /*=====================
  * Other functions
@@ -239,10 +221,10 @@ lv_style_t * lv_imgbtn_get_style(const lv_obj_t * imgbtn, lv_imgbtn_style_t type
  *      MACROS
  **********************/
 
-#endif  /*USE_LV_IMGBTN*/
+#endif /*USE_LV_IMGBTN*/
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif  /*LV_IMGBTN_H*/
+#endif /*LV_IMGBTN_H*/

@@ -39,12 +39,12 @@ extern "C" {
  * @param font pointer to a font (NULL to use the default)
  * @return pointer to the initialized theme
  */
-lv_theme_t * lv_theme_alien_init(uint16_t hue, lv_font_t *font);
+lv_theme_t* lv_theme_alien_init(uint16_t hue, lv_font_t* font);
 /**
  * Get a pointer to the theme
  * @return pointer to the theme
  */
-lv_theme_t * lv_theme_get_alien(void);
+lv_theme_t* lv_theme_get_alien(void);
 
 /**********************
  *      MACROS

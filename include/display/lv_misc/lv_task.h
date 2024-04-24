@@ -37,8 +37,7 @@ extern "C" {
 /**
  * Possible priorities for lv_tasks
  */
-enum
-{
+enum {
     LV_TASK_PRIO_OFF = 0,
     LV_TASK_PRIO_LOWEST,
     LV_TASK_PRIO_LOW,
@@ -47,19 +46,19 @@ enum
     LV_TASK_PRIO_HIGHEST,
     LV_TASK_PRIO_NUM,
 };
+
 typedef uint8_t lv_task_prio_t;
 
 /**
  * Descriptor of a lv_task
  */
-typedef struct
-{
-    uint32_t period;
-    uint32_t last_run;
-    void (*task) (void*);
-    void * param;
-    uint8_t prio:3;
-    uint8_t once:1;
+typedef struct {
+        uint32_t period;
+        uint32_t last_run;
+        void (*task)(void*);
+        void* param;
+        uint8_t prio : 3;
+        uint8_t once : 1;
 } lv_task_t;
 
 /**********************
@@ -84,7 +83,7 @@ LV_ATTRIBUTE_TASK_HANDLER void lv_task_handler(void);
  * @param param free parameter
  * @return pointer to the new task
  */
-lv_task_t* lv_task_create(void (*task) (void *), uint32_t period, lv_task_prio_t prio, void * param);
+lv_task_t* lv_task_create(void (*task)(void*), uint32_t period, lv_task_prio_t prio, void* param);
 
 /**
  * Delete a lv_task
@@ -112,12 +111,11 @@ void lv_task_set_period(lv_task_t* lv_task_p, uint32_t period);
  */
 void lv_task_ready(lv_task_t* lv_task_p);
 
-
 /**
  * Delete the lv_task after one call
  * @param lv_task_p pointer to a lv_task.
  */
-void lv_task_once(lv_task_t * lv_task_p);
+void lv_task_once(lv_task_t* lv_task_p);
 
 /**
  * Reset a lv_task.

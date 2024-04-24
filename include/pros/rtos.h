@@ -59,20 +59,20 @@ typedef void* task_t;
 typedef void (*task_fn_t)(void*);
 
 typedef enum {
-	E_TASK_STATE_RUNNING = 0,
-	E_TASK_STATE_READY,
-	E_TASK_STATE_BLOCKED,
-	E_TASK_STATE_SUSPENDED,
-	E_TASK_STATE_DELETED,
-	E_TASK_STATE_INVALID
+    E_TASK_STATE_RUNNING = 0,
+    E_TASK_STATE_READY,
+    E_TASK_STATE_BLOCKED,
+    E_TASK_STATE_SUSPENDED,
+    E_TASK_STATE_DELETED,
+    E_TASK_STATE_INVALID
 } task_state_e_t;
 
 typedef enum {
-	E_NOTIFY_ACTION_NONE,
-	E_NOTIFY_ACTION_BITS,
-	E_NOTIFY_ACTION_INCR,
-	E_NOTIFY_ACTION_OWRITE,
-	E_NOTIFY_ACTION_NO_OWRITE
+    E_NOTIFY_ACTION_NONE,
+    E_NOTIFY_ACTION_BITS,
+    E_NOTIFY_ACTION_INCR,
+    E_NOTIFY_ACTION_OWRITE,
+    E_NOTIFY_ACTION_NO_OWRITE
 } notify_action_e_t;
 
 #ifdef PROS_USE_SIMPLE_NAMES
@@ -127,7 +127,7 @@ uint32_t millis(void);
 
 /**
  * Gets the number of microseconds since PROS initialized,
- * 
+ *
  * \return The number of microseconds since PROS initialized
  */
 uint64_t micros(void);
@@ -308,16 +308,16 @@ task_t task_get_current();
 uint32_t task_notify(task_t task);
 
 /**
- * 
+ *
  * Utilizes task notifications to wait until specified task is complete and deleted,
  * then continues to execute the program. Analogous to std::thread::join in C++.
  *
  * See https://pros.cs.purdue.edu/v5/tutorials/topical/notifications.html for
  * details.
- * 
+ *
  * \param task
  *        The task to wait on.
- * 
+ *
  * \return void
  */
 void task_join(task_t task);
@@ -434,9 +434,9 @@ bool mutex_give(mutex_t mutex);
 void mutex_delete(mutex_t mutex);
 
 #ifdef __cplusplus
-}  // namespace c
-}  // namespace pros
+} // namespace c
+} // namespace pros
 }
 #endif
 
-#endif  // _PROS_RTOS_H_
+#endif // _PROS_RTOS_H_

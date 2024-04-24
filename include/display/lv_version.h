@@ -14,11 +14,10 @@ extern "C" {
  *      INCLUDES
  *********************/
 /*Current version of LittlevGL*/
-#define LVGL_VERSION_MAJOR   5
-#define LVGL_VERSION_MINOR   3
-#define LVGL_VERSION_PATCH   0
-#define LVGL_VERSION_INFO    ""
-
+#define LVGL_VERSION_MAJOR 5
+#define LVGL_VERSION_MINOR 3
+#define LVGL_VERSION_PATCH 0
+#define LVGL_VERSION_INFO ""
 
 /*********************
  *      DEFINES
@@ -56,8 +55,8 @@ extern "C" {
  * #endif
  *
  * */
-#define LV_VERSION_CHECK(x,y,z) (x == LVGL_VERSION_MAJOR && (y < LVGL_VERSION_MINOR || (y == LVGL_VERSION_MINOR && z <= LVGL_VERSION_PATCH)))
-
+#define LV_VERSION_CHECK(x, y, z)                                                                                      \
+    (x == LVGL_VERSION_MAJOR && (y < LVGL_VERSION_MINOR || (y == LVGL_VERSION_MINOR && z <= LVGL_VERSION_PATCH)))
 
 #ifdef __cplusplus
 } /* extern "C" */

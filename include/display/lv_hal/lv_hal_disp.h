@@ -33,33 +33,33 @@ extern "C" {
  * Display Driver structure to be registered by HAL
  */
 typedef struct _disp_drv_t {
-    /*Write the internal buffer (VDB) to the display. 'lv_flush_ready()' has to be called when finished*/
-    void (*disp_flush)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t * color_p);
+        /*Write the internal buffer (VDB) to the display. 'lv_flush_ready()' has to be called when finished*/
+        void (*disp_flush)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t* color_p);
 
-    /*Fill an area with a color on the display*/
-    void (*disp_fill)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, lv_color_t color);
+        /*Fill an area with a color on the display*/
+        void (*disp_fill)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, lv_color_t color);
 
-    /*Write pixel map (e.g. image) to the display*/
-    void (*disp_map)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t * color_p);
+        /*Write pixel map (e.g. image) to the display*/
+        void (*disp_map)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t* color_p);
 
-    /*Optional interface functions to use GPU*/
+        /*Optional interface functions to use GPU*/
 #if USE_LV_GPU
-    /*Blend two memories using opacity (GPU only)*/
-    void (*mem_blend)(lv_color_t * dest, const lv_color_t * src, uint32_t length, lv_opa_t opa);
+        /*Blend two memories using opacity (GPU only)*/
+        void (*mem_blend)(lv_color_t* dest, const lv_color_t* src, uint32_t length, lv_opa_t opa);
 
-    /*Fill a memory with a color (GPU only)*/
-    void (*mem_fill)(lv_color_t * dest, uint32_t length, lv_color_t color);
+        /*Fill a memory with a color (GPU only)*/
+        void (*mem_fill)(lv_color_t* dest, uint32_t length, lv_color_t color);
 #endif
 
 #if LV_VDB_SIZE
-    /*Optional: Set a pixel in a buffer according to the requirements of the display*/
-    void (*vdb_wr)(uint8_t * buf, lv_coord_t buf_w, lv_coord_t x, lv_coord_t y, lv_color_t color, lv_opa_t opa);
+        /*Optional: Set a pixel in a buffer according to the requirements of the display*/
+        void (*vdb_wr)(uint8_t* buf, lv_coord_t buf_w, lv_coord_t x, lv_coord_t y, lv_color_t color, lv_opa_t opa);
 #endif
 } lv_disp_drv_t;
 
 typedef struct _disp_t {
-    lv_disp_drv_t driver;
-    struct _disp_t *next;
+        lv_disp_drv_t driver;
+        struct _disp_t* next;
 } lv_disp_t;
 
 /**********************
@@ -72,7 +72,7 @@ typedef struct _disp_t {
  * After it you can set the fields.
  * @param driver pointer to driver variable to initialize
  */
-void lv_disp_drv_init(lv_disp_drv_t *driver);
+void lv_disp_drv_init(lv_disp_drv_t* driver);
 
 /**
  * Register an initialized display driver.
@@ -80,26 +80,26 @@ void lv_disp_drv_init(lv_disp_drv_t *driver);
  * @param driver pointer to an initialized 'lv_disp_drv_t' variable (can be local variable)
  * @return pointer to the new display or NULL on error
  */
-lv_disp_t * lv_disp_drv_register(lv_disp_drv_t *driver);
+lv_disp_t* lv_disp_drv_register(lv_disp_drv_t* driver);
 
 /**
  * Set the active display
  * @param disp pointer to a display (return value of 'lv_disp_register')
  */
-void lv_disp_set_active(lv_disp_t * disp);
+void lv_disp_set_active(lv_disp_t* disp);
 
 /**
  * Get a pointer to the active display
  * @return pointer to the active display
  */
-lv_disp_t * lv_disp_get_active(void);
+lv_disp_t* lv_disp_get_active(void);
 
 /**
  * Get the next display.
  * @param disp pointer to the current display. NULL to initialize.
  * @return the next display or NULL if no more. Give the first display when the parameter is NULL
  */
-lv_disp_t * lv_disp_next(lv_disp_t * disp);
+lv_disp_t* lv_disp_next(lv_disp_t* disp);
 
 /**
  * Fill a rectangular area with a color on the active display
@@ -109,7 +109,7 @@ lv_disp_t * lv_disp_next(lv_disp_t * disp);
  * @param y2 bottom coordinate of the rectangle
  * @param color_p pointer to an array of colors
  */
-void lv_disp_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, lv_color_t *color_p);
+void lv_disp_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, lv_color_t* color_p);
 
 /**
  * Fill a rectangular area with a color on the active display
@@ -129,7 +129,7 @@ void lv_disp_fill(int32_t x1, int32_t y1, int32_t x2, int32_t y2, lv_color_t col
  * @param y2 bottom coordinate of the rectangle
  * @param color_map pointer to an array of colors
  */
-void lv_disp_map(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t * color_map);
+void lv_disp_map(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t* color_map);
 
 #if USE_LV_GPU
 /**
@@ -140,7 +140,7 @@ void lv_disp_map(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_
  * @param length number of pixels in 'src'
  * @param opa opacity (0, LV_OPA_TRANSP: transparent ... 255, LV_OPA_COVER, fully cover)
  */
-void lv_disp_mem_blend(lv_color_t * dest, const lv_color_t * src, uint32_t length, lv_opa_t opa);
+void lv_disp_mem_blend(lv_color_t* dest, const lv_color_t* src, uint32_t length, lv_opa_t opa);
 
 /**
  * Fill a memory with a color (GPUs may support it)
@@ -150,7 +150,7 @@ void lv_disp_mem_blend(lv_color_t * dest, const lv_color_t * src, uint32_t lengt
  * @param length number of pixels in 'src'
  * @param opa opacity (0, LV_OPA_TRANSP: transparent ... 255, LV_OPA_COVER, fully cover)
  */
-void lv_disp_mem_fill(lv_color_t * dest, uint32_t length, lv_color_t color);
+void lv_disp_mem_fill(lv_color_t* dest, uint32_t length, lv_color_t color);
 /**
  * Shows if memory blending (by GPU) is supported or not
  * @return false: 'mem_blend' is not supported in the driver; true: 'mem_blend' is supported in the driver

@@ -36,13 +36,12 @@ extern "C" {
  * @param mask the triangle will be drawn only in this mask
  * @param color color of the triangle
  */
-void lv_draw_triangle(const lv_point_t * points, const lv_area_t * mask, lv_color_t color);
+void lv_draw_triangle(const lv_point_t* points, const lv_area_t* mask, lv_color_t color);
 #endif
 
 /**********************
  *      MACROS
  **********************/
-
 
 #ifdef __cplusplus
 } /* extern "C" */

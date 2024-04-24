@@ -34,13 +34,12 @@ extern "C" {
  * @param style pointer to a line's style
  * @param opa_scale scale down all opacities by the factor
  */
-void lv_draw_line(const lv_point_t * point1, const lv_point_t * point2, const lv_area_t * mask,
-                  const lv_style_t * style, lv_opa_t opa_scale);
+void lv_draw_line(const lv_point_t* point1, const lv_point_t* point2, const lv_area_t* mask, const lv_style_t* style,
+                  lv_opa_t opa_scale);
 
 /**********************
  *      MACROS
  **********************/
-
 
 #ifdef __cplusplus
 } /* extern "C" */
