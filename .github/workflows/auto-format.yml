@@ -73,3 +73,5 @@ jobs:
         git config --local user.name "GitHub Action"
         git diff --quiet || git commit -am "Automatically format code"
         git push
+        git reset HEAD~1
+        git push origin +HEAD
