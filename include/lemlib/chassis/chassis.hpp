@@ -33,8 +33,8 @@ class OdomSensors {
          * pros::Rotation vertical_rotation(1); // rotation sensor on port 1
          * pros::Imu imu(2); // IMU on port 2
          * // tracking wheel using a new 2.75" wheel, 0.5 inches to the right of the tracking center
-         * TrackingWheel vertical1(&vertical_rotation, lemlib::Omniwheel::NEW_275, 0.5);
-         * OdomSensors sensors(&vertical1, // vertical tracking wheel
+         * lemlib::TrackingWheel vertical1(&vertical_rotation, lemlib::Omniwheel::NEW_275, 0.5);
+         * lemlib::OdomSensors sensors(&vertical1, // vertical tracking wheel
          *                     nullptr, // no second vertical tracking wheel, set to nullptr
          *                     nullptr, // no horizontal tracking wheels, set to nullptr
          *                     nullptr, // no second horizontal tracking wheel, set to nullptr
@@ -77,15 +77,15 @@ class ControllerSettings {
          *
          * @b Example
          * @code {.cpp}
-         * ControllerSettings lateralSettings(10, // proportional gain (kP)
-         *                                    0, // integral gain (kI), set to 0 to disable
-         *                                    3, // derivative gain (kD), set to 3
-         *                                    3, // integral anti windup range, set to 0 to disable
-         *                                    1, // small error range, in inches
-         *                                    100, // small error range timeout, in milliseconds
-         *                                    3, // large error range, in inches
-         *                                    500, // large error range timeout, in milliseconds
-         *                                    5); // maximum acceleration (slew)
+         * lemlib::ControllerSettings lateralSettings(10, // proportional gain (kP)
+         *                                            0, // integral gain (kI), set to 0 to disable
+         *                                            3, // derivative gain (kD), set to 3
+         *                                            3, // integral anti windup range, set to 0 to disable
+         *                                            1, // small error range, in inches
+         *                                            100, // small error range timeout, in milliseconds
+         *                                            3, // large error range, in inches
+         *                                            500, // large error range timeout, in milliseconds
+         *                                            5); // maximum acceleration (slew)
          * @endcode
          */
         ControllerSettings(float kP, float kI, float kD, float windupRange, float smallError, float smallErrorTimeout,
@@ -348,7 +348,7 @@ class Chassis {
                 OdomSensors sensors, DriveCurve* throttleCurve = &defaultDriveCurve,
                 DriveCurve* steerCurve = &defaultDriveCurve);
         /**
-         * @brief Calibrate the chassis sensors
+         * @brief Calibrate the chassis sensors. THis should be called in the initialize function
          *
          * @param calibrateIMU whether the IMU should be calibrated. true by default
          *
@@ -379,14 +379,11 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     // set the pose of the chassis to x = 0, y = 0, theta = 0
-         *     // the position should always be set at the start of the autonomous
-         *     chassis.setPose(0, 0, 0);
-         *     // set the pose of the chassis to x = 5.3, y = 12.2, theta = 3.14
-         *     // this time with theta in radians
-         *     chassis.setPose(5.3, 12.2, 3.14, true);
-         * }
+         * // set the pose of the chassis to x = 0, y = 0, theta = 0
+         * chassis.setPose(0, 0, 0);
+         * // set the pose of the chassis to x = 5.3, y = 12.2, theta = 3.14
+         * // this time with theta in radians
+         * chassis.setPose(5.3, 12.2, 3.14, true);
          * @endcode
          */
         void setPose(float x, float y, float theta, bool radians = false);
@@ -398,16 +395,13 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     // set the pose of the chassis to x = 0, y = 0, theta = 0
-         *     // the position should always be set at the start of the autonomous
-         *     Pose pose(0, 0, 0);
-         *     chassis.setPose(pose);
-         *     // set the pose of the chassis to x = 5.3, y = 12.2, theta = 3.14
-         *     // this time with theta in radians
-         *     Pose pose(5.3, 12.2, 3.14);
-         *     chassis.setPose(pose, true);
-         * }
+         * // set the pose of the chassis to x = 0, y = 0, theta = 0
+         * lemlib::Pose poseA(0, 0, 0);
+         * chassis.setPose(poseA);
+         * // set the pose of the chassis to x = 5.3, y = 12.2, theta = 3.14
+         * // this time with theta in radians
+         * lemlib::Pose poseB(5.3, 12.2, 3.14);
+         * chassis.setPose(poseB, true);
          * @endcode
          */
         void setPose(Pose pose, bool radians = false);
@@ -419,47 +413,43 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     // get the pose of the chassis
-         *     Pose pose = chassis.getPose();
-         *     // print the x, y, and theta values of the pose
-         *     printf("X: %f, Y: %f, Theta: %f\n", pose.x, pose.y, pose.theta);
-         * }
-         * @endcode
-         * @code {.cpp}
-         * void autonomous() {
-         *     // get the pose of the chassis in radians
-         *     Pose pose = chassis.getPose(true);
-         *     // print the x, y, and theta values of the pose
-         *     printf("X: %f, Y: %f, Theta: %f\n", pose.x, pose.y, pose.theta);
-         * }
+         * // get the pose of the chassis
+         * lemlib::Pose pose = chassis.getPose();
+         * // print the x, y, and theta values of the pose
+         * printf("X: %f, Y: %f, Theta: %f\n", pose.x, pose.y, pose.theta);
+         * // get the pose of the chassis in radians
+         * lemlib::Pose poseRad = chassis.getPose(true);
+         * // print the x, y, and theta values of the pose
+         * printf("X: %f, Y: %f, Theta: %f\n", poseRad.x, poseRad.y, poseRad.theta);
+         * // get the pose of the chassis in radians and standard position
+         * lemlib::Pose poseRadStandard = chassis.getPose(true, true);
+         * // print the x, y, and theta values of the pose
+         * printf("X: %f, Y: %f, Theta: %f\n", poseRadStandard.x, poseRadStandard.y, poseRadStandard.theta);
          * @endcode
          */
         Pose getPose(bool radians = false, bool standardPos = false);
         /**
          * @brief Wait until the robot has traveled a certain distance along the path
          *
-         * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
+         * @note Units are in inches if current motion is moveToPoint, moveToPose or follow, degrees for everything else
          *
          * @param dist the distance the robot needs to travel before returning
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     // move the robot to x = 20, y = 15, and face heading 90
-         *     chassis.moveToPose(20, 15, 90, 4000);
-         *     // wait until the robot has traveled 10 inches
-         *     chassis.waitUntil(10);
-         *     // output "traveled 10 inches" to the console
-         *     printf("traveled 10 inches\n");
-         *     // turn the robot to face 270 degrees
-         *     // this will wait for the last motion to complete before running
-         *     chassis.turnToHeading(270, 4000);
-         *     // wait until the robot has traveled 45 degrees
-         *     chassis.waitUntil(45);
-         *     // output "traveled 45 degrees" to the console
-         *     printf("traveled 45 degrees\n");
-         * }
+         * // move the robot to x = 20, y = 15, and face heading 90
+         * chassis.moveToPose(20, 15, 90, 4000);
+         * // wait until the robot has traveled 10 inches
+         * chassis.waitUntil(10);
+         * // output "traveled 10 inches" to the console
+         * std::cout << "traveled 10 inches" << std::endl;
+         * // turn the robot to face 270 degrees
+         * // this will wait for the last motion to complete before running
+         * chassis.turnToHeading(270, 4000);
+         * // wait until the robot has traveled 45 degrees
+         * chassis.waitUntil(45);
+         * // output "traveled 45 degrees" to the console
+         * std::cout << "traveled 45 degrees" << std::endl;
          * @endcode
          */
         void waitUntil(float dist);
@@ -468,14 +458,12 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     // move the robot to x = 20, y = 15, and face heading 90
-         *     chassis.moveToPose(20, 15, 90, 4000);
-         *     // wait until the robot has completed the motion
-         *     chassis.waitUntilDone();
-         *     // output "motion completed" to the console
-         *     printf("motion completed\n");
-         * }
+         * // move the robot to x = 20, y = 15, and face heading 90
+         * chassis.moveToPose(20, 15, 90, 4000);
+         * // wait until the robot has completed the motion
+         * chassis.waitUntilDone();
+         * // output "motion completed" to the console
+         * std::cout << "motion completed" << std::endl;
          * @endcode
          */
         void waitUntilDone();
@@ -486,10 +474,12 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     // set the brake mode of the drivetrain motors to hold
-         *     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-         * }
+         * // set the brake mode of the drivetrain motors to hold
+         * chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+         * // set the brake mode of the drivetrain motors to coast
+         * chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+         * // set the brake mode of the drivetrain motors to brake
+         * chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
          * @endcode
          */
         void setBrakeMode(pros::motor_brake_mode_e mode);
@@ -504,26 +494,24 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
-         *     // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
-         *     chassis.turnToPoint(45, -45, 1000);
-         *     // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
-         *     // but face the point with the back of the robot
-         *     chassis.turnToPoint(45, -45, 1000, {.forwards = false});
-         *     // turn the robot to face the point x = -20, 32.5 with a timeout of 2000ms
-         *     // and a maximum speed of 60
-         *     chassis.turnToPoint(-20, 32.5, 2000, {.maxSpeed = 60});
-         *     // turn the robot to face the point x = -30, y = 22.5 with a timeout of 1500ms
-         *     // and turn counterclockwise
-         *     chassis.turnToPoint(-30, 22.5, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
-         *     // turn the robot to face the point x = 10, y = 10 with a timeout of 500ms
-         *     // with a minSpeed of 20 and a maxSpeed of 60
-         *     chassis.turnToPoint(10, 10, 500, {.minSpeed = 20, .maxSpeed = 60});
-         *     // turn the robot to face the point x = 7.5, y = 7.5 with a timeout of 2000ms
-         *     // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
-         *     chassis.turnToPoint(7.5, 7.5, 2000, {.minSpeed = 60, .earlyExitRange = 5});
-         * }
+         * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
+         * // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
+         * chassis.turnToPoint(45, -45, 1000);
+         * // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
+         * // but face the point with the back of the robot
+         * chassis.turnToPoint(45, -45, 1000, {.forwards = false});
+         * // turn the robot to face the point x = -20, 32.5 with a timeout of 2000ms
+         * // and a maximum speed of 60
+         * chassis.turnToPoint(-20, 32.5, 2000, {.maxSpeed = 60});
+         * // turn the robot to face the point x = -30, y = 22.5 with a timeout of 1500ms
+         * // and turn counterclockwise
+         * chassis.turnToPoint(-30, 22.5, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+         * // turn the robot to face the point x = 10, y = 10 with a timeout of 500ms
+         * // with a minSpeed of 20 and a maxSpeed of 60
+         * chassis.turnToPoint(10, 10, 500, {.maxSpeed = 60, .minSpeed = 20});
+         * // turn the robot to face the point x = 7.5, y = 7.5 with a timeout of 2000ms
+         * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
+         * chassis.turnToPoint(7.5, 7.5, 2000, {.minSpeed = 60, .earlyExitRange = 5});
          * @endcode
          */
         void turnToPoint(float x, float y, int timeout, TurnToPointParams params = {}, bool async = true);
@@ -537,23 +525,21 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
-         *     // turn the robot to face heading 135, with a timeout of 1000ms
-         *     chassis.turnToHeading(135, 1000);
-         *     // turn the robot to face heading 230.5 with a timeout of 2000ms
-         *     // and a maximum speed of 60
-         *     chassis.turnToHeading(230.5, 2000, {.maxSpeed = 60});
-         *     // turn the robot to face heading -90 with a timeout of 1500ms
-         *     // and turn counterclockwise
-         *     chassis.turnToHeading(-90, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
-         *     // turn the robot to face heading 90 with a timeout of 500ms
-         *     // with a minSpeed of 20 and a maxSpeed of 60
-         *     chassis.turnToHeading(90, 500, {.minSpeed = 20, .maxSpeed = 60});
-         *     // turn the robot to face heading 45 with a timeout of 2000ms
-         *     // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
-         *     chassis.turnToHeading(45, 2000, {.minSpeed = 60, .earlyExitRange = 5});
-         * }
+         * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
+         * // turn the robot to face heading 135, with a timeout of 1000ms
+         * chassis.turnToHeading(135, 1000);
+         * // turn the robot to face heading 230.5 with a timeout of 2000ms
+         * // and a maximum speed of 60
+         * chassis.turnToHeading(230.5, 2000, {.maxSpeed = 60});
+         * // turn the robot to face heading -90 with a timeout of 1500ms
+         * // and turn counterclockwise
+         * chassis.turnToHeading(-90, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+         * // turn the robot to face heading 90 with a timeout of 500ms
+         * // with a minSpeed of 20 and a maxSpeed of 60
+         * chassis.turnToHeading(90, 500, {.maxSpeed = 60, .minSpeed = 20});
+         * // turn the robot to face heading 45 with a timeout of 2000ms
+         * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
+         * chassis.turnToHeading(45, 2000, {.minSpeed = 60, .earlyExitRange = 5});
          * @endcode
          */
         void turnToHeading(float theta, int timeout, TurnToHeadingParams params = {}, bool async = true);
@@ -568,29 +554,26 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
-         *     // turn the robot to face heading 135, with a timeout of 1000ms
-         *     // and lock the left side of the drivetrain
-         *     chassis.swingToHeading(135, DriveSide::LEFT, 1000);
-         *     // turn the robot to face heading 230.5 with a timeout of 2000ms
-         *     // and a maximum speed of 60
-         *     // and lock the right side of the drivetrain
-         *     chassis.swingToHeading(230.5, DriveSide::RIGHT, 2000, {.maxSpeed = 60});
-         *     // turn the robot to face heading -90 with a timeout of 1500ms
-         *     // and turn counterclockwise
-         *     // and lock the left side of the drivetrain
-         *     chassis.swingToHeading(-90, DriveSide::LEFT, 1500, {.direction =
-         * AngularDirection::CCW_COUNTERCLOCKWISE});
-         *     // turn the robot to face heading 90 with a timeout of 500ms
-         *     // with a minSpeed of 20 and a maxSpeed of 60
-         *     // and lock the right side of the drivetrain
-         *     chassis.swingToHeading(90, DriveSide::RIGHT, 500, {.minSpeed = 20, .maxSpeed = 60});
-         *     // turn the robot to face heading 45 with a timeout of 2000ms
-         *     // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
-         *     // and lock the left side of the drivetrain
-         *     chassis.swingToHeading(45, DriveSide::LEFT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
-         * }
+         * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
+         * // turn the robot to face heading 135, with a timeout of 1000ms
+         * // and lock the left side of the drivetrain
+         * chassis.swingToHeading(135, DriveSide::LEFT, 1000);
+         * // turn the robot to face heading 230.5 with a timeout of 2000ms
+         * // and a maximum speed of 60
+         * // and lock the right side of the drivetrain
+         * chassis.swingToHeading(230.5, DriveSide::RIGHT, 2000, {.maxSpeed = 60});
+         * // turn the robot to face heading -90 with a timeout of 1500ms
+         * // and turn counterclockwise
+         * // and lock the left side of the drivetrain
+         * chassis.swingToHeading(-90, DriveSide::LEFT, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+         * // turn the robot to face heading 90 with a timeout of 500ms
+         * // with a minSpeed of 20 and a maxSpeed of 60
+         * // and lock the right side of the drivetrain
+         * chassis.swingToHeading(90, DriveSide::RIGHT, 500, {.maxSpeed = 60, .minSpeed = 20});
+         * // turn the robot to face heading 45 with a timeout of 2000ms
+         * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
+         * // and lock the left side of the drivetrain
+         * chassis.swingToHeading(45, DriveSide::LEFT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
          * @endcode
          */
         void swingToHeading(float theta, DriveSide lockedSide, int timeout, SwingToHeadingParams params = {},
@@ -607,33 +590,32 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
-         *     // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
-         *     // and lock the left side of the drivetrain
-         *     chassis.swingToPoint(45, -45, DriveSide::LEFT, 1000);
-         *     // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
-         *     // but face the point with the back of the robot
-         *     // and lock the right side of the drivetrain
-         *     chassis.swingToPoint(45, -45, DriveSide::RIGHT, 1000, {.forwards = false});
-         *     // turn the robot to face the point x = -20, 32.5 with a timeout of 2000ms
-         *     // and a maximum speed of 60
-         *     // and lock the left side of the drivetrain
-         *     chassis.swingToPoint(-20, 32.5, DriveSide::LEFT, 2000, {.maxSpeed = 60});
-         *     // turn the robot to face the point x = -30, y = 22.5 with a timeout of 1500ms
-         *     // and turn counterclockwise
-         *     // and lock the right side of the drivetrain
-         *     chassis.swingToPoint(-30, 22.5, DriveSide::RIGHT, 1500, {.direction =
+         * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
+         * // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
+         * // and lock the left side of the drivetrain
+         * chassis.swingToPoint(45, -45, DriveSide::LEFT, 1000);
+         * // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
+         * // but face the point with the back of the robot
+         * // and lock the right side of the drivetrain
+         * chassis.swingToPoint(45, -45, DriveSide::RIGHT, 1000, {.forwards = false});
+         * // turn the robot to face the point x = -20, 32.5 with a timeout of 2000ms
+         * // and a maximum speed of 60
+         * // and lock the left side of the drivetrain
+         * chassis.swingToPoint(-20, 32.5, DriveSide::LEFT, 2000, {.maxSpeed = 60});
+         * // turn the robot to face the point x = -30, y = 22.5 with a timeout of 1500ms
+         * // and turn counterclockwise
+         * // and lock the right side of the drivetrain
+         * chassis.swingToPoint(-30, 22.5, DriveSide::RIGHT, 1500, {.direction =
          * AngularDirection::CCW_COUNTERCLOCKWISE});
-         *     // turn the robot to face the point x = 10, y = 10 with a timeout of 500ms
-         *     // with a minSpeed of 20 and a maxSpeed of 60
-         *     // and lock the left side of the drivetrain
-         *     chassis.swingToPoint(10, 10, DriveSide::LEFT, 500, {.minSpeed = 20, .maxSpeed = 60});
-         *     // turn the robot to face the point x = 7.5, y = 7.5 with a timeout of 2000ms
-         *     // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
-         *     // and lock the right side of the drivetrain
-         *     chassis.swingToPoint(7.5, 7.5, DriveSide::RIGHT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
-         * }
+         * // turn the robot to face the point x = 10, y = 10 with a timeout of 500ms
+         * // with a minSpeed of 20 and a maxSpeed of 60
+         * // and lock the left side of the drivetrain
+         * chassis.swingToPoint(10, 10, DriveSide::LEFT, 500, {.maxSpeed = 60, .minSpeed = 20});
+         * // turn the robot to face the point x = 7.5, y = 7.5 with a timeout of 2000ms
+         * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
+         * // and lock the right side of the drivetrain
+         * chassis.swingToPoint(7.5, 7.5, DriveSide::RIGHT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
+         * @endcode
          */
         void swingToPoint(float x, float y, DriveSide lockedSide, int timeout, SwingToPointParams params = {},
                           bool async = true);
@@ -651,25 +633,23 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     // move the robot to x = 20, y = 15, and face heading 90 with a timeout of 4000ms
-         *     chassis.moveToPose(20, 15, 90, 4000);
-         *     // move the robot to x = 20, y = 15, and face heading 90 with a timeout of 4000ms
-         *     // but face the point with the back of the robot
-         *     chassis.moveToPose(20, 15, 90, 4000, {.forwards = false});
-         *     // move the robot to x = -20, 32.5 and face heading 90 with a timeout of 4000ms
-         *     // with a maxSpeed of 60
-         *     chassis.moveToPose(-20, 32.5, 90, 4000, {.maxSpeed = 60});
-         *     // move the robot to x = 10, y = 10 and face heading 90
-         *     // with a minSpeed of 20 and a maxSpeed of 60
-         *     chassis.moveToPose(10, 10, 90, 4000, {.minSpeed = 20, .maxSpeed = 60});
-         *     // move the robot to x = 7.5, y = 7.5 and face heading 90 with a timeout of 4000ms
-         *     // with a minSpeed of 60, and exit the movement if the robot is within 5 inches of the target
-         *     chassis.moveToPose(7.5, 7.5, 90, 4000, {.minSpeed = 60, .earlyExitRange = 5});
-         *     // move the robot to 0, 0, and facing heading 0 with a timeout of 4000ms
-         *     // this motion should not be as curved as the others, so we set lead to a smaller value (0.3)
-         *     chassis.moveToPose(0, 0, 0, 4000, {.lead = 0.3});
-         * }
+         * // move the robot to x = 20, y = 15, and face heading 90 with a timeout of 4000ms
+         * chassis.moveToPose(20, 15, 90, 4000);
+         * // move the robot to x = 20, y = 15, and face heading 90 with a timeout of 4000ms
+         * // but face the point with the back of the robot
+         * chassis.moveToPose(20, 15, 90, 4000, {.forwards = false});
+         * // move the robot to x = -20, 32.5 and face heading 90 with a timeout of 4000ms
+         * // with a maxSpeed of 60
+         * chassis.moveToPose(-20, 32.5, 90, 4000, {.maxSpeed = 60});
+         * // move the robot to x = 10, y = 10 and face heading 90
+         * // with a minSpeed of 20 and a maxSpeed of 60
+         * chassis.moveToPose(10, 10, 90, 4000, {.maxSpeed = 60, .minSpeed = 20});
+         * // move the robot to x = 7.5, y = 7.5 and face heading 90 with a timeout of 4000ms
+         * // with a minSpeed of 60, and exit the movement if the robot is within 5 inches of the target
+         * chassis.moveToPose(7.5, 7.5, 90, 4000, {.minSpeed = 60, .earlyExitRange = 5});
+         * // move the robot to 0, 0, and facing heading 0 with a timeout of 4000ms
+         * // this motion should not be as curved as the others, so we set lead to a smaller value (0.3)
+         * chassis.moveToPose(0, 0, 0, 4000, {.lead = 0.3});
          * @endcode
          */
         void moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params = {}, bool async = true);
@@ -684,22 +664,20 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     // move the robot to x = 20, y = 15 with a timeout of 4000ms
-         *     chassis.moveToPoint(20, 15, 4000);
-         *     // move the robot to x = 20, y = 15 with a timeout of 4000ms
-         *     // but face the point with the back of the robot
-         *     chassis.moveToPoint(20, 15, 4000, {.forwards = false});
-         *     // move the robot to x = -20, 32.5 with a timeout of 4000ms
-         *     // with a maxSpeed of 60
-         *     chassis.moveToPoint(-20, 32.5, 4000, {.maxSpeed = 60});
-         *     // move the robot to x = 10, y = 10 with a timeout of 4000ms
-         *     // with a minSpeed of 20 and a maxSpeed of 60
-         *     chassis.moveToPoint(10, 10, 4000, {.minSpeed = 20, .maxSpeed = 60});
-         *     // move the robot to x = 7.5, y = 7.5 with a timeout of 4000ms
-         *     // with a minSpeed of 60, and exit the movement if the robot is within 5 inches of the target
-         *     chassis.moveToPoint(7.5, 7.5, 4000, {.minSpeed = 60, .earlyExitRange = 5});
-         * }
+         * // move the robot to x = 20, y = 15 with a timeout of 4000ms
+         * chassis.moveToPoint(20, 15, 4000);
+         * // move the robot to x = 20, y = 15 with a timeout of 4000ms
+         * // but face the point with the back of the robot
+         * chassis.moveToPoint(20, 15, 4000, {.forwards = false});
+         * // move the robot to x = -20, 32.5 with a timeout of 4000ms
+         * // with a maxSpeed of 60
+         * chassis.moveToPoint(-20, 32.5, 4000, {.maxSpeed = 60});
+         * // move the robot to x = 10, y = 10 with a timeout of 4000ms
+         * // with a minSpeed of 20 and a maxSpeed of 60
+         * chassis.moveToPoint(10, 10, 4000, {.maxSpeed = 60, .minSpeed = 20});
+         * // move the robot to x = 7.5, y = 7.5 with a timeout of 4000ms
+         * // with a minSpeed of 60, and exit the movement if the robot is within 5 inches of the target
+         * chassis.moveToPoint(7.5, 7.5, 4000, {.minSpeed = 60, .earlyExitRange = 5});
          * @endcode
          */
         void moveToPoint(float x, float y, int timeout, MoveToPointParams params = {}, bool async = true);
@@ -758,7 +736,7 @@ class Chassis {
          *         pros::delay(25);
          *     }
          * }
-         *@endcode
+         * @endcode
          */
         void tank(int left, int right, bool disableDriveCurve = false);
         /**
@@ -788,6 +766,7 @@ class Chassis {
          *         pros::delay(25);
          *     }
          * }
+         * @endcode
          */
         void arcade(int throttle, int turn, bool disableDriveCurve = false);
         /**
@@ -818,6 +797,7 @@ class Chassis {
          *         pros::delay(25);
          *     }
          * }
+         * @endcode
          */
         void curvature(int throttle, int turn, bool disableDriveCurve = false);
         /**
@@ -826,33 +806,29 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *      // move the robot to x = 20, y = 20 with a timeout of 4000ms
-         *      chassis.moveToPoint(20, 20, 4000);
-         *      // wait 500 milliseconds
-         *      pros::delay(500);
-         *      // cancel the current motion. This stops it immediately
-         *      chassis.cancelMotion();
-         * }
+         * // move the robot to x = 20, y = 20 with a timeout of 4000ms
+         * chassis.moveToPoint(20, 20, 4000);
+         * // wait 500 milliseconds
+         * pros::delay(500);
+         * // cancel the current motion. This stops it immediately
+         * chassis.cancelMotion();
          * @endcode
          * @b Example (advanced)
          * @code {.cpp}
-         * void autonomous() {
-         *      // this example shows how the cancelMotion function behaves when a motion is queued
-         *      // this is an advanced example since we will be using tasks here
-         *      // move the robot to x = 20, y = 20 with a timeout of 4000ms
-         *      chassis.moveToPoint(20, 20, 4000);
-         *      // start a lambda task that will be used to cancel the motion after 500ms
-         *      pros::Task task([] {
-         *          // wait 500 milliseconds
-         *          pros::delay(500);
-         *          // cancel the current motion. This stops it immediately
-         *          chassis.cancelMotion();
-         *      });
-         *      // queue a motion to x = 10, y = 10 with a timeout of 4000ms
-         *      // this will run after the first motion is cancelled
-         *      chassis.moveToPoint(10, 10, 4000);
-         * }
+         * // this example shows how the cancelMotion function behaves when a motion is queued
+         * // this is an advanced example since we will be using tasks here
+         * // move the robot to x = 20, y = 20 with a timeout of 4000ms
+         * chassis.moveToPoint(20, 20, 4000);
+         * // start a lambda task that will be used to cancel the motion after 500ms
+         * pros::Task task([] {
+         *     // wait 500 milliseconds
+         *     pros::delay(500);
+         *     // cancel the current motion. This stops it immediately
+         *     chassis.cancelMotion();
+         * });
+         * // queue a motion to x = 10, y = 10 with a timeout of 4000ms
+         * // this will run after the first motion is cancelled
+         * chassis.moveToPoint(10, 10, 4000);
          * @endcode
          */
         void cancelMotion();
@@ -862,33 +838,29 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *      // move the robot to x = 20, y = 20 with a timeout of 4000ms
-         *      chassis.moveToPoint(20, 20, 4000);
-         *      // wait 500 milliseconds
-         *      pros::delay(500);
-         *      // cancel all motions. The robot will stop immediately
-         *      chassis.cancelAllMotions();
-         * }
+         * // move the robot to x = 20, y = 20 with a timeout of 4000ms
+         * chassis.moveToPoint(20, 20, 4000);
+         * // wait 500 milliseconds
+         * pros::delay(500);
+         * // cancel all motions. The robot will stop immediately
+         * chassis.cancelAllMotions();
          * @endcode
          * @b Example (advanced)
          * @code {.cpp}
-         * void autonomous() {
-         *      // this example shows how the cancelMotion function behaves when a motion is queued
-         *      // this is an advanced example since we will be using tasks here
-         *      // move the robot to x = 20, y = 20 with a timeout of 4000ms
-         *      chassis.moveToPoint(20, 20, 4000);
-         *      // start a lambda task that will be used to cancel all motions after 500ms
-         *      pros::Task task([] {
-         *          // wait 500 milliseconds
-         *          pros::delay(500);
-         *          // cancels both motions
-         *          chassis.cancelAllMotions();
-         *      });
-         *      // queue a motion to x = 10, y = 10 with a timeout of 4000ms
-         *      // this will never run because cancelAllMotions will be called while this motion is in the queue
-         *      chassis.moveToPoint(10, 10, 4000);
-         * }
+         * // this example shows how the cancelMotion function behaves when a motion is queued
+         * // this is an advanced example since we will be using tasks here
+         * // move the robot to x = 20, y = 20 with a timeout of 4000ms
+         * chassis.moveToPoint(20, 20, 4000);
+         * // start a lambda task that will be used to cancel all motions after 500ms
+         * pros::Task task([] {
+         *     // wait 500 milliseconds
+         *     pros::delay(500);
+         *     // cancels both motions
+         *     chassis.cancelAllMotions();
+         * });
+         * // queue a motion to x = 10, y = 10 with a timeout of 4000ms
+         * // this will never run because cancelAllMotions will be called while this motion is in the queue
+         * chassis.moveToPoint(10, 10, 4000);
          * @endcode
          */
         void cancelAllMotions();
@@ -897,13 +869,11 @@ class Chassis {
          *
          * @b Example
          * @code {.cpp}
-         * void autonomous() {
-         *     // move the robot to x = 20, y = 15, and face heading 90
-         *     chassis.moveToPose(20, 15, 90, 4000);
-         *     // delay for 500ms
-         *     // this returns true, since the robot is still in motion
-         *     chassis.isInMotion();
-         * }
+         * // move the robot to x = 20, y = 15, and face heading 90
+         * chassis.moveToPose(20, 15, 90, 4000);
+         * // delay for 500ms
+         * // this returns true, since the robot is still in motion
+         * chassis.isInMotion();
          * @endcode
          */
         bool isInMotion() const;
@@ -911,13 +881,14 @@ class Chassis {
          * @brief Resets the x and y position of the robot
          * without interfering with the heading.
          *
-         * void autonomous() {
-         *     // set robot position to x = 10, y = 15, and heading 90
-         *     chassis.setPose(10, 15, 90);
-         *     // reset the robot's x and y position
-         *     chassis.resetLocalPosition();
-         *     // the robot's position is now x = 0, y = 0, and heading 90
-         * }
+         * @b Example
+         * @code {.cpp}
+         * // set robot position to x = 10, y = 15, and heading 90
+         * chassis.setPose(10, 15, 90);
+         * // reset the robot's x and y position
+         * chassis.resetLocalPosition();
+         * // the robot's position is now x = 0, y = 0, and heading 90
+         * @endcode
          */
         void resetLocalPosition();
         /**
