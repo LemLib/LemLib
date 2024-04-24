@@ -30,6 +30,10 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = "furo"
 
 html_theme_options = {
+    "source_repository": "https://github.com/lemlib/lemlib/",
+    "source_branch": "master",
+    "source_directory": "docs/",
+
     "light_css_variables": {
         "color-brand-primary": "#00C852",
         "color-brand-content": "#00C852",
@@ -46,7 +50,13 @@ html_static_path = ['_static']
 
 
 breathe_projects = {"LemLib": "xml/"}
-#breathe_projects = {"LemLib": "/home/battlechicken/Projects/LemLib/docs/xml"}
+
+breathe_projects_source = {
+    "LemLib" : (
+        "../", ["include/lemlib", "include/lemlib/chassis"]
+    )
+}
+
 breathe_default_project = "LemLib"
 
 myst_enable_extensions = [
