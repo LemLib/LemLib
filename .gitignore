@@ -24,3 +24,7 @@ latex
 
 # MacOS
 .DS_Store
+docs/_build
+docs/html
+docs/xml
+html

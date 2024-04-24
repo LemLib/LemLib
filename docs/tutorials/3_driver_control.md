@@ -31,7 +31,8 @@ void opcontrol() {
 ## Arcade Drive
 Arcade drive is the most popular form of controlling the robot. In arcade control, we give the robot a forwards/backwards speed and a turning speed. Below are 2 examples: single stick arcade and double stick arcade.
 
-#### Single Stick Arcade
+### Single Stick Arcade
+
 ```cpp
 pros::Controller controller();
 
@@ -51,7 +52,8 @@ void opcontrol() {
 }
 ```
 
-#### Double Stick Arcade
+### Double Stick Arcade
+
 ```cpp
 pros::Controller controller();
 
@@ -74,7 +76,8 @@ void opcontrol() {
 ## Curvature Drive
 Curvature drive is a lesser-know, yet powerful, method. We give the robot a forwards/backwards speed, and the curvature of an arc. The greater the curvature, the more the robot turns. Its similar to arcade but performs better when turning. Below is an example of single stick and double stick curvature drive:
 
-#### Single Stick Curvature
+### Single Stick Curvature
+
 ```cpp
 pros::Controller controller();
 
@@ -94,7 +97,8 @@ void opcontrol() {
 }
 ```
 
-#### Double Stick Curvature
+### Double Stick Curvature
+
 ```cpp
 pros::Controller controller();
 
@@ -122,7 +126,10 @@ Making precise movements is difficult. If only there was a way make it less sens
 
 Instead of the regular linear relationship between controller input and drivetrain output, input scaling is an exponential relationship to make small movements less sensitive in exchange for making fast movements less sensitive. Below in an image of this relationship:
 
-<img src="./assets/3_driver_control/curve.jpg" height=400 style="display: block;margin-left: auto;margin-right: auto;">
+```{image} ../assets/3_driver_control/curve.jpeg
+:align: center
+:height: 400
+```
 
 Here is a [Desmos graph](https://www.desmos.com/calculator/fuouoahwvc) which shows this relationship. You can tune `t` to make it as steep as you like. Once we have this t value, we can input it into the drive functions:
 
@@ -147,6 +154,3 @@ void opcontrol() {
 
 ## Conclusion
 That's all for driver control. We will be covering autonomous motion and tuning in the next tutorial.
-
-[Previous Tutorial](2_setting_up_the_chassis.md) <br>
-[Next Tutorial](4_auto_and_tuning.md)
