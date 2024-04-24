@@ -1,17 +1,13 @@
-#include <algorithm>
 #include <math.h>
-#include <optional>
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
-#include "pros/misc.hpp"
 #include "lemlib/logger/logger.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
-#include "lemlib/timer.hpp"
 #include "pros/rtos.hpp"
 
 lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
