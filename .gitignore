@@ -19,7 +19,10 @@ temp.errors
 # template files
 *.zip
 
-# Doxygen
+# Docs
+docs/package-lock.json
+docs/package.json
+docs/node_modules/
 latex
 
 # MacOS
