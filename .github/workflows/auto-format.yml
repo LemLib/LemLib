@@ -6,13 +6,8 @@ permissions:
   contents: write
 
 jobs:
-  format:
+  setup:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - step: format-code
-          - step: output-version
 
     steps:
     - name: Checkout code
@@ -39,56 +34,70 @@ jobs:
           sudo apt-get install -y clang-format
         fi
 
-    - name: ${{ matrix.step }}
-      run: |
-          if [ "${{ matrix.step }}" == "output-version" ]; then
-            clang-format --version
-          elif [ "${{ matrix.step }}" == "format-code" ]; then
-            echo "Formatting code..."  # Replace this with actual code formatting commands
+  clang-format-version:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output clang-format version
+        run: clang-format --version
+
+  check-file-changes:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes in .cpp, .hpp, .h files in src/lemlib and include/lemlib
+        id: check-file-changes
+        run: |
+          git fetch origin
+          changed_files=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }} -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h')
+          if [ -z "$changed_files" ]; then
+            echo "::set-output name=all_files::true"
+          else
+            echo "::set-output name=all_files::false"
+            echo "::set-output name=changed_files::$changed_files"
           fi
 
-    - name: Output clang-format version
-      run: clang-format --version
+  format:
+    needs: [clang-format-version, check-file-changes]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-    - name: Check for changes in .cpp, .hpp, .h files in src/lemlib and include/lemlib
-      id: check-file-changes
-      run: |
-        git fetch origin
-        changed_files=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }} -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h')
-        if [ -z "$changed_files" ]; then
-          echo "::set-output name=all_files::true"
-        else
-          echo "::set-output name=all_files::false"
-          echo "::set-output name=changed_files::$changed_files"
-        fi
-
-    - name: Format code
-      run: |
-        if [ "${{ steps.check-file-changes.outputs.all_files }}" == "true" ]; then
-          echo "No .cpp, .hpp, or .h files were changed in the last commit in src/lemlib and include/lemlib. Formatting all .cpp, .hpp, and .h files in these directories."
-          find ./src/lemlib ./include/lemlib -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | while read filename; do
-            clang-format -i $filename
-          done
-        else
-          echo "${{ steps.check-file-changes.outputs.changed_files }}" | while read filename; do
-            if [[ $filename == *.cpp || $filename == *.hpp || $filename == *.h ]]; then
+      - name: Format code
+        run: |
+          if [[ "${{ needs.check-format-changes.outputs.changes }}" == "true" ]]; then
+            echo "No .cpp, .hpp, or .h files were changed in the last commit in src/lemlib and include/lemlib. Formatting all .cpp, .hpp, and .h files in these directories."
+            find ./src/lemlib ./include/lemlib -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | while read filename; do
               clang-format -i $filename
-            fi
-          done
-        fi
+            done
+          else
+            echo "${{ steps.check-file-changes.outputs.changed_files }}" | while read filename; do
+              if [[ $filename == *.cpp || $filename == *.hpp || $filename == *.h ]]; then
+                clang-format -i $filename
+              fi
+            done
+          fi
 
-    - name: Check for changes
-      id: check-format-changes
-      run: |
-         git diff --exit-code -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h' || echo "::set-output name=changes::true"
-      continue-on-error: true
+      - name: Check for changes
+        id: check-format-changes
+        run: |
+           git diff --exit-code -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h' || echo "::set-output name=changes::true"
+        continue-on-error: true
 
-    - name: Commit changes
-      run: |
-        if [[ "${{ steps.check-format-changes.outputs.changes }}" == "true" ]]; then
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "Automated code formatting"
-          git push
-        fi
+      - name: Commit changes
+        run: |
+          if [[ "${{ steps.check-format-changes.outputs.changes }}" == "true" ]]; then
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add .
+            git commit -m "Automated code formatting"
+            git push
+          fi
