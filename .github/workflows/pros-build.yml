@@ -24,6 +24,16 @@ jobs:
           key: ${{ runner.os }}-pros-${{ steps.month-number.outputs.month }}
           restore-keys: |
             ${{ runner.os }}-pros-
+              # Cache Python dependencies
+      - name: Cache Python dependencies
+        uses: actions/cache@v2
+        with:
+                  path: ~/.cache/pip
+                  key: ${{ runner.os }}-pip-${{ steps.month-number.outputs.month }}-${{ hashFiles('**/requirements.txt') }}
+                  restore-keys: |
+                    ${{ runner.os }}-pip-${{ steps.month-number.outputs.month }}-
+                    ${{ runner.os }}-pip-
+                    ${{ runner.os }}-
       - name: Get short SHA
         id: short-sha
         run: |
