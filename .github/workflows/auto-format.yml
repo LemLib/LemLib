@@ -30,12 +30,13 @@ jobs:
 
     - name: Install clang-format
       run: |
-        if [ ! -f /usr/lib/llvm-10/bin/clang-format ]; then
-          sudo apt-get install -y clang-format
-        fi
+              if [ ! -f /usr/lib/llvm-10/bin/clang-format ]; then
+                sudo apt-get install -y clang-format
+              fi
+              which clang-format
 
     - name: Output clang-format version
-      run: /usr/lib/llvm-10/bin/clang-format --version
+      run: clang-format --version
 
     - name: Check for changes in .cpp, .hpp, .h files in src/lemlib and include/lemlib
       id: check-file-changes
