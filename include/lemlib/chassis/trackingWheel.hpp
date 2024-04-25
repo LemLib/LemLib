@@ -45,7 +45,7 @@ class TrackingWheel {
          * // it's also 5 inches away from the tracking center. This tracking wheel is to the left
          * // of the tracking center, so we use a negative distance. If it was to the right of the
          * // tracking center, we would use a positive distance
-         * TrackingWheel verticalTrackingWheel(&verticalEncoder, lemlib::Omniwheel::NEW_275, -5);
+         * lemlib::TrackingWheel verticalTrackingWheel(&verticalEncoder, lemlib::Omniwheel::NEW_275, -5);
          * // create a new optical shaft encoder on ports `C` and `D`
          * // this sensor is not reversed
          * pros::ADIEncoder horizontalEncoder('C', 'D', false);
@@ -55,7 +55,7 @@ class TrackingWheel {
          * // of the tracking center, so we use a negative distance. If it was to the front of the
          * // tracking center, we would use a positive distance
          * // this wheel also has a 5:3 gear ratio
-         * TrackingWheel horizontalTrackingWheel(&horizontalEncoder, lemlib::Omniwheel::OLD_325, -2, 5.0/3.0);
+         * lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEncoder, lemlib::Omniwheel::OLD_325, -2, 5.0/3.0);
          * @endcode
          */
         TrackingWheel(pros::ADIEncoder* encoder, float wheelDiameter, float distance, float gearRatio = 1);
@@ -77,7 +77,7 @@ class TrackingWheel {
          * // it's also 5 inches away from the tracking center. This tracking wheel is to the left
          * // of the tracking center, so we use a negative distance. If it was to the right of the
          * // tracking center, we would use a positive distance
-         * TrackingWheel verticalTrackingWheel(&verticalEncoder, lemlib::Omniwheel::NEW_275, -5);
+         * lemlib::TrackingWheel verticalTrackingWheel(&verticalEncoder, lemlib::Omniwheel::NEW_275, -5);
          * // create a new rotation sensor on port 2
          * // this sensor is reversed
          * pros::Rotation horizontalEncoder(2, true);
@@ -87,7 +87,7 @@ class TrackingWheel {
          * // of the tracking center, so we use a negative distance. If it was to the front of the
          * // tracking center, we would use a positive distance
          * // this wheel also has a 5:3 gear ratio
-         * TrackingWheel horizontalTrackingWheel(&horizontalEncoder, lemlib::Omniwheel::OLD_325, -2, 5.0/3.0);
+         * lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEncoder, lemlib::Omniwheel::OLD_325, -2, 5.0/3.0);
          * @endcode
          */
         TrackingWheel(pros::Rotation* encoder, float wheelDiameter, float distance, float gearRatio = 1);
@@ -114,7 +114,7 @@ class TrackingWheel {
          * // distance is also negative because the left drive side is to the left of the tracking center
          * // if it was to the right of the tracking center, we would use a positive distance
          * // the rpm is 360
-         * TrackingWheel leftTrackingWheel(&leftMotors, lemlib::Omniwheel::OLD_4, -5, 360);
+         * lemlib::TrackingWheel leftTrackingWheel(&leftMotors, lemlib::Omniwheel::OLD_4, -5, 360);
          * @endcode
          */
         TrackingWheel(pros::Motor_Group* motors, float wheelDiameter, float distance, float rpm);
