@@ -41,11 +41,11 @@ jobs:
 
     - name: ${{ matrix.step }}
       run: |
-        if [ "${{ matrix.step }}" == "output-version" ]; then
-          clang-format --version
-        elif [ "${{ matrix.step }}" == "format-code" ]; then
-          # Rest of the code for format-code step
-        fi
+          if [ "${{ matrix.step }}" == "output-version" ]; then
+            clang-format --version
+          elif [ "${{ matrix.step }}" == "format-code" ]; then
+            echo "Formatting code..."  # Replace this with actual code formatting commands
+          fi
 
     - name: Output clang-format version
       run: clang-format --version
