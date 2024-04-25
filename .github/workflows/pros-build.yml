@@ -55,7 +55,14 @@ jobs:
         run: echo $SHA
         env:
           SHA: ${{ steps.short-sha.outputs.sha }}
-
+      - name: Cache ARM Toolchain
+        id: cache-arm
+        uses: actions/cache@v2
+        with:
+            path: ~/arm-none-eabi
+            key: ${{ runner.os }}-arm-toolchain-${{ steps.month-number.outputs.month }}
+            restore-keys: |
+              ${{ runner.os }}-arm-toolchain-
       - name: Install ARM Toolchain
         uses: fiam/arm-none-eabi-gcc@v1
         with:
