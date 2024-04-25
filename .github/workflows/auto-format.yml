@@ -22,18 +22,19 @@ jobs:
           echo "::set-output name=week::$(($(date +'%U') / 2))"
   
     - name: Cache clang-format
+      id: cache
       uses: actions/cache@v2
       with:
-          path: /usr/lib/llvm-10/bin/clang-format
-          key: ${{ runner.os }}-clang-format-${{ steps.date.outputs.week }}
-          restore-keys: ${{ runner.os }}-clang-format-
-
+              path: /usr/lib/llvm-10/bin/clang-format
+              key: ${{ runner.os }}-clang-format-${{ steps.date.outputs.week }}
+              restore-keys: ${{ runner.os }}-clang-format-
+    
     - name: Install clang-format
       run: |
-              if [ ! -f /usr/lib/llvm-10/bin/clang-format ]; then
-                sudo apt-get install -y clang-format
-              fi
-              which clang-format
+                  if [ "${{ steps.cache.outputs.cache-hit }}" != "true" ]; then
+                    sudo apt-get install -y clang-format
+                  fi
+                  which clang-format
 
     - name: Output clang-format version
       run: clang-format --version
