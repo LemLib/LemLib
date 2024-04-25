@@ -2,17 +2,28 @@ name: Build Template
 
 on:
   push:
-    branches: "**"
+    branches: '*'
   pull_request:
-    branches: "**"
+    branches: '*'
 
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
+      - name: Get Month Number
+        id: month-number
+        run: echo "::set-output name=month::$(date +'%m')"
+
+      - name: Cache PROS CLI
+        uses: actions/cache@v2
+        with:
+          path: ~/.pros
+          key: ${{ runner.os }}-pros-${{ steps.month-number.outputs.month }}
+          restore-keys: |
+            ${{ runner.os }}-pros-
       - name: Get short SHA
         id: short-sha
         run: |
