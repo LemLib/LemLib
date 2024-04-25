@@ -8,6 +8,11 @@ permissions:
 jobs:
   format:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - step: format-code
+          - step: output-version
 
     steps:
     - name: Checkout code
@@ -32,6 +37,14 @@ jobs:
       run: |
         if [ ! -f /usr/lib/llvm-10/bin/clang-format ]; then
           sudo apt-get install -y clang-format
+        fi
+
+    - name: ${{ matrix.step }}
+      run: |
+        if [ "${{ matrix.step }}" == "output-version" ]; then
+          clang-format --version
+        elif [ "${{ matrix.step }}" == "format-code" ]; then
+          # Rest of the code for format-code step
         fi
 
     - name: Output clang-format version
