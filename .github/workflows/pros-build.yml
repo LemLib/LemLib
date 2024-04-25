@@ -64,9 +64,10 @@ jobs:
             restore-keys: |
               ${{ runner.os }}-arm-toolchain-
       - name: Install ARM Toolchain
+        if: steps.cache-arm.outputs.cache-hit != 'true'
         uses: fiam/arm-none-eabi-gcc@v1
         with:
-          release: "10-2020-q4"
+          release: '10-2020-q4'
 
       - name: Setup Python
         uses: actions/setup-python@v2
