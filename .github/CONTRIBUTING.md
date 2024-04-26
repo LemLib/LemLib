@@ -122,16 +122,31 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/LemLib
 
 ### Your First Code Contribution
 
+> [!Info]
 > Using a development environment different from the one recommended below is fine, but you will have to adjust the steps yourself.
 
-We recommend using [Visual Studio Code](https://code.visualstudio.com/) as your IDE. It is free, open-source, and cross-platform.
+> [!Info]
+> We do not recommend using the C/C++ extension, as its slow for linting and autocomplete.
+
+> [!Info]
+> At a minimum, we recommend the PROS and clangd extensions
+
+
+We recommend using [Visual Studio Code](https://code.visualstudio.com/) as your IDE. It is free, (mostly) open-source, and cross-platform.
 Here is a list of recommended extensions:
-- [clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd), a very fast linter
-- [clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) to format your code. Recommended to format on save.
-- [Doxygen Documentation Generator](https://marketplace.visualstudio.com/items?itemName=cschlosser.doxdocgen) automatically generates Doxygen comments
-- [file-icons](https://marketplace.visualstudio.com/items?itemName=file-icons.file-icons) to display file icons
-- [PROS](https://marketplace.visualstudio.com/items?itemName=sigbots.pros) to build and upload your code
+- [Better C++ Syntax](https://marketplace.visualstudio.com/items?itemName=jeff-hykin.better-cpp-syntax) better syntax highlighting for C++
+- [Better Comments](https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments) comment highlighting
+- [clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd), super fast liner, code completion, and auto-formatter
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) to check for spelling mistakes
+- [CodeSnap](https://marketplace.visualstudio.com/items?itemName=adpyke.codesnap) take very nice screenshots of your code
+- [Doxygen Documentation Generator](https://marketplace.visualstudio.com/items?itemName=cschlosser.doxdocgen) automatically generates Doxygen comments
+- [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens) displays errors, warning, and info nicely
+- [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) AI autocomplete useful for repetitive and trivial tasks
+- [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens) useful git tools
+- [Markdown Emoji](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-emoji) syntax for emojis in markdown
+- [Markdown Preview Enhanced](https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced) better markdown preview
+- [Material Icon Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme) for improved visual grepping of files
+- [PROS](https://marketplace.visualstudio.com/items?itemName=sigbots.pros) to build and upload your code
 
 > If asked to disable the IntelliSense in favor of clangd, do so.
 
