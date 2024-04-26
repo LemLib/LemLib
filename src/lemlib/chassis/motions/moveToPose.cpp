@@ -44,8 +44,8 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
     if (!params.forwards) target.theta = fmod(target.theta + M_PI, 2 * M_PI); // backwards movement
 
     const float initialDistance = getPose().distance(target);
-    if(params.lead/initialDistance>0.95) params.lead = 0.95*initialDistance; // prevents lead from being too high
-    if(params.lead == 0) params.lead = 0.6*initialDistance; //default lead value
+    if(params.lead / initialDistance > 0.95) params.lead = 0.95 * initialDistance; // prevents lead from being too high
+    if(params.lead == 0) params.lead = 0.6 * initialDistance; // default lead value
     
     // use global horizontalDrift is horizontalDrift is 0
     if (params.horizontalDrift == 0) params.horizontalDrift = drivetrain.horizontalDrift;
