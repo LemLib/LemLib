@@ -2,38 +2,17 @@ name: Build Template
 
 on:
   push:
-    branches: '*'
+    branches: "**"
   pull_request:
-    branches: '*'
+    branches: "**"
 
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: Get Month Number
-        id: month-number
-        run: echo "::set-output name=month::$(date +'%m')"
 
-      - name: Cache PROS CLI
-        uses: actions/cache@v2
-        with:
-          path: ~/.pros
-          key: ${{ runner.os }}-pros-${{ steps.month-number.outputs.month }}
-          restore-keys: |
-            ${{ runner.os }}-pros-
-              # Cache Python dependencies
-      - name: Cache Python dependencies
-        uses: actions/cache@v2
-        with:
-                  path: ~/.cache/pip
-                  key: ${{ runner.os }}-pip-${{ steps.month-number.outputs.month }}-${{ hashFiles('**/requirements.txt') }}
-                  restore-keys: |
-                    ${{ runner.os }}-pip-${{ steps.month-number.outputs.month }}-
-                    ${{ runner.os }}-pip-
-                    ${{ runner.os }}-
+    steps:
       - name: Get short SHA
         id: short-sha
         run: |
@@ -55,19 +34,11 @@ jobs:
         run: echo $SHA
         env:
           SHA: ${{ steps.short-sha.outputs.sha }}
-      - name: Cache ARM Toolchain
-        id: cache-arm
-        uses: actions/cache@v2
-        with:
-            path: ~/arm-none-eabi
-            key: ${{ runner.os }}-arm-toolchain-${{ steps.month-number.outputs.month }}
-            restore-keys: |
-              ${{ runner.os }}-arm-toolchain-
+
       - name: Install ARM Toolchain
-        if: steps.cache-arm.outputs.cache-hit != 'true'
         uses: fiam/arm-none-eabi-gcc@v1
         with:
-          release: '10-2020-q4'
+          release: "10-2020-q4"
 
       - name: Setup Python
         uses: actions/setup-python@v2
