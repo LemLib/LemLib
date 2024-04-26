@@ -9,6 +9,8 @@
 #include "lemlib/pid.hpp"
 #include "lemlib/exitcondition.hpp"
 #include "lemlib/driveCurve.hpp"
+#include <atomic>
+#include <vector>
 
 namespace lemlib {
 
@@ -484,17 +486,57 @@ class Chassis {
          * without interfering with the heading.
          */
         void resetLocalPosition();
+
         /**
-         * PIDs are exposed so advanced users can implement things like gain scheduling
-         * Changes are immediate and will affect a motion in progress
+         * @brief Modify the lateral PID gains object. This also contains the windupRange and signFlipReset settings.
+         * Intended for advanced users.
+         * @param newGains the new gains. May specify all the gains, none of them, or anywhere in between.
          *
-         * @warning Do not interact with these unless you know what you are doing
+         * @b Example
+         * @code {.cpp}
+         * chassis.setLateralPIDGains({.kP = 24});
          */
-        PID lateralPID;
-        PID angularPID;
-    protected:
+        void setLateralPIDGains(PID::OptionalGains newGains);
         /**
-         * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
+         * @brief Modify the angular PID gains object. This also contains the windupRange and signFlipReset settings.
+         * Intended for advanced users.
+         * @param newGains the new gains. May specify all the gains, none of them, or anywhere in between.
+         *
+         * @b Example
+         * @code {.cpp}
+         * chassis.setAngularPIDGains({.kP = 24});
+         */
+        void setAngularPIDGains(PID::OptionalGains newGains);
+
+        /**
+         * @brief Get the Lateral PID Gains object
+         *
+         * @return PID::Gains
+         */
+        PID::Gains getLateralPIDGains() const;
+        /**
+         * @brief Get the Angular PID Gains object
+         *
+         * @return PID::Gains
+         */
+        PID::Gains getAngularPIDGains() const;
+
+        void setLateralSlew(float newSlew);
+        void setAngularSlew(float newSlew);
+
+        float getLateralSlew() const;
+        float getAngularSlew() const;
+
+        const ErrorExitConditionGroupFactory& getLateralExitConditionFactory() const;
+        ErrorExitConditionGroupFactory& getLateralExitConditionFactory();
+        const ErrorExitConditionGroupFactory& getAngularExitConditionFactory() const;
+        ErrorExitConditionGroupFactory& getAngularExitConditionFactory();
+    protected:
+        ErrorExitConditionGroupFactory lateralExitConditionFactory;
+        ErrorExitConditionGroupFactory angularExitConditionFactory;
+        /**
+         * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of
+         * queue
          */
         void requestMotionStart();
         /**
@@ -507,17 +549,16 @@ class Chassis {
 
         float distTraveled = 0;
 
-        ControllerSettings lateralSettings;
-        ControllerSettings angularSettings;
+        std::atomic<float> lateralSlew;
+        std::atomic<float> angularSlew;
+
         Drivetrain drivetrain;
         OdomSensors sensors;
         DriveCurve* throttleCurve;
         DriveCurve* steerCurve;
 
-        ExitCondition lateralLargeExit;
-        ExitCondition lateralSmallExit;
-        ExitCondition angularLargeExit;
-        ExitCondition angularSmallExit;
+        PID lateralPID;
+        PID angularPID;
     private:
         pros::Mutex mutex;
 };

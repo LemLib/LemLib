@@ -38,12 +38,11 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParam
     std::uint8_t compState = pros::competition::get_status();
     distTraveled = 0;
     Timer timer(timeout);
-    angularLargeExit.reset();
-    angularSmallExit.reset();
+    auto angularExit = this->angularExitConditionFactory.create();
     angularPID.reset();
 
     // main loop
-    while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
+    while (!timer.isDone() && !angularExit->getExit() && this->motionRunning) {
         // update variables
         Pose pose = getPose();
 
@@ -69,13 +68,12 @@ void lemlib::Chassis::turnToHeading(float theta, int timeout, TurnToHeadingParam
 
         // calculate the speed
         motorPower = angularPID.update(deltaTheta);
-        angularLargeExit.update(deltaTheta);
-        angularSmallExit.update(deltaTheta);
+        angularExit->update(deltaTheta);
 
         // cap the speed
         if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
         else if (motorPower < -params.maxSpeed) motorPower = -params.maxSpeed;
-        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
+        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, this->getAngularSlew());
         if (motorPower < 0 && motorPower > -params.minSpeed) motorPower = -params.minSpeed;
         else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
         prevMotorPower = motorPower;

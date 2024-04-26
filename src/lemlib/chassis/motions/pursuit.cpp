@@ -273,7 +273,7 @@ void lemlib::Chassis::follow(const asset& path, float lookahead, int timeout, bo
 
         // get the target velocity of the robot
         targetVel = pathPoints.at(closestPoint).theta;
-        targetVel = slew(targetVel, prevVel, lateralSettings.slew);
+        targetVel = slew(targetVel, prevVel, this->getLateralSlew());
         prevVel = targetVel;
 
         // calculate target left and right velocities

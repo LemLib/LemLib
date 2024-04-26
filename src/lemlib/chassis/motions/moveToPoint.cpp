@@ -29,8 +29,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
 
     // reset PIDs and exit conditions
     lateralPID.reset();
-    lateralLargeExit.reset();
-    lateralSmallExit.reset();
+    auto lateralExit = this->lateralExitConditionFactory.create();
     angularPID.reset();
 
     // initialize vars used between iterations
@@ -48,8 +47,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     target.theta = lastPose.angle(target);
 
     // main loop
-    while (!timer.isDone() && ((!lateralSmallExit.getExit() && !lateralLargeExit.getExit()) || !close) &&
-           this->motionRunning) {
+    while (!timer.isDone() && (!lateralExit->getExit() || !close) && this->motionRunning) {
         // update position
         const Pose pose = getPose(true, true);
 
@@ -81,8 +79,7 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
         float lateralError = pose.distance(target) * cos(angleError(pose.theta, pose.angle(target)));
 
         // update exit conditions
-        lateralSmallExit.update(lateralError);
-        lateralLargeExit.update(lateralError);
+        lateralExit->update(lateralError);
 
         // get output from PIDs
         float lateralOut = lateralPID.update(lateralError);
@@ -91,13 +88,13 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
 
         // apply restrictions on angular speed
         angularOut = std::clamp(angularOut, -params.maxSpeed, params.maxSpeed);
-        angularOut = slew(angularOut, prevAngularOut, angularSettings.slew);
+        angularOut = slew(angularOut, prevAngularOut, this->getAngularSlew());
 
         // apply restrictions on lateral speed
         lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
         // constrain lateral output by max accel
         // but not for decelerating, since that would interfere with settling
-        if (!close) lateralOut = slew(lateralOut, prevLateralOut, lateralSettings.slew);
+        if (!close) lateralOut = slew(lateralOut, prevLateralOut, this->getLateralSlew());
 
         // prevent moving in the wrong direction
         if (params.forwards && !close) lateralOut = std::fmax(lateralOut, 0);

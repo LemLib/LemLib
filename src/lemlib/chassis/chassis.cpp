@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <math.h>
 #include <optional>
+#include "lemlib/exitcondition.hpp"
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
@@ -65,17 +66,17 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
 lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
                          OdomSensors sensors, DriveCurve* throttleCurve, DriveCurve* steerCurve)
     : drivetrain(drivetrain),
-      lateralSettings(linearSettings),
-      angularSettings(angularSettings),
       sensors(sensors),
       throttleCurve(throttleCurve),
       steerCurve(steerCurve),
       lateralPID(linearSettings.kP, linearSettings.kI, linearSettings.kD, linearSettings.windupRange, true),
       angularPID(angularSettings.kP, angularSettings.kI, angularSettings.kD, angularSettings.windupRange, true),
-      lateralLargeExit(lateralSettings.largeError, lateralSettings.largeErrorTimeout),
-      lateralSmallExit(lateralSettings.smallError, lateralSettings.smallErrorTimeout),
-      angularLargeExit(angularSettings.largeError, angularSettings.largeErrorTimeout),
-      angularSmallExit(angularSettings.smallError, angularSettings.smallErrorTimeout) {}
+      lateralSlew(linearSettings.slew),
+      angularSlew(angularSettings.slew),
+      lateralExitConditionFactory({{linearSettings.smallError, int(linearSettings.smallErrorTimeout)},
+                                   {linearSettings.largeError, int(linearSettings.largeErrorTimeout)}}),
+      angularExitConditionFactory({{angularSettings.smallError, int(angularSettings.smallErrorTimeout)},
+                                   {angularSettings.largeError, int(angularSettings.largeErrorTimeout)}}) {}
 
 /**
  * @brief calibrate the IMU given a sensors struct
@@ -238,4 +239,36 @@ void lemlib::Chassis::resetLocalPosition() {
 void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
     drivetrain.leftMotors->set_brake_modes(mode);
     drivetrain.rightMotors->set_brake_modes(mode);
+}
+
+void lemlib::Chassis::setLateralPIDGains(PID::OptionalGains newGains) { this->lateralPID.setGains(newGains); }
+
+void lemlib::Chassis::setAngularPIDGains(PID::OptionalGains newGains) { this->angularPID.setGains(newGains); }
+
+lemlib::PID::Gains lemlib::Chassis::getLateralPIDGains() const { return this->lateralPID.getGains(); }
+
+lemlib::PID::Gains lemlib::Chassis::getAngularPIDGains() const { return this->lateralPID.getGains(); }
+
+void lemlib::Chassis::setLateralSlew(float slew) { this->angularSlew = slew; }
+
+void lemlib::Chassis::setAngularSlew(float slew) { this->angularSlew = slew; }
+
+float lemlib::Chassis::getLateralSlew() const { return this->lateralSlew; }
+
+float lemlib::Chassis::getAngularSlew() const { return this->angularSlew; }
+
+const lemlib::ErrorExitConditionGroupFactory& lemlib::Chassis::getAngularExitConditionFactory() const {
+    return this->angularExitConditionFactory;
+}
+
+lemlib::ErrorExitConditionGroupFactory& lemlib::Chassis::getAngularExitConditionFactory() {
+    return this->angularExitConditionFactory;
+}
+
+const lemlib::ErrorExitConditionGroupFactory& lemlib::Chassis::getLateralExitConditionFactory() const {
+    return this->lateralExitConditionFactory;
+}
+
+lemlib::ErrorExitConditionGroupFactory& lemlib::Chassis::getLateralExitConditionFactory() {
+    return this->lateralExitConditionFactory;
 }
