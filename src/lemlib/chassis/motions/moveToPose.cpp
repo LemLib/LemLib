@@ -85,7 +85,7 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         if (lateralLargeExit.getExit() && lateralSmallExit.getExit()) lateralSettled = true;
 
         // calculate the carrot point
-        Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * params.lead * distTarget/initialDistance;
+        Pose carrot = target - Pose(cos(target.theta), sin(target.theta)) * params.lead * distTarget / initialDistance;
         if (close) carrot = target; // settling behavior
 
         // calculate if the robot is on the same side as the carrot point
