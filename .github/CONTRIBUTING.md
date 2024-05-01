@@ -1,5 +1,5 @@
 <!-- omit in toc -->
-# Contributing to LemLib
+# Contributing
 
 First off, thanks for taking the time to contribute! ❤️
 
