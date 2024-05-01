@@ -1,4 +1,4 @@
-# 04 - Tuning and Moving
+# 4 - Tuning and Moving
 
 ## Introduction
 In this tutorial, we will be learning how to tune the PIDs, move the robot autonomously, and use odometry.

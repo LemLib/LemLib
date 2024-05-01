@@ -1,4 +1,4 @@
-# 05 - Pure Pursuit
+# 5 - Pure Pursuit
 
 ## Introduction
 
