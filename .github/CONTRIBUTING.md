@@ -143,9 +143,8 @@ Here is a list of recommended extensions:
 - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens) displays errors, warning, and info nicely
 - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) AI autocomplete useful for repetitive and trivial tasks
 - [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens) useful git tools
-- [Markdown Emoji](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-emoji) syntax for emojis in markdown
-- [Markdown Preview Enhanced](https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced) better markdown preview
 - [Material Icon Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme) for improved visual grepping of files
+- [MyST-Markdown](https://marketplace.visualstudio.com/items?itemName=ExecutableBookProject.myst-highlight) for previewing markdown files with MyST extensions
 - [PROS](https://marketplace.visualstudio.com/items?itemName=sigbots.pros) to build and upload your code
 
 > If asked to disable the IntelliSense in favor of clangd, do so.
