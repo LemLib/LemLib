@@ -127,6 +127,10 @@ There is no right answer to this question. The driver should use whichever contr
 This section is optional and is not needed to control the robot
 ```
 
+```{info}
+Tank control only uses the throttle curve, it does not use the steer curve
+```
+
 ```{seealso}
 [Detailed explanation in Vex Forum](https://www.vexforum.com/t/expo-drive-lemlibs-implementation/123337)
 ```
