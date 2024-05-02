@@ -1,4 +1,4 @@
-# 02 - Configuration
+# 2 - Configuration
 
 ## Introduction
 
