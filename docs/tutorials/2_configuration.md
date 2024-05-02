@@ -18,10 +18,6 @@ Let's start off by identifying the motors on the robot. We need to figure out wh
 Motors should be created outside of a function, near the top of the file.
 ```
 
-```{seealso}
-[pros::Motor documentation](https://pros.cs.purdue.edu/v5/api/cpp/motors.html)
-```
-
 ```cpp
 pros::Motor front_left_motor(1); // front left motor on port 1
 pros::Motor middle_left_motor(2); // middle left motor on port 2
@@ -73,10 +69,6 @@ pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_36); // red cartridge
 ```
 
 Now, all our motors are configured. However, we need to add them to motor groups so LemLib can interface with them. See the code below:
-
-```{seealso}
-[pros::MotorGroup documentation](https://pros.cs.purdue.edu/v5/api/cpp/motor_groups.html)
-```
 
 ```cpp
 pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_18); // left_motor_group
@@ -162,7 +154,12 @@ Odometry is the algorithm that tracks the robots position. It does this through 
 
 ### IMU
 
-For the IMU, all we need to do is find the port it is connected to. Enter the devices menu on the brain screen, and see what port the IMU is connected to. Record this, we will need it soon.
+For the IMU, all we need to do is find the port it is connected to. Enter the devices menu on the brain screen, and see what port the IMU is connected to. See the example below for creating the IMU in code:
+
+```cpp
+// create an imu on port 10
+pros::Imu imu(10);
+```
 
 ### Tracking Wheels
 
@@ -215,10 +212,6 @@ First, we need to create the encoders. The process is different for the 2 differ
 ```{important}
 The optical shat encoder uses 2 ADI (tri-port) ports. However, there are only a few valid port combinations, they are as follows:
 ('A', 'B'); ('C', 'D'); ('E', 'F'); ('G', 'H')
-```
-
-```{seealso}
-[pros::ADIEncoder documentation](https://pros.cs.purdue.edu/v5/api/cpp/adi.html#pros-adiencoder)
 ```
 
 
@@ -315,14 +308,27 @@ Users may wish to gear their tracking wheels. Contrary to what you'd expect, its
 Now that we know all the properties of the tracking wheel, we can initialize our tracking wheels in code:
 
 ```cpp
-// horizontal tracking wheel encoder. Rotation sensor, port 20, not reversed
-pros::Rotation horizontalEnc(20);
-// vertical tracking wheel encoder. ADI Encoder, ports 'C', 'D'
-pros::ADIEncoder verticalEnc('C', 'D', true);
-// horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -5.75);
-// vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
-lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
+// horizontal tracking wheel encoder
+pros::Rotation horizontal_encoder(20);
+// vertical tracking wheel encoder
+pros::ADIEncoder vertical_encoder('C', 'D', true);
+// horizontal tracking wheel
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
+// vertical tracking wheel
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5);
+```
+
+### Config
+
+Now that we have configured all the sensors we need for 
+
+```cpp
+lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
+                            nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
+                            &horizontal_tracking_wheel, // horizontal tracking wheel 1
+                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+                            &imu // inertial sensor
+);
 ```
 
 ## PIDs
@@ -330,29 +336,97 @@ lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
 We aren't going to tune the PIDs in this tutorial, but we will in the next. For now, just copy/paste the code below into your project:
 
 ```cpp
-// lateral motion controller
-lemlib::ControllerSettings linearController(10, // proportional gain (kP)
-                                            0, // integral gain (kI)
-                                            3, // derivative gain (kD)
-                                            3, // anti windup
-                                            1, // small error range, in inches
-                                            100, // small error range timeout, in milliseconds
-                                            3, // large error range, in inches
-                                            500, // large error range timeout, in milliseconds
-                                            20 // maximum acceleration (slew)
+// lateral PID controller
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              3, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              20 // maximum acceleration (slew)
 );
 
-// angular motion controller
-lemlib::ControllerSettings angularController(2, // proportional gain (kP)
-                                             0, // integral gain (kI)
-                                             10, // derivative gain (kD)
-                                             3, // anti windup
-                                             1, // small error range, in degrees
-                                             100, // small error range timeout, in milliseconds
-                                             3, // large error range, in degrees
-                                             500, // large error range timeout, in milliseconds
-                                             0 // maximum acceleration (slew)
+// angular PID controller
+lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              10, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in degrees
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in degrees
+                                              500, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 );
 ```
 
-## 
+## Final Configuration
+
+Now we have all the necessary information to configure lemlib. See the code block below:
+
+```cpp
+pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_18); // left_motor_group
+pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_06); // left_motor_group
+pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_36); // left_motor_group
+pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_18); // right_motor_group
+pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_06); // right_motor_group
+pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_36); // right_motor_group
+
+// left motor group
+pros::MotorGroup left_motor_group({ front_left_motor, middle_left_motor, back_left_motor });
+// right motor group
+pros::MotorGroup right_motor_group({ front_right_motor, middle_right_motor, back_right_motor });
+
+// drivetrain settings
+lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
+                              &right_motor_group, // right motor group
+                              10, // 10 inch track width
+                              lemlib::Omniwheel::NEW_4, // using new 4" omnis
+                              360, // drivetrain rpm is 360
+                              2 // horizontal drift is 2 (for now)
+);
+
+// imu
+pros::Imu imu(10);
+// horizontal tracking wheel encoder
+pros::Rotation horizontal_encoder(20);
+// vertical tracking wheel encoder
+pros::ADIEncoder vertical_encoder('C', 'D', true);
+// horizontal tracking wheel
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
+// vertical tracking wheel
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5);
+
+// odometry settings
+lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
+                            nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
+                            &horizontal_tracking_wheel, // horizontal tracking wheel 1
+                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+                            &imu // inertial sensor
+);
+
+// lateral PID controller
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              3, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              20 // maximum acceleration (slew)
+);
+
+// angular PID controller
+lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              10, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in degrees
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in degrees
+                                              500, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
+);
+```

@@ -65,10 +65,9 @@ lemlib::ControllerSettings angularController(2, // proportional gain (kP)
 );
 
 // sensors for odometry
-// note that in this example we use internal motor encoders (IMEs), so we don't pass vertical tracking wheels
-lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel 1, set to null
-                            nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-                            &horizontal, // horizontal tracking wheel 1
+lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel
+                            nullptr, // vertical tracking wheel 2, set to nullptr as we don't have a second one
+                            &horizontal, // horizontal tracking wheel
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
