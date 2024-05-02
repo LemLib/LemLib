@@ -73,6 +73,30 @@ void opcontrol() {
 }
 ```
 
+### Throttle/Steer priority
+
+You can prioritize steering over turning, or vice versa. For example, you could fully prioritize steering so that the angular velocity of the robot is guaranteed to be the same for a given steering input, no matter the throttle input. With LemLib, you can prioritize steering over throttle by a set amount, from 0 to 1. 0.5 is the default, where steering and turning have the same priority. 0 fully prioritizes throttle, while 1 fully prioritizes steering. See the code block below:
+
+```cpp
+pros::Controller controller();
+
+void opcontrol() {
+    // loop forever
+    while (true) {
+        // get left y and right x positions
+        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int leftX = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+
+        // move the robot
+        // prioritize steering slightly
+        chassis.arcade(leftY, leftX, false, 0.75);
+
+        // delay to save resources
+        pros::delay(25);
+    }
+}
+```
+
 ## Curvature Drive
 Curvature drive is a lesser-know, yet powerful, method. We give the robot a forwards/backwards speed, and the curvature of an arc. The greater the curvature, the more the robot turns. Its similar to arcade but performs better when turning. Below is an example of single stick and double stick curvature drive:
 
