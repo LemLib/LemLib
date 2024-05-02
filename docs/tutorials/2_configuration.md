@@ -429,4 +429,28 @@ lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
                                               500, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
+
+// create the chassis
+lemlib::Chassis chassis(drivetrain, // drivetrain settings
+                        lateral_controller, // lateral PID settings
+                        angular_controller, // angular PID settings
+                        sensors // odometry sensors
+);
+
+// initialize function. Runs on program startup
+void initialize() {
+    pros::lcd::initialize(); // initialize brain screen
+    chassis.calibrate(); // calibrate sensors
+    // print position to brain screen
+    pros::Task screen_task([&]() {
+        while (true) {
+            // print robot location to the brain screen
+            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            // delay to save resources
+            pros::delay(20);
+        }
+    });
+}
 ```

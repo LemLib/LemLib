@@ -107,7 +107,6 @@ void initialize() {
 
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
-        lemlib::Pose pose(0, 0, 0);
         while (true) {
             // print robot location to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
