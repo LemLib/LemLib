@@ -1,3 +1,3 @@
-# Contribute
+```{include} ../.github/CONTRIBUTING.md
 
-This is how you contribute
+```

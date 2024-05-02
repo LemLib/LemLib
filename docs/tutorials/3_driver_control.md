@@ -1,4 +1,4 @@
-# 03 - Driver Control
+# 3 - Driver Control
 
 ## Introduction
 In this tutorial, we will be learning how to program the drivetrain to allow for controller joystick inputs.
