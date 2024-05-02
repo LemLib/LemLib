@@ -19,20 +19,20 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 <!-- omit in toc -->
 ## Table of Contents
 
-- [I Have a Question](#i-have-a-question)
-- [I Want To Contribute](#i-want-to-contribute)
-  - [Reporting Bugs](#reporting-bugs)
-  - [Suggesting Enhancements](#suggesting-enhancements)
-  - [Your First Code Contribution](#your-first-code-contribution)
-  - [Improving The Documentation](#improving-the-documentation)
-- [Styleguides](#styleguides)
-  - [C++ Coding Style](#c-coding-style)
-  - [Commit Messages](#commit-messages)
+- [🙋I Have a Question](#i-have-a-question)
+- [🧑‍💻I Want To Contribute](#i-want-to-contribute)
+  - [🐛Reporting Bugs](#reporting-bugs)
+  - [✨Suggesting Enhancements](#suggesting-enhancements)
+  - [🚀Your First Code Contribution](#your-first-code-contribution)
+  - [📝Improving The Documentation](#improving-the-documentation)
+- [💄Styleguides](#styleguides)
+  - [💄C++ Coding Style](#c-coding-style)
+  - [💄Commit Messages](#commit-messages)
 
 
 
 
-## I Have a Question
+## 🙋I Have a Question
 
 > If you want to ask a question, we assume that you have read the available [Documentation](https://lemlib.github.io/LemLib/).
 
@@ -50,17 +50,17 @@ We will then take care of the issue as soon as possible.
 
 
 
-## I Want To Contribute
+## 🧑‍💻I Want To Contribute
 
 
 > ### Legal Notice <!-- omit in toc -->
 > When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
 
 
-### Reporting Bugs
+### 🐛Reporting Bugs
 
 <!-- omit in toc -->
-#### Before Submitting a Bug Report
+#### 🐛Before Submitting a Bug Report
 
 A good bug report shouldn't leave others needing to chase you up for more information. Therefore, we ask you to investigate carefully, collect information and describe the issue in detail in your report. Please complete the following steps in advance to help us fix any potential bug as fast as possible.
 
@@ -74,7 +74,7 @@ A good bug report shouldn't leave others needing to chase you up for more inform
   - Can you reliably reproduce the issue?
 
 <!-- omit in toc -->
-#### How Do I Submit a Good Bug Report?
+#### 🐛How Do I Submit a Good Bug Report?
 
 > You must never report security-related issues, vulnerabilities, or bugs including sensitive information to the issue tracker, or elsewhere in public. Instead sensitive bugs must be sent by email to <liamteale6@gmail.com>.
 <!-- You may add a PGP key to allow the messages to be sent encrypted as well. -->
@@ -96,12 +96,12 @@ Once it's filed:
 - If the team is able to reproduce the issue, it will be marked `confirmed-bug`, as well as possibly other tags (such as `p: critical`), and the issue will be left to be [implemented by someone](#your-first-code-contribution).
 
 
-### Suggesting Enhancements
+### ✨Suggesting Enhancements
 
 This section guides you through submitting an enhancement suggestion for LemLib, **including completely new features and minor improvements to existing functionality**. Following these guidelines will help maintainers and the community to understand your suggestion and find related suggestions.
 
 <!-- omit in toc -->
-#### Before Submitting an Enhancement
+#### ✨Before Submitting an Enhancement
 
 - Make sure that you are using the latest version.
 - Read the [documentation](https://lemlib.github.io/LemLib/) carefully and find out if the functionality is already covered, maybe by an individual configuration.
@@ -109,7 +109,7 @@ This section guides you through submitting an enhancement suggestion for LemLib,
 - Find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature. Keep in mind that we want features that will be useful to the majority of our users and not just a small subset.
 
 <!-- omit in toc -->
-#### How Do I Submit a Good Enhancement Suggestion?
+#### ✨How Do I Submit a Good Enhancement Suggestion?
 
 Enhancement suggestions are tracked as [GitHub issues](https://github.com/LemLib/LemLib/issues). You can use the Feature Request issue template upon creation of a new issue.
 
@@ -120,15 +120,15 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/LemLib
 - **(Optional) List possible implementations and alternatives** you have in mind.
 
 
-### Your First Code Contribution
+### 🚀Your First Code Contribution
 
-> [!Info]
+> [!NOTE]
 > Using a development environment different from the one recommended below is fine, but you will have to adjust the steps yourself.
 
-> [!Info]
+> [!NOTE]
 > We do not recommend using the C/C++ extension, as its slow for linting and autocomplete.
 
-> [!Info]
+> [!NOTE]
 > At a minimum, we recommend the PROS and clangd extensions
 
 
@@ -162,7 +162,7 @@ You can apply the kernel to your project with the following commands
 In order to contribute to LemLib, you will need to [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the repository and clone it to your local machine. You can then [commit](#commit-messages) your changes to your fork. Once you are done, you can [create a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the master branch. You can use the [Pull Request Template](PULL_REQUEST_TEMPLATE.md) to structure your pull request.
 
 
-### Improving The Documentation
+### 📝Improving The Documentation
 We use a combination of [Doxygen](http://www.doxygen.nl/), [Breathe](https://www.breathe-doc.org/), and [Sphinx](https://www.sphinx-doc.org/en/master/) to generate our documentation. The documentation is hosted on [Read The Docs](https://docs.readthedocs.io/en/stable/), which gives us both free hosting, and automatic versioning of the documentation. It automatically deploys after every commit.
 
 You can improve the documentation by:
@@ -184,10 +184,10 @@ make html
 ```
 Then you can view the documentation by pointing your browser at the `./_build/html/index.html` file.
 
-## Styleguides
+## 💄Styleguides
 
 
-### C++ Coding Style
+### 💄C++ Coding Style
 
 We use our own style guide for LemLib. Here are the most important rules:
  - Use `lowerCamelCase` for variables and functions
@@ -205,7 +205,7 @@ For further information, check out [.clang-format](../.clang-format).
 We use the [clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) extension to format our code. You can use the `.clang-format` file in the root directory of the project to configure your IDE to use the same formatting rules as we do. You can also use the `clang-format` command line tool to format your code. You can find more information about the tool [here](https://clang.llvm.org/docs/ClangFormat.html).
 
 
-### Commit Messages
+### 💄Commit Messages
 
 Commit titles should be short and descriptive. They should be written in the imperative mood, i.e. as if you were commanding someone. They should not end with a period. If you are fixing an issue, you should include the issue number in the commit title. Additional information can be provided in the commit body. For example:
 
