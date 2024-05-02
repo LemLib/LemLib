@@ -194,13 +194,13 @@ Recommended horizontal tracking:
 
 It's recommended to use a horizontal tracking wheel even you have traction wheels, since even with traction wheels the robot can still slide horizontally slightly. It is strongly recommended to use a horizontal tracking wheel if your drivetrain only uses omniwheels, since the robot can drift horizontally a lot.
 
-```{seealso}
+```{tip}
 The optimal tracking setup is 1x IMU, 1x vertical tracking wheel, 1x horizontal tracking wheel
 ```
 
 #### Encoders
 
-```{sealso}
+```{note}
 If you are not using tracking wheels, you can skip this part
 ```
 
