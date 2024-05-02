@@ -1,5 +1,13 @@
 # Documentation Home
 
+Welcome to the documentation for LemLib! This site contains everything you'd need to use to use or contribute to the LemLib template.
+
+If you're new to LemLib, and are looking for an introduction, check out the introductory [tutorials](./tutorials/1_getting_started.md).
+
+If you already know what you're doing, and just need a specific piece of information, check out the [API reference](./api/index.md).
+
+If you'd like to contribute to LemLib, we ask that you read the [contributing guide](./contribute.md) first.
+
 ```{toctree}
 :hidden:
 :maxdepth: 2
@@ -32,23 +40,5 @@ self
 
 ./api/index
 ```
-
-```{image} ./assets/LemLib_Banner_V3.png
-```
-<p align="center">
-    <img src="https://img.shields.io/github/contributors/LemLib/LemLib?style=for-the-badge">
-    <img src="https://img.shields.io/github/stars/LemLib/LemLib?style=for-the-badge">
-    <img src="https://img.shields.io/github/downloads/LemLib/LemLib/total?style=for-the-badge">
-    <img src="https://img.shields.io/github/actions/workflow/status/LemLib/LemLib/pros-build.yml?style=for-the-badge">
-    <img src="https://img.shields.io/badge/version-v0.4.9-blue?style=for-the-badge">
-    <img src="https://img.shields.io/badge/pre_release-v0.5.0-blue?style=for-the-badge">
-</p>
-<hr>
-
-Welcome to the documentation for LemLib!
-
-<!--Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.-->
-
-
 
 
