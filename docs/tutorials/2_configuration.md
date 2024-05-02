@@ -1,10 +1,10 @@
-# 2 - Setting Up The Chassis
+# 02 - Configuration
 
 ## Introduction
 
 Now that LemLib has been installed, we need to configure it before we can start using it. Most mistakes happen during configuration, so pay close attention to the instructions.
 
-## The Drivetrain
+## Drivetrain
 
 First, we need to configure the motors on our drivetrain. Each motor has 3 properties: the port its connected to, whether its reversed or not, and what cartridge is installed (AKA gearbox).
 
@@ -99,7 +99,7 @@ Now that our motors are fully configured, we need to pass them to LemLib. We can
  - wheel diameter
  - horizontal drift
 
-##### Track Width
+### Track Width
 
 Track width is the distance from the left side of the drivetrain to the right side of the drivetrain. Specifically, from the middle of the wheels. Track width is shown in the diagram below:
 
@@ -107,7 +107,7 @@ Track width is the distance from the left side of the drivetrain to the right si
 
 Record the track width, we'll need it soon.
 
-#### Wheel Diameter
+### Wheel Diameter
 
 This one should be self-explanatory. Its the diameter of the wheels on your drivetrain. The diameter on the wheels are actually slightly different than the diameter advertised by Vex (and, as is typical of Vex, this is not documented anywhere). For that reason, LemLib includes constants for all the different wheels, as follows:
 
@@ -138,7 +138,7 @@ Record the wheel diameter, we'll need it soon.
  [//]: # (TODO: Link tuning tutorial here) 
 Don't worry about horizontal drift, we'll cover it in the tuning tutorial. For now, just set it to 2.
 
-#### Code Config
+### Configuration
 
 We now have all the necessary information to configure the drivetrain. We will use the `Drivetrain` class to store this info, see the example below:
 
@@ -172,13 +172,13 @@ Tracking wheels are independent wheels that have an encoder attached to them. Se
 
 LemLib can work on any tracking setup, but some setups perform much better than others. See the table below:
 
-##### Heading Tracking:
+###### Heading Tracking:
 
 | Recommended | Acceptable                  | Not Recommended   |
 | ----------- | --------------------------- | ----------------- |
 | 1x IMU      | 2x parallel tracking wheels | IMEs              |
 
-##### Lateral Position Tracking
+###### Lateral Position Tracking
 
 There are more possible configs for lateral position tracking. Let's start with the recommended vertical tracking:
 
@@ -197,9 +197,12 @@ It's recommended to use a horizontal tracking wheel even you have traction wheel
 ```{seealso}
 The optimal tracking setup is 1x IMU, 1x vertical tracking wheel, 1x horizontal tracking wheel
 ```
-#### Code Config
 
-##### Tracking Wheels
+#### Encoders
+
+```{sealso}
+If you are not using tracking wheels, you can skip this part
+```
 
 Tracking wheels can use either an [Optical Shaft Encoder](https://www.vexrobotics.com/276-2156.html), or a [V5 Rotation Sensor](https://www.vexrobotics.com/276-6050.html). In our testing, there was no difference in accuracy. Use whatever is most convenient.
 
@@ -221,5 +224,135 @@ The optical shat encoder uses 2 ADI (tri-port) ports. However, there are only a 
 
 ```cpp
 // create an optical shaft encoder connected to ports 'A' and 'B'
-pros::ADIEncoder encoder('A', 'B');
+pros::ADIEncoder adi_encoder('A', 'B');
 ```
+
+##### V5 Rotation Sensor
+
+The V5 rotation sensor, for this purpose, is identical to the optical shaft encoder. The difference is that it uses a V5 smart port, not ADI ports. See the example below:
+
+```cpp
+// create a v5 rotation sensor on port 1
+pros::Rotation rotation_sensor(1);
+```
+
+##### Determining Reversal
+
+Next, we need to determine if the encoders are reversed or not. We will determine this by printing their values to the brain screen. Use the snippet below to print the encoder readings to the brain:
+
+```{important}
+remove the while loop in initialize after you have determined whether the tracking wheels should be reversed or not
+```
+
+```cpp
+// replace 'A', 'B', with the ports the sensor is connected to
+pros::ADIEncoder vertical_encoder('A', 'B');
+// replace 1 with the port the rotation sensor is connected to
+pros::Rotation horizontal_sensor(1);
+
+// this runs at the start of the program
+void initialize() {
+    pros::lcd::initialize(); // initialize brain screen
+    while (true) { // infinite loop
+        // print measurements from the adi encoder
+        pros::lcd::print(0, "ADI Encoder: %i", adi_encoder.get_value());
+        // print measurements from the rotation sensor
+        pros::lcd::print(1, "Rotation Sensor: %i", rotation_sensor.get_position());
+        pros::delay(10); // delay to save resources. DO NOT REMOVE
+    }
+}
+```
+
+```{tip}
+if the sensors readings are not changing or show very large numbers (>1000000), you've likely specified the wrong ports for the sensors
+```
+
+Use the snippet in your program and run it. When you push the robot forwards, the measured position of the vertical encoder(s) should increase. If they decrease, then the sensor(s) needs to be reversed. When you push the robot to the right (relative to the robot), the position measured by horizontal encoders should increase. If they decrease, the sensor(s) needs to be reversed.
+
+To reverse a sensor, simply pass `true` to the encoder constructors after the ports. See the example below:
+
+```cpp
+// reversed ADI Encoder
+pros::ADIEncoder adi_encoder('A', 'B', true);
+// reversed rotation sensor
+pros::Rotation rotation_sensor(1, true);
+```
+
+#### Offsets
+
+Now that we have the encoders configured, we need to determine the offset of the tracking wheels. The offset of the tracking wheel is equal to the length of the line perpendicular to it that ends at the tracking center. To help us understand, let's take a look at the diagram below:
+
+![Offsets](../assets/2_configuration/tracking_wheel_distance.png)
+
+In the diagram, there are 3 tracking wheels: one vertical tracking wheel on the left with an offset of 4.6", one vertical tracking wheel on the right with an offset of 1.7", and one horizontal tracking wheel at the back with an offset of 4.5"
+
+The offset of a tracking wheel can be positive or negative, depending on whether its a vertical or horizontal wheel and where it is relative to the tracking center. See the tables below:
+
+###### Vertical Tracking Wheel
+
+| Position | Sign |
+| -------- | ---- |
+| Left     | -    |
+| Right    | +    |
+
+###### Horizontal Tracking Wheel
+
+| Position | Sign |
+| -------- | ---- |
+| Back     | -    |
+| Front    | +    |
+
+#### Wheel Diameter
+
+As said previously, the marketed diameter of wheels do not match their actual diameter. See the "Wheel Diameter" section in the "Drivetrain" tutorial for more info.
+
+#### Gear Ratio
+
+Users may wish to gear their tracking wheels. Contrary to what you'd expect, its not done to increase the precision of the sensor. Instead, tracking wheels may be geared to make them thinner. The gear ratio is equal to the teeth of the driven gear divided by the teeth of the driving gear. If you don't gear the tracking wheel, the gear ratio is equal to 1.
+
+#### Config
+
+Now that we know all the properties of the tracking wheel, we can initialize our tracking wheels in code:
+
+```cpp
+// horizontal tracking wheel encoder. Rotation sensor, port 20, not reversed
+pros::Rotation horizontalEnc(20);
+// vertical tracking wheel encoder. ADI Encoder, ports 'C', 'D'
+pros::ADIEncoder verticalEnc('C', 'D', true);
+// horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
+lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -5.75);
+// vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
+lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
+```
+
+## PIDs
+
+We aren't going to tune the PIDs in this tutorial, but we will in the next. For now, just copy/paste the code below into your project:
+
+```cpp
+// lateral motion controller
+lemlib::ControllerSettings linearController(10, // proportional gain (kP)
+                                            0, // integral gain (kI)
+                                            3, // derivative gain (kD)
+                                            3, // anti windup
+                                            1, // small error range, in inches
+                                            100, // small error range timeout, in milliseconds
+                                            3, // large error range, in inches
+                                            500, // large error range timeout, in milliseconds
+                                            20 // maximum acceleration (slew)
+);
+
+// angular motion controller
+lemlib::ControllerSettings angularController(2, // proportional gain (kP)
+                                             0, // integral gain (kI)
+                                             10, // derivative gain (kD)
+                                             3, // anti windup
+                                             1, // small error range, in degrees
+                                             100, // small error range timeout, in milliseconds
+                                             3, // large error range, in degrees
+                                             500, // large error range timeout, in milliseconds
+                                             0 // maximum acceleration (slew)
+);
+```
+
+## 
