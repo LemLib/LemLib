@@ -766,7 +766,7 @@ class Chassis {
          *         chassis.arcade(leftY, // throttle
          *                        rightX, // steer
          *                        false, // enable drive curves
-         *                        0.75 // 
+         *                        0.75 // slightly prioritize steering
          *         );
          *         // delay to save resources
          *         pros::delay(25);
