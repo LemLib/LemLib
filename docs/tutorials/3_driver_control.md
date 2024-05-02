@@ -23,7 +23,7 @@ void opcontrol() {
         chassis.tank(leftY, rightY);
 
         // delay to save resources
-        pros::delay(10);
+        pros::delay(25);
     }
 }
 ```
@@ -47,7 +47,7 @@ void opcontrol() {
         chassis.arcade(leftY, leftX);
 
         // delay to save resources
-        pros::delay(10);
+        pros::delay(25);
     }
 }
 ```
@@ -68,7 +68,7 @@ void opcontrol() {
         chassis.arcade(leftY, rightX);
 
         // delay to save resources
-        pros::delay(10);
+        pros::delay(25);
     }
 }
 ```
@@ -92,7 +92,7 @@ void opcontrol() {
         chassis.curvature(leftY, leftX);
 
         // delay to save resources
-        pros::delay(10);
+        pros::delay(25);
     }
 }
 ```
@@ -113,7 +113,7 @@ void opcontrol() {
         chassis.curvature(leftY, rightX);
 
         // delay to save resources
-        pros::delay(10);
+        pros::delay(25);
     }
 }
 ```
@@ -122,35 +122,49 @@ void opcontrol() {
 There is no right answer to this question. The driver should use whichever control method they feel most comfortable with.
 
 ## Input Scaling
+
+```{info}
+This section is optional and is not needed to control the robot
+```
+
+```{seealso}
+[Detailed explanation in Vex Forum](https://www.vexforum.com/t/expo-drive-lemlibs-implementation/123337)
+```
+
 Making precise movements is difficult. If only there was a way make it less sensitive, but not limit the maximum speed. Well, there is a way, and it's called input scaling.
 
-Instead of the regular linear relationship between controller input and drivetrain output, input scaling is an exponential relationship to make small movements less sensitive in exchange for making fast movements less sensitive. Below in an image of this relationship:
+Instead of the regular linear relationship between controller input and drivetrain output, input scaling is an exponential relationship to make small movements less sensitive in exchange for making fast movements more sensitive. Below in an image of this relationship:
 
 ```{image} ../assets/3_driver_control/curve.jpeg
 :align: center
 :height: 400
 ```
 
-Here is a [Desmos graph](https://www.desmos.com/calculator/fuouoahwvc) which shows this relationship. You can tune `t` to make it as steep as you like. Once we have this t value, we can input it into the drive functions:
+### Code
 
 ```cpp
-pros::Controller controller();
+// input curve for throttle input during driver control
+lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
+                                     10, // minimum output where drivetrain will move out of 127
+                                     1.019 // expo curve gain
+);
 
-void opcontrol() {
-    // loop forever
-    while (true) {
-        // get left y and right x positions
-        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+// input curve for steer input during driver control
+lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
+                                  10, // minimum output where drivetrain will move out of 127
+                                  1.019 // expo curve gain
+);
 
-        // move the robot. T value is 12.4
-        chassis.curvature(leftY, rightX, 12.4);
-
-        // delay to save resources
-        pros::delay(10);
-    }
-}
+// create the chassis
+lemlib::Chassis chassis(drivetrain,
+                        lateral_controller,
+                        angular_controller,
+                        sensors,
+                        &throttle_curve, 
+                        &steer_curve
+);
 ```
+
 
 ## Conclusion
 That's all for driver control. We will be covering autonomous motion and tuning in the next tutorial.
