@@ -75,6 +75,10 @@ void opcontrol() {
 
 ### Throttle/Steer priority
 
+```{info}
+This section is optional and is not needed to control the robot
+```
+
 You can prioritize steering over turning, or vice versa. For example, you could fully prioritize steering so that the angular velocity of the robot is guaranteed to be the same for a given steering input, no matter the throttle input. With LemLib, you can prioritize steering over throttle by a set amount, from 0 to 1. 0.5 is the default, where steering and turning have the same priority. 0 fully prioritizes throttle, while 1 fully prioritizes steering. See the code block below:
 
 ```cpp
