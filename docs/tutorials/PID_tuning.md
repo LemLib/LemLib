@@ -6,7 +6,7 @@ PIDs are used in the majority of motion algorithms in LemLib. There are 2 PID Co
 
 ## What is a PID?
 
-```{tip}
+```{seealso}
 If you are not familiar with PID, check out the [BLRS Wiki](https://wiki.purduesigbots.com/software/control-algorithms/pid-controller)
 ```
 
