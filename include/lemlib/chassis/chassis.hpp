@@ -236,7 +236,7 @@ enum class DriveSide {
 /**
  * @brief Parameters for Chassis::swingToPoint
  *
- * We use a struct to simplify customization. Chassis::swingToHeading has many
+ * We use a struct to simplify customization. Chassis::swingToPoint has many
  * parameters and specifying them all just to set one optional param harms
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
