@@ -63,7 +63,7 @@ void autonomous() {
 
 To tune the PID, use this flowchart. Repeat until no amount of kD stops the robot from oscillating: 
 
-```{image} ../assets/pid_tuning/pd_tuning_flowchart.png
+```{image} ../assets/4_pid_tuning/pd_tuning_flowchart.png
 ```
 
 ### kI and Anti-Windup Range
@@ -90,7 +90,7 @@ First, we need to determine the range of steady-state error after a motion. To d
 
 Now that we have the anti-windup range, we need to tune kI. Repeat the procedure below until satisfied:
 
-```{image} ../assets/pid_tuning/i_tuning_flowchart.png
+```{image} ../assets/4_pid_tuning/i_tuning_flowchart.png
 ```
 
 When the procedure has been completed, enter your new kI gain.
@@ -143,7 +143,7 @@ lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
 
 To tune the PID, use this flowchart. Repeat until no amount of kD stops the robot from oscillating:
 
-```{image} ../assets/pid_tuning/pd_tuning_flowchart.png
+```{image} ../assets/4_pid_tuning/pd_tuning_flowchart.png
 ```
 
 When this process is finished, use the found values in the settings and restore the disabled gains:
@@ -185,7 +185,7 @@ First, we need to determine the range of steady-state error after a motion. To d
 
 Now that we have the anti-windup range, we need to tune kI. Repeat the procedure below until satisfied:
 
-```{image} ../assets/pid_tuning/i_tuning_flowchart.png
+```{image} ../assets/4_pid_tuning/i_tuning_flowchart.png
 ```
 
 When the procedure has been completed, enter your new kI gain.
