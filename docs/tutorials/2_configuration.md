@@ -53,30 +53,30 @@ Now, we need to specify what cartridge is used by every motor. The cartridge can
 
 |          **Color**         |         **RPM**         | **Code Representation**    |
 | -------------------------- | ----------------------- | -------------------------- | 
-| **Red**                    |           100           | `pros::E_MOTOR_GEARSET_36` |
-| **Green**                  |           200           | `pros::E_MOTOR_GEARSET_18` |
-| **Blue**                   |           600           | `pros::E_MOTOR_GEARSET_06` |
+| **Red**                    |           100           | `pros::E_MOTOR_GEARSET_RED` |
+| **Green**                  |           200           | `pros::E_MOTOR_GEARSET_GREEN` |
+| **Blue**                   |           600           | `pros::E_MOTOR_GEARSET_BLUE` |
 
 We need to specify the cartridge configuration in code as well:
 
 ```cpp
-pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_18); // green cartridge
-pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_06); // blue cartridge
-pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_36); // red cartridge
-pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_18); // green cartridge
-pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_06); // blue cartridge
-pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_36); // red cartridge
+pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_GREEN); // green cartridge
+pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_BLUE); // blue cartridge
+pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_RED); // red cartridge
+pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_GREEN); // green cartridge
+pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_BLUE); // blue cartridge
+pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_RED); // red cartridge
 ```
 
 Now, all our motors are configured. However, we need to add them to motor groups so LemLib can interface with them. See the code below:
 
 ```cpp
-pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_18); // left_motor_group
-pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_06); // left_motor_group
-pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_36); // left_motor_group
-pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_18); // right_motor_group
-pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_06); // right_motor_group
-pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_36); // right_motor_group
+pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_GREEN); // left_motor_group
+pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_BLUE); // left_motor_group
+pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_RED); // left_motor_group
+pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_GREEN); // right_motor_group
+pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_BLUE); // right_motor_group
+pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_RED); // right_motor_group
 
 // left motor group
 pros::MotorGroup left_motor_group({ front_left_motor, middle_left_motor, back_left_motor });
@@ -366,12 +366,12 @@ lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
 Now we have all the necessary information to configure lemlib. See the code block below:
 
 ```cpp
-pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_18); // left_motor_group
-pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_06); // left_motor_group
-pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_36); // left_motor_group
-pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_18); // right_motor_group
-pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_06); // right_motor_group
-pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_36); // right_motor_group
+pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_GREEN); // left_motor_group
+pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_BLUE); // left_motor_group
+pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_RED); // left_motor_group
+pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_GREEN); // right_motor_group
+pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_BLUE); // right_motor_group
+pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_RED); // right_motor_group
 
 // left motor group
 pros::MotorGroup left_motor_group({ front_left_motor, middle_left_motor, back_left_motor });
