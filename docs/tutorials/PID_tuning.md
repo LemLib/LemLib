@@ -10,7 +10,11 @@ PIDs are used in the majority of motion algorithms in LemLib. There are 2 PID Co
 If you are not familiar with PID, check out the [BLRS Wiki](https://wiki.purduesigbots.com/software/control-algorithms/pid-controller)
 ```
 
-A PID is a controller. It controls a mechanism. It takes a numerical input, and returns a numerical output. The numerical input is a measurement from a sensor, and the numerical output is the power for an actuator (e.g a motor). 
+A PID is a controller. It controls a mechanism. It takes a numerical input, and returns a numerical output. The numerical input is a measurement from a sensor, and the numerical output is the power for an actuator (e.g a motor).
+
+## Tuning a PID
+
+
 
 ## Angular PID
 
@@ -229,3 +233,35 @@ void autonomous() {
 ```
 
 Decrease slew to make the robot tip less. Run the program again and decrease slew until the robot no longer tips.
+
+## Exit Conditions
+
+Exit conditions determine when motions will exit. Motions have 3 exit conditions: 
+
+ * Timeout
+ * Short timeout when the robot is within a certain range of the target
+ * Very short timeout when the robot is within certain small range of the target
+
+The main timeout is used in case something unexpected happens, like when the robot collides with another robot. This allows the autonomous to continue to the next motion where it can potentially recover.
+
+The other 2 timeouts are used when the robot is close to the target. There is a longer timeout and a shorter timeout. For example: 
+
+ * if the robot is within 5 inches of the target for 500ms, exit
+ * if the robot is within 1 inch of the target for 100ms, exit
+
+These exit conditions are tuned in the PID settings constructor. See the code example below: 
+
+```cpp
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              3, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              20 // maximum acceleration (slew)
+);
+```
+
+You have now tuned the PIDs!
