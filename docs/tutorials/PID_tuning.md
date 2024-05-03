@@ -62,6 +62,47 @@ To tune the PID, use this flowchart. Repeat until no amount of kD stops the robo
 ```{image} ../assets/pid_tuning/pd_tuning_flowchart.png
 ```
 
+### kI and Anti-Windup Range
+
+```{caution}
+kI should only be used as a last resort, when kP and kD can't be tuned to a satisfactory degree, which is rare
+```
+
+```{important}
+This needs to be done **after** tuning kP and kD
+```
+
+```{important}
+All gains other than kP and kD should be disabled while tuning kI
+```
+
+```{note}
+steady-state error is the distance between the robot and the target after the robot stops moving
+```
+
+kI is the integral gain. It's used to correct steady-state error. This is usually used in velocity controllers and not positional controllers, but in some cases it is necessary for positional controllers.
+
+First, we need to determine the range of steady-state error after a motion. To do that, record the average steady-state error. To record the average steady state error, move the robot in motions between 10 degrees and 180 degrees and record the average steady-state error. Then increase that by 50%. This is the anti-windup range. Enter the new anti-windup range into the settings. But what is an anti-windup range? An anti-windup range is a range where the integral component of the controller can be increased. If error is outside of this range, integral will be set to 0. This is to prevent overshooting the target for long motions.
+
+Now that we have the anti-windup range, we need to tune kI. Repeat the procedure below until satisfied:
+
+```{image} ../assets/pid_tuning/i_tuning_flowchart.png
+```
+
+When the procedure has been completed, enter your new kI gain.
+
+### Slew
+
+```{caution}
+It is extremely rare that angular acceleration needs to be limited. Skip this section unless you know what you are doing
+```
+
+Slew is used to limit angular acceleration. There aren't really any situations where this is necessary except for extreme circumstances. For example: a 70lbs VEXU robot that will quickly burn out its motors if it accelerates too quickly.
+
+A slew of `0` disables acceleration limiting. Higher values allow the robot to accelerate faster. For example, a value of `127` will allow the robot to accelerate to max velocity from rest in 10ms.
+
+Since there is no use case for angular acceleration limiting except in extreme situations, this document will not cover tuning angular slew.
+
 ## Lateral PID
 
 Here is the PID settings we copy/pasted earlier:
@@ -126,18 +167,24 @@ kI should only be used as a last resort, when kP and kD can't be tuned to a sati
 This needs to be done **after** tuning kP and kD
 ```
 
+```{important}
+All gains other than kP and kD should be disabled while tuning kI
+```
+
 ```{note}
 steady-state error is the distance between the robot and the target after the robot stops moving
 ```
 
 kI is the integral gain. It's used to correct steady-state error. This is usually used in velocity controllers and not positional controllers, but in some cases it is necessary for positional controllers.
 
-First, we need to determine the range of steady-state error after a motion. To do that, record the average steady-state error. To record the average steady state error, move the robot in motions between 5" and 48" and record the average steady-state error. Then increase that by 50%. This is the anti-windup range. But what is an anti-windup range? An anti-windup range is a range where the integral component of the controller can be increased. If error is outside of this range, integral will be set to 0. This is to prevent overshooting the target for long motions.
+First, we need to determine the range of steady-state error after a motion. To do that, record the average steady-state error. To record the average steady state error, move the robot in motions between 5" and 48" and record the average steady-state error. Then increase that by 50%. This is the anti-windup range. Enter the new anti-windup range into the settings. But what is an anti-windup range? An anti-windup range is a range where the integral component of the controller can be increased. If error is outside of this range, integral will be set to 0. This is to prevent overshooting the target for long motions.
 
 Now that we have the anti-windup range, we need to tune kI. Repeat the procedure below until satisfied:
 
 ```{image} ../assets/pid_tuning/i_tuning_flowchart.png
 ```
+
+When the procedure has been completed, enter your new kI gain.
 
 ### Slew
 
