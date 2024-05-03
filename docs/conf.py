@@ -17,6 +17,8 @@ extensions = [
     'breathe',
     'myst_parser',
     'sphinx_copybutton',
+    'sphinx.ext.autosectionlabel',
+    'sphinx.ext.todo',
 ]
 
 templates_path = ['_templates']
@@ -68,7 +70,7 @@ myst_enable_extensions = [
     "fieldlist",
     "html_admonition",
     "html_image",
-    #"linkify",
+    "linkify",
     "replacements",
     "smartquotes",
     "strikethrough",

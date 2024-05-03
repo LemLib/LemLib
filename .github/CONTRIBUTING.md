@@ -159,7 +159,7 @@ You can apply the kernel to your project with the following commands
 - Apply the kernel: `pros c apply LemLib@a.b.c-d`
 - Remove the template: `pros c remove LemLib@a.b.c-d`
 
-In order to contribute to LemLib, you will need to [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the repository and clone it to your local machine. You can then [commit](#commit-messages) your changes to your fork. Once you are done, you can [create a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the master branch. You can use the [Pull Request Template](PULL_REQUEST_TEMPLATE.md) to structure your pull request.
+In order to contribute to LemLib, you will need to [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the repository and clone it to your local machine. You can then [commit](#commit-messages) your changes to your fork. Once you are done, you can [create a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the master branch. You can use the [Pull Request Template](https://github.com/LemLib/LemLib/blob/master/.github/PULL_REQUEST_TEMPLATE.md) to structure your pull request.
 
 
 ### Improving The Documentation
@@ -168,12 +168,11 @@ We use a combination of [Doxygen](http://www.doxygen.nl/), [Breathe](https://www
 You can improve the documentation by:
 - Editing the [README](../README.md)
 - Adding/Editing comments in the source code
-- Editing the [Doxygen configuration file](../docs/Doxyfile)
-- Changing the [Header HTML file](../docs/doxygen-awesome/header.html) and the [Footer HTML file](../docs/doxygen-awesome/footer.html)
-- Adding/Editing [Tutorials](../docs/tutorials)
+- Editing the [Doxygen configuration file](https://github.com/LemLib/LemLib/blob/master/docs/Doxyfile)
+- Adding/Editing [Tutorials](https://github.com/LemLib/LemLib/tree/master/docs/tutorials)
 - Opening an [Issue](https://github.com/LemLib/LemLib/issues) to suggest a change or to report a bug
 
-Changes should be requested via a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](PULL_REQUEST_TEMPLATE.md) to structure your pull request. Additionally, you should verify that the documentation builds correctly on your machine.
+Changes should be requested via a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](https://github.com/LemLib/LemLib/blob/master/.github/PULL_REQUEST_TEMPLATE.md) to structure your pull request. Additionally, you should verify that the documentation builds correctly on your machine.
 
 You can do so by installing Doxygen, and all of the python dependencies listed in `docs/requirements.txt`. Once you've done that, run the following commands to render the documentation:
 
