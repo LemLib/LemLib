@@ -29,8 +29,10 @@ self
 ./tutorials/1_getting_started.md
 ./tutorials/2_configuration.md
 ./tutorials/3_driver_control.md
-./tutorials/4_auto_and_tuning.md
-./tutorials/5_pure_pursuit.md
+./tutorials/4_pid_tuning.md
+./tutorials/5_turning.md
+./tutorials/6_lateral_motion.md
+./tutorials/7_pure_pursuit.md
 ```
 
 ```{toctree}
