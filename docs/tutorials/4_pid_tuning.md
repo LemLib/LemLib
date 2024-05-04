@@ -265,3 +265,6 @@ lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
 ```
 
 You have now tuned the PIDs!
+
+> [Previous - Driver Control](./3_driver_control.md) <br>
+> [Next - Turning](./5_turning.md)

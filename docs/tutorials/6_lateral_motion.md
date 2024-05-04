@@ -81,3 +81,6 @@ chassis.moveToPose(
 ```{seealso}
 {cpp:func}`moveToPose <lemlib::Chassis::moveToPose>` and {cpp:class}`MoveToPoseParams <lemlib::MoveToPoseParams>` API references.
 ```
+
+> [Previous - Turning](./5_turning.md) <br>
+> [Next - Pure Pursuit](./7_pure_pursuit.md)
