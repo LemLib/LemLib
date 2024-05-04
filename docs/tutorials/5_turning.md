@@ -10,7 +10,7 @@ Turning motions are the simplest motions LemLib can perform. All of the motions 
 
 This motion turns the robot to face a certain angle. This angle is absolute, meaning turning the robot to face 90 degrees will always cause the robot to face the same direction. 
 
-The function has two required arguments, the angle to turn to (in degrees), and the timeout. This is a hard time limit for how long the movement can take (in milliseconds. After this time period has elapsed, the movement *will* end, no matter how complete it is.
+The function has two required arguments, the angle to turn to (in degrees), and the timeout. This is a hard time limit for how long the movement can take (in milliseconds). After this time period has elapsed, the movement *will* end, no matter how complete it is.
 
 Here's an example of the simplest call you can make:
 
