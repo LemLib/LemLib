@@ -1,6 +1,6 @@
 # Documentation Home
 
-Welcome to the documentation for LemLib! This site contains everything you'd need to use to use or contribute to the LemLib template.
+Welcome to the documentation for LemLib! This site contains everything you'd need to use to use or contribute to LemLib.
 
 If you're new to LemLib, and are looking for an introduction, check out the introductory [tutorials](./tutorials/1_getting_started.md).
 
