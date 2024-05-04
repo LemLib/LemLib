@@ -4,6 +4,10 @@ Turning motions are the simplest motions LemLib can perform. All of the motions 
 
 ## Turn To Heading
 
+```{seealso}
+{cpp:func}`turnToHeading <lemlib::Chassis::turnToHeading>` and {cpp:class}`TurnToHeadingParams <lemlib::TurnToHeadingParams>` API references.
+```
+
 This motion turns the robot to face a certain angle. This angle is absolute, meaning turning the robot to face 90 degrees will always cause the robot to face the same direction. 
 
 The function has two required arguments, the angle to turn to (in degrees), and the timeout. This is a hard time limit for how long the movement can take (in milliseconds. After this time period has elapsed, the movement *will* end, no matter how complete it is.
@@ -30,9 +34,11 @@ chassis.turnToHeading(
 ); 
 ```
 
-You can find more details at {cpp:func}`turnToHeading <lemlib::Chassis::turnToHeading>` and {cpp:class}`TurnToHeadingParams <lemlib::TurnToHeadingParams>` API references.
-
 ## Turn To Point
+
+```{seealso}
+{cpp:func}`turnToPoint <lemlib::Chassis::turnToPoint>` and {cpp:class}`TurnToPointParams <lemlib::TurnToPointParams>` API references.
+```
 
 `turnToPoint` motions work exactly the same as `turnToHeading` motions, except they target a point in Cartesian coordinates on the field, instead of a heading. This is particularly useful if you want to turn to face a game object with a fixed position, regardless if your position on the field.
 
@@ -49,9 +55,11 @@ chassis.turnTo(53, 53, 1000);
 
 Similar to `turnToHeading`, the motion also takes two optional arguments, `params` and `async`. 
 
-You can find more details at {cpp:func}`turnToPoint <lemlib::Chassis::turnToPoint>` and {cpp:class}`TurnToPointParams <lemlib::TurnToPointParams>` API references.
-
 ## Swing to Heading
+
+```{seealso}
+{cpp:func}`swingToHeading <lemlib::Chassis::swingToHeading>` and {cpp:class}`SwingToHeadingParams <lemlib::SwingToHeadingParams>` API references.
+```
 
 Swing motions are unique in that they only use half the drivetrain to move.
 
@@ -71,9 +79,11 @@ The following illustration shows that this motion looks like if everything worke
 
 As with all the other turn motions `swingToHeading` also takes a `params` and `async` argument, which works exactly like the others do.
 
-You can find more details at {cpp:func}`swingToHeading <lemlib::Chassis::swingToHeading>` and {cpp:class}`SwingToHeadingParams <lemlib::SwingToHeadingParams>` API references.
-
 ## Swing to Point
+
+```{seealso}
+{cpp:func}`swingToPoint <lemlib::Chassis::swingToPoint>` and {cpp:class}`SwingToPointParams <lemlib::SwingToPointParams>` API references.
+```
 
 `swingToPoint` works exactly like `swingToHeading`, except it turns to face a point rather than a heading.
 
@@ -81,6 +91,3 @@ You can find more details at {cpp:func}`swingToHeading <lemlib::Chassis::swingTo
 chassis.swingToPoint(53, 53, 4000); // swing to face the point (53, 53) degrees, with a timeout of 4000 ms
 ```
 As with all the other turn motions `swingToPoint` also takes a `params` and `async` argument, which works exactly like the others do.
-
-
-You can find more details at {cpp:func}`swingToPoint <lemlib::Chassis::swingToPoint>` and {cpp:class}`SwingToPointParams <lemlib::SwingToPointParams>` API references.
