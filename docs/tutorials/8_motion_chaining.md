@@ -46,24 +46,24 @@ Once the error is below `earlyExitRange`, the motion will automatically exit and
 
 ```cpp
 void intakeBall() {
-    chassis.setPose({0,0,0});
-    const lemlib::Pose intakeBallTarget {0,24};
+    chassis.setPose(0, 0, 0);
+    lemlib::Pose intakeBallTarget(0, 24);
 
     // spin intake
     intake();
     // move towards ball
-    chassis.moveToPoint(intakeBallTarget.x,intakeBallTarget.y, 1500, {.minSpeed=48});
+    chassis.moveToPoint(intakeBallTarget.x, intakeBallTarget.y, 1500, {.minSpeed=48});
   
     // Wait until a ball has been intaked.
     // Or until the motion has stopped after which, the state of
     // the intake is very unlikely to change and we'd be wasting time
-    while (Robot::chassis->isInMotion() && !isBallInIntake()) {
+    while (chassis.isInMotion() && !isBallInIntake()) {
         pros::delay(10); // don't consume all the cpu's resources
     }
   
     // Cancel and move on to the next motion since the purpose of the first is complete.
     // If the motion had exited before a ball was detected, then this will do nothing. 
-    chassis->cancelMotion();
+    chassis.cancelMotion();
 }
 ```
 
@@ -82,7 +82,7 @@ Now lets look at some code
 
 ```cpp
 void goAroundObstacle() {
-    chassis.setPose({0,0,90});
+    chassis.setPose(0, 0, 90);
     // go around obstacle to prevent hitting it
     // TODO: explain params
     chassis.moveToPose(48, -24, 90, 2000, {.minSpeed=72, .earlyExitRange=8});
