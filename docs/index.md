@@ -30,9 +30,10 @@ self
 ./tutorials/2_configuration.md
 ./tutorials/3_driver_control.md
 ./tutorials/4_pid_tuning.md
-./tutorials/5_turning.md
+./tutorials/5_angular_motion.md
 ./tutorials/6_lateral_motion.md
 ./tutorials/7_pure_pursuit.md
+./tutorials/8_motion_chaining.md
 ```
 
 ```{toctree}
