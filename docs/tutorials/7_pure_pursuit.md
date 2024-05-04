@@ -1,4 +1,4 @@
-# 5 - Pure Pursuit
+# 7 - Pure Pursuit
 
 ## Introduction
 
@@ -8,7 +8,7 @@ In this tutorial, we will be be using Pure Pursuit. Pure Pursuit is a path follo
 
 Pure Pursuit is a path following algorithm that allows the robot to follow a path quickly. It works by drawing an imaginary circle around the robot, and then finding the intersection of the circle and the path. The robot will then drive towards the intersection. This is shown in the GIF below:
 
-```{image} ../assets/5_pure_pursuit/pursuit.gif
+```{image} ../assets/7_pure_pursuit/pursuit.gif
 :height: 400
 :align: center
 ```
@@ -27,7 +27,7 @@ Using the Path Generator is simple:
 
 Another feature of the path.jerryio is the ability to make the robot go faster or slower at certain points. The planner will automatically slow down the robot around sharp corners and decelerate as it approaches the end of the path. You can view the velocity of the path at each waypoint on the speed graph at the bottom of the page. See the video below:
 
-```{image} ../assets/5_pure_pursuit/custom_speed.gif
+```{image} ../assets/7_pure_pursuit/custom_speed.gif
 :height: 400
 :align: center
 ```
@@ -48,6 +48,8 @@ ASSET(example_txt);
 ASSET(example2_txt)
 
 void autonomous() {
+    // set chassis pose
+    chassis.setPose(0, 0, 0);
     // lookahead distance: 15 inches
     // timeout: 2000 ms
     chassis.follow(example_txt, 15, 2000);
@@ -61,8 +63,4 @@ In the above example, the robot reads the path in "example.txt", has a timeout o
 ```{attention}
 The position of the robot when it starts following the path is critical. It does not need to be very close, but it is easy to accidentally make the robot start at the end of the path than at the start of the path. You can identify the end of the path with the checkered flag at the end of the path. If you do make this mistake, it will seem that the robot is barely moving, not moving where its supposed to, or even not moving at all. 
 ```
-## Conclusion
-That's it for the tutorials! I hope they were helpful. If you have any questions, feel free to ask me on Discord (sizzlinseal). You can also open issues and pull requests on the repos.
- - [LemLib](https://github.com/LemLib/LemLib)
- - [path.jerryio](https://path.jerryio.com/)
 
