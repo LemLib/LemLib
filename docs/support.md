@@ -12,7 +12,3 @@ To get started, join our [Discord](https://discord.gg/pCHr7XZUTj), and check out
 
 Contributing is another great way to help us improve LemLib. All contributions are welcome, no matter how large or small. We ask that before you contribute, you read the [contributing guide](./contribute.md).
 
-## Donating
-
-> TODO: write this
-
