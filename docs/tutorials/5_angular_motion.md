@@ -1,4 +1,4 @@
-# 5 - Turning Motions
+# 5 - Angular Motions
 
 Turning motions are the simplest motions LemLib can perform. All of the motions will rotate the robot in some way, and only use the angular PID controller.
 
@@ -72,7 +72,7 @@ chassis.swingToHeading(45, 4000); // swing to face 45 degrees, with a timeout of
 
 The following illustration shows that this motion looks like if everything worked successfully:
 
-```{image} ../assets/5_turning/swing-turn.svg
+```{image} ../assets/5_angular_motion/swing-turn.svg
 :width: 400
 :align: center
 ```
@@ -91,3 +91,6 @@ As with all the other turn motions `swingToHeading` also takes a `params` and `a
 chassis.swingToPoint(53, 53, 4000); // swing to face the point (53, 53) degrees, with a timeout of 4000 ms
 ```
 As with all the other turn motions `swingToPoint` also takes a `params` and `async` argument, which works exactly like the others do.
+
+> [Previous - PID Tuning](./4_pid_tuning.md) <br>
+> [Next - Lateral Motion](./6_lateral_motion.md)
