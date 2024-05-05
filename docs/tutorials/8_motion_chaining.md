@@ -90,3 +90,5 @@ void goAroundObstacle() {
     chassis.moveToPose(64, 3, 0, 2000);
 }
 ```
+
+> [Previous - Pure Pursuit](./7_pure_pursuit.md)

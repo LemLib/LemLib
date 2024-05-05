@@ -64,4 +64,5 @@ In the above example, the robot reads the path in "example.txt", has a timeout o
 The position of the robot when it starts following the path is critical. It does not need to be very close, but it is easy to accidentally make the robot start at the end of the path than at the start of the path. You can identify the end of the path with the checkered flag at the end of the path. If you do make this mistake, it will seem that the robot is barely moving, not moving where its supposed to, or even not moving at all. 
 ```
 
-> [Previous - Lateral Motion](./6_lateral_motion.md)
+> [Previous - Lateral Motion](./6_lateral_motion.md) <br>
+> [Next - Motion Chaining](./8_motion_chaining.md)
