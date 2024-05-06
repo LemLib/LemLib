@@ -21,28 +21,23 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 - Generic PID class
 - Odometry
 - Odom turn to face point
-- [Boomerang controller](https://www.desmos.com/calculator/sptjw5szex) (Beta)
+- [Boomerang controller](https://www.desmos.com/calculator/sptjw5szex)
 - Pure Pursuit
-- [Path Generator](https://github.com/LemLib/Path-Gen) support
 
 ## Example Project
-You can find a fully annotated example project [here](https://github.com/LemLib/LemLib/blob/master/src/main.cpp).
+You can find a fully annotated example project [here](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp).
 
 ## Tutorials
-The tutorials provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to Pure Pursuit.
- - 1: [Getting Started](https://lemlib.github.io/LemLib/md_docs_tutorials_1_getting_started.html)
- - 2: [Setting up the Chassis](https://lemlib.github.io/LemLib/md_docs_tutorials_2_setting_up_the_chassis.html)
- - 3: [Tuning and Moving](https://lemlib.github.io/LemLib/md_docs_tutorials_3_tuning_and_moving.html)
- - 4: [Pure Pursuit](https://lemlib.github.io/LemLib/md_docs_tutorials_4_pure_pursuit.html)
+The [tutorials](https://lemlib.readthedocs.io/en/latest/tutorials/1_getting_started.html) provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to Path Following:
 
 ## FAQ
 _**1. Help! Why is my controller vibrating?**_
-Your inertial sensor calibration failed.
+If your controller vibrated more than once, your inertial sensor calibration failed.
 Check if its connected to the right port and try again.
 
 _**2. What drivetrains are supported?**_
 Only tank/differential.
-This is not going to change, as other drivetrains simply aren't popular enough.
+This is not going to change until other drivetrains are competitive.
 
 _**3. Do I need tracking wheels?**_
 No, but it is recommended.
@@ -53,14 +48,13 @@ No, but it is highly recommended.
 The one exception to this would be if you have 2 parallel tracking wheels which are tuned well and are perfectly square. LemLib will work without it, but the accuracy will be compromised. 
 
 _**5. Do I need an SD card?**_
-Only if you use Pure Pursuit `chassis.follow()`.
-This will change in the next major release however. In fact you could try it right now in our latest beta.
+As of v0.5.0, no SD card is necessary.
 
 _**6. What are the units?**_
 The units are inches and degrees.
 In a future release, Qunits will be used so you can use whatever units you like.
 
-_**7. Is LemLib VRC legal?**_
+_**7. Is LemLib V5RC legal?**_
 Yes.
 Per the RECF student-centred policy, in the context of third-party libraries.
 > Students should be able to understand and explain the code used on their robots
@@ -68,7 +62,7 @@ Per the RECF student-centred policy, in the context of third-party libraries.
 In other words, you need to know how LemLib works. You don't need to know the details like all the math, just more or less how the algorithm works. If you want to learn more about LemLib, you can look through the documentation and ask questions on our Discord server.
 
 ## Documentation
-Check out the [Doxygen documentation](https://lemlib.github.io/LemLib/index.html).
+Check out the [Documentation](https://lemlib.readthedocs.io/en/latest/index.html).
 
 ## Contributing
 Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/.github/CONTRIBUTING.md) and join our [Discord server](https://discord.gg/pCHr7XZUTj).
