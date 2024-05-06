@@ -23,6 +23,8 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 - Odom turn to face point
 - [Boomerang controller](https://www.desmos.com/calculator/sptjw5szex)
 - Pure Pursuit
+- Motion Chaining
+- Driver Control
 
 ## Example Project
 You can find a fully annotated example project [here](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp).
