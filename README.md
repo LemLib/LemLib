@@ -63,7 +63,7 @@ Per the RECF student-centred policy, in the context of third-party libraries.
 In other words, you need to know how LemLib works. You don't need to know the details like all the math, just more or less how the algorithm works. If you want to learn more about LemLib, you can look through the documentation and ask questions on our Discord server.
 
 ## Documentation
-Check out the [Documentation](https://lemlib.readthedocs.io/en/latest/index.html).
+Check out the [Documentation](https://lemlib.readthedocs.io/en/v0.5.0/index.html).
 
 ## Contributing
 Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/.github/CONTRIBUTING.md) and join our [Discord server](https://discord.gg/pCHr7XZUTj).
