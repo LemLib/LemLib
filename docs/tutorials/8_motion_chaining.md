@@ -26,9 +26,9 @@ Motion chaining is the chaining of multiple motions together such that there is 
 
 ### Minimum Speed
 
-To ensure the robot doesn't slow down, we will specify a minimum speed that the robot can go at. This `minSpeed` overrides everything (`slew`, PID, `maxSlipSpeed`), but it does not override `maxSpeed`. It also doesn't override turning in 2d motions. This means that if `minSpeed=127`, then the robot will still be able to turn towards its target, but even so, it will not be very accurate. 
+To ensure the robot doesn't slow down, we will specify a minimum speed that the robot can go at. This `minSpeed` overrides everything (`slew`, PID, `maxSlipSpeed`), but it does not override `maxSpeed`. It also doesn't override turning in 2d motions. This means that if `minSpeed=127`, then the robot will still be able to turn towards its target, but even so, it will not be very accurate.
 
-```{tip} 
+```{tip}
 During a 2d motion a ratio will be applied to ensure that the left power to right power ratio is maintained even if they are above `maxSpeed`.
 ```
 
@@ -53,42 +53,84 @@ void intakeBall() {
     intake();
     // move towards ball
     chassis.moveToPoint(intakeBallTarget.x, intakeBallTarget.y, 1500, {.minSpeed=48});
-  
+
     // Wait until a ball has been intaked.
     // Or until the motion has stopped after which, the state of
     // the intake is very unlikely to change and we'd be wasting time
     while (chassis.isInMotion() && !isBallInIntake()) {
         pros::delay(10); // don't consume all the cpu's resources
     }
-  
+
     // Cancel and move on to the next motion since the purpose of the first is complete.
-    // If the motion had exited before a ball was detected, then this will do nothing. 
+    // If the motion had exited before a ball was detected, then this will do nothing.
     chassis.cancelMotion();
 }
 ```
 
-## Example Code
+## Example
 
 ### Introduction Example
 
-Lets define some coordinates for our example first:
+Let's revisit the example from the introduction, to see how you might actually implement it.
 
 ```{image} ../assets/8_motion_chaining/boomerang-chaining-around-obstacle-with-coords.svg
 :align: center
 :width: 600
 ```
 
-Now lets look at some code
+Here's how you'd implement this movement in code:
 
 ```cpp
 void goAroundObstacle() {
     chassis.setPose(0, 0, 90);
+
     // go around obstacle to prevent hitting it
-    // TODO: explain params
-    chassis.moveToPose(48, -24, 90, 2000, {.minSpeed=72, .earlyExitRange=8});
+    chassis.moveToPose(
+        48,
+        -24,
+        90,
+        2000,
+        {.minSpeed=72, .earlyExitRange=8}
+        // a minSpeed of 72 means that the chassis will slow down as
+        // it approaches the target point, but it won't come to a full stop
+
+        // an earlyExitRange of 8 means the movement will exit 8" away from
+        // the target point
+    );
+
     // go to target position
     chassis.moveToPose(64, 3, 0, 2000);
 }
 ```
 
-> [Previous - Pure Pursuit](./7_pure_pursuit.md)
+### Turning Example
+
+Sometimes you might want to make a turn at the beginning of a movement to create a better path for a `moveToPose`.
+
+Here's a drawing of a possible use case:
+
+```{image} ../assets/8_motion_chaining/chain-with-turn.svg
+
+```
+
+And here's how you would implement that movement:
+
+```cpp
+// turn the chassis 90 degrees, so it faces away from the goal
+chassis.swingToHeading(
+    90,
+    500,
+    {.minSpeed = 127, .earlyExitRange = 20}
+    // minSpeed 127 means the chassis will move as fast
+    // as possible to make this turn
+    // the earlyExitRange of 20 means that the chassis
+    // will exit once it gets within 20 degrees of the
+    // target angle
+);
+
+// at this point in the movement that chassis is moving at a speed of 127 and is facing away from the goal,
+// towards the target point
+
+// now we can move the chassis to the desired point
+chassis.moveToPose(120, 10, 0, 1000);
+```
