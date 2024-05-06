@@ -39,5 +39,3 @@ finally, put this at the top of your main.cpp file
 ```
 
 You've now installed LemLib, and you're ready to configure your robot!
-
-> [Next - Configuration](./2_configuration.md)
