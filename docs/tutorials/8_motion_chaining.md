@@ -105,7 +105,8 @@ void goAroundObstacle() {
 
 ### Turning Example
 
-Sometimes you might want to make a turn at the beginning of a movement to create a better path for a `moveToPose`.
+Sometimes you might want to make a turn at the beginning of a movement to create a better path for a `moveToPose`. 
+This is especially important if the next motion has a high minSpeed, because it will cause the motion to not wait until it is facing the target, and rather immediately start going forward.
 
 Here's a drawing of a possible use case:
 
@@ -116,7 +117,7 @@ Here's a drawing of a possible use case:
 And here's how you would implement that movement:
 
 ```cpp
-// turn the chassis 90 degrees, so it faces away from the goal
+// turn the chassis to 90 degrees, so it faces away from the goal
 chassis.swingToHeading(
     90,
     500,
