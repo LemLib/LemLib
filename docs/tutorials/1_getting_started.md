@@ -1,52 +1,41 @@
-# 01 - Getting Started
+# 1 - Getting Started
 
-## Introduction
+## Installation - VS Code
 
-Welcome to LemLib! This tutorial will walk you through the basics of LemLib and how to get everything set up.
+We recommend using [Visual Studio Code](https://code.visualstudio.com/) as a code editor. Click on the link and click the download button, as shown in the image below:
+![vscode](../assets/1_getting_started/download-visual-studio-code.png)
 
-## Installation - Development Environment
+## Installation - PROS
 
-LemLib is a [PROS](https://pros.cs.purdue.edu) template, so you can use it with any text editor. However, we recommend using Visual Studio Code, as it has the best support for PROS.
+[PROS](https://pros.cs.purdue.edu/) provides the tooling needed to build and upload programs. It can be installed as a VSCode [Extension](https://marketplace.visualstudio.com/items?itemName=sigbots.pros). Simply click on the blocks at the bottom of the sidebar on the left in VSCode, search up `PROS`, and click `install`, as shown in the image below:
 
-To install Visual Studio Code, go to [https://code.visualstudio.com](https://code.visualstudio.com) and download the installer for your operating system.
+![pros](../assets/1_getting_started/install-pros.png)
 
-<img src="./assets/1_getting_started/download-visual-studio-code.png"  width="800">
+After the extension has been downloaded, you should see a notification as seen in the image below. Click install, and wait for it to finish:
 
-<br>
-Once you have installed it, open it and install the PROS extension. You can do this by clicking typing `Ctrl+Shift+X` (`⌘+Shift+X` on Mac), searching for "PROS", and clicking the install button.
-<br>
-<img src="./assets/1_getting_started/install-pros.png" height=500 style="display: block;margin-left: auto;margin-right: auto;">
-<br>
+![pros-toolchain](../assets/1_getting_started/download-pros-toolchain.png)
 
-And finally, we can create a new project. Navigate to the new PROS tab on the left, and click the "Create New Project" button. Select a folder, a name, v5, and when asked to select a version, select "latest".
+After the toolchain has been installed, you can create a new PROS project. Select the PROS logo in the sidebar, click `Create Project`, select an empty folder for the project, give it a suitable name, e.g `1010N-Spin-Up`, select `v5`, and for kernel version select `3.8.3`. A notification in the bottom right will pop up notifying you that the project is being created. VSCode will open a new window as soon as it is ready. There will be a popup asking whether to "trust" the folder, click `yes`. You have now installed PROS and created your first project!
 
-Now we can install LemLib!
-<br>
+## Installation - clangd
 
-## Installation
+[clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) is a linter and provides code completion, and is essential for any programmer. We recommend this over the [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) extension as its much faster.
 
-In Visual Studio Code, press the PROS button on the sidebar and click `Open Integrated Terminal`.
+To install clangd, repeat the steps to install the PROS extension, but search up `clangd` instead of `PROS`. After it has been installed, open the `main.cpp` file in your project. A notification from clangd will appear in the bottom right stating that it needs to install. Click `install` and wait for it to finish installing. If the notification does not appear, ensure you have clangd installed and reopen `main.cpp`. You have now installed clangd!
 
-<br>
-<img src="./assets/1_getting_started/integrated_terminal.png" height=800 style="display: block;margin-left: auto;margin-right: auto;">
+## LemLib Installation
 
-Then copy and paste one of the following into the terminal, and hit enter.
-- latest stable version:
-  ```bash
-  pros c add-depot LemLib https://raw.githubusercontent.com/LemLib/LemLib/depot/stable.json # adds LemLib's stable depot
-  pros c apply LemLib # applies latest stable version of LemLib
-  ```
-- latest beta version:
-  ```bash
-  pros c add-depot LemLib https://raw.githubusercontent.com/LemLib/LemLib/depot/stable.json # adds LemLib's stable depot
-  pros c add-depot LemLib-beta https://raw.githubusercontent.com/LemLib/LemLib/depot/beta.json # adds LemLib's beta depot
-  pros c apply LemLib # applies latest beta version of LemLib
-  ```
-Finally, put the following at the top of your `main.cpp` file:
-```cpp
+To install LemLib, first need to open the PROS integrated terminal. This can be done by clicking on the PROS icon on the left of the screen and clicking `integrated terminal`
+
+Then, copy/paste the following commands into your command line. This will tell PROS where it can find LemLib, and to apply the latest version of LemLib to your project:
+```
+pros c add-depot LemLib https://raw.githubusercontent.com/LemLib/LemLib/depot/stable.json # adds LemLib's stable depot
+pros c apply LemLib # applies latest stable version of LemLib
+```
+
+finally, put this at the top of your main.cpp file
+```c++
 #include "lemlib/api.hpp"
 ```
 
-You are now ready to start using LemLib!
-
-[Next Tutorial](2_setting_up_the_chassis.md)
+You've now installed LemLib, and you're ready to configure your robot!

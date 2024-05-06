@@ -35,8 +35,8 @@ lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
                               10, // 10 inch track width
-                              lemlib::Omniwheel::NEW_4, // using new 3.25" omnis
-                              343, // drivetrain rpm is 343
+                              lemlib::Omniwheel::NEW_4, // using new 4" omnis
+                              360, // drivetrain rpm is 360
                               2 // horizontal drift is 2. If we had traction wheels, it would have been 8
 );
 
@@ -65,10 +65,9 @@ lemlib::ControllerSettings angularController(2, // proportional gain (kP)
 );
 
 // sensors for odometry
-// note that in this example we use internal motor encoders (IMEs), so we don't pass vertical tracking wheels
-lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel 1, set to null
-                            nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-                            &horizontal, // horizontal tracking wheel 1
+lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel
+                            nullptr, // vertical tracking wheel 2, set to nullptr as we don't have a second one
+                            &horizontal, // horizontal tracking wheel
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
@@ -108,7 +107,6 @@ void initialize() {
 
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
-        lemlib::Pose pose(0, 0, 0);
         while (true) {
             // print robot location to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x

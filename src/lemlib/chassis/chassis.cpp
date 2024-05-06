@@ -1,29 +1,15 @@
-#include <algorithm>
 #include <math.h>
-#include <optional>
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.h"
-#include "pros/misc.hpp"
 #include "lemlib/logger/logger.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
-#include "lemlib/timer.hpp"
 #include "pros/rtos.hpp"
 
-/**
- * @brief The variables are pointers so that they can be set to nullptr if they are not used
- * Otherwise the chassis class would have to have a constructor for each possible combination of sensors
- *
- * @param vertical1 pointer to the first vertical tracking wheel
- * @param vertical2 pointer to the second vertical tracking wheel
- * @param horizontal1 pointer to the first horizontal tracking wheel
- * @param horizontal2 pointer to the second horizontal tracking wheel
- * @param imu pointer to the IMU
- */
 lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
                                  TrackingWheel* horizontal2, pros::Imu* imu)
     : vertical1(vertical1),
@@ -32,17 +18,6 @@ lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertic
       horizontal2(horizontal2),
       imu(imu) {}
 
-/**
- * @brief The constants are stored in a class so that they can be easily passed to the chassis class
- * Set a constant to 0 and it will be ignored
- *
- * @param leftMotors pointer to the left motors
- * @param rightMotors pointer to the right motors
- * @param trackWidth the track width of the robot
- * @param wheelDiameter the diameter of the wheel used on the drivetrain
- * @param rpm the rpm of the wheels
- * @param horizontalDrift higher values make the robot move faster but causes more overshoot on turns
- */
 lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth,
                                float wheelDiameter, float rpm, float horizontalDrift)
     : leftMotors(leftMotors),
@@ -52,16 +27,6 @@ lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* r
       rpm(rpm),
       horizontalDrift(horizontalDrift) {}
 
-/**
- * @brief Construct a new Chassis
- *
- * @param drivetrain drivetrain to be used for the chassis
- * @param lateralSettings settings for the lateral controller
- * @param angularSettings settings for the angular controller
- * @param sensors sensors to be used for odometry
- * @param throttleCurve curve applied to throttle input during driver control
- * @param turnCurve curve applied to steer input during driver control
- */
 lemlib::Chassis::Chassis(Drivetrain drivetrain, ControllerSettings linearSettings, ControllerSettings angularSettings,
                          OdomSensors sensors, DriveCurve* throttleCurve, DriveCurve* steerCurve)
     : drivetrain(drivetrain),
@@ -108,11 +73,6 @@ void calibrateIMU(lemlib::OdomSensors& sensors) {
     }
 }
 
-/**
- * @brief Calibrate the chassis sensors
- *
- * @param calibrateIMU whether the IMU should be calibrated. true by default
- */
 void lemlib::Chassis::calibrate(bool calibrateImu) {
     // calibrate the IMU if it exists and the user doesn't specify otherwise
     if (sensors.imu != nullptr && calibrateImu) calibrateIMU(sensors);
@@ -133,32 +93,12 @@ void lemlib::Chassis::calibrate(bool calibrateImu) {
     pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
 }
 
-/**
- * @brief Set the Pose object
- *
- * @param x new x value
- * @param y new y value
- * @param theta new theta value
- * @param radians true if theta is in radians, false if not. False by default
- */
 void lemlib::Chassis::setPose(float x, float y, float theta, bool radians) {
     lemlib::setPose(lemlib::Pose(x, y, theta), radians);
 }
 
-/**
- * @brief Set the pose of the chassis
- *
- * @param Pose the new pose
- * @param radians whether pose theta is in radians (true) or not (false). false by default
- */
 void lemlib::Chassis::setPose(Pose pose, bool radians) { lemlib::setPose(pose, radians); }
 
-/**
- * @brief Get the pose of the chassis
- *
- * @param radians whether theta should be in radians (true) or degrees (false). false by default
- * @return Pose
- */
 lemlib::Pose lemlib::Chassis::getPose(bool radians, bool standardPos) {
     Pose pose = lemlib::getPose(true);
     if (standardPos) pose.theta = M_PI_2 - pose.theta;
@@ -166,23 +106,12 @@ lemlib::Pose lemlib::Chassis::getPose(bool radians, bool standardPos) {
     return pose;
 }
 
-/**
- * @brief Wait until the robot has traveled a certain distance along the path
- *
- * @note Units are in inches if current motion is moveTo or follow, degrees if using turnTo
- *
- * @param dist the distance the robot needs to travel before returning
- */
 void lemlib::Chassis::waitUntil(float dist) {
     // do while to give the thread time to start
     do pros::delay(10);
     while (distTraveled <= dist && distTraveled != -1);
 }
 
-/**
- * @brief Wait until the robot has completed the path
- *
- */
 void lemlib::Chassis::waitUntilDone() {
     do pros::delay(10);
     while (distTraveled != -1);
@@ -222,19 +151,11 @@ void lemlib::Chassis::cancelAllMotions() {
 
 bool lemlib::Chassis::isInMotion() const { return this->motionRunning; }
 
-/**
- * @brief Resets the x and y position of the robot
- * without interfering with the heading.
- */
 void lemlib::Chassis::resetLocalPosition() {
     float theta = this->getPose().theta;
     lemlib::setPose(lemlib::Pose(0, 0, theta), false);
 }
 
-/**
- * @brief Sets the brake mode of the drivetrain motors
- *
- */
 void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
     drivetrain.leftMotors->set_brake_modes(mode);
     drivetrain.rightMotors->set_brake_modes(mode);

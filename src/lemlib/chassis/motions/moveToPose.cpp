@@ -5,19 +5,6 @@
 #include "lemlib/util.hpp"
 #include "pros/misc.hpp"
 
-/**
- * @brief Move the chassis towards the target pose
- *
- * Uses the boomerang controller
- *
- * @param x x location
- * @param y y location
- * @param theta target heading in degrees.
- * @param timeout longest time the robot can spend moving
- *
- * @param maxSpeed the maximum speed the robot can move at. 127 at default
- * @param async whether the function should be run asynchronously. true by default
- */
 void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params, bool async) {
     // take the mutex
     this->requestMotionStart();

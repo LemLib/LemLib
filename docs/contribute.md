@@ -1,0 +1,3 @@
+```{include} ../.github/CONTRIBUTING.md
+
+```
