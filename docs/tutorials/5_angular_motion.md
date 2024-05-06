@@ -91,6 +91,3 @@ As with all the other turn motions `swingToHeading` also takes a `params` and `a
 chassis.swingToPoint(53, 53, 4000); // swing to face the point (53, 53) degrees, with a timeout of 4000 ms
 ```
 As with all the other turn motions `swingToPoint` also takes a `params` and `async` argument, which works exactly like the others do.
-
-> [Previous - PID Tuning](./4_pid_tuning.md) <br>
-> [Next - Lateral Motion](./6_lateral_motion.md)

@@ -458,6 +458,3 @@ void initialize() {
 ## Conclusion
 
 You have now configured LemLib! We'll cover driver control next
-
-> [Previous - Getting Started](./1_getting_started.md) <br>
-> [Next - Driver Control](./3_driver_control.md)

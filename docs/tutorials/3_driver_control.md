@@ -200,6 +200,3 @@ lemlib::Chassis chassis(drivetrain,
 
 ## Conclusion
 That's all for driver control. We will be covering autonomous motion and tuning in the next tutorial.
-
-> [Previous - Configuration](./2_configuration.md) <br>
-> [Next - PID Tuning](./4_pid_tuning.md)
