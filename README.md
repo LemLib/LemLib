@@ -29,7 +29,7 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 You can find a fully annotated example project [here](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp).
 
 ## Tutorials
-The [tutorials](https://lemlib.readthedocs.io/en/latest/tutorials/1_getting_started.html) provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to Path Following:
+The [tutorials](https://lemlib.readthedocs.io/en/v0.5.0/tutorials/1_getting_started.html) provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to Path Following:
 
 ## FAQ
 _**1. Help! Why is my controller vibrating?**_
