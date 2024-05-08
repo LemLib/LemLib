@@ -165,6 +165,10 @@ pros::Imu imu(10);
 
 ### Tracking Wheels
 
+```{important}
+Vertical tracking wheels are parallel with the wheels on the drivetrain. Horizontal tracking wheels are perpendicular to the wheels on the drivetrain.
+```
+
 Tracking wheels are independent wheels that have an encoder attached to them. See the image below:
 
 ```{image} ../assets/2_configuration/tracking_wheel.png
