@@ -95,7 +95,10 @@ Now that our motors are fully configured, we need to pass them to LemLib. We can
 
 Track width is the distance from the left side of the drivetrain to the right side of the drivetrain. Specifically, from the middle of the wheels. Track width is shown in the diagram below:
 
-![track width](../assets/2_configuration/track_width.png)
+```{image} ../assets/2_configuration/track_width.png
+:width: 400
+:align: center
+```
 
 Record the track width, we'll need it soon.
 
@@ -127,7 +130,6 @@ Record the wheel diameter, we'll need it soon.
 
 ### Horizontal Drift
 
- [//]: # (TODO: Link tuning tutorial here) 
 Don't worry about horizontal drift, we'll cover it in the tuning tutorial. For now, just set it to 2.
 
 ### Configuration
@@ -165,7 +167,10 @@ pros::Imu imu(10);
 
 Tracking wheels are independent wheels that have an encoder attached to them. See the image below:
 
-![Tracking Wheel](../assets/2_configuration/tracking_wheel.png)
+```{image} ../assets/2_configuration/tracking_wheel.png
+:width: 400
+:align: center
+```
 
 LemLib can work on any tracking setup, but some setups perform much better than others. See the table below:
 
@@ -275,7 +280,9 @@ pros::Rotation rotation_sensor(1, true);
 
 Now that we have the encoders configured, we need to determine the offset of the tracking wheels. The offset of the tracking wheel is equal to the length of the line perpendicular to it that ends at the tracking center. To help us understand, let's take a look at the diagram below:
 
-![Offsets](../assets/2_configuration/tracking_wheel_distance.png)
+```{image} ../assets/2_configuration/tracking_wheel_distance.png
+:align: center
+```
 
 In the diagram, there are 3 tracking wheels: one vertical tracking wheel on the left with an offset of 4.6", one vertical tracking wheel on the right with an offset of 1.7", and one horizontal tracking wheel at the back with an offset of 4.5"
 
