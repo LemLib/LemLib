@@ -27,6 +27,10 @@ pros::Motor middle_right_motor(5); // middle right motor on port 5
 pros::motor back_right_motor(6); // back right motor on port 6
 ```
 
+```{tip}
+Remember, you need `#include "lemlib/api.hpp" at the top of your file otherwise there will be errors everywhere
+```
+
 Now, we need to determine which way the motors spin when we apply a positive voltage. This can be done by moving the motor through the devices menu on the brain screen and observing how the drive wheels move. See the table below for determining whether a motor is reversed or not:
 
 ```{important}
