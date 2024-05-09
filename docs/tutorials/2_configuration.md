@@ -19,12 +19,8 @@ Motors should be created outside of a function, near the top of the file.
 ```
 
 ```cpp
-pros::Motor front_left_motor(1); // front left motor on port 1
-pros::Motor middle_left_motor(2); // middle left motor on port 2
-pros::Motor back_left_motor(3); // back left motor on port 3
-pros::Motor front_right_motor(4); // front right motor on port 4
-pros::Motor middle_right_motor(5); // middle right motor on port 5
-pros::motor back_right_motor(6); // back right motor on port 6
+pros::MotorGroup left_motors({1, 2, 3}); // left motors on ports 1, 2, 3
+pros::MotorGroup right_motors({4, 5, 6}); // right motors on ports 4, 5, 6
 ```
 
 ```{tip}
@@ -45,47 +41,23 @@ This needs to be done for all motors on the drivetrain
 Now, let's update our configuration. If a motor is reversed, it has a negative port. If its forwards (not reversed), it has a positive port:
 
 ```cpp
-pros::Motor front_left_motor(-1); // reversed
-pros::Motor middle_left_motor(-2); // reversed
-pros::Motor back_left_motor(-3); // reversed
-pros::Motor front_right_motor(4); // forwards
-pros::Motor middle_right_motor(5); // forwards
-pros::motor back_right_motor(6); // forwards
+pros::MotorGroup left_motors({-1, 2, -3}); // left motors on ports 1 (reversed), 2 (forwards), and 3 (reversed)
+pros::MotorGroup right_motors({4, -5, 6}); // right motors on ports 4 (forwards), 5 (reversed), and 6 (forwards)
 ```
 
 Now, we need to specify what cartridge is used by every motor. The cartridge can be checked by looking at the area below the shaft of the motor. A motor can have one of three cartridges:
 
 |          **Color**         |         **RPM**         | **Code Representation**    |
 | -------------------------- | ----------------------- | -------------------------- | 
-| **Red**                    |           100           | `pros::E_MOTOR_GEAR_RED` |
-| **Green**                  |           200           | `pros::E_MOTOR_GEAR_GREEN` |
-| **Blue**                   |           600           | `pros::E_MOTOR_GEAR_BLUE` |
+| **Red**                    |           100           | `pros::MotorGearset::red` |
+| **Green**                  |           200           | `pros::MotorGearset::green` |
+| **Blue**                   |           600           | `pros::MotorGearset::blue` |
 
 We need to specify the cartridge configuration in code as well:
 
 ```cpp
-pros::Motor front_left_motor(-1, pros::E_MOTOR_GEAR_GREEN); // green cartridge
-pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEAR_BLUE); // blue cartridge
-pros::Motor back_left_motor(-3, pros::E_MOTOR_GEAR_RED); // red cartridge
-pros::Motor front_right_motor(4, pros::E_MOTOR_GEAR_GREEN); // green cartridge
-pros::Motor middle_right_motor(5, pros::E_MOTOR_GEAR_BLUE); // blue cartridge
-pros::motor back_right_motor(6, pros::E_MOTOR_GEAR_RED); // red cartridge
-```
-
-Now, all our motors are configured. However, we need to add them to motor groups so LemLib can interface with them. See the code below:
-
-```cpp
-pros::Motor front_left_motor(-1, pros::E_MOTOR_GEAR_GREEN); // left_motor_group
-pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEAR_BLUE); // left_motor_group
-pros::Motor back_left_motor(-3, pros::E_MOTOR_GEAR_RED); // left_motor_group
-pros::Motor front_right_motor(4, pros::E_MOTOR_GEAR_GREEN); // right_motor_group
-pros::Motor middle_right_motor(5, pros::E_MOTOR_GEAR_BLUE); // right_motor_group
-pros::motor back_right_motor(6, pros::E_MOTOR_GEAR_RED); // right_motor_group
-
-// left motor group
-pros::MotorGroup left_motor_group({ front_left_motor, middle_left_motor, back_left_motor });
-// right motor group
-pros::MotorGroup right_motor_group({ front_right_motor, middle_right_motor, back_right_motor });
+pros::MotorGroup left_motors({-1, 2, -3}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
+pros::MotorGroup right_motors({4, -5, 6}, pros::MotorGearset::green); // right motors use 200 RPM cartridges
 ```
 
 Now that our motors are fully configured, we need to pass them to LemLib. We can do this through a helper class: `Drivetrain`. It needs the following information:
@@ -230,7 +202,7 @@ The optical shat encoder uses 2 ADI (tri-port) ports. However, there are only a 
 
 ```cpp
 // create an optical shaft encoder connected to ports 'A' and 'B'
-pros::ADIEncoder adi_encoder('A', 'B');
+pros::adi::Encoder adi_encoder('A', 'B');
 ```
 
 ##### V5 Rotation Sensor
@@ -252,7 +224,7 @@ remove the while loop in initialize after you have determined whether the tracki
 
 ```cpp
 // replace 'A', 'B', with the ports the sensor is connected to
-pros::ADIEncoder vertical_encoder('A', 'B');
+pros::adi::Encoder vertical_encoder('A', 'B');
 // replace 1 with the port the rotation sensor is connected to
 pros::Rotation horizontal_sensor(1);
 
@@ -275,13 +247,13 @@ if the sensors readings are not changing or show very large numbers (>1000000), 
 
 Use the snippet in your program and run it. When you push the robot forwards, the measured position of the vertical encoder(s) should increase. If they decrease, then the sensor(s) needs to be reversed. When you push the robot to the right (relative to the robot), the position measured by horizontal encoders should increase. If they decrease, the sensor(s) needs to be reversed.
 
-To reverse a sensor, simply pass `true` to the encoder constructors after the ports. See the example below:
+To reverse an ADI Encoder, simply pass `true` to the encoder constructors after the ports. For a rotation sensor, make the port number negative as with motors. See the example below:
 
 ```cpp
 // reversed ADI Encoder
-pros::ADIEncoder adi_encoder('A', 'B', true);
+pros::adi::Encoder adi_encoder('A', 'B', true);
 // reversed rotation sensor
-pros::Rotation rotation_sensor(1, true);
+pros::Rotation rotation_sensor(-1);
 ```
 
 #### Offsets
@@ -326,7 +298,7 @@ Now that we know all the properties of the tracking wheel, we can initialize our
 // horizontal tracking wheel encoder
 pros::Rotation horizontal_encoder(20);
 // vertical tracking wheel encoder
-pros::ADIEncoder vertical_encoder('C', 'D', true);
+pros::adi::Encoder vertical_encoder('C', 'D', true);
 // horizontal tracking wheel
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
 // vertical tracking wheel
@@ -381,17 +353,10 @@ lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
 Now we have all the necessary information to configure lemlib. See the code block below:
 
 ```cpp
-pros::Motor front_left_motor(-1, pros::E_MOTOR_GEAR_GREEN); // left_motor_group
-pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEAR_BLUE); // left_motor_group
-pros::Motor back_left_motor(-3, pros::E_MOTOR_GEAR_RED); // left_motor_group
-pros::Motor front_right_motor(4, pros::E_MOTOR_GEAR_GREEN); // right_motor_group
-pros::Motor middle_right_motor(5, pros::E_MOTOR_GEAR_BLUE); // right_motor_group
-pros::motor back_right_motor(6, pros::E_MOTOR_GEAR_RED); // right_motor_group
-
 // left motor group
-pros::MotorGroup left_motor_group({ front_left_motor, middle_left_motor, back_left_motor });
+pros::MotorGroup left_motor_group({-1, 2, -3}, pros::MotorGears::blue);
 // right motor group
-pros::MotorGroup right_motor_group({ front_right_motor, middle_right_motor, back_right_motor });
+pros::MotorGroup right_motor_group({4, -5, 6}, pros::MotorGears::green);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
@@ -407,7 +372,7 @@ pros::Imu imu(10);
 // horizontal tracking wheel encoder
 pros::Rotation horizontal_encoder(20);
 // vertical tracking wheel encoder
-pros::ADIEncoder vertical_encoder('C', 'D', true);
+pros::adi::Encoder vertical_encoder('C', 'D', true);
 // horizontal tracking wheel
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
 // vertical tracking wheel
