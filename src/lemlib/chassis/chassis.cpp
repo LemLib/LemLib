@@ -1,9 +1,6 @@
 #include <math.h>
-#include "pros/imu.h"
 #include "pros/imu.hpp"
 #include "pros/motors.h"
-#include "pros/motors.hpp"
-#include "pros/misc.hpp"
 #include "pros/rtos.h"
 #include "lemlib/logger/logger.hpp"
 #include "lemlib/util.hpp"
