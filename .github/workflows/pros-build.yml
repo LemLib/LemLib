@@ -1,7 +1,11 @@
 name: Pros Build
+
 on:
   push:
-    branches: "main"
+    branches: "**"
+  pull_request:
+    branches: "**"
+
 concurrency:
   cancel-in-progress: true
 
@@ -13,6 +17,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: PROS Build
-        uses: Lemlib/pros-build@main
+        uses: Lemlib/pros-build@v1
         with:
           library-path: lemlib
