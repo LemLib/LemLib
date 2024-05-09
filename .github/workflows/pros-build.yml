@@ -14,6 +14,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: PROS Build
-        uses: Lemlib/pros-build@v1
+        uses: LemLib/pros-build@v1
         with:
           library-path: lemlib
