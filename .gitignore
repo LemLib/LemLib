@@ -15,19 +15,3 @@ temp.log
 temp.errors
 *.ini
 .d/
-
-# template files
-*.zip
-
-# Docs
-docs/package-lock.json
-docs/package.json
-docs/node_modules/
-latex
-
-# MacOS
-.DS_Store
-docs/_build
-docs/html
-docs/xml
-html

@@ -155,8 +155,8 @@ class Drivetrain {
          */
         Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth, float wheelDiameter,
                    float rpm, float horizontalDrift);
-        pros::Motor_Group* leftMotors;
-        pros::Motor_Group* rightMotors;
+        pros::MotorGroup* leftMotors;
+        pros::MotorGroup* rightMotors;
         float trackWidth;
         float wheelDiameter;
         float rpm;

@@ -1,4 +1,6 @@
 #include <math.h>
+#include "pros/imu.h"
+#include "pros/imu.hpp"
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
@@ -55,7 +57,7 @@ void calibrateIMU(lemlib::OdomSensors& sensors) {
         sensors.imu->reset();
         // wait until IMU is calibrated
         do pros::delay(10);
-        while (sensors.imu->get_status() != 0xFF && sensors.imu->is_calibrating());
+        while (sensors.imu->get_status() != pros::ImuStatus::error && sensors.imu->is_calibrating());
         // exit if imu has been calibrated
         if (!isnanf(sensors.imu->get_heading()) && !isinf(sensors.imu->get_heading())) {
             calibrated = true;
@@ -157,6 +159,6 @@ void lemlib::Chassis::resetLocalPosition() {
 }
 
 void lemlib::Chassis::setBrakeMode(pros::motor_brake_mode_e mode) {
-    drivetrain.leftMotors->set_brake_modes(mode);
-    drivetrain.rightMotors->set_brake_modes(mode);
+    drivetrain.leftMotors->set_brake_mode_all(mode);
+    drivetrain.rightMotors->set_brake_mode_all(mode);
 }
