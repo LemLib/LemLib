@@ -10,7 +10,7 @@ The controller has 2 joysticks. A `left` one and a `right` one. Each joystick ha
 Tank drive is a simple method of controlling the drivetrain. You give it the power for the left wheels and the power for the right wheels. In this example, we will use the `left y` axis and the `right y` axis.
 
 ```cpp
-pros::Controller controller();
+pros::Controller controller(E_CONTROLLER_MASTER);
 
 void opcontrol() {
     // loop forever
@@ -34,7 +34,7 @@ Arcade drive is the most popular form of controlling the robot. In arcade contro
 ### Single Stick Arcade
 
 ```cpp
-pros::Controller controller();
+pros::Controller controller(E_CONTROLLER_MASTER);
 
 void opcontrol() {
     // loop forever
@@ -55,7 +55,7 @@ void opcontrol() {
 ### Double Stick Arcade
 
 ```cpp
-pros::Controller controller();
+pros::Controller controller(E_CONTROLLER_MASTER);
 
 void opcontrol() {
     // loop forever
@@ -82,7 +82,7 @@ This section is optional and is not needed to control the robot
 You can prioritize steering over turning, or vice versa. For example, you could fully prioritize steering so that the angular velocity of the robot is guaranteed to be the same for a given steering input, no matter the throttle input. With LemLib, you can prioritize steering over throttle by a set amount, from 0 to 1. 0.5 is the default, where steering and turning have the same priority. 0 fully prioritizes throttle, while 1 fully prioritizes steering. See the code block below:
 
 ```cpp
-pros::Controller controller();
+pros::Controller controller(E_CONTROLLER_MASTER);
 
 void opcontrol() {
     // loop forever
@@ -107,7 +107,7 @@ Curvature drive is a lesser-know, yet powerful, method. We give the robot a forw
 ### Single Stick Curvature
 
 ```cpp
-pros::Controller controller();
+pros::Controller controller(E_CONTROLLER_MASTER);
 
 void opcontrol() {
     // loop forever
@@ -128,7 +128,7 @@ void opcontrol() {
 ### Double Stick Curvature
 
 ```cpp
-pros::Controller controller();
+pros::Controller controller(E_CONTROLLER_MASTER);
 
 void opcontrol() {
     // loop forever
