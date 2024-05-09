@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Test With Upload + Bonus Files
+      - name: PROS Build
         uses: Lemlib/pros-build@main
         with:
           library-path: lemlib
