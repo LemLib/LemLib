@@ -4,7 +4,8 @@
 #include "pros/motor_group.hpp"
 #include "pros/motors.h"
 
-lemlib::TrackingWheel::TrackingWheel(pros::adi::Encoder* encoder, float wheelDiameter, float distance, float gearRatio) {
+lemlib::TrackingWheel::TrackingWheel(pros::adi::Encoder* encoder, float wheelDiameter, float distance,
+                                     float gearRatio) {
     this->encoder = encoder;
     this->diameter = wheelDiameter;
     this->distance = distance;
