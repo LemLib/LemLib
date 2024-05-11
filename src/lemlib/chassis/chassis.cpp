@@ -55,7 +55,7 @@ void calibrateIMU(lemlib::OdomSensors& sensors) {
         sensors.imu->reset();
         // wait until IMU is calibrated
         do pros::delay(10);
-        while (sensors.imu->get_status() != 0xFF && sensors.imu->is_calibrating());
+        while (sensors.imu->is_calibrating());
         // exit if imu has been calibrated
         if (!isnanf(sensors.imu->get_heading()) && !isinf(sensors.imu->get_heading())) {
             calibrated = true;
