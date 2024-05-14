@@ -38,7 +38,8 @@ class dynamic_arg_list {
         template <typename T> struct typed_node : node<> {
                 T value;
 
-                template <typename Arg> FMT_CONSTEXPR typed_node(const Arg& arg) : value(arg) {}
+                template <typename Arg> FMT_CONSTEXPR typed_node(const Arg& arg)
+                    : value(arg) {}
 
                 template <typename Char> FMT_CONSTEXPR typed_node(const basic_string_view<Char>& arg)
                     : value(arg.data(), arg.size()) {}

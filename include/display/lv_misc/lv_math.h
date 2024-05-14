@@ -10,7 +10,6 @@
 extern "C" {
 #endif
 
-
 /*********************
  *      INCLUDES
  *********************/
@@ -19,15 +18,15 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-#define LV_MATH_MIN(a,b) ((a) < (b) ? (a) : (b))
-#define LV_MATH_MAX(a,b) ((a) > (b) ? (a) : (b))
+#define LV_MATH_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define LV_MATH_MAX(a, b) ((a) > (b) ? (a) : (b))
 #define LV_MATH_ABS(x) ((x) > 0 ? (x) : (-(x)))
 
-#define LV_TRIGO_SIN_MAX    32767
-#define LV_TRIGO_SHIFT      15      /* >> LV_TRIGO_SHIFT to normalize*/
+#define LV_TRIGO_SIN_MAX 32767
+#define LV_TRIGO_SHIFT 15 /* >> LV_TRIGO_SHIFT to normalize*/
 
-#define LV_BEZIER_VAL_MAX       1024    /*Max time in Bezier functions (not [0..1] to use integers) */
-#define LV_BEZIER_VAL_SHIFT     10      /*log2(LV_BEZIER_VAL_MAX): used to normalize up scaled values*/
+#define LV_BEZIER_VAL_MAX 1024 /*Max time in Bezier functions (not [0..1] to use integers) */
+#define LV_BEZIER_VAL_SHIFT 10 /*log2(LV_BEZIER_VAL_MAX): used to normalize up scaled values*/
 
 /**********************
  *      TYPEDEFS
@@ -42,7 +41,7 @@ extern "C" {
  * @param buf pointer to a `char` buffer. The result will be stored here (max 10 elements)
  * @return same as `buf` (just for convenience)
  */
-char * lv_math_num_to_str(int32_t num, char * buf);
+char* lv_math_num_to_str(int32_t num, char* buf);
 
 /**
  * Return with sinus of an angle

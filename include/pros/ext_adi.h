@@ -639,13 +639,13 @@ int32_t ext_adi_gyro_shutdown(ext_adi_gyro_t gyro);
 typedef int32_t ext_adi_potentiometer_t;
 
 /**
- * Initializes a potentiometer on the given port. 
+ * Initializes a potentiometer on the given port.
  *
  * This function uses the following values of errno when an error state is
  * reached:
  * ENXIO - The given value is not within the range of ADI Ports
  * EADDRINUSE - The port is not configured as a potentiometer
- * 
+ *
  * \param smart_port
  *        The smart port with the adi expander (1-21)
  * \param adi_port
@@ -656,7 +656,8 @@ typedef int32_t ext_adi_potentiometer_t;
  * \return An adi_potentiometer_t object containing the given port, or PROS_ERR if the
  * initialization failed.
  */
-ext_adi_potentiometer_t ext_adi_potentiometer_init(uint8_t smart_port, uint8_t adi_port, adi_potentiometer_type_e_t potentiometer_type); 
+ext_adi_potentiometer_t ext_adi_potentiometer_init(uint8_t smart_port, uint8_t adi_port,
+                                                   adi_potentiometer_type_e_t potentiometer_type);
 
 /**
  * Gets the current potentiometer angle in tenths of a degree.
@@ -682,14 +683,14 @@ double ext_adi_potentiometer_get_angle(ext_adi_potentiometer_t potentiometer);
 typedef int32_t ext_adi_led_t;
 
 /**
- * Initializes a led on the given port. 
+ * Initializes a led on the given port.
  *
  * This function uses the following values of errno when an error state is
  * reached:
  * ENXIO - The given value is not within the range of ADI Ports
  * EINVAL - A given value is not correct, or the buffer is null
  * EADDRINUSE - The port is not configured for ADI output
- * 
+ *
  * \param smart_port
  *        The smart port with the adi expander (1-21)
  * \param adi_port
@@ -710,7 +711,8 @@ ext_adi_led_t ext_adi_led_init(uint8_t smart_port, uint8_t adi_port);
  * EADDRINUSE - The port is not configured for ADI output
  *
  * @param led port of type adi_led_t
- * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to current draw
+ * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to
+ * current draw
  * @param buffer_length length of buffer to clear
  * @return PROS_SUCCESS if successful, PROS_ERR if not
  */
@@ -726,7 +728,8 @@ int32_t ext_adi_led_clear_all(ext_adi_led_t led, uint32_t* buffer, uint32_t buff
  * EADDRINUSE - The port is not configured for ADI output
  *
  * @param led port of type adi_led_t
- * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to current draw
+ * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to
+ * current draw
  * @param buffer_length length of buffer to clear
  * @return PROS_SUCCESS if successful, PROS_ERR if not
  */
@@ -742,7 +745,8 @@ int32_t ext_adi_led_set(ext_adi_led_t led, uint32_t* buffer, uint32_t buffer_len
  * EADDRINUSE - The port is not configured for ADI output
  *
  * @param led port of type adi_led_t
- * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to current draw
+ * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to
+ * current draw
  * @param buffer_length length of buffer to clear
  * @param color color to set all the led strip value to
  * @return PROS_SUCCESS if successful, PROS_ERR if not
@@ -759,13 +763,15 @@ int32_t ext_adi_led_set_all(ext_adi_led_t led, uint32_t* buffer, uint32_t buffer
  * EADDRINUSE - The port is not configured for ADI output
  *
  * @param led port of type adi_led_t
- * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to current draw
+ * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to
+ * current draw
  * @param buffer_length length of the input buffer
  * @param color color to clear all the led strip to
  * @param pixel_position position of the pixel to clear (0 indexed)
  * @return PROS_SUCCESS if successful, PROS_ERR if not
  */
-int32_t ext_adi_led_set_pixel(ext_adi_led_t led, uint32_t* buffer, uint32_t buffer_length, uint32_t color, uint32_t pixel_position);
+int32_t ext_adi_led_set_pixel(ext_adi_led_t led, uint32_t* buffer, uint32_t buffer_length, uint32_t color,
+                              uint32_t pixel_position);
 
 /**
  * @brief Clear one pixel on the led strip
@@ -777,7 +783,8 @@ int32_t ext_adi_led_set_pixel(ext_adi_led_t led, uint32_t* buffer, uint32_t buff
  * EADDRINUSE - The port is not configured for ADI output
  *
  * @param led port of type adi_led_t
- * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to current draw
+ * @param buffer array of colors in format 0xRRGGBB, recommended that individual RGB value not to exceed 0x80 due to
+ * current draw
  * @param buffer_length length of the input buffer
  * @param pixel_position position of the pixel to clear (0 indexed)
  * @return PROS_SUCCESS if successful, PROS_ERR if not
@@ -785,9 +792,9 @@ int32_t ext_adi_led_set_pixel(ext_adi_led_t led, uint32_t* buffer, uint32_t buff
 int32_t ext_adi_led_clear_pixel(ext_adi_led_t led, uint32_t* buffer, uint32_t buffer_length, uint32_t pixel_position);
 
 #ifdef __cplusplus
-}  // namespace c
-}  // namespace pros
+} // namespace c
+} // namespace pros
 }
 #endif
 
-#endif  // _PROS_ADI_H_
+#endif // _PROS_ADI_H_

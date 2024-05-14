@@ -33,18 +33,17 @@ extern "C" {
  **********************/
 /*Data of canvas*/
 typedef struct {
-    lv_img_ext_t img; /*Ext. of ancestor*/
-    /*New data for this type */
-    lv_img_dsc_t dsc;
+        lv_img_ext_t img; /*Ext. of ancestor*/
+        /*New data for this type */
+        lv_img_dsc_t dsc;
 } lv_canvas_ext_t;
-
 
 /*Styles*/
 enum {
     LV_CANVAS_STYLE_MAIN,
 };
-typedef uint8_t lv_canvas_style_t;
 
+typedef uint8_t lv_canvas_style_t;
 
 /**********************
  * GLOBAL PROTOTYPES
@@ -56,7 +55,7 @@ typedef uint8_t lv_canvas_style_t;
  * @param copy pointer to a canvas object, if not NULL then the new object will be copied from it
  * @return pointer to the created canvas
  */
-lv_obj_t * lv_canvas_create(lv_obj_t * par, const lv_obj_t * copy);
+lv_obj_t* lv_canvas_create(lv_obj_t* par, const lv_obj_t* copy);
 
 /*=====================
  * Setter functions
@@ -75,7 +74,7 @@ lv_obj_t * lv_canvas_create(lv_obj_t * par, const lv_obj_t * copy);
  * @param cf color format. The following formats are supported:
  *      LV_IMG_CF_TRUE_COLOR, LV_IMG_CF_TRUE_COLOR_CHROMA_KEYED, LV_IMG_CF_INDEXES_1/2/4/8BIT
  */
-void lv_canvas_set_buffer(lv_obj_t * canvas, void * buf, lv_coord_t w, lv_coord_t h, lv_img_cf_t cf);
+void lv_canvas_set_buffer(lv_obj_t* canvas, void* buf, lv_coord_t w, lv_coord_t h, lv_img_cf_t cf);
 
 /**
  * Set the color of a pixel on the canvas
@@ -84,7 +83,7 @@ void lv_canvas_set_buffer(lv_obj_t * canvas, void * buf, lv_coord_t w, lv_coord_
  * @param y x coordinate of the point to set
  * @param c color of the point
  */
-void lv_canvas_set_px(lv_obj_t * canvas, lv_coord_t x, lv_coord_t y, lv_color_t c);
+void lv_canvas_set_px(lv_obj_t* canvas, lv_coord_t x, lv_coord_t y, lv_color_t c);
 
 /**
  * Set a style of a canvas.
@@ -92,7 +91,7 @@ void lv_canvas_set_px(lv_obj_t * canvas, lv_coord_t x, lv_coord_t y, lv_color_t 
  * @param type which style should be set
  * @param style pointer to a style
  */
-void lv_canvas_set_style(lv_obj_t * canvas, lv_canvas_style_t type, lv_style_t * style);
+void lv_canvas_set_style(lv_obj_t* canvas, lv_canvas_style_t type, lv_style_t* style);
 
 /*=====================
  * Getter functions
@@ -105,7 +104,7 @@ void lv_canvas_set_style(lv_obj_t * canvas, lv_canvas_style_t type, lv_style_t *
  * @param y x coordinate of the point to set
  * @return color of the point
  */
-lv_color_t lv_canvas_get_px(lv_obj_t * canvas, lv_coord_t x, lv_coord_t y);
+lv_color_t lv_canvas_get_px(lv_obj_t* canvas, lv_coord_t x, lv_coord_t y);
 
 /**
  * Get style of a canvas.
@@ -113,7 +112,7 @@ lv_color_t lv_canvas_get_px(lv_obj_t * canvas, lv_coord_t x, lv_coord_t y);
  * @param type which style should be get
  * @return style pointer to the style
  */
-lv_style_t * lv_canvas_get_style(const lv_obj_t * canvas, lv_canvas_style_t type);
+lv_style_t* lv_canvas_get_style(const lv_obj_t* canvas, lv_canvas_style_t type);
 
 /*=====================
  * Other functions
@@ -128,7 +127,7 @@ lv_style_t * lv_canvas_get_style(const lv_obj_t * canvas, lv_canvas_style_t type
  * @param x left side of the destination position
  * @param y top side of the destination position
  */
-void lv_canvas_copy_buf(lv_obj_t * canvas, const void * to_copy, lv_coord_t w, lv_coord_t h, lv_coord_t x, lv_coord_t y);
+void lv_canvas_copy_buf(lv_obj_t* canvas, const void* to_copy, lv_coord_t w, lv_coord_t h, lv_coord_t x, lv_coord_t y);
 
 /**
  * Multiply a buffer with the canvas
@@ -139,7 +138,7 @@ void lv_canvas_copy_buf(lv_obj_t * canvas, const void * to_copy, lv_coord_t w, l
  * @param x left side of the destination position
  * @param y top side of the destination position
  */
-void lv_canvas_mult_buf(lv_obj_t * canvas, void * to_copy, lv_coord_t w, lv_coord_t h, lv_coord_t x, lv_coord_t y);
+void lv_canvas_mult_buf(lv_obj_t* canvas, void* to_copy, lv_coord_t w, lv_coord_t h, lv_coord_t x, lv_coord_t y);
 
 /**
  * Draw circle function of the canvas
@@ -149,7 +148,7 @@ void lv_canvas_mult_buf(lv_obj_t * canvas, void * to_copy, lv_coord_t w, lv_coor
  * @param radius radius of the circle
  * @param color border color of the circle
  */
-void lv_canvas_draw_circle(lv_obj_t * canvas, lv_coord_t x0, lv_coord_t y0, lv_coord_t radius, lv_color_t color);
+void lv_canvas_draw_circle(lv_obj_t* canvas, lv_coord_t x0, lv_coord_t y0, lv_coord_t radius, lv_color_t color);
 
 /**
  * Draw line function of the canvas
@@ -160,7 +159,7 @@ void lv_canvas_draw_circle(lv_obj_t * canvas, lv_coord_t x0, lv_coord_t y0, lv_c
  *
  * NOTE: The lv_canvas_draw_line function originates from https://github.com/jb55/bresenham-line.c.
  */
-void lv_canvas_draw_line(lv_obj_t * canvas, lv_point_t point1, lv_point_t point2, lv_color_t color);
+void lv_canvas_draw_line(lv_obj_t* canvas, lv_point_t point1, lv_point_t point2, lv_color_t color);
 
 /**
  * Draw triangle function of the canvas
@@ -168,7 +167,7 @@ void lv_canvas_draw_line(lv_obj_t * canvas, lv_point_t point1, lv_point_t point2
  * @param points edge points of the triangle
  * @param color line color of the triangle
  */
-void lv_canvas_draw_triangle(lv_obj_t * canvas, lv_point_t * points, lv_color_t color);
+void lv_canvas_draw_triangle(lv_obj_t* canvas, lv_point_t* points, lv_color_t color);
 
 /**
  * Draw rectangle function of the canvas
@@ -176,7 +175,7 @@ void lv_canvas_draw_triangle(lv_obj_t * canvas, lv_point_t * points, lv_color_t 
  * @param points edge points of the rectangle
  * @param color line color of the rectangle
  */
-void lv_canvas_draw_rect(lv_obj_t * canvas, lv_point_t * points, lv_color_t color);
+void lv_canvas_draw_rect(lv_obj_t* canvas, lv_point_t* points, lv_color_t color);
 
 /**
  * Draw polygon function of the canvas
@@ -185,7 +184,7 @@ void lv_canvas_draw_rect(lv_obj_t * canvas, lv_point_t * points, lv_color_t colo
  * @param size edge count of the polygon
  * @param color line color of the polygon
  */
-void lv_canvas_draw_polygon(lv_obj_t * canvas, lv_point_t * points, size_t size, lv_color_t color);
+void lv_canvas_draw_polygon(lv_obj_t* canvas, lv_point_t* points, size_t size, lv_color_t color);
 
 /**
  * Fill polygon function of the canvas
@@ -195,16 +194,18 @@ void lv_canvas_draw_polygon(lv_obj_t * canvas, lv_point_t * points, size_t size,
  * @param boundary_color line color of the polygon
  * @param fill_color fill color of the polygon
  */
-void lv_canvas_fill_polygon(lv_obj_t * canvas, lv_point_t * points, size_t size, lv_color_t boundary_color, lv_color_t fill_color);
+void lv_canvas_fill_polygon(lv_obj_t* canvas, lv_point_t* points, size_t size, lv_color_t boundary_color,
+                            lv_color_t fill_color);
 /**
  * Boundary fill function of the canvas
  * @param canvas pointer to a canvas object
  * @param x x coordinate of the start position (seed)
  * @param y y coordinate of the start position (seed)
  * @param boundary_color edge/boundary color of the area
- * @param fill_color fill color of the area 
+ * @param fill_color fill color of the area
  */
-void lv_canvas_boundary_fill4(lv_obj_t * canvas, lv_coord_t x, lv_coord_t y, lv_color_t boundary_color, lv_color_t fill_color);
+void lv_canvas_boundary_fill4(lv_obj_t* canvas, lv_coord_t x, lv_coord_t y, lv_color_t boundary_color,
+                              lv_color_t fill_color);
 
 /**
  * Flood fill function of the canvas
@@ -214,16 +215,16 @@ void lv_canvas_boundary_fill4(lv_obj_t * canvas, lv_coord_t x, lv_coord_t y, lv_
  * @param fill_color fill color of the area
  * @param bg_color background color of the area
  */
-void lv_canvas_flood_fill(lv_obj_t * canvas, lv_coord_t x, lv_coord_t y, lv_color_t fill_color, lv_color_t bg_color);
+void lv_canvas_flood_fill(lv_obj_t* canvas, lv_coord_t x, lv_coord_t y, lv_color_t fill_color, lv_color_t bg_color);
 
 /**********************
  *      MACROS
  **********************/
 
-#endif  /*USE_LV_CANVAS*/
+#endif /*USE_LV_CANVAS*/
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif  /*LV_CANVAS_H*/
+#endif /*LV_CANVAS_H*/

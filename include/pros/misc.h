@@ -64,25 +64,25 @@ namespace pros {
 typedef enum { E_CONTROLLER_MASTER = 0, E_CONTROLLER_PARTNER } controller_id_e_t;
 
 typedef enum {
-	E_CONTROLLER_ANALOG_LEFT_X = 0,
-	E_CONTROLLER_ANALOG_LEFT_Y,
-	E_CONTROLLER_ANALOG_RIGHT_X,
-	E_CONTROLLER_ANALOG_RIGHT_Y
+    E_CONTROLLER_ANALOG_LEFT_X = 0,
+    E_CONTROLLER_ANALOG_LEFT_Y,
+    E_CONTROLLER_ANALOG_RIGHT_X,
+    E_CONTROLLER_ANALOG_RIGHT_Y
 } controller_analog_e_t;
 
 typedef enum {
-	E_CONTROLLER_DIGITAL_L1 = 6,
-	E_CONTROLLER_DIGITAL_L2,
-	E_CONTROLLER_DIGITAL_R1,
-	E_CONTROLLER_DIGITAL_R2,
-	E_CONTROLLER_DIGITAL_UP,
-	E_CONTROLLER_DIGITAL_DOWN,
-	E_CONTROLLER_DIGITAL_LEFT,
-	E_CONTROLLER_DIGITAL_RIGHT,
-	E_CONTROLLER_DIGITAL_X,
-	E_CONTROLLER_DIGITAL_B,
-	E_CONTROLLER_DIGITAL_Y,
-	E_CONTROLLER_DIGITAL_A
+    E_CONTROLLER_DIGITAL_L1 = 6,
+    E_CONTROLLER_DIGITAL_L2,
+    E_CONTROLLER_DIGITAL_R1,
+    E_CONTROLLER_DIGITAL_R2,
+    E_CONTROLLER_DIGITAL_UP,
+    E_CONTROLLER_DIGITAL_DOWN,
+    E_CONTROLLER_DIGITAL_LEFT,
+    E_CONTROLLER_DIGITAL_RIGHT,
+    E_CONTROLLER_DIGITAL_X,
+    E_CONTROLLER_DIGITAL_B,
+    E_CONTROLLER_DIGITAL_Y,
+    E_CONTROLLER_DIGITAL_A
 } controller_digital_e_t;
 
 #ifdef PROS_USE_SIMPLE_NAMES
@@ -128,28 +128,22 @@ typedef enum {
 #endif
 
 /*
-Given an id and a port, this macro sets the port 
+Given an id and a port, this macro sets the port
 variable based on the id and allows the mutex to take that port.
 
 Returns error (in the function/scope it's in) if the controller
 failed to connect or an invalid id is given.
 */
-#define CONTROLLER_PORT_MUTEX_TAKE(id, port) \
-	switch (id) {							\
-		case E_CONTROLLER_MASTER:			\
-			port = V5_PORT_CONTROLLER_1;	\
-			break;							\
-		case E_CONTROLLER_PARTNER:			\
-			port = V5_PORT_CONTROLLER_2;	\
-			break;							\
-		default:							\
-			errno = EINVAL;					\
-			return PROS_ERR;				\
-	}										\
-	if (!internal_port_mutex_take(port)) {	\
-		errno = EACCES;						\
-		return PROS_ERR;					\
-	}										\
+#define CONTROLLER_PORT_MUTEX_TAKE(id, port)                                                                           \
+    switch (id) {                                                                                                      \
+        case E_CONTROLLER_MASTER: port = V5_PORT_CONTROLLER_1; break;                                                  \
+        case E_CONTROLLER_PARTNER: port = V5_PORT_CONTROLLER_2; break;                                                 \
+        default: errno = EINVAL; return PROS_ERR;                                                                      \
+    }                                                                                                                  \
+    if (!internal_port_mutex_take(port)) {                                                                             \
+        errno = EACCES;                                                                                                \
+        return PROS_ERR;                                                                                               \
+    }                                                                                                                  \
 /******************************************************************************/
 /**                              Date and Time                               **/
 /******************************************************************************/
@@ -158,16 +152,16 @@ extern const char* baked_date;
 extern const char* baked_time;
 
 typedef struct {
-	uint16_t year; // Year - 1980
-	uint8_t day;
-	uint8_t month; // 1 = January
+        uint16_t year; // Year - 1980
+        uint8_t day;
+        uint8_t month; // 1 = January
 } date_s_t;
 
 typedef struct {
-	uint8_t hour;
-	uint8_t min;
-	uint8_t sec;
-	uint8_t sec_hund; // hundredths of a second
+        uint8_t hour;
+        uint8_t min;
+        uint8_t sec;
+        uint8_t sec_hund; // hundredths of a second
 } time_s_t;
 
 #ifdef __cplusplus
@@ -480,4 +474,4 @@ int32_t usd_is_installed(void);
 }
 #endif
 
-#endif  // _PROS_MISC_H_
+#endif // _PROS_MISC_H_

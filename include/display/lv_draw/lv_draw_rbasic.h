@@ -37,7 +37,7 @@ extern "C" {
  * GLOBAL PROTOTYPES
  **********************/
 
-void lv_rpx(lv_coord_t x, lv_coord_t y, const lv_area_t * mask_p, lv_color_t color, lv_opa_t opa);
+void lv_rpx(lv_coord_t x, lv_coord_t y, const lv_area_t* mask_p, lv_color_t color, lv_opa_t opa);
 
 /**
  * Fill an area on the display
@@ -46,8 +46,7 @@ void lv_rpx(lv_coord_t x, lv_coord_t y, const lv_area_t * mask_p, lv_color_t col
  * @param color fill color
  * @param opa opacity (ignored, only for compatibility with lv_vfill)
  */
-void lv_rfill(const lv_area_t * cords_p, const lv_area_t * mask_p,
-              lv_color_t color, lv_opa_t opa);
+void lv_rfill(const lv_area_t* cords_p, const lv_area_t* mask_p, lv_color_t color, lv_opa_t opa);
 
 /**
  * Draw a letter to the display
@@ -58,8 +57,7 @@ void lv_rfill(const lv_area_t * cords_p, const lv_area_t * mask_p,
  * @param color color of letter
  * @param opa opacity of letter (ignored, only for compatibility with lv_vletter)
  */
-void lv_rletter(const lv_point_t * pos_p, const lv_area_t * mask_p,
-                const lv_font_t * font_p, uint32_t letter,
+void lv_rletter(const lv_point_t* pos_p, const lv_area_t* mask_p, const lv_font_t* font_p, uint32_t letter,
                 lv_color_t color, lv_opa_t opa);
 
 /**
@@ -67,7 +65,6 @@ void lv_rletter(const lv_point_t * pos_p, const lv_area_t * mask_p,
  * @param bg_color the background color of the currently drawn letter
  */
 void lv_rletter_set_background(lv_color_t color);
-
 
 /**
  * Draw a color map to the display (image)
@@ -80,17 +77,16 @@ void lv_rletter_set_background(lv_color_t color);
  * @param recolor mix the pixels with this color
  * @param recolor_opa the intense of recoloring
  */
-void lv_rmap(const lv_area_t * cords_p, const lv_area_t * mask_p,
-             const uint8_t * map_p, lv_opa_t opa, bool chroma_key, bool alpha_byte,
-             lv_color_t recolor, lv_opa_t recolor_opa);
+void lv_rmap(const lv_area_t* cords_p, const lv_area_t* mask_p, const uint8_t* map_p, lv_opa_t opa, bool chroma_key,
+             bool alpha_byte, lv_color_t recolor, lv_opa_t recolor_opa);
 /**********************
  *      MACROS
  **********************/
 
-#endif  /*USE_LV_REAL_DRAW*/
+#endif /*USE_LV_REAL_DRAW*/
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif  /*LV_DRAW_RBASIC_H*/
+#endif /*LV_DRAW_RBASIC_H*/

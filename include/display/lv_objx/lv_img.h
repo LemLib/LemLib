@@ -35,20 +35,19 @@ extern "C" {
  *      TYPEDEFS
  **********************/
 /*Data of image*/
-typedef struct
-{
-    /*No inherited ext. because inherited from the base object*/ /*Ext. of ancestor*/
-    /*New data for this type */
-    const void * src;             /*Image source: Pointer to an array or a file or a symbol*/
+typedef struct {
+        /*No inherited ext. because inherited from the base object*/ /*Ext. of ancestor*/
+        /*New data for this type */
+        const void* src; /*Image source: Pointer to an array or a file or a symbol*/
 
-    lv_coord_t w;               /*Width of the image (Handled by the library)*/
-    lv_coord_t h;               /*Height of the image (Handled by the library)*/
+        lv_coord_t w; /*Width of the image (Handled by the library)*/
+        lv_coord_t h; /*Height of the image (Handled by the library)*/
 #if USE_LV_MULTI_LANG
-    uint16_t lang_txt_id;       /*The ID of the image to display. */
+        uint16_t lang_txt_id; /*The ID of the image to display. */
 #endif
-    uint8_t src_type  :2;       /*See: lv_img_src_t*/
-    uint8_t auto_size :1;       /*1: automatically set the object size to the image size*/
-    uint8_t cf :5;              /*Color format from `lv_img_color_format_t`*/
+        uint8_t src_type : 2; /*See: lv_img_src_t*/
+        uint8_t auto_size : 1; /*1: automatically set the object size to the image size*/
+        uint8_t cf : 5; /*Color format from `lv_img_color_format_t`*/
 } lv_img_ext_t;
 
 /**********************
@@ -61,7 +60,7 @@ typedef struct
  * @param copy pointer to a image object, if not NULL then the new object will be copied from it
  * @return pointer to the created image
  */
-lv_obj_t * lv_img_create(lv_obj_t * par, const lv_obj_t * copy);
+lv_obj_t* lv_img_create(lv_obj_t* par, const lv_obj_t* copy);
 
 /*=====================
  * Setter functions
@@ -72,7 +71,7 @@ lv_obj_t * lv_img_create(lv_obj_t * par, const lv_obj_t * copy);
  * @param img pointer to an image object
  * @param data the image data
  */
-void lv_img_set_src(lv_obj_t * img, const void * src_img);
+void lv_img_set_src(lv_obj_t* img, const void* src_img);
 
 #if USE_LV_MULTI_LANG
 /**
@@ -80,7 +79,7 @@ void lv_img_set_src(lv_obj_t * img, const void * src_img);
  * @param img pointer to an image object
  * @param src_id ID of the source
  */
-void lv_img_set_src_id(lv_obj_t * img, uint32_t txt_id);
+void lv_img_set_src_id(lv_obj_t* img, uint32_t txt_id);
 #endif
 
 /**
@@ -89,10 +88,9 @@ void lv_img_set_src_id(lv_obj_t * img, uint32_t txt_id);
  * @param img -
  * @param fn -
  */
-static inline void lv_img_set_file(lv_obj_t * img, const char * fn)
-{
-    (void) img;
-    (void) fn;
+static inline void lv_img_set_file(lv_obj_t* img, const char* fn) {
+    (void)img;
+    (void)fn;
 }
 
 /**
@@ -101,27 +99,23 @@ static inline void lv_img_set_file(lv_obj_t * img, const char * fn)
  * @param img pointer to an image
  * @param en true: auto size enable, false: auto size disable
  */
-void lv_img_set_auto_size(lv_obj_t * img, bool autosize_en);
+void lv_img_set_auto_size(lv_obj_t* img, bool autosize_en);
 
 /**
  * Set the style of an image
  * @param img pointer to an image object
  * @param style pointer to a style
  */
-static inline void lv_img_set_style(lv_obj_t *img, lv_style_t *style)
-{
-    lv_obj_set_style(img, style);
-}
+static inline void lv_img_set_style(lv_obj_t* img, lv_style_t* style) { lv_obj_set_style(img, style); }
 
 /**
  * Obsolete since v5.1. Just for compatibility with v5.0. Will be removed in v6.0
  * @param img -
  * @param upscale -
  */
-static inline void lv_img_set_upscale(lv_obj_t * img, bool upcale)
-{
-    (void) img;
-    (void) upcale;
+static inline void lv_img_set_upscale(lv_obj_t* img, bool upcale) {
+    (void)img;
+    (void)upcale;
 }
 
 /*=====================
@@ -133,14 +127,14 @@ static inline void lv_img_set_upscale(lv_obj_t * img, bool upcale)
  * @param img pointer to an image object
  * @return the image source (symbol, file name or C array)
  */
-const void * lv_img_get_src(lv_obj_t * img);
+const void* lv_img_get_src(lv_obj_t* img);
 
 /**
  * Get the name of the file set for an image
  * @param img pointer to an image
  * @return file name
  */
-const char * lv_img_get_file_name(const lv_obj_t * img);
+const char* lv_img_get_file_name(const lv_obj_t* img);
 
 #if USE_LV_MULTI_LANG
 /**
@@ -148,7 +142,7 @@ const char * lv_img_get_file_name(const lv_obj_t * img);
  * @param img pointer to an image
  * @return ID of the source
  */
-uint16_t lv_img_get_src_id(lv_obj_t * img);
+uint16_t lv_img_get_src_id(lv_obj_t* img);
 #endif
 
 /**
@@ -156,25 +150,21 @@ uint16_t lv_img_get_src_id(lv_obj_t * img);
  * @param img pointer to an image
  * @return true: auto size is enabled, false: auto size is disabled
  */
-bool lv_img_get_auto_size(const lv_obj_t * img);
+bool lv_img_get_auto_size(const lv_obj_t* img);
 
 /**
  * Get the style of an image object
  * @param img pointer to an image object
  * @return pointer to the image's style
  */
-static inline lv_style_t* lv_img_get_style(const lv_obj_t *img)
-{
-    return lv_obj_get_style(img);
-}
+static inline lv_style_t* lv_img_get_style(const lv_obj_t* img) { return lv_obj_get_style(img); }
 
 /**
  * Obsolete since v5.1. Just for compatibility with v5.0. Will be removed in v6.0
  * @param img -
  * @return false
  */
-static inline bool lv_img_get_upscale(const lv_obj_t * img)
-{
+static inline bool lv_img_get_upscale(const lv_obj_t* img) {
     (void)img;
     return false;
 }
@@ -186,10 +176,10 @@ static inline bool lv_img_get_upscale(const lv_obj_t * img)
 /*Use this macro to declare an image in a c file*/
 #define LV_IMG_DECLARE(var_name) extern const lv_img_dsc_t var_name;
 
-#endif  /*USE_LV_IMG*/
+#endif /*USE_LV_IMG*/
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif  /*LV_IMG_H*/
+#endif /*LV_IMG_H*/

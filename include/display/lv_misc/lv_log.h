@@ -26,11 +26,11 @@ extern "C" {
 
 /*Possible log level. For compatibility declare it independently from `USE_LV_LOG`*/
 
-#define LV_LOG_LEVEL_TRACE 0     /*A lot of logs to give detailed information*/
-#define LV_LOG_LEVEL_INFO  1     /*Log important events*/
-#define LV_LOG_LEVEL_WARN  2     /*Log if something unwanted happened but didn't caused problem*/
-#define LV_LOG_LEVEL_ERROR 3     /*Only critical issue, when the system may fail*/
-#define _LV_LOG_LEVEL_NUM  4
+#define LV_LOG_LEVEL_TRACE 0 /*A lot of logs to give detailed information*/
+#define LV_LOG_LEVEL_INFO 1 /*Log important events*/
+#define LV_LOG_LEVEL_WARN 2 /*Log if something unwanted happened but didn't caused problem*/
+#define LV_LOG_LEVEL_ERROR 3 /*Only critical issue, when the system may fail*/
+#define _LV_LOG_LEVEL_NUM 4
 
 typedef int8_t lv_log_level_t;
 
@@ -38,7 +38,6 @@ typedef int8_t lv_log_level_t;
 /**********************
  *      TYPEDEFS
  **********************/
-
 
 /**********************
  * GLOBAL PROTOTYPES
@@ -49,7 +48,7 @@ typedef int8_t lv_log_level_t;
  * @param f a function pointer:
  *          `void my_print (lv_log_level_t level, const char * file, uint32_t line, const char * dsc)`
  */
-void lv_log_register_print(void f(lv_log_level_t, const char *, uint32_t,  const char *));
+void lv_log_register_print(void f(lv_log_level_t, const char*, uint32_t, const char*));
 
 /**
  * Add a log
@@ -58,25 +57,30 @@ void lv_log_register_print(void f(lv_log_level_t, const char *, uint32_t,  const
  * @param line line number in the source code where the log added
  * @param dsc description of the log
  */
-void lv_log_add(lv_log_level_t level, const char * file, int line, const char * dsc);
+void lv_log_add(lv_log_level_t level, const char* file, int line, const char* dsc);
 
 /**********************
  *      MACROS
  **********************/
 
-#define LV_LOG_TRACE(dsc)   lv_log_add(LV_LOG_LEVEL_TRACE, __FILE__, __LINE__, dsc);
-#define LV_LOG_INFO(dsc)    lv_log_add(LV_LOG_LEVEL_INFO, __FILE__, __LINE__, dsc);
-#define LV_LOG_WARN(dsc)    lv_log_add(LV_LOG_LEVEL_WARN, __FILE__, __LINE__, dsc);
-#define LV_LOG_ERROR(dsc)   lv_log_add(LV_LOG_LEVEL_ERROR, __FILE__, __LINE__, dsc);
+#define LV_LOG_TRACE(dsc) lv_log_add(LV_LOG_LEVEL_TRACE, __FILE__, __LINE__, dsc);
+#define LV_LOG_INFO(dsc) lv_log_add(LV_LOG_LEVEL_INFO, __FILE__, __LINE__, dsc);
+#define LV_LOG_WARN(dsc) lv_log_add(LV_LOG_LEVEL_WARN, __FILE__, __LINE__, dsc);
+#define LV_LOG_ERROR(dsc) lv_log_add(LV_LOG_LEVEL_ERROR, __FILE__, __LINE__, dsc);
 
 #else /*USE_LV_LOG*/
 
 /*Do nothing if `USE_LV_LOG  0`*/
-#define lv_log_add(level, file, line, dsc) {;}
-#define LV_LOG_TRACE(dsc) {;}
-#define LV_LOG_INFO(dsc) {;}
-#define LV_LOG_WARN(dsc) {;}
-#define LV_LOG_ERROR(dsc) {;}
+#define lv_log_add(level, file, line, dsc)                                                                             \
+    { ; }
+#define LV_LOG_TRACE(dsc)                                                                                              \
+    { ; }
+#define LV_LOG_INFO(dsc)                                                                                               \
+    { ; }
+#define LV_LOG_WARN(dsc)                                                                                               \
+    { ; }
+#define LV_LOG_ERROR(dsc)                                                                                              \
+    { ; }
 #endif /*USE_LV_LOG*/
 
 #ifdef __cplusplus

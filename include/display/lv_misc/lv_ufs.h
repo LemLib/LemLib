@@ -11,7 +11,6 @@
 extern "C" {
 #endif
 
-
 /*********************
  *      INCLUDES
  *********************/
@@ -36,30 +35,27 @@ extern "C" {
  *      TYPEDEFS
  **********************/
 /*Description of a file entry */
-typedef struct
-{
-    char * fn_d;
-    void * data_d;
-    uint32_t size;  /*Data length in bytes*/
-    uint16_t oc;    /*Open Count*/
-    uint8_t const_data :1;
+typedef struct {
+        char* fn_d;
+        void* data_d;
+        uint32_t size; /*Data length in bytes*/
+        uint16_t oc; /*Open Count*/
+        uint8_t const_data : 1;
 } lv_ufs_ent_t;
 
 /*File descriptor, used to handle opening an entry more times simultaneously
  Contains unique informations about the specific opening*/
-typedef struct
-{
-    lv_ufs_ent_t* ent; /*Pointer to the entry*/
-    uint32_t rwp;   /*Read Write Pointer*/
-    uint8_t ar :1;  /*1: Access for read is enabled */
-    uint8_t aw :1;  /*1: Access for write is enabled */
+typedef struct {
+        lv_ufs_ent_t* ent; /*Pointer to the entry*/
+        uint32_t rwp; /*Read Write Pointer*/
+        uint8_t ar : 1; /*1: Access for read is enabled */
+        uint8_t aw : 1; /*1: Access for write is enabled */
 } lv_ufs_file_t;
 
 /* Read directory descriptor.
  * It is used to to iterate through the entries in a directory*/
-typedef struct
-{
-    lv_ufs_ent_t * last_ent;
+typedef struct {
+        lv_ufs_ent_t* last_ent;
 } lv_ufs_dir_t;
 
 /**********************
@@ -85,7 +81,7 @@ bool lv_ufs_ready(void);
  * @return LV_FS_RES_OK: no error, the file is opened
  *         any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_open (void * file_p, const char * fn, lv_fs_mode_t mode);
+lv_fs_res_t lv_ufs_open(void* file_p, const char* fn, lv_fs_mode_t mode);
 
 /**
  * Create a file with a constant data
@@ -95,7 +91,7 @@ lv_fs_res_t lv_ufs_open (void * file_p, const char * fn, lv_fs_mode_t mode);
  * @return LV_FS_RES_OK: no error, the file is read
  *         any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_create_const(const char * fn, const void * const_p, uint32_t len);
+lv_fs_res_t lv_ufs_create_const(const char* fn, const void* const_p, uint32_t len);
 
 /**
  * Close an opened file
@@ -103,7 +99,7 @@ lv_fs_res_t lv_ufs_create_const(const char * fn, const void * const_p, uint32_t 
  * @return LV_FS_RES_OK: no error, the file is read
  *         any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_close (void * file_p);
+lv_fs_res_t lv_ufs_close(void* file_p);
 
 /**
  * Remove a file. The file can not be opened.
@@ -111,7 +107,7 @@ lv_fs_res_t lv_ufs_close (void * file_p);
  * @return LV_FS_RES_OK: no error, the file is removed
  *         LV_FS_RES_DENIED: the file was opened, remove failed
  */
-lv_fs_res_t lv_ufs_remove(const char * fn);
+lv_fs_res_t lv_ufs_remove(const char* fn);
 
 /**
  * Read data from an opened file
@@ -122,7 +118,7 @@ lv_fs_res_t lv_ufs_remove(const char * fn);
  * @return LV_FS_RES_OK: no error, the file is read
  *         any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_read (void * file_p, void * buf, uint32_t btr, uint32_t * br);
+lv_fs_res_t lv_ufs_read(void* file_p, void* buf, uint32_t btr, uint32_t* br);
 
 /**
  * Write data to an opened file
@@ -133,7 +129,7 @@ lv_fs_res_t lv_ufs_read (void * file_p, void * buf, uint32_t btr, uint32_t * br)
  * @return LV_FS_RES_OK: no error, the file is read
  *         any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_write (void * file_p, const void * buf, uint32_t btw, uint32_t * bw);
+lv_fs_res_t lv_ufs_write(void* file_p, const void* buf, uint32_t btw, uint32_t* bw);
 
 /**
  * Set the read write pointer. Also expand the file size if necessary.
@@ -142,7 +138,7 @@ lv_fs_res_t lv_ufs_write (void * file_p, const void * buf, uint32_t btw, uint32_
  * @return LV_FS_RES_OK: no error, the file is read
  *         any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_seek (void * file_p, uint32_t pos);
+lv_fs_res_t lv_ufs_seek(void* file_p, uint32_t pos);
 
 /**
  * Give the position of the read write pointer
@@ -151,7 +147,7 @@ lv_fs_res_t lv_ufs_seek (void * file_p, uint32_t pos);
  * @return LV_FS_RES_OK: no error, the file is read
  *         any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_tell (void * file_p, uint32_t * pos_p);
+lv_fs_res_t lv_ufs_tell(void* file_p, uint32_t* pos_p);
 
 /**
  * Truncate the file size to the current position of the read write pointer
@@ -159,7 +155,7 @@ lv_fs_res_t lv_ufs_tell (void * file_p, uint32_t * pos_p);
  * @return LV_FS_RES_OK: no error, the file is read
  *         any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_trunc (void * file_p);
+lv_fs_res_t lv_ufs_trunc(void* file_p);
 
 /**
  * Give the size of the file in bytes
@@ -168,7 +164,7 @@ lv_fs_res_t lv_ufs_trunc (void * file_p);
  * @return LV_FS_RES_OK: no error, the file is read
  *         any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_size (void * file_p, uint32_t * size_p);
+lv_fs_res_t lv_ufs_size(void* file_p, uint32_t* size_p);
 
 /**
  * Initialize a lv_ufs_read_dir_t variable to directory reading
@@ -176,7 +172,7 @@ lv_fs_res_t lv_ufs_size (void * file_p, uint32_t * size_p);
  * @param path uFS doesn't support folders so it has to be ""
  * @return LV_FS_RES_OK or any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_dir_open(void * rddir_p, const char * path);
+lv_fs_res_t lv_ufs_dir_open(void* rddir_p, const char* path);
 
 /**
  * Read the next file name
@@ -184,14 +180,14 @@ lv_fs_res_t lv_ufs_dir_open(void * rddir_p, const char * path);
  * @param fn pointer to buffer to sore the file name
  * @return LV_FS_RES_OK or any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_dir_read(void * dir_p, char * fn);
+lv_fs_res_t lv_ufs_dir_read(void* dir_p, char* fn);
 
 /**
  * Close the directory reading
  * @param rddir_p pointer to an initialized 'ufs_read_dir_t' variable
  * @return LV_FS_RES_OK or any error from lv_fs_res_t enum
  */
-lv_fs_res_t lv_ufs_dir_close(void * rddir_p);
+lv_fs_res_t lv_ufs_dir_close(void* rddir_p);
 
 /**
  * Give the size of a drive
@@ -199,7 +195,7 @@ lv_fs_res_t lv_ufs_dir_close(void * rddir_p);
  * @param free_p pointer to store the free site [kB]
  * @return LV_FS_RES_OK or any error from 'fs_res_t'
  */
-lv_fs_res_t lv_ufs_free (uint32_t * total_p, uint32_t * free_p);
+lv_fs_res_t lv_ufs_free(uint32_t* total_p, uint32_t* free_p);
 
 /**********************
  *      MACROS
