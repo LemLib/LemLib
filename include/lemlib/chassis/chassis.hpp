@@ -254,6 +254,8 @@ struct SwingToPointParams {
         /** angle between the robot and target heading where the movement will exit. Only has an effect if minSpeed is
          * non-zero.*/
         float earlyExitRange = 0;
+        /**  */
+        float swingRadius = 0;
 };
 
 /**
@@ -275,6 +277,8 @@ struct SwingToHeadingParams {
         /** angle between the robot and target heading where the movement will exit. Only has an effect if minSpeed is
          * non-zero.*/
         float earlyExitRange = 0;
+        /**  */
+        float swingRadius = 0;
 };
 
 /**
