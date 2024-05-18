@@ -24,7 +24,11 @@ pros::Motor middle_left_motor(2); // middle left motor on port 2
 pros::Motor back_left_motor(3); // back left motor on port 3
 pros::Motor front_right_motor(4); // front right motor on port 4
 pros::Motor middle_right_motor(5); // middle right motor on port 5
-pros::motor back_right_motor(6); // back right motor on port 6
+pros::Motor back_right_motor(6); // back right motor on port 6
+```
+
+```{tip}
+Remember, you need `#include "lemlib/api.hpp" at the top of your file otherwise there will be errors everywhere
 ```
 
 Now, we need to determine which way the motors spin when we apply a positive voltage. This can be done by moving the motor through the devices menu on the brain screen and observing how the drive wheels move. See the table below for determining whether a motor is reversed or not:
@@ -46,37 +50,37 @@ pros::Motor middle_left_motor(-2); // reversed
 pros::Motor back_left_motor(-3); // reversed
 pros::Motor front_right_motor(4); // forwards
 pros::Motor middle_right_motor(5); // forwards
-pros::motor back_right_motor(6); // forwards
+pros::Motor back_right_motor(6); // forwards
 ```
 
 Now, we need to specify what cartridge is used by every motor. The cartridge can be checked by looking at the area below the shaft of the motor. A motor can have one of three cartridges:
 
 |          **Color**         |         **RPM**         | **Code Representation**    |
 | -------------------------- | ----------------------- | -------------------------- | 
-| **Red**                    |           100           | `pros::E_MOTOR_GEARSET_RED` |
-| **Green**                  |           200           | `pros::E_MOTOR_GEARSET_GREEN` |
-| **Blue**                   |           600           | `pros::E_MOTOR_GEARSET_BLUE` |
+| **Red**                    |           100           | `pros::E_MOTOR_GEAR_RED` |
+| **Green**                  |           200           | `pros::E_MOTOR_GEAR_GREEN` |
+| **Blue**                   |           600           | `pros::E_MOTOR_GEAR_BLUE` |
 
 We need to specify the cartridge configuration in code as well:
 
 ```cpp
-pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_GREEN); // green cartridge
-pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_BLUE); // blue cartridge
-pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_RED); // red cartridge
-pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_GREEN); // green cartridge
-pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_BLUE); // blue cartridge
-pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_RED); // red cartridge
+pros::Motor front_left_motor(-1, pros::E_MOTOR_GEAR_GREEN); // green cartridge
+pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEAR_BLUE); // blue cartridge
+pros::Motor back_left_motor(-3, pros::E_MOTOR_GEAR_RED); // red cartridge
+pros::Motor front_right_motor(4, pros::E_MOTOR_GEAR_GREEN); // green cartridge
+pros::Motor middle_right_motor(5, pros::E_MOTOR_GEAR_BLUE); // blue cartridge
+pros::Motor back_right_motor(6, pros::E_MOTOR_GEAR_RED); // red cartridge
 ```
 
 Now, all our motors are configured. However, we need to add them to motor groups so LemLib can interface with them. See the code below:
 
 ```cpp
-pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_GREEN); // left_motor_group
-pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_BLUE); // left_motor_group
-pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_RED); // left_motor_group
-pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_GREEN); // right_motor_group
-pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_BLUE); // right_motor_group
-pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_RED); // right_motor_group
+pros::Motor front_left_motor(-1, pros::E_MOTOR_GEAR_GREEN); // left_motor_group
+pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEAR_BLUE); // left_motor_group
+pros::Motor back_left_motor(-3, pros::E_MOTOR_GEAR_RED); // left_motor_group
+pros::Motor front_right_motor(4, pros::E_MOTOR_GEAR_GREEN); // right_motor_group
+pros::Motor middle_right_motor(5, pros::E_MOTOR_GEAR_BLUE); // right_motor_group
+pros::Motor back_right_motor(6, pros::E_MOTOR_GEAR_RED); // right_motor_group
 
 // left motor group
 pros::MotorGroup left_motor_group({ front_left_motor, middle_left_motor, back_left_motor });
@@ -377,12 +381,12 @@ lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
 Now we have all the necessary information to configure lemlib. See the code block below:
 
 ```cpp
-pros::Motor front_left_motor(-1, pros::E_MOTOR_GEARSET_GREEN); // left_motor_group
-pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEARSET_BLUE); // left_motor_group
-pros::Motor back_left_motor(-3, pros::E_MOTOR_GEARSET_RED); // left_motor_group
-pros::Motor front_right_motor(4, pros::E_MOTOR_GEARSET_GREEN); // right_motor_group
-pros::Motor middle_right_motor(5, pros::E_MOTOR_GEARSET_BLUE); // right_motor_group
-pros::motor back_right_motor(6, pros::E_MOTOR_GEARSET_RED); // right_motor_group
+pros::Motor front_left_motor(-1, pros::E_MOTOR_GEAR_GREEN); // left_motor_group
+pros::Motor middle_left_motor(-2, pros::E_MOTOR_GEAR_BLUE); // left_motor_group
+pros::Motor back_left_motor(-3, pros::E_MOTOR_GEAR_RED); // left_motor_group
+pros::Motor front_right_motor(4, pros::E_MOTOR_GEAR_GREEN); // right_motor_group
+pros::Motor middle_right_motor(5, pros::E_MOTOR_GEAR_BLUE); // right_motor_group
+pros::Motor back_right_motor(6, pros::E_MOTOR_GEAR_RED); // right_motor_group
 
 // left motor group
 pros::MotorGroup left_motor_group({ front_left_motor, middle_left_motor, back_left_motor });
