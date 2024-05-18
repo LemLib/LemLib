@@ -223,7 +223,7 @@ struct TurnToHeadingParams {
 /**
  * @brief Enum class DriveSide
  *
- * When using swing turns, the user needs to specify what side of the drivetrain should be locked
+ * When using swing turns, the user needs to specify what side of the drivetrain should be on the inside
  * we could just use an integer or boolean for this, but using an enum class improves readability
  *
  * This enum class only has 2 values, LEFT and RIGHT
@@ -254,8 +254,6 @@ struct SwingToPointParams {
         /** angle between the robot and target heading where the movement will exit. Only has an effect if minSpeed is
          * non-zero.*/
         float earlyExitRange = 0;
-        /**  */
-        float swingRadius = 0;
 };
 
 /**
@@ -277,8 +275,50 @@ struct SwingToHeadingParams {
         /** angle between the robot and target heading where the movement will exit. Only has an effect if minSpeed is
          * non-zero.*/
         float earlyExitRange = 0;
-        /**  */
-        float swingRadius = 0;
+};
+
+/**
+ * @brief Parameters for Chassis::arcToPoint
+ *
+ * We use a struct to simplify customization. Chassis::arcToPoint has many
+ * parameters and specifying them all just to set one optional param harms
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ */
+struct ArcToPointParams {
+        /** whether the robot should turn to face the point with the front of the robot. True by default */
+        bool forwards = true;
+        /** the direction the robot should turn in. AUTO by default */
+        AngularDirection direction = AngularDirection::AUTO;
+        /** the maximum speed the robot can turn at. Value between 0-127. 127 by default */
+        float maxSpeed = 127;
+        /** the minimum speed the robot can turn at. If set to a non-zero value, the exit conditions will switch to less
+         * accurate but smoother ones. Value between 0-127. 0 by default */
+        float minSpeed = 0;
+        /** angle between the robot and target heading where the movement will exit. Only has an effect if minSpeed is
+         * non-zero.*/
+        float earlyExitRange = 0;
+};
+
+/**
+ * @brief Parameters for Chassis::arcToHeading
+ *
+ * We use a struct to simplify customization. Chassis::arcToHeading has many
+ * parameters and specifying them all just to set one optional param harms
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ */
+struct ArcToHeadingParams {
+        /** the direction the robot should turn in. AUTO by default */
+        AngularDirection direction = AngularDirection::AUTO;
+        /** the maximum speed the robot can turn at. Value between 0-127. 127 by default */
+        float maxSpeed = 127;
+        /** the minimum speed the robot can turn at. If set to a non-zero value, the exit conditions will switch to less
+         * accurate but smoother ones. Value between 0-127. 0 by default */
+        float minSpeed = 0;
+        /** angle between the robot and target heading where the movement will exit. Only has an effect if minSpeed is
+         * non-zero.*/
+        float earlyExitRange = 0;
 };
 
 /**
@@ -623,6 +663,76 @@ class Chassis {
          */
         void swingToPoint(float x, float y, DriveSide lockedSide, int timeout, SwingToPointParams params = {},
                           bool async = true);
+        /**
+         * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
+         *
+         * @param theta heading location
+         * @param radius the radius of the arc (positive to arc right, negitive to arc left)
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         *
+         * @b Example
+         * @code {.cpp}
+         * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
+         * // turn the robot to face heading 135, with a timeout of 1000ms
+         * // and lock the left side of the drivetrain
+         * chassis.swingToHeading(135, DriveSide::LEFT, 1000);
+         * // turn the robot to face heading 230.5 with a timeout of 2000ms
+         * // and a maximum speed of 60
+         * // and lock the right side of the drivetrain
+         * chassis.swingToHeading(230.5, DriveSide::RIGHT, 2000, {.maxSpeed = 60});
+         * // turn the robot to face heading -90 with a timeout of 1500ms
+         * // and turn counterclockwise
+         * // and lock the left side of the drivetrain
+         * chassis.swingToHeading(-90, DriveSide::LEFT, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+         * // turn the robot to face heading 90 with a timeout of 500ms
+         * // with a minSpeed of 20 and a maxSpeed of 60
+         * // and lock the right side of the drivetrain
+         * chassis.swingToHeading(90, DriveSide::RIGHT, 500, {.maxSpeed = 60, .minSpeed = 20});
+         * // turn the robot to face heading 45 with a timeout of 2000ms
+         * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
+         * // and lock the left side of the drivetrain
+         * chassis.swingToHeading(45, DriveSide::LEFT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
+         * @endcode
+         */
+        void arcToHeading(float theta, float radius, int timeout, ArcToHeadingParams params = {},
+                            bool async = true);
+        /**
+         * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
+         *
+         * @param theta heading location
+         * @param radius the radius of the arc (positive to arc right, negitive to arc left)
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         *
+         * @b Example
+         * @code {.cpp}
+         * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
+         * // turn the robot to face heading 135, with a timeout of 1000ms
+         * // and lock the left side of the drivetrain
+         * chassis.swingToHeading(135, DriveSide::LEFT, 1000);
+         * // turn the robot to face heading 230.5 with a timeout of 2000ms
+         * // and a maximum speed of 60
+         * // and lock the right side of the drivetrain
+         * chassis.swingToHeading(230.5, DriveSide::RIGHT, 2000, {.maxSpeed = 60});
+         * // turn the robot to face heading -90 with a timeout of 1500ms
+         * // and turn counterclockwise
+         * // and lock the left side of the drivetrain
+         * chassis.swingToHeading(-90, DriveSide::LEFT, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+         * // turn the robot to face heading 90 with a timeout of 500ms
+         * // with a minSpeed of 20 and a maxSpeed of 60
+         * // and lock the right side of the drivetrain
+         * chassis.swingToHeading(90, DriveSide::RIGHT, 500, {.maxSpeed = 60, .minSpeed = 20});
+         * // turn the robot to face heading 45 with a timeout of 2000ms
+         * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
+         * // and lock the left side of the drivetrain
+         * chassis.swingToHeading(45, DriveSide::LEFT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
+         * @endcode
+         */
+        void arcToPoint(float x, float y, float radius, int timeout, ArcToPointParams params = {},
+                            bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *

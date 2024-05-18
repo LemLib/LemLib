@@ -8,7 +8,6 @@
 void lemlib::Chassis::swingToHeading(float theta, DriveSide insideSide, int timeout, SwingToHeadingParams params,
                                      bool async) {
     params.minSpeed = fabs(params.minSpeed);
-    params.swingRadius = fabs(params.swingRadius);
     this->requestMotionStart();
     // were all motions cancelled?
     if (!this->motionRunning) return;
@@ -21,7 +20,7 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide insideSide, int time
     }
     float targetTheta;
     float deltaTheta;
-    float outsideMotorPower, insideMotorPower;
+    float motorPower;
     float prevMotorPower = 0;
     float startTheta = getPose().theta;
     bool settling = false;
@@ -38,12 +37,9 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide insideSide, int time
                                              ? this->drivetrain.leftMotors->get_brake_modes().at(0)
                                              : this->drivetrain.rightMotors->get_brake_modes().at(0);
     
-    // only lock if swing radius is disabled
-    if (params.swingRadius == 0) {
-        // set brake mode of the locked side to hold
-        if (insideSide == DriveSide::LEFT) this->drivetrain.leftMotors->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
-        else this->drivetrain.rightMotors->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
-    }
+    // set brake mode of the locked side to hold
+    if (insideSide == DriveSide::LEFT) this->drivetrain.leftMotors->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
+    else this->drivetrain.rightMotors->set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
 
     // main loop
     while (!timer.isDone() && !angularLargeExit.getExit() && !angularSmallExit.getExit() && this->motionRunning) {
@@ -70,41 +66,32 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide insideSide, int time
         if (params.minSpeed != 0 && fabs(deltaTheta) < params.earlyExitRange) break;
         if (params.minSpeed != 0 && sgn(deltaTheta) != sgn(prevDeltaTheta)) break;
 
-        // calculate the speed of the outside motors
-        outsideMotorPower = angularPID.update(deltaTheta);
+        // calculate the speed of the motors
+        motorPower = angularPID.update(deltaTheta);
         angularLargeExit.update(deltaTheta);
         angularSmallExit.update(deltaTheta);
 
-        // calculate the ratio
-        insideMotorPower = 0;
-        if (params.swingRadius > 0) {
-            double ratio = params.swingRadius / (params.swingRadius + drivetrain.trackWidth);
-            insideMotorPower = outsideMotorPower * ratio;
-        }
-
         // cap the speed
-        if (outsideMotorPower > params.maxSpeed) outsideMotorPower = params.maxSpeed;
-        else if (outsideMotorPower < -params.maxSpeed) outsideMotorPower = -params.maxSpeed;
-        if (fabs(deltaTheta) > 20) outsideMotorPower = slew(outsideMotorPower, prevMotorPower, angularSettings.slew);
-        if (outsideMotorPower < 0 && outsideMotorPower > -params.minSpeed) outsideMotorPower = -params.minSpeed;
-        else if (outsideMotorPower > 0 && outsideMotorPower < params.minSpeed) outsideMotorPower = params.minSpeed;
-        prevMotorPower = outsideMotorPower;
+        if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
+        else if (motorPower < -params.maxSpeed) motorPower = -params.maxSpeed;
+        if (fabs(deltaTheta) > 20) motorPower = slew(motorPower, prevMotorPower, angularSettings.slew);
+        if (motorPower < 0 && motorPower > -params.minSpeed) motorPower = -params.minSpeed;
+        else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
+        prevMotorPower = motorPower;
 
-        infoSink()->debug("Swing: Outside Motor Power: {}, Inside Motor Power: {} ", outsideMotorPower, insideMotorPower);
+        infoSink()->debug("Swing: Motor Power: {} ", motorPower);
 
         // move the drivetrain
         if (insideSide == DriveSide::LEFT) {
-            drivetrain.rightMotors->move(-outsideMotorPower);
-            if (params.swingRadius == 0) drivetrain.leftMotors->brake();
-            else drivetrain.leftMotors->move(insideMotorPower);
+            drivetrain.rightMotors->move(-motorPower);
+            drivetrain.leftMotors->brake();
         } else {
-            drivetrain.leftMotors->move(outsideMotorPower);
-            if (params.swingRadius == 0) drivetrain.rightMotors->brake();
-            else drivetrain.rightMotors->move(-insideMotorPower);
+            drivetrain.leftMotors->move(motorPower);
+            drivetrain.rightMotors->brake();
         }
 
         // delay to save resources
-        pros::delay(10);
+        pros::delay(10);    
     }
 
     // set the brake mode of the locked side of the drivetrain to its
