@@ -21,7 +21,7 @@ lemlib::TrackingWheel::TrackingWheel(pros::Rotation* encoder, float wheelDiamete
 
 lemlib::TrackingWheel::TrackingWheel(pros::MotorGroup* motors, float wheelDiameter, float distance, float rpm) {
     this->motors = motors;
-    this->motors->set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
+    this->motors->set_encoder_units_all(pros::E_MOTOR_ENCODER_ROTATIONS);
     this->diameter = wheelDiameter;
     this->distance = distance;
     this->rpm = rpm;
