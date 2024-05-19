@@ -47,17 +47,21 @@ pros::MotorGroup right_motors({4, -5, 6}); // right motors on ports 4 (forwards)
 
 Now, we need to specify what cartridge is used by every motor. The cartridge can be checked by looking at the area below the shaft of the motor. A motor can have one of three cartridges:
 
-|          **Color**         |         **RPM**         | **Code Representation**    |
-| -------------------------- | ----------------------- | -------------------------- | 
-| **Red**                    |           100           | `pros::MotorGearset::red` |
+|          **Color**         |         **RPM**         | **Code Representation**     |
+| -------------------------- | ----------------------- | --------------------------- | 
+| **Red**                    |           100           | `pros::MotorGearset::red`   |
 | **Green**                  |           200           | `pros::MotorGearset::green` |
-| **Blue**                   |           600           | `pros::MotorGearset::blue` |
+| **Blue**                   |           600           | `pros::MotorGearset::blue`  |
 
 We need to specify the cartridge configuration in code as well:
 
 ```cpp
 pros::MotorGroup left_motors({-1, 2, -3}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
 pros::MotorGroup right_motors({4, -5, 6}, pros::MotorGearset::green); // right motors use 200 RPM cartridges
+```
+
+```{important}
+
 ```
 
 Now that our motors are fully configured, we need to pass them to LemLib. We can do this through a helper class: `Drivetrain`. It needs the following information:
