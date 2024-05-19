@@ -30,7 +30,7 @@ lemlib::TrackingWheel::TrackingWheel(pros::MotorGroup* motors, float wheelDiamet
 void lemlib::TrackingWheel::reset() {
     if (this->encoder != nullptr) this->encoder->reset();
     if (this->rotation != nullptr) this->rotation->reset_position();
-    if (this->motors != nullptr) this->motors->tare_position();
+    if (this->motors != nullptr) this->motors->tare_position_all();
 }
 
 float lemlib::TrackingWheel::getDistanceTraveled() {
