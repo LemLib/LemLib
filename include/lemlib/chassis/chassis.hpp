@@ -223,7 +223,7 @@ struct TurnToHeadingParams {
 /**
  * @brief Enum class DriveSide
  *
- * When using swing turns, the user needs to specify what side of the drivetrain should be on the inside
+ * When using swing turns, the user needs to specify what side of the drivetrain should be locked
  * we could just use an integer or boolean for this, but using an enum class improves readability
  *
  * This enum class only has 2 values, LEFT and RIGHT
