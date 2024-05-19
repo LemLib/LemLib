@@ -1,5 +1,9 @@
 # 7 - Pure Pursuit
 
+```{tip}
+View the [example project](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp) if you need more context for setup
+```
+
 ## Introduction
 
 In this tutorial, we will be be using Pure Pursuit. Pure Pursuit is a path following algorithm that allows the robot to follow a path quickly.

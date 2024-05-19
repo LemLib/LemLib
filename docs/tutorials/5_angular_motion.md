@@ -1,5 +1,9 @@
 # 5 - Angular Motions
 
+```{tip}
+View the [example project](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp) if you need more context for setup
+```
+
 Turning motions are the simplest motions LemLib can perform. All of the motions will rotate the robot in some way, and only use the angular PID controller.
 
 ## Turn To Heading

@@ -1,5 +1,9 @@
 # 2 - Configuration
 
+```{tip}
+View the [example project](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp) if you need more context for setup
+```
+
 ## Introduction
 
 Now that LemLib has been installed, we need to configure it before we can start using it. Most mistakes happen during configuration, so pay close attention to the instructions.

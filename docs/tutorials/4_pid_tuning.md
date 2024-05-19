@@ -1,5 +1,9 @@
 # 4 - PID Tuning
 
+```{tip}
+View the [example project](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp) if you need more context for setup
+```
+
 ## Introduction
 
 PIDs are used in the majority of motion algorithms in LemLib. There are 2 PID Controllers used by LemLib: one for lateral motion, and one for angular motion. This tutorial will focus on tuning those PIDs.

@@ -1,5 +1,9 @@
 # 6 - Lateral Motion
 
+```{tip}
+View the [example project](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp) if you need more context for setup
+```
+
 In most autons, you don't just want to spin the chassis in circles, you also want to move across the field. LemLib provides two PID based motions designed to do exactly this: `moveToPoint` and `moveToPose`. Both of these motions use both the angular and lateral PID controllers under the hood, meaning both will need to be tuned.
 
 ## Move To Point

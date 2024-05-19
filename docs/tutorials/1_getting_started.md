@@ -15,7 +15,7 @@ After the extension has been downloaded, you should see a notification as seen i
 
 ![pros-toolchain](../assets/1_getting_started/download-pros-toolchain.png)
 
-After the toolchain has been installed, you can create a new PROS project. Select the PROS logo in the sidebar, click `Create Project`, select an empty folder for the project, give it a suitable name, e.g `1010N-Spin-Up`, select `v5`, and for kernel version select `3.8.3`. A notification in the bottom right will pop up notifying you that the project is being created. VSCode will open a new window as soon as it is ready. There will be a popup asking whether to "trust" the folder, click `yes`. You have now installed PROS and created your first project!
+After the toolchain has been installed, you can create a new PROS project. Select the PROS logo in the sidebar, click `Create Project`, select an empty folder for the project, give it a suitable name, e.g `1010N-Spin-Up`, select `v5`, and for kernel version select `4.1.0`. A notification in the bottom right will pop up notifying you that the project is being created. VSCode will open a new window as soon as it is ready. There will be a popup asking whether to "trust" the folder, click `yes`. You have now installed PROS and created your first project!
 
 ## Installation - clangd
 

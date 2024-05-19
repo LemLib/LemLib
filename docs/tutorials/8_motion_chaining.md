@@ -1,5 +1,9 @@
 # 8 - Motion Chaining
 
+```{tip}
+View the [example project](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp) if you need more context for setup
+```
+
 ## Introduction
 
 We use motion chaining when we have a path that cannot be described with one single motion. For example, imagine we want to go around an obstacle like so:

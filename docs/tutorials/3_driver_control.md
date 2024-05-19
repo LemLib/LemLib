@@ -1,5 +1,9 @@
 # 3 - Driver Control
 
+```{tip}
+View the [example project](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp) if you need more context for setup
+```
+
 ## Introduction
 In this tutorial, we will be learning how to program the drivetrain to allow for controller joystick inputs.
 
