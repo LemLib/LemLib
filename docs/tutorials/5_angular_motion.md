@@ -66,8 +66,8 @@ Swing motions are unique in that they only use half the drivetrain to move.
 Here's an example of how you'd use a swing turn:
 
 ```cpp
-chassis.setPose(0,0,0); // the robot now things that its at (0,0) with heading of 0 degrees
-chassis.swingToHeading(45, 4000); // swing to face 45 degrees, with a timeout of 4000 ms
+chassis.setPose(0,0,0); // the robot now thinks that its at (0,0) with heading of 0 degrees
+chassis.swingToHeading(45, DriveSide::LEFT, 4000); // swing to face 45 degrees, with a timeout of 4000 ms
 ```
 
 The following illustration shows that this motion looks like if everything worked successfully:
@@ -88,6 +88,37 @@ As with all the other turn motions `swingToHeading` also takes a `params` and `a
 `swingToPoint` works exactly like `swingToHeading`, except it turns to face a point rather than a heading.
 
 ```cpp
-chassis.swingToPoint(53, 53, 4000); // swing to face the point (53, 53) degrees, with a timeout of 4000 ms
+chassis.swingToPoint(53, 53, DriveSide::LEFT, 4000); // swing to face the point (53, 53) degrees, with a timeout of 4000 ms
 ```
 As with all the other turn motions `swingToPoint` also takes a `params` and `async` argument, which works exactly like the others do.
+
+## Arc to Heading
+
+```{seealso}
+{cpp:func}`arcToHeading <lemlib::Chassis::arcToHeading>` and {cpp:class}`ArcToHeadingParams <lemlib::ArcToHeadingParams>` API references.
+```
+
+Arc motions are like swing motions in that they don't turn around the tracking center, however in the arc motions the robot turns around a point `radius` distance away from the tracking center
+
+Here's an example of how you would use an arc turn: 
+
+```cpp
+chassis.setPose(0, 0, 0); // the robot now thinks that its at (0,0) with heading of 0 degrees
+chassis.arcToHeading(45, 12, 4000) // arc around a point 12 in to the right of the robot to face 45 degrees, with a timeout of 4000 ms
+```
+
+As with all the other turn motions `arcToHeading` also takes a `params` and `async` argument, which works exactly like the others do.
+
+## Arc to Point
+
+```{seealso}
+{cpp:func}`arcToPoint <lemlib::Chassis::arcToPoint>` and {cpp:class}`ArcToPointParams <lemlib::ArcToPointParams>` API references.
+```
+
+`arcToPoint` works exactly like `arcToHeading`, except it turns to face a point rather than a heading.
+
+```cpp
+chassis.arcToHeading(23, 23, -12, 4000) // arc around a point 12 in to the left of the robot to face the point (23, 23), with a timeout of 4000 ms
+```add
+
+As with all the other turn motions `arcToPoint` also takes a `params` and `async` argument, which works exactly like the others do.
