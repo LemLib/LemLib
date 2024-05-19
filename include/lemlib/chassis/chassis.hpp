@@ -664,7 +664,7 @@ class Chassis {
         void swingToPoint(float x, float y, DriveSide lockedSide, int timeout, SwingToPointParams params = {},
                           bool async = true);
         /**
-         * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
+         * @brief Turn the chassis so it is facing the target heading by rotating around a point `radius` inches away from the center of rotation
          *
          * @param theta heading location
          * @param radius the radius of the arc (positive to arc right, negitive to arc left)
@@ -676,32 +676,33 @@ class Chassis {
          * @code {.cpp}
          * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
          * // turn the robot to face heading 135, with a timeout of 1000ms
-         * // and lock the left side of the drivetrain
-         * chassis.swingToHeading(135, DriveSide::LEFT, 1000);
+         * // and rotate around a point 3 inches to the left of the drivetrain
+         * chassis.arcToHeading(135, -3, 1000);
          * // turn the robot to face heading 230.5 with a timeout of 2000ms
          * // and a maximum speed of 60
-         * // and lock the right side of the drivetrain
-         * chassis.swingToHeading(230.5, DriveSide::RIGHT, 2000, {.maxSpeed = 60});
+         * // and rotate around a point 7 inches to the right of the drivetrain
+         * chassis.arcToHeading(230.5, 7, 2000, {.maxSpeed = 60});
          * // turn the robot to face heading -90 with a timeout of 1500ms
          * // and turn counterclockwise
-         * // and lock the left side of the drivetrain
-         * chassis.swingToHeading(-90, DriveSide::LEFT, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+         * // and rotate around a point 22 inches to the left of the drivetrain
+         * chassis.arcToHeading(-90, -22, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
          * // turn the robot to face heading 90 with a timeout of 500ms
          * // with a minSpeed of 20 and a maxSpeed of 60
-         * // and lock the right side of the drivetrain
-         * chassis.swingToHeading(90, DriveSide::RIGHT, 500, {.maxSpeed = 60, .minSpeed = 20});
+         * // and rotate around a point 12 inches to the right of the drivetrain
+         * chassis.arcToHeading(90, 12, 500, {.maxSpeed = 60, .minSpeed = 20});
          * // turn the robot to face heading 45 with a timeout of 2000ms
          * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
-         * // and lock the left side of the drivetrain
-         * chassis.swingToHeading(45, DriveSide::LEFT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
+         * // and rotate around a point 45 inches to the left of the drivetrain
+         * chassis.arcToHeading(45, -45, 2000, {.minSpeed = 60, .earlyExitRange = 5});
          * @endcode
          */
         void arcToHeading(float theta, float radius, int timeout, ArcToHeadingParams params = {},
                             bool async = true);
         /**
-         * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
+         * @brief Turn the chassis so it is facing the target point by rotating around a point `radius` inches away from the center of rotation
          *
-         * @param theta heading location
+         * @param x x location
+         * @param y y location
          * @param radius the radius of the arc (positive to arc right, negitive to arc left)
          * @param timeout longest time the robot can spend moving
          * @param params struct to simulate named parameters
@@ -710,25 +711,30 @@ class Chassis {
          * @b Example
          * @code {.cpp}
          * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
-         * // turn the robot to face heading 135, with a timeout of 1000ms
-         * // and lock the left side of the drivetrain
-         * chassis.swingToHeading(135, DriveSide::LEFT, 1000);
-         * // turn the robot to face heading 230.5 with a timeout of 2000ms
+         * // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
+         * // and rotate around a point 3 inches to the left of the drivetrain
+         * chassis.swingToPoint(45, -45, -3, 1000);
+         * // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
+         * // but face the point with the back of the robot
+         * // and rotate around a point 7 inches to the right of the drivetrain
+         * chassis.swingToPoint(45, -45, 7, 1000, {.forwards = false});
+         * // turn the robot to face the point x = -20, 32.5 with a timeout of 2000ms
          * // and a maximum speed of 60
-         * // and lock the right side of the drivetrain
-         * chassis.swingToHeading(230.5, DriveSide::RIGHT, 2000, {.maxSpeed = 60});
-         * // turn the robot to face heading -90 with a timeout of 1500ms
+         * // and rotate around a point 12 inches to the left of the drivetrain
+         * chassis.swingToPoint(-20, 32.5, -12, 2000, {.maxSpeed = 60});
+         * // turn the robot to face the point x = -30, y = 22.5 with a timeout of 1500ms
          * // and turn counterclockwise
-         * // and lock the left side of the drivetrain
-         * chassis.swingToHeading(-90, DriveSide::LEFT, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
-         * // turn the robot to face heading 90 with a timeout of 500ms
+         * // and rotate around a point 15 inches to the left of the drivetrain
+         * chassis.swingToPoint(-30, 22.5, 15, 1500, {.direction =
+         * AngularDirection::CCW_COUNTERCLOCKWISE});
+         * // turn the robot to face the point x = 10, y = 10 with a timeout of 500ms
          * // with a minSpeed of 20 and a maxSpeed of 60
-         * // and lock the right side of the drivetrain
-         * chassis.swingToHeading(90, DriveSide::RIGHT, 500, {.maxSpeed = 60, .minSpeed = 20});
-         * // turn the robot to face heading 45 with a timeout of 2000ms
+         * // and rotate around a point 45 inches to the left of the drivetrain
+         * chassis.swingToPoint(10, 10, -45, 500, {.maxSpeed = 60, .minSpeed = 20});
+         * // turn the robot to face the point x = 7.5, y = 7.5 with a timeout of 2000ms
          * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
-         * // and lock the left side of the drivetrain
-         * chassis.swingToHeading(45, DriveSide::LEFT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
+         * // rotate around a point 13 inches to the left of the drivetrain
+         * chassis.swingToPoint(7.5, 7.5, 13, 2000, {.minSpeed = 60, .earlyExitRange = 5});
          * @endcode
          */
         void arcToPoint(float x, float y, float radius, int timeout, ArcToPointParams params = {},
