@@ -1,16 +1,12 @@
 #include "lemlib/pose.hpp"
 
 namespace lemlib {
-enum OutputType { VOLTAGE, VELOCITY };
-
 struct DifferentialChassisSpeeds {
         float L, R;
-        OutputType outType = VOLTAGE;
 };
 
 struct HolonomicChassisSpeeds {
         float X, Y, Omega;
-        OutputType outType = VOLTAGE;
 };
 
 class DifferentialMotion {
