@@ -1,7 +1,7 @@
 #include "lemlib/pose.hpp"
 
 namespace lemlib {
-enum class MotionState { RUNNING, FINISHED};
+enum class MotionState { RUNNING, FINISHED };
 
 struct DifferentialChassisSpeeds {
         float L, R;
