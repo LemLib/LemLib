@@ -14,15 +14,19 @@ struct HolonomicChassisSpeeds {
 class DifferentialMotion {
     public:
         virtual DifferentialChassisSpeeds calculate(Pose pose) = 0;
-        virtual MotionState getState() = 0;
+        MotionState getState();
         virtual ~DifferentialMotion();
+    protected:
+        MotionState state = MotionState::RUNNING;
 };
 
 class HolonomicMotion {
     public:
         virtual HolonomicChassisSpeeds calculate(Pose pose) = 0;
-        virtual MotionState getState() = 0;
+        MotionState getState();
         virtual ~HolonomicMotion();
+    protected:
+        MotionState state = MotionState::RUNNING;
 };
 
 } // namespace lemlib
