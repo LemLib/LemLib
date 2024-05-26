@@ -17,8 +17,8 @@ enum class MotionState {
  * @brief represents the speed of the left and right wheels of a differential drive robot
  */
 struct DifferentialChassisSpeeds {
-        float left; /** the speed of the left wheels */
-        float right; /** the speed of the right wheels */
+        Voltage left; /** the speed of the left wheels */
+        Voltage right; /** the speed of the right wheels */
 };
 
 /**
@@ -27,9 +27,9 @@ struct DifferentialChassisSpeeds {
  * @brief represents the speed of the x, y, and angular velocity of a holonomic drive robot
  */
 struct HolonomicChassisSpeeds {
-        float x; /** x velocity */
-        float y; /** y velocity */
-        float omega; /** angular velocity */
+        LinearVelocity x; /** x velocity */
+        LinearVelocity y; /** y velocity */
+        AngularVelocity omega; /** angular velocity */
 };
 
 /**
