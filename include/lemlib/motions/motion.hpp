@@ -1,4 +1,5 @@
-#include "lemlib/pose.hpp"
+#include "units/units.hpp"
+#include "units/Vector2D.hpp"
 
 namespace lemlib {
 /**
@@ -49,7 +50,7 @@ class DifferentialMotion {
          * @param pose the current pose of the robot
          * @return DifferentialChassisSpeeds the speed of the left and right wheels
          */
-        virtual DifferentialChassisSpeeds calculate(Pose pose) = 0;
+        virtual DifferentialChassisSpeeds calculate(units::Pose pose) = 0;
         /**
          * @brief Get the state of the motion
          * 
@@ -82,7 +83,7 @@ class HolonomicMotion {
          * @param pose the current pose of the robot
          * @return HolonomicChassisSpeeds the field-relative speed of the robot
          */
-        virtual HolonomicChassisSpeeds calculate(Pose pose) = 0;
+        virtual HolonomicChassisSpeeds calculate(units::Pose pose) = 0;
         /**
          * @brief Get the state of the motion
          * 
