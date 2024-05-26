@@ -76,6 +76,24 @@
                     "src\\main.cpp"
                 ],
                 "version": "4.1.0"
+            },
+            "units": {
+                "location": "C:\\Users\\liamt\\AppData\\Roaming\\PROS\\templates\\units@1.0.0",
+                "metadata": {
+                    "origin": "local"
+                },
+                "name": "units",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": "^4.0.7",
+                "system_files": [
+                    "firmware\\units.a",
+                    "include\\units\\Vector2D.hpp",
+                    "include\\units\\Angle.hpp",
+                    "include\\units\\units.hpp"
+                ],
+                "target": "v5",
+                "user_files": [],
+                "version": "1.0.0"
             }
         },
         "upload_options": {},
