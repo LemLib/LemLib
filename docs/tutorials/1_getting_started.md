@@ -35,7 +35,15 @@ pros c apply LemLib # applies latest stable version of LemLib
 
 finally, put this at the top of your main.cpp file
 ```c++
-#include "lemlib/api.hpp"
+#include "lemlib/api.hpp" // IWYU pragma: keep
+```
+
+```{note}
+The `// IWYU pragma: keep` comment is there to prevent unhelpful unused include warnings. You can remove it if you wish
+```
+
+```{tip}
+View the [example project](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp) if you need more context for setup
 ```
 
 You've now installed LemLib, and you're ready to configure your robot!
