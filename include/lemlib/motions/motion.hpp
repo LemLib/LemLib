@@ -14,7 +14,7 @@ enum class MotionState {
 };
 
 /**
- * @struct DifferentialChassisSpeeds1
+ * @struct DifferentialChassisSpeeds
  *
  * @brief represents the speed of the left and right wheels of a differential drive robot
  */
