@@ -1,3 +1,5 @@
+#pragma once
+
 #include "units/Pose.hpp"
 
 namespace lemlib {
