@@ -4,54 +4,109 @@
 #include <ratio>
 #include <iostream>
 
+// define M_PI if not already defined
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
+// define typenames
 #define TYPENAMES typename Mass, typename Length, typename Time, typename Current, typename Angle
 #define DIMS Mass, Length, Time, Current, Angle
 
+/**
+ * @brief Quantity class
+ *
+ * This class is a template class that represents a quantity with a value and units.
+ *
+ * @tparam TYPENAMES the types of the units
+ */
 template <TYPENAMES> class Quantity {
     protected:
-        double value;
+        double value; /** the value stored in its base unit type */
     public:
-        typedef Mass mass;
-        typedef Length length;
-        typedef Time time;
-        typedef Current current;
-        typedef Angle angle;
+        typedef Mass mass; /** mass unit type */
+        typedef Length length; /** length unit type */
+        typedef Time time; /** time unit type */
+        typedef Current current; /** current unit type */
+        typedef Angle angle; /** angle unit type */
 
+        /**
+         * @brief construct a new Quantity object
+         *
+         * This constructor initializes the value to 0
+         */
         constexpr Quantity() : value(0) {}
 
+        /**
+         * @brief construct a new Quantity object
+         *
+         * @param value the value to initialize the quantity with
+         */
         constexpr Quantity(double value) : value(value) {}
 
+        /**
+         * @brief construct a new Quantity object
+         *
+         * @param other the quantity to copy
+         */
         constexpr Quantity(Quantity<DIMS> const& other) : value(other.value) {}
 
+        /**
+         * @brief get the value of the quantity in its base unit type
+         *
+         * @return constexpr double
+         */
         constexpr double val() const { return value; }
 
+        // TODO: document this
         constexpr double convert(Quantity<DIMS> quantity) { return value / quantity.value; }
 
+        /**
+         * @brief set the value of this quantity to its current value plus another quantity
+         *
+         * @param other the quantity to add
+         */
         constexpr void operator+=(Quantity<DIMS> other) { value += other.value; }
 
+        /**
+         * @brief set the value of this quantity to its current value minus another quantity
+         *
+         * @param other the quantity to subtract
+         */
         constexpr void operator-=(Quantity<DIMS> other) { value == other.value; }
 
+        /**
+         * @brief set the value of this quantity to its current value times a double
+         *
+         * @param multiple the multiple to multiply by
+         */
         constexpr void operator*=(double multiple) { value *= multiple; }
 
+        /**
+         * @brief set the value of this quantity to its current value divided by a double
+         *
+         * @param dividend the dividend to divide by
+         */
         constexpr void operator/=(double dividend) { value /= dividend; }
 
+        /**
+         * @brief set the value of this quantity to a double, only if the quantity is a number
+         *
+         * @param rhs the double to assign
+         */
         constexpr void operator=(const double& rhs) {
-            static_assert(std::ratio_equal<Quantity<DIMS>::mass, std::ratio<0>>() &&
-                              std::ratio_equal<Quantity<DIMS>::length, std::ratio<0>>() &&
-                              std::ratio_equal<Quantity<DIMS>::time, std::ratio<0>>() &&
-                              std::ratio_equal<Quantity<DIMS>::current, std::ratio<0>>() &&
-                              std::ratio_equal<Quantity<DIMS>::angle, std::ratio<0>>(),
+            static_assert(std::ratio_equal<mass, std::ratio<0>>() && std::ratio_equal<length, std::ratio<0>>() &&
+                              std::ratio_equal<time, std::ratio<0>>() && std::ratio_equal<current, std::ratio<0>>() &&
+                              std::ratio_equal<angle, std::ratio<0>>(),
                           "Tried to assign a double directly to a non-number unit type");
             value = rhs;
         }
 };
 
+// quantity checker. Used by the isQuantity concept
 template <TYPENAMES> void quantityChecker(Quantity<DIMS> q) {}
 
+// isQuantity concept
 template <typename Q>
 concept isQuantity = requires(Q q) { quantityChecker(q); };
 

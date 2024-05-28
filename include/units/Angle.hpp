@@ -1,4 +1,5 @@
 #pragma once
+
 #include "units/units.hpp"
 
 using Angle = Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>>;
