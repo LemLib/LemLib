@@ -16,11 +16,14 @@ enum class MotionState {
 /**
  * @struct DifferentialChassisSpeeds
  *
- * @brief represents the speed of the left and right wheels of a differential drive robot
+ * @brief represents the angular and linear velocity of the robot, as well as a weight to determine whether to
+ *        prioritize linear or angular velocity when desaturating the motors
  */
 struct DifferentialChassisSpeeds {
-        Voltage left; /** the speed of the left wheels */
-        Voltage right; /** the speed of the right wheels */
+        LinearVelocity linearVelocity; /** linear velocity */
+        AngularVelocity angularVelocity; /** angular velocity */
+        float weight = 0.5; /** how to desaturate the motors. 0 fully prioritizes linear velocity
+                                while 1 fully prioritizes angular velocity */
 };
 
 /**
