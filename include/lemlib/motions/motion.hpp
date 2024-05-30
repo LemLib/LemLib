@@ -3,15 +3,6 @@
 #include "units/Pose.hpp"
 
 namespace lemlib {
-/**
- * @enum MotionState
- *
- * @brief Enum to represent the state of a motion
- */
-enum class MotionState {
-    RUNNING, /** the motion is currently running */
-    FINISHED /** the motion is finished */
-};
 
 /**
  * @struct DifferentialChassisSpeeds
@@ -56,18 +47,19 @@ class DifferentialMotion {
          */
         virtual DifferentialChassisSpeeds calculate(units::Pose pose) = 0;
         /**
-         * @brief Get the state of the motion
+         * @brief Get whether the motion is running
          *
-         * @return MotionState the state of the motion
+         * @return true the motion is running
+         * @return false the motion is not running
          */
-        MotionState getState();
+        bool isRunning();
         /**
          * @brief Destroy the Differential Motion object
          *
          */
         virtual ~DifferentialMotion();
     protected:
-        MotionState state = MotionState::RUNNING; /** the state of the motion */
+        bool running = true; /** whether the motion is running or not */
 };
 
 /**
@@ -89,18 +81,19 @@ class HolonomicMotion {
          */
         virtual HolonomicChassisSpeeds calculate(units::Pose pose) = 0;
         /**
-         * @brief Get the state of the motion
+         * @brief Get whether the motion is running
          *
-         * @return MotionState the state of the motion
+         * @return true the motion is running
+         * @return false the motion is not running
          */
-        MotionState getState();
+        bool isRunning();
         /**
          * @brief Destroy the Holonomic Motion object
          *
          */
         virtual ~HolonomicMotion();
     protected:
-        MotionState state = MotionState::RUNNING; /** the state of the motion */
+        bool running = true; /** whether the motion is running or not */
 };
 
 } // namespace lemlib
