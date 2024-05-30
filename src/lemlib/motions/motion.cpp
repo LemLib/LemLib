@@ -1,7 +1,7 @@
 #include "lemlib/motions/motion.hpp"
 
 namespace lemlib {
-MotionState DifferentialMotion::getState() { return state; }
+bool DifferentialMotion::isRunning() { return running; }
 
-MotionState HolonomicMotion::getState() { return state; }
+bool HolonomicMotion::isRunning() { return running; }
 } // namespace lemlib
