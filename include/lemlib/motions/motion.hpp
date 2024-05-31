@@ -73,7 +73,7 @@ class DifferentialMotion {
         bool running = true; /** whether the motion is running or not */
         const Length trackWidth; /** the track width of the robot */
         const LinearVelocity maxDriveVelocity; /** the maximum velocity of the robot */
-        const float desaturateBias; /** weight to determine whether to prioritize linear or angular velocity when
+        float desaturateBias; /** weight to determine whether to prioritize linear or angular velocity when
                                desaturating the motors */
         /**
          * @brief Desaturates the motor speeds to prevent the motors from saturating
