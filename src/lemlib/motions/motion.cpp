@@ -2,10 +2,10 @@
 #include "units/units.hpp"
 
 namespace lemlib {
-DifferentialMotion::DifferentialMotion(const Length trackWidth, const LinearVelocity maxVelocity,
+DifferentialMotion::DifferentialMotion(const Length trackWidth, const LinearVelocity maxDriveVelocity,
                                        const float desaturateBias)
     : trackWidth(trackWidth),
-      maxVelocity(maxVelocity),
+      maxDriveVelocity(maxDriveVelocity),
       desaturateBias(desaturateBias) {}
 
 bool DifferentialMotion::isRunning() const { return running; }
@@ -15,10 +15,10 @@ DifferentialChassisSpeeds DifferentialMotion::desaturate(DifferentialChassisSpee
     LinearVelocity throttle = speeds.linearVelocity;
     LinearVelocity turn = (speeds.angularVelocity * (trackWidth / 2)).val();
     // desaturate if necessary
-    if (units::abs(throttle) + units::abs(turn) > maxVelocity) {
+    if (units::abs(throttle) + units::abs(turn) > maxDriveVelocity) {
         const LinearVelocity prevThrottle = throttle;
-        throttle *= (1 - desaturateBias * std::abs(turn.val() / maxVelocity.val()));
-        turn *= (1 - (1 - desaturateBias) * std::abs(prevThrottle.val() / maxVelocity.val()));
+        throttle *= (1 - desaturateBias * std::abs(turn.val() / maxDriveVelocity.val()));
+        turn *= (1 - (1 - desaturateBias) * std::abs(prevThrottle.val() / maxDriveVelocity.val()));
     }
     // return desaturated speeds
     return {throttle, turn.val() / (trackWidth / 2).val()};
