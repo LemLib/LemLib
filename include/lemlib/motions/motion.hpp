@@ -59,7 +59,7 @@ class DifferentialMotion {
         virtual ~DifferentialMotion();
     protected:
         bool running = true; /** whether the motion is running or not */
-        const float weight = 0.5; /** weight to determine whether to prioritize linear or angular velocity when
+        const float desaturateBias = 0.5; /** weight to determine whether to prioritize linear or angular velocity when
                                desaturating the motors */
         const Length trackWidth; /** the track width of the robot */
         const LinearVelocity maxVelocity; /** the maximum velocity of the robot */
