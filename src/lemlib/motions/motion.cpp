@@ -2,6 +2,12 @@
 #include "units/units.hpp"
 
 namespace lemlib {
+DifferentialMotion::DifferentialMotion(const Length trackWidth, const LinearVelocity maxVelocity,
+                                       const float desaturateBias)
+    : trackWidth(trackWidth),
+      maxVelocity(maxVelocity),
+      desaturateBias(desaturateBias) {}
+
 bool DifferentialMotion::isRunning() const { return running; }
 
 DifferentialChassisSpeeds DifferentialMotion::desaturate(DifferentialChassisSpeeds speeds) const {
