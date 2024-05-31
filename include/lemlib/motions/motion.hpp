@@ -51,7 +51,7 @@ class DifferentialMotion {
          * @return true the motion is running
          * @return false the motion is not running
          */
-        bool isRunning();
+        bool isRunning() const;
         /**
          * @brief Destroy the Differential Motion object
          *
@@ -96,7 +96,7 @@ class HolonomicMotion {
          * @return true the motion is running
          * @return false the motion is not running
          */
-        bool isRunning();
+        bool isRunning() const;
         /**
          * @brief Destroy the Holonomic Motion object
          *

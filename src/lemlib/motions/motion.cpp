@@ -2,7 +2,7 @@
 #include "units/units.hpp"
 
 namespace lemlib {
-bool DifferentialMotion::isRunning() { return running; }
+bool DifferentialMotion::isRunning() const { return running; }
 
 DifferentialChassisSpeeds DifferentialMotion::desaturate(DifferentialChassisSpeeds speeds) const {
     // get throttle and turn velocity
@@ -18,5 +18,5 @@ DifferentialChassisSpeeds DifferentialMotion::desaturate(DifferentialChassisSpee
     return {throttle, turn.val() / (trackWidth / 2).val()};
 }
 
-bool HolonomicMotion::isRunning() { return running; }
+bool HolonomicMotion::isRunning() const { return running; }
 } // namespace lemlib
