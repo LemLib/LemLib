@@ -24,5 +24,9 @@ DifferentialChassisSpeeds DifferentialMotion::desaturate(DifferentialChassisSpee
     return {throttle, turn.val() / (trackWidth / 2).val()};
 }
 
+DifferentialMotion::~DifferentialMotion() {}
+
 bool HolonomicMotion::isRunning() const { return running; }
+
+HolonomicMotion::~HolonomicMotion() {}
 } // namespace lemlib
