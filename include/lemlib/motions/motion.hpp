@@ -1,6 +1,7 @@
 #pragma once
 
 #include "units/Pose.hpp"
+#include "units/units.hpp"
 
 namespace lemlib {
 
@@ -13,8 +14,6 @@ namespace lemlib {
 struct DifferentialChassisSpeeds {
         LinearVelocity linearVelocity; /** linear velocity */
         AngularVelocity angularVelocity; /** angular velocity */
-        float weight = 0.5; /** how to desaturate the motors. 0 fully prioritizes linear velocity
-                                while 1 fully prioritizes angular velocity */
 };
 
 /**
@@ -60,6 +59,17 @@ class DifferentialMotion {
         virtual ~DifferentialMotion();
     protected:
         bool running = true; /** whether the motion is running or not */
+        const float weight = 0.5; /** weight to determine whether to prioritize linear or angular velocity when
+                               desaturating the motors */
+        const Length trackWidth; /** the track width of the robot */
+        const LinearVelocity maxVelocity; /** the maximum velocity of the robot */
+        /**
+         * @brief Desaturates the motor speeds to prevent the motors from saturating
+         *
+         * @param speeds the speeds to desaturate
+         * @return DifferentialChassisSpeeds
+         */
+        DifferentialChassisSpeeds desaturate(DifferentialChassisSpeeds speeds) const;
 };
 
 /**
