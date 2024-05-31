@@ -11,8 +11,7 @@ DifferentialChassisSpeeds DifferentialMotion::desaturate(DifferentialChassisSpee
     // desaturate if necessary
     if (units::abs(throttle) + units::abs(turn) > maxVelocity) {
         const LinearVelocity prevThrottle = throttle;
-        const LinearVelocity prevTurn = turn;
-        throttle *= (1 - desaturateBias * std::abs(prevTurn.val() / maxVelocity.val()));
+        throttle *= (1 - desaturateBias * std::abs(turn.val() / maxVelocity.val()));
         turn *= (1 - (1 - desaturateBias) * std::abs(prevThrottle.val() / maxVelocity.val()));
     }
     // return desaturated speeds
