@@ -8,8 +8,7 @@ namespace lemlib {
 /**
  * @struct DifferentialChassisSpeeds
  *
- * @brief represents the angular and linear velocity of the robot, as well as a weight to determine whether to
- *        prioritize linear or angular velocity when desaturating the motors
+ * @brief represents the linear and velocity of the differential drivetrain
  */
 struct DifferentialChassisSpeeds {
         LinearVelocity linearVelocity; /** linear velocity */
@@ -19,12 +18,12 @@ struct DifferentialChassisSpeeds {
 /**
  * @struct HolonomicChassisSpeeds
  *
- * @brief represents the speed of the x, y, and angular velocity of a holonomic drive robot
+ * @brief represents the field-relative x, y, and angular velocity of a holonomic drivetrain
  */
 struct HolonomicChassisSpeeds {
-        LinearVelocity x; /** x velocity */
-        LinearVelocity y; /** y velocity */
-        AngularVelocity omega; /** angular velocity */
+        LinearVelocity xVelocity; /** x velocity */
+        LinearVelocity yVelocity; /** y velocity */
+        AngularVelocity angularVelocity; /** angular velocity */
 };
 
 /**
