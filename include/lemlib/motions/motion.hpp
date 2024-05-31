@@ -37,6 +37,17 @@ struct HolonomicChassisSpeeds {
  */
 class DifferentialMotion {
     public:
+        /**
+         * @brief Construct a new Differential Motion object
+         *
+         * The parameters are used to calculate the linear and angular velocity of the robot
+         * as well as to modify the output speeds to prevent the motors from becoming saturated
+         *
+         * @param trackWidth the track width of the robot
+         * @param maxVelocity the maximum theoretical velocity of the robot
+         * @param desaturateBias the weight to determine whether to prioritize linear or angular velocity. 0 fully
+         * prioritizes linear velocity, 1 fully prioritizes angular velocity. Default is 0.5
+         */
         DifferentialMotion(const Length trackWidth, const LinearVelocity maxVelocity, const float desaturateBias = 0.5);
         /**
          * @brief Calculates the speed of the left and right wheels of a differential drive robot
