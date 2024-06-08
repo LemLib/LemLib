@@ -4,7 +4,7 @@
     <img src="https://img.shields.io/github/stars/LemLib/LemLib?style=for-the-badge">
     <img src="https://img.shields.io/github/downloads/LemLib/LemLib/total?style=for-the-badge">
     <img src="https://img.shields.io/github/actions/workflow/status/LemLib/LemLib/pros-build.yml?style=for-the-badge">
-    <img src="https://img.shields.io/badge/version-v0.5.1-blue?style=for-the-badge">
+    <img src="https://img.shields.io/badge/version-v0.5.2-blue?style=for-the-badge">
 </p>
 <hr>
 Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.
