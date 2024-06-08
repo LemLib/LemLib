@@ -20,7 +20,7 @@ void Chassis::arcade(int throttle, int turn, bool disableDriveCurve, float desat
     // use drive curves if they have not been disabled
     if (!disableDriveCurve) {
         throttle = std::round(throttleCurve->curve(throttle));
-        turn = std::round(throttleCurve->curve(turn));
+        turn = std::round(steerCurve->curve(turn));
     }
     // desaturate motors based on joyBias
     if (std::abs(throttle) + std::abs(turn) > 127) {
@@ -54,7 +54,7 @@ void Chassis::curvature(int throttle, int turn, bool disableDriveCurve) {
     // use drive curves if they have not been disabled
     if (!disableDriveCurve) {
         throttle = throttleCurve->curve(throttle);
-        turn = throttleCurve->curve(turn);
+        turn = steerCurve->curve(turn);
     }
 
     float leftPower = throttle + (std::fabs(throttle) * turn / 127.0);
