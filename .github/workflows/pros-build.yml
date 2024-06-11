@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: "**"
 
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,7 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: PROS Build
-        uses: LemLib/pros-build@v1.0.0
+      - name: Run LemLib/pros-build
+        uses: LemLib/pros-build@v2
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          library-path: lemlib
+          name: ${{ steps.test.outputs.name }}
+          path: ${{ github.workspace }}/template/*
