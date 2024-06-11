@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run LemLib/pros-build
-        uses: LemLib/pros-build@v2
+        uses: LemLib/pros-build@v2.0.1
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
