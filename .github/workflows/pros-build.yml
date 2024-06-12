@@ -15,9 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Update README.md
-
-      - name: Update README wiht latest links
+      - name: Update README with the latest links
         run: |
           echo "\n## [Github link](${{github.server_url}}/${{github.repository}})" >> README.md
           perl -i -pe 's@(?<=[^/])(docs/assets/.*?)(?=[")])@${{github.server_url}}/${{github.repository}}/blob/master/$1?raw=true@g' README.md
