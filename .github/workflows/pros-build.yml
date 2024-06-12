@@ -32,3 +32,4 @@ jobs:
         with:
           name: ${{ steps.test.outputs.name }}
           path: ${{ github.workspace }}/template/*
+
