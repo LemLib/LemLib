@@ -23,11 +23,24 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 ## Features
 - Generic PID class
 - Odometry
-- Odom turn to face point
-- [Boomerang controller](https://www.desmos.com/calculator/sptjw5szex)
-- Pure Pursuit
+  - Supports IMU
+  - Works without tracking wheels
+  - Supports all tracking wheels configurations
+- Turn to face point
+- Turn to face heading
+- Swing to face point
+- Swing to face heading 
+- Move to Pose via boomerang
+- Path Following via pure pursuit
 - Motion Chaining
 - Driver Control
+  - Expo drive curves
+  - Smooth deadzone compensation
+  - Minimum output
+  - Arcade control (single or double stick)
+  - Tank control
+  - Curvature control (single or double stick)
+  - turn-steer prioritization
 
 ## Example Project
 You can find a fully annotated example project [here](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp).
