@@ -4,9 +4,13 @@
     <img src="https://img.shields.io/github/stars/LemLib/LemLib?style=for-the-badge">
     <img src="https://img.shields.io/github/downloads/LemLib/LemLib/total?style=for-the-badge">
     <img src="https://img.shields.io/github/actions/workflow/status/LemLib/LemLib/pros-build.yml?style=for-the-badge">
-    <img src="https://img.shields.io/badge/version-v0.5.1-blue?style=for-the-badge">
+    <img src="https://img.shields.io/badge/version-v0.5.2-blue?style=for-the-badge">
 </p>
 <hr>
+
+>[!IMPORTANT]
+> LemLib is being written from scratch for its upcoming v0.6.0 release. You can find the source code for the latest stable version of LemLib [here](https://github.com/LemLib/LemLib/tree/stable)
+
 Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.
 
 The creation of this template was inspired by [EZ-Template](https://github.com/EZ-Robotics/EZ-Template) and [OkapiLib](https://github.com/OkapiLib/OkapiLib). We aim to develop a library that strikes a balance between ease-of-use, akin to that of EZ-Template, and comprehensive functionality, similar to that of OkapiLib.
@@ -19,17 +23,30 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 ## Features
 - Generic PID class
 - Odometry
-- Odom turn to face point
-- [Boomerang controller](https://www.desmos.com/calculator/sptjw5szex)
-- Pure Pursuit
+  - Supports IMU
+  - Works without tracking wheels
+  - Supports all tracking wheels configurations
+- Turn to face point
+- Turn to face heading
+- Swing to face point
+- Swing to face heading 
+- Move to Pose via boomerang
+- Path Following via pure pursuit
 - Motion Chaining
 - Driver Control
+  - Expo drive curves
+  - Smooth deadzone compensation
+  - Minimum output
+  - Arcade control (single or double stick)
+  - Tank control
+  - Curvature control (single or double stick)
+  - turn-steer prioritization
 
 ## Example Project
 You can find a fully annotated example project [here](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp).
 
 ## Tutorials
-The [tutorials](https://lemlib.readthedocs.io/en/v0.5.0/tutorials/1_getting_started.html) provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to Path Following:
+The [tutorials](https://lemlib.readthedocs.io/en/stable/tutorials/1_getting_started.html) provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to Path Following:
 
 ## FAQ
 _**1. Help! Why is my controller vibrating?**_
@@ -63,7 +80,7 @@ Per the RECF student-centred policy, in the context of third-party libraries.
 In other words, you need to know how LemLib works. You don't need to know the details like all the math, just more or less how the algorithm works. If you want to learn more about LemLib, you can look through the documentation and ask questions on our Discord server.
 
 ## Documentation
-Check out the [Documentation](https://lemlib.readthedocs.io/en/v0.5.0/index.html).
+Check out the [Documentation](https://lemlib.readthedocs.io/en/stable/index.html).
 
 ## Contributing
 Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/.github/CONTRIBUTING.md) and join our [Discord server](https://discord.gg/pCHr7XZUTj).
