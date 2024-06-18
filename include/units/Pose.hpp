@@ -68,4 +68,5 @@ class Pose : public V2Position {
          */
         void setTheta(Angle h);
 };
+
 } // namespace units
