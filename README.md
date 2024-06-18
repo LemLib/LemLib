@@ -7,6 +7,10 @@
     <img src="https://img.shields.io/badge/version-v0.5.2-blue?style=for-the-badge">
 </p>
 <hr>
+
+>[!IMPORTANT]
+> LemLib is being written from scratch for its upcoming v0.6.0 release. You can find the source code for the latest stable version of LemLib [here](https://github.com/LemLib/LemLib/tree/stable)
+
 Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.
 
 The creation of this template was inspired by [EZ-Template](https://github.com/EZ-Robotics/EZ-Template) and [OkapiLib](https://github.com/OkapiLib/OkapiLib). We aim to develop a library that strikes a balance between ease-of-use, akin to that of EZ-Template, and comprehensive functionality, similar to that of OkapiLib.
