@@ -3,5 +3,5 @@
 namespace lemlib {
 bool DifferentialMotion::isFinished() { return finished; }
 
-DifferentialMotion::~DifferentialMotion() {}
+DifferentialMotion::~DifferentialMotion() = default;
 } // namespace lemlib
