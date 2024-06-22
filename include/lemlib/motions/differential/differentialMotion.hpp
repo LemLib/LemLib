@@ -30,13 +30,13 @@ class DifferentialMotion {
          * @return true the motion is running
          * @return false the motion is not running
          */
-        virtual bool isRunning();
+        virtual bool isFinished();
         /**
          * @brief Destroy the Differential Motion object
          *
          */
         virtual ~DifferentialMotion();
     protected:
-        bool running = true; /** whether the motion is running or not */
+        bool finished = false; /** whether the motion is finished or not */
 };
 } // namespace lemlib
