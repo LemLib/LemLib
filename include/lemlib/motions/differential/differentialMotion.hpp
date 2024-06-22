@@ -13,6 +13,9 @@ namespace lemlib {
  * We use this abstraction to allow for different motion algorithms to be used with the same interface.
  * This allows us to easily create and maintain motion algorithms while also allowing the user to
  * make custom motion algorithms without having to recompile the library.
+ *
+ * Instances of child classes are generally constructed immediately before use and destroyed immediately after use.
+ * Basically, they only exist for the duration of the motion.
  */
 class DifferentialMotion {
     public:

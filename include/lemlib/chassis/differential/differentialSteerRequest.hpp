@@ -17,6 +17,10 @@ namespace lemlib {
  * This may seem like a somewhat unnecessary abstraction: "why not just pass the motor group to the motion constructor?"
  * Because some of these control methods can be complex, and we also do not want to expose the motor group to the
  * motion, as this could lead to the motion handler being bypassed.
+ *
+ * Steer requests may be created every time a motion is updated, or be stored as a member variable of the motion. This
+ * depends on the implementation of the motion but both are valid, with the latter usually being used for more complex
+ * motor control methods.
  */
 class DifferentialSteerRequest {
     public:
