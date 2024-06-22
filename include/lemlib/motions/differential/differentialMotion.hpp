@@ -6,6 +6,18 @@
 namespace lemlib {
 
 /**
+ * @brief struct representing the state of a differential chassis
+ *
+ * This struct is used to represent the state of a differential chassis. It contains the pose, velocity, and
+ * acceleration
+ */
+struct DifferentialChassisState {
+        units::Pose pose; /** pose of the chassis */
+        units::VelocityPose velocity; /** velocity of the chassis */
+        units::AccelerationPose acceleration; /** acceleration of the chassis */
+};
+
+/**
  * @class DifferentialMotion
  *
  * @brief Abstract class which represents a motion algorithm for a differential drive robot
@@ -22,11 +34,11 @@ class DifferentialMotion {
         /**
          * @brief Calculates the target state of the chassis
          *
-         * @param pose the current pose of the robot
-         * @return std::shared_ptr<DifferentialSteerRequest> shared pointer to a implementation of
+         * @param state the current position, velocity, and acceleration of the chassis
+         * @return std::shared_ptr<DifferentialSteerRequest> shared pointer to an implementation of
          * DifferentialSteerRequest
          */
-        virtual std::shared_ptr<DifferentialSteerRequest> calculate(units::Pose pose) = 0;
+        virtual std::shared_ptr<DifferentialSteerRequest> calculate(const DifferentialChassisState& state) = 0;
         /**
          * @brief Get whether the motion is running
          *
