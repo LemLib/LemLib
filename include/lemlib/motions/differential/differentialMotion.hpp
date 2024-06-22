@@ -17,10 +17,11 @@ namespace lemlib {
 class DifferentialMotion {
     public:
         /**
-         * @brief Calculates the speed of the left and right wheels of a differential drive robot
+         * @brief Calculates the target state of the chassis
          *
          * @param pose the current pose of the robot
-         * @return DifferentialChassisSpeeds the speed of the left and right wheels
+         * @return std::shared_ptr<DifferentialSteerRequest> shared pointer to a implementation of
+         * DifferentialSteerRequest
          */
         virtual std::shared_ptr<DifferentialSteerRequest> calculate(units::Pose pose) = 0;
         /**
