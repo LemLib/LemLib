@@ -35,7 +35,6 @@ class Motion {
          * @param state the current position, velocity, and acceleration of the chassis
          * @return std::unique_ptr<Drivetrain> the unique pointer that was passed as an argument
          *
-
          */
         virtual std::unique_ptr<Drivetrain> calculate(std::unique_ptr<Drivetrain> drivetrain,
                                                       const DrivetrainState& state) = 0;
@@ -56,7 +55,7 @@ class Motion {
          * }
          * @endcode
          */
-        bool isFinished() const;
+        virtual bool isFinished() const;
 };
 
 } // namespace lemlib::differential
