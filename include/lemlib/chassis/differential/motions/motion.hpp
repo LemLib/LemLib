@@ -55,7 +55,12 @@ class Motion {
          * }
          * @endcode
          */
-        virtual bool isFinished() const;
+        virtual bool isFinished() = 0;
+        /**
+         * @brief Destroy the Motion object
+         *
+         */
+        virtual ~Motion();
 };
 
 } // namespace lemlib::differential
