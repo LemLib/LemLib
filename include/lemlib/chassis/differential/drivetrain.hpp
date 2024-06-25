@@ -8,16 +8,21 @@ namespace lemlib::differential {
  * @brief struct containing a left and right motor group representing a drivetrain
  */
 struct Drivetrain {
-        pros::MotorGroup left; /** the left side of the drivetrain */
-        pros::MotorGroup right; /** the right side of the drivetrain */
+        /** the left side of the drivetrain */
+        pros::MotorGroup left;
+        /** the right side of the drivetrain */
+        pros::MotorGroup right;
 };
 
 /**
  * @brief struct containing the position, velocity, and acceleration of a chassis
  */
 struct ChassisState {
-        const units::Pose pose; /** pose of the chassis */
-        const units::VelocityPose velocity; /** velocity of the chassis */
-        const units::AccelerationPose acceleration; /** acceleration of the chassis */
+        /** pose of the chassis */
+        const units::Pose pose;
+        /** velocity of the chassis */
+        const units::VelocityPose velocity;
+        /** acceleration of the chassis */
+        const units::AccelerationPose acceleration;
 };
 } // namespace lemlib::differential
