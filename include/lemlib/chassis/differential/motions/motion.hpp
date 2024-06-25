@@ -41,7 +41,7 @@ class Motion {
         /**
          * @brief check if the motion is finished
          *
-         * @return true the motion is finished or does not exist
+         * @return true the motion is finished
          * @return false the motion is not finished and is currently running
          */
         virtual bool isFinished() = 0;
