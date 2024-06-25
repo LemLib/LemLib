@@ -14,11 +14,11 @@ namespace lemlib::differential {
  * @code {.cpp}
  * class SimpleForward : public Motion {
  *   public:
- *     std::unique_ptr<Drivetrain> calculate(std::unique_ptr<Drivetrain> drivetrain,
- *                                           const ChassisState& state) override {
- *       drivetrain->left.move(127);
- *       drivetrain->right.move(127);
- *       return std::move(drivetrain); // return ownership of the drivetrain
+ *     SimpleForward() {}
+ *
+ *     void calculate(Drivetrain& drivetrain, const ChassisState& state) override {
+ *       drivetrain.left.move(127);
+ *       drivetrain.right.move(127);
  *     }
  *
  *     bool isFinished() override {
@@ -32,19 +32,18 @@ class Motion {
         /**
          * @brief calculate and apply new outputs for the drivetrain
          *
-         * @param drivetrain a unique pointer to the drivetrain. This should be returned
+         * @param drivetrain a reference to the drivetrain. This is passed here instead of the ctor to
+         * simplify the creation of the motion, and to discourage the use of the drivetrain outside of
+         * the calculate method
          * @param state the current position, velocity, and acceleration of the chassis
-         * @return std::unique_ptr<Drivetrain> the unique pointer that was passed as an argument
          *
          * @b Example
          * @code {.cpp}
-         * std::unique_ptr<Drivetrain> drivetrain = getDrivetrain(); // get the drivetrain
-         * ChassisState state = getState(); // get the state of the chassis
-         * drivetrain = motion->calculate(std::move(drivetrain), state); // calculate the motion
+         * Motion* motion = new SimpleForward();
+         * motion->calculate(drivetrain, state);
          * @endcode
          */
-        virtual std::unique_ptr<Drivetrain> calculate(std::unique_ptr<Drivetrain> drivetrain,
-                                                      const ChassisState& state) = 0;
+        virtual void calculate(Drivetrain& drivetrain, const ChassisState& state) = 0;
         /**
          * @brief check if the motion is finished
          *
