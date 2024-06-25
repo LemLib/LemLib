@@ -36,12 +36,6 @@ class Motion {
          * simplify the creation of the motion, and to discourage the use of the drivetrain outside of
          * the calculate method
          * @param state the current position, velocity, and acceleration of the chassis
-         *
-         * @b Example
-         * @code {.cpp}
-         * Motion* motion = new SimpleForward();
-         * motion->calculate(drivetrain, state);
-         * @endcode
          */
         virtual void calculate(Drivetrain& drivetrain, const ChassisState& state) = 0;
         /**
