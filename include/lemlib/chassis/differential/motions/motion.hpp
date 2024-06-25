@@ -43,13 +43,6 @@ class Motion {
          *
          * @return true the motion is finished or does not exist
          * @return false the motion is not finished and is currently running
-         *
-         * @b Example
-         * @code {.cpp}
-         * if (motion->isFinished()) {
-         *   // do something
-         * }
-         * @endcode
          */
         virtual bool isFinished() = 0;
         /**
