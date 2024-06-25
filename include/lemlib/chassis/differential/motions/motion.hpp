@@ -48,10 +48,6 @@ class Motion {
         /**
          * @brief check if the motion is finished
          *
-         * This function simply returns the value of m_finished, which is set by the child class
-         * Once m_finished is set to true, the motion is considered finished and the calculate method
-         * should not be called again.
-         *
          * @return true the motion is finished or does not exist
          * @return false the motion is not finished and is currently running
          *
