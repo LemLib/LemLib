@@ -13,9 +13,9 @@ struct Drivetrain {
 };
 
 /**
- * @brief struct containing the position, velocity, and acceleration of a drivetrain
+ * @brief struct containing the position, velocity, and acceleration of a chassis
  */
-struct DrivetrainState {
+struct ChassisState {
         const units::Pose pose; /** pose of the chassis */
         const units::VelocityPose velocity; /** velocity of the chassis */
         const units::AccelerationPose acceleration; /** acceleration of the chassis */

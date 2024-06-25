@@ -15,18 +15,19 @@ namespace lemlib::differential {
  * class SimpleForward : public Motion {
  *   public:
  *     std::unique_ptr<Drivetrain> calculate(std::unique_ptr<Drivetrain> drivetrain,
- *                                           const DrivetrainState& state) override {
+ *                                           const ChassisState& state) override {
  *       drivetrain->left.move(127);
  *       drivetrain->right.move(127);
- *       m_finished = false; // this motion never stops
  *       return std::move(drivetrain); // return ownership of the drivetrain
+ *     }
+ *
+ *     bool isFinished() override {
+ *       return false; // this motion never finishes
  *     }
  * };
  * @endcode
  */
 class Motion {
-    protected:
-        bool m_finished = false; /** whether the motion is finished or not */
     public:
         /**
          * @brief calculate and apply new outputs for the drivetrain
@@ -35,9 +36,15 @@ class Motion {
          * @param state the current position, velocity, and acceleration of the chassis
          * @return std::unique_ptr<Drivetrain> the unique pointer that was passed as an argument
          *
+         * @b Example
+         * @code {.cpp}
+         * std::unique_ptr<Drivetrain> drivetrain = getDrivetrain(); // get the drivetrain
+         * ChassisState state = getState(); // get the state of the chassis
+         * drivetrain = motion->calculate(std::move(drivetrain), state); // calculate the motion
+         * @endcode
          */
         virtual std::unique_ptr<Drivetrain> calculate(std::unique_ptr<Drivetrain> drivetrain,
-                                                      const DrivetrainState& state) = 0;
+                                                      const ChassisState& state) = 0;
         /**
          * @brief check if the motion is finished
          *
@@ -58,9 +65,8 @@ class Motion {
         virtual bool isFinished() = 0;
         /**
          * @brief Destroy the Motion object
-         *
          */
-        virtual ~Motion();
+        virtual ~Motion() = default;
 };
 
 } // namespace lemlib::differential
