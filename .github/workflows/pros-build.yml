@@ -11,109 +11,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Get short SHA
-        id: short-sha
-        run: |
-          if [ $ACTION = opened ]; then
-              # we have to get the head sha directly from the pr api, because github silly ig
-              echo "then"
-              sha=$(wget -O- --quiet https://api.github.com/repos/LemLib/LemLib/pulls/$PR_NUM | jq -r .head.sha | head -c 6)
-          else
-              echo "else"
-              sha=$(echo $SHA | head -c 6)
-          fi
-          echo "sha=$sha" >> $GITHUB_OUTPUT
-        env:
-          SHA: ${{ github.event.after }} # this isn't present for pr opened events
-          ACTION: ${{github.event.action}}
-          PR_NUM: ${{github.event.number}}
-
-      - name: Set short SHA
-        run: echo $SHA
-        env:
-          SHA: ${{ steps.short-sha.outputs.sha }}
-
-      - name: Install ARM Toolchain
-        uses: fiam/arm-none-eabi-gcc@v1
-        with:
-          release: "10-2020-q4"
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: PIP Installer
-        uses: BSFishy/pip-action@v1
-        with:
-          packages: pros-cli
-
-      - name: Testing PROS Install
-        run: pros --version
-
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v4
 
-      - name: Get version number
-        id: version
+      - name: Update README with the latest links
         run: |
-          version=$(awk -F'=' '/^VERSION:=/{print $2}' Makefile)
-          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "\n## [Github link](${{github.server_url}}/${{github.repository}})" >> README.md
+          perl -i -pe 's@(?<=[^/])(docs/assets/.*?)(?=[")])@${{github.server_url}}/${{github.repository}}/blob/master/$1?raw=true@g' README.md
 
-      - name: Get Template Postfix
-        id: template-postfix
-        run: |
-          echo postfix="$VER+$SHA" >> "$GITHUB_OUTPUT"
-        env:
-          SHA: ${{ steps.short-sha.outputs.sha }}
-          VER: ${{ steps.version.outputs.version }}
-
-      - name: Get Template Name
-        id: template-name
-        run: |
-          echo name=$TEMPLATE_NAME@$POSTFIX >> "$GITHUB_OUTPUT"
-        env:
-          POSTFIX: ${{ steps.template-postfix.outputs.postfix }}
-          TEMPLATE_NAME: ${{ github.event.repository.name }}
-
-      - name: Update version in Makefile
-        run: sed -i "s/^VERSION:=.*\$/VERSION:=$POSTFIX/" Makefile
-        env:
-          POSTFIX: ${{ steps.template-postfix.outputs.postfix }}
-
-      - name: Build PROS Project
-        run: make clean quick -j
-
-      - name: Create LemLib template
-        run: pros make template
-
-      - name: Create template folder
-        run: mkdir -p template/include/lemlib/
-        
-      - name: Copy LICENSE and README.md into template
-        run: cp {LICENSE,README.md} template/include/lemlib/  
-        
-      - name: Append GitHub link to README.md
-        run: echo "\n## [Github link](${{github.server_url}}/${{github.repository}})" >> template/include/lemlib/README.md
-
-      - name: Fix relative Github links in README.md
-        run: perl -i -pe 's@(?<=[^/])(docs/assets/.*?)(?=[")])@${{github.server_url}}/${{github.repository}}/blob/master/$1?raw=true@g' template/include/lemlib/README.md
-
-      - name: Unzip Template
-        uses: montudor/action-zip@v1.0.0
+      - name: Run LemLib/pros-build
+        id: test
+        uses: LemLib/pros-build@v2.0.1
         with:
-          args: unzip "${{steps.template-name.outputs.name}}.zip" -d template
-        
-      - name: Create VERSION file
-        run: echo $POSTFIX > template/include/lemlib/VERSION
-        env:
-          POSTFIX: ${{ steps.template-postfix.outputs.postfix }}
+          copy_readme_and_license_to_include: true
+          lib_folder_name: lemlib
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.template-name.outputs.name }}
-          path: "template/*"
-          retention-days: 89
+          name: ${{ steps.test.outputs.name }}
+          path: ${{ github.workspace }}/template/*
+
