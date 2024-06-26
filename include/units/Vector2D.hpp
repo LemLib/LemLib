@@ -200,7 +200,7 @@ template <isQuantity T> class Vector2D {
          * @param other the vector to calculate the dot product with
          * @return R the dot product
          */
-        template <isQuantity Q, isQuantity R = QMultiplication<T, Q>> R dot(Vector2D<Q>& other) {
+        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> R dot(Vector2D<Q>& other) {
             return (x * other.getX()) + (y * other.getY());
         }
 
@@ -215,7 +215,7 @@ template <isQuantity T> class Vector2D {
          * @param other the vector to calculate the cross product with
          * @return R the cross product
          */
-        template <isQuantity Q, isQuantity R = QMultiplication<T, Q>> R cross(Vector2D<Q>& other) {
+        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> R cross(Vector2D<Q>& other) {
             return (x * other.getY()) - (y * other.getX());
         }
 
