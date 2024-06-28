@@ -83,6 +83,7 @@ class Pose : public V2Position {
  * is that VelocityPose has an additional member variable, angularVelocity.
  */
 class VelocityPose : public V2Velocity {
+    public:
         /**
          * @brief Construct a new VelocityPose object
          *
