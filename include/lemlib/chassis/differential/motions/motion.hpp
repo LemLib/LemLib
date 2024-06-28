@@ -50,5 +50,4 @@ class Motion {
          */
         virtual ~Motion() = default;
 };
-
 } // namespace lemlib::differential
