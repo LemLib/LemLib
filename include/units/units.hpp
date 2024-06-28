@@ -197,11 +197,27 @@ template <isQuantity Q> constexpr bool operator>(const Q& lhs, const Q& rhs) {
 }
 
 #define NEW_UNIT(Name, suffix, m, l, t, i, a, o, j, n)                                                                 \
-    using Name = Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>, std::ratio<o>,    \
-                          std::ratio<j>, std::ratio<n>>;                                                               \
+    class Name : public Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>,            \
+                                 std::ratio<o>, std::ratio<j>, std::ratio<n>> {                                        \
+        public:                                                                                                        \
+            explicit constexpr Name(double value)                                                                      \
+                : Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>, std::ratio<o>,   \
+                           std::ratio<j>, std::ratio<n>>(value) {}                                                     \
+            constexpr Name(Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>,         \
+                                    std::ratio<o>, std::ratio<j>, std::ratio<n>>                                       \
+                               value)                                                                                  \
+                : Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>, std::ratio<o>,   \
+                           std::ratio<j>, std::ratio<n>>(value) {};                                                    \
+    };                                                                                                                 \
     constexpr Name suffix = Name(1.0);                                                                                 \
-    constexpr Name operator""_##suffix(long double value) { return Name(static_cast<double>(value)); }                 \
-    constexpr Name operator""_##suffix(unsigned long long value) { return Name(static_cast<double>(value)); }          \
+    constexpr Name operator""_##suffix(long double value) {                                                            \
+        return Name(Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>, std::ratio<o>, \
+                             std::ratio<j>, std::ratio<n>>(static_cast<double>(value)));                               \
+    }                                                                                                                  \
+    constexpr Name operator""_##suffix(unsigned long long value) {                                                     \
+        return Name(Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>, std::ratio<o>, \
+                             std::ratio<j>, std::ratio<n>>(static_cast<double>(value)));                               \
+    }                                                                                                                  \
     inline std::ostream& operator<<(std::ostream& os, const Name& quantity) {                                          \
         os << quantity.internal() << "_" << #suffix;                                                                   \
         return os;                                                                                                     \
