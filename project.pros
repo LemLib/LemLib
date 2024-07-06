@@ -78,7 +78,7 @@
                 "version": "4.1.0"
             },
             "units": {
-                "location": "C:\\Users\\liamt\\AppData\\Roaming\\PROS\\templates\\units@0.2.0",
+                "location": "/home/liam/.config/pros/templates/units@0.2.2",
                 "metadata": {
                     "origin": "local"
                 },
@@ -86,16 +86,16 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.0.7",
                 "system_files": [
-                    "include\\units\\Pose.hpp",
-                    "include\\units\\Angle.hpp",
-                    "include\\units\\units.hpp",
-                    "include\\units\\Vector2D.hpp",
-                    "firmware\\units.a",
-                    "include\\units\\Temperature.hpp"
+                    "include/units/Temperature.hpp",
+                    "include/units/Pose.hpp",
+                    "include/units/units.hpp",
+                    "include/units/Angle.hpp",
+                    "include/units/Vector2D.hpp",
+                    "firmware/units.a"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.2.0"
+                "version": "0.2.2"
             }
         },
         "upload_options": {},
