@@ -10,7 +10,7 @@ Now that LemLib has been installed, we need to configure it before we can start 
 
 ## Drivetrain
 
-First, we need to configure the motors on our drivetrain. Each motor has 3 properties: the port its connected to, whether its reversed or not, and what cartridge is installed (AKA gearbox).
+First, we need to configure the motors on our drivetrain. Each motor has 3 properties: the port it's connected to, whether it's reversed or not, and what cartridge is installed (AKA gearbox).
 
 ```{important}
 Motors are on the left side of the robot from the robot's point of view.
@@ -31,7 +31,7 @@ pros::MotorGroup right_motors({4, 5, 6}); // right motors on ports 4, 5, 6
 Remember, you need `#include "lemlib/api.hpp"` at the top of your file otherwise there will be errors everywhere
 ```
 
-Now, we need to determine which way the motors spin when we apply a positive voltage. This can be done by moving the motor through the devices menu on the brain screen and observing how the drive wheels move. See the table below for determining whether a motor is reversed or not:
+Now, we need to determine which way the motors spin when we apply a positive voltage. This can be done by moving the motor through the devices menu on the brain screen and observing how the drive wheels move. See the table below to determine whether a motor is reversed or not:
 
 ```{important}
 This needs to be done for all motors on the drivetrain
@@ -60,7 +60,7 @@ Now, we need to specify what cartridge is used by every motor. The cartridge can
 We need to specify the cartridge configuration in code as well:
 
 ```cpp
-pros::MotorGroup left_motors({-1, 2, -3}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
+pros::MotorGroup left_motors({-1, 2, -3}, pros::MotorGearset::blue); // left motors use 600 RPM cartridges
 pros::MotorGroup right_motors({4, -5, 6}, pros::MotorGearset::green); // right motors use 200 RPM cartridges
 ```
 
@@ -73,7 +73,7 @@ Now that our motors are fully configured, we need to pass them to LemLib. We can
 
 ### Track Width
 
-Track width is the distance from the left side of the drivetrain to the right side of the drivetrain. Specifically, from the middle of the wheels. Track width is shown in the diagram below:
+Track width is the distance between the left side and right sides of the drivetrain. Specifically, from the middle of the wheels. Track width is shown in the diagram below:
 
 ```{image} ../assets/2_configuration/track_width.png
 :width: 400
@@ -84,7 +84,7 @@ Record the track width, we'll need it soon.
 
 ### Wheel Diameter
 
-This one should be self-explanatory. Its the diameter of the wheels on your drivetrain. The diameter on the wheels are actually slightly different than the diameter advertised by Vex (and, as is typical of Vex, this is not documented anywhere). For that reason, LemLib includes constants for all the different wheels, as follows:
+This one should be self-explanatory. It's the diameter of the wheels on your drivetrain. The diameter on the wheels are actually slightly different than the diameter advertised by Vex (and, as is typical of Vex, this is not documented anywhere). For that reason, LemLib includes constants for all the different wheels, as follows:
 
 ```{note}
 If, for whatever reason, you want a custom wheel size: you can input a number instead of a constant
@@ -199,7 +199,7 @@ First, we need to create the encoders. The process is different for the 2 differ
 ##### Optical Shaft Encoder
 
 ```{important}
-The optical shat encoder uses 2 ADI (tri-port) ports. However, there are only a few valid port combinations, they are as follows:
+The optical shaft encoder uses 2 ADI (tri-port) ports. However, there are only a few valid port combinations, they are as follows:
 ('A', 'B'); ('C', 'D'); ('E', 'F'); ('G', 'H')
 ```
 
@@ -249,7 +249,7 @@ void initialize() {
 if the sensors readings are not changing or show very large numbers (>1000000), you've likely specified the wrong ports for the sensors
 ```
 
-Use the snippet in your program and run it. When you push the robot forwards, the measured position of the vertical encoder(s) should increase. If they decrease, then the sensor(s) needs to be reversed. When you push the robot to the right (relative to the robot), the position measured by horizontal encoders should increase. If they decrease, the sensor(s) needs to be reversed.
+Use the snippet in your program and run it. When you push the robot forwards, the measured position of the vertical encoder(s) should increase. If they decrease, the sensor(s) needs to be reversed. When you push the robot to the right (relative to the robot), the position measured by horizontal encoders should increase. If they decrease, the sensor(s) needs to be reversed.
 
 To reverse an ADI Encoder, simply pass `true` to the encoder constructors after the ports. For a rotation sensor, make the port number negative as with motors. See the example below:
 
@@ -292,7 +292,7 @@ As said previously, the marketed diameter of wheels do not match their actual di
 
 #### Gear Ratio
 
-Users may wish to gear their tracking wheels. Contrary to what you'd expect, its not done to increase the precision of the sensor. Instead, tracking wheels may be geared to make them thinner. The gear ratio is equal to the teeth of the driven gear divided by the teeth of the driving gear. If you don't gear the tracking wheel, the gear ratio is equal to 1.
+Users may wish to gear their tracking wheels. Contrary to what you'd expect, its not done to increase the precision of the sensor. Instead, tracking wheels may be geared to make them thinner. The gear ratio is equal to the teeth of the driven gear divided by the teeth of the driving gear. If you don't gear the tracking wheel, set the gear ratio to 1.
 
 #### Config
 
@@ -354,7 +354,7 @@ lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
 
 ## Final Configuration
 
-Now we have all the necessary information to configure lemlib. See the code block below:
+Now we have all the necessary information to configure LemLib. See the code block below:
 
 ```cpp
 // left motor group
@@ -441,4 +441,4 @@ void initialize() {
 
 ## Conclusion
 
-You have now configured LemLib! We'll cover driver control next
+You have now configured LemLib! We'll cover driver control next.
