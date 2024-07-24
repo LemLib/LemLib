@@ -18,7 +18,7 @@ pros c apply LemLib # applies latest stable version of LemLib
 To update LemLib, all you have to do is run the following command:
 
 ```bash
-pros c update
+pros c upgrade
 ```
 
 ### Beta Depot
