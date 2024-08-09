@@ -4,6 +4,23 @@
         "project_name": "LemLib",
         "target": "v5",
         "templates": {
+            "hot-cold-asset": {
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hot-cold-asset@1.0.0",
+                "metadata": {
+                    "origin": "local"
+                },
+                "name": "hot-cold-asset",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": "^4.1.0",
+                "system_files": [
+                    "firmware\\hot-cold-asset.a",
+                    "include\\hot-cold-asset\\asset.hpp",
+                    "firmware\\hot-cold-asset.mk"
+                ],
+                "target": "v5",
+                "user_files": [],
+                "version": "1.0.0"
+            },
             "kernel": {
                 "location": "/home/aang/.config/pros/templates/kernel@4.1.0",
                 "metadata": {
