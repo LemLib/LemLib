@@ -22,7 +22,7 @@ jobs:
 
       - name: Run LemLib/pros-build
         id: test
-        uses: LemLib/pros-build@v2.0.1
+        uses: LemLib/pros-build@v2.0.2
         with:
           copy_readme_and_license_to_include: true
           lib_folder_name: lemlib
