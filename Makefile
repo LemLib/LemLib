@@ -36,7 +36,7 @@ EXCLUDE_SRC_FROM_LIB+=$(foreach file, $(SRCDIR)/main,$(foreach cext,$(CEXTS),$(f
 # whatever files you want here. This line is configured to add all header files
 # that are in the the include directory get exported
 
-TEMPLATE_FILES=$(INCDIR)/lemlib/*.hpp $(INCDIR)/lemlib/logger/*.hpp $(INCDIR)/lemlib/chassis/*.hpp $(INCDIR)/fmt/*.h $(INCDIR)/fmt/LICENSE $(FWDIR)/hot-cold-asset.mk $(FWDIR)/hot-cold-asset.a $(ROOT)/static/example.txt $(INCDIR)/lemlib/LICENSE $(INCDIR)/lemlib/README.md $(INCDIR)/lemlib/VERSION $(INCDIR)/hot-cold-asset/asset.hpp
+TEMPLATE_FILES=$(INCDIR)/lemlib/*.hpp $(INCDIR)/lemlib/logger/*.hpp $(INCDIR)/lemlib/chassis/*.hpp $(INCDIR)/fmt/*.h $(INCDIR)/fmt/LICENSE $(FWDIR)/hot-cold-asset.mk $(ROOT)/static/example.txt $(INCDIR)/lemlib/LICENSE $(INCDIR)/lemlib/README.md $(INCDIR)/lemlib/VERSION $(INCDIR)/hot-cold-asset/asset.hpp
 
 .DEFAULT_GOAL=quick
 
