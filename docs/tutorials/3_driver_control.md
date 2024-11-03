@@ -83,7 +83,16 @@ void opcontrol() {
 This section is optional and is not needed to control the robot
 ```
 
-You can prioritize steering over turning, or vice versa. For example, you could fully prioritize steering so that the angular velocity of the robot is guaranteed to be the same for a given steering input, no matter the throttle input. With LemLib, you can prioritize steering over throttle by a set amount, from 0 to 1. 0.5 is the default, where steering and turning have the same priority. 0 fully prioritizes throttle, while 1 fully prioritizes steering. See the code block below:
+When we combine throttle and steering inputs, we can sometimes get a value over the motors' max voltage. 
+For example, if the steering input and throttle input are both maxed out at 127, then the power supplied to the left drive will be 0, and the right drive will get 254, which will be rounded down to 127. 
+This means the drive won't move forward at full speed, nor will it turn at full speed. 
+This can be undesired behavior, as you may want steering to be consistent, no matter what throttle you provide.
+
+Luckily, LemLib provides you the authority to choose your desired behavior through the `desaturateBias` param.
+`desaturateBias` has a range of 0 to 1, and only has an effect if motor output would be above 127.
+If set to 0, steering will be reduced until the motor output is below 127, leaving throttle alone, and vice versa for a value 1.
+The default is 0.5, where steering and throttle have the same priority. 
+See the code block below:
 
 ```cpp
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
