@@ -42,14 +42,13 @@ jobs:
             const run_id = ${{github.event.workflow_run.id}};
             
             const pull_head_sha = '${{github.event.workflow_run.head_sha}}';
-            const pull_user_id = ${{github.event.sender.id}};
             
             /** @type {{old_body: string}} */
             const {issue_number, old_body} = await (async () => {
               const pulls = await github.rest.pulls.list({owner, repo});
               for await (const {data} of github.paginate.iterator(pulls)) {
                 for (const pull of data) {
-                  if (pull.head.sha === pull_head_sha && pull.user.id === pull_user_id) {
+                  if (pull.head.sha === pull_head_sha) {
                     return {issue_number: pull.number, old_body: pull.body};
                   }
                 }
