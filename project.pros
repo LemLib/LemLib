@@ -4,6 +4,26 @@
         "project_name": "LemLib",
         "target": "v5",
         "templates": {
+            "hardware": {
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hardware@0.2.0",
+                "metadata": {
+                    "origin": "local"
+                },
+                "name": "hardware",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": "^4.1.1",
+                "system_files": [
+                    "include\\hardware\\IMU\\V5InertialSensor.hpp",
+                    "include\\hardware\\encoder\\ADIEncoder.hpp",
+                    "firmware\\hardware.a",
+                    "include\\hardware\\IMU\\Imu.hpp",
+                    "include\\hardware\\encoder\\Encoder.hpp",
+                    "include\\hardware\\encoder\\V5RotationSensor.hpp"
+                ],
+                "target": "v5",
+                "user_files": [],
+                "version": "0.2.0"
+            },
             "kernel": {
                 "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\kernel@4.1.1",
                 "metadata": {
