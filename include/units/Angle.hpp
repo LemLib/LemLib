@@ -2,8 +2,29 @@
 
 #include "units/units.hpp"
 
-using Angle = Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>, std::ratio<0>,
-                       std::ratio<0>, std::ratio<0>>;
+class Angle : public Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>, std::ratio<0>,
+                              std::ratio<0>, std::ratio<0>> {
+    public:
+        explicit constexpr Angle(double value)
+            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>, std::ratio<0>,
+                       std::ratio<0>, std::ratio<0>>(value) {}
+
+        constexpr Angle(Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>,
+                                 std::ratio<0>, std::ratio<0>, std::ratio<0>>
+                            value)
+            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>, std::ratio<0>,
+                       std::ratio<0>, std::ratio<0>>(value) {};
+};
+
+template <> struct LookupName<Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>,
+                                       std::ratio<0>, std::ratio<0>, std::ratio<0>>> {
+        using Named = Angle;
+};
+
+inline std::ostream& operator<<(std::ostream& os, const Angle& quantity) {
+    os << quantity.internal() << " rad";
+    return os;
+}
 
 constexpr Angle rad = Angle(1.0);
 constexpr Angle deg = Angle(M_PI / 180);
@@ -24,21 +45,31 @@ NEW_UNIT_LITERAL(AngularJerk, rps3, rot / sec / sec / sec)
 NEW_UNIT_LITERAL(AngularJerk, rpm3, rot / min / min / min)
 
 // Angle declaration operators
+// Standard orientation
+constexpr Angle operator""_stRad(long double value) { return Angle(static_cast<double>(value)); }
+
+constexpr Angle operator""_stRad(unsigned long long value) { return Angle(static_cast<double>(value)); }
+
 constexpr Angle operator""_stDeg(long double value) { return static_cast<double>(value) * deg; }
 
 constexpr Angle operator""_stDeg(unsigned long long value) { return static_cast<double>(value) * deg; }
 
-constexpr Angle operator""_stRad(long double value) { return Angle(static_cast<double>(value)); }
+constexpr Angle operator""_stRot(long double value) { return static_cast<double>(value) * rot; }
 
-constexpr Angle operator""_stRad(unsigned long long value) { return Angle(static_cast<double>(value)); }
+constexpr Angle operator""_stRot(unsigned long long value) { return static_cast<double>(value) * rot; }
+
+// Compass orientation
+constexpr Angle operator""_cRad(long double value) { return 90_stDeg - Angle(static_cast<double>(value)); }
+
+constexpr Angle operator""_cRad(unsigned long long value) { return 90_stDeg - Angle(static_cast<double>(value)); }
 
 constexpr Angle operator""_cDeg(long double value) { return 90_stDeg - static_cast<double>(value) * deg; }
 
 constexpr Angle operator""_cDeg(unsigned long long value) { return 90_stDeg - static_cast<double>(value) * deg; }
 
-constexpr Angle operator""_cRad(long double value) { return 90_stDeg - Angle(static_cast<double>(value)); }
+constexpr Angle operator""_cRot(long double value) { return 90_stDeg - static_cast<double>(value) * rot; }
 
-constexpr Angle operator""_cRad(unsigned long long value) { return 90_stDeg - Angle(static_cast<double>(value)); }
+constexpr Angle operator""_cRot(unsigned long long value) { return 90_stDeg - static_cast<double>(value) * rot; }
 
 // Angle functions
 namespace units {
@@ -67,14 +98,20 @@ static inline Angle constrainAngle180(Angle in) {
 } // namespace units
 
 // Angle to/from operators
-constexpr inline Angle from_sRad(double value) { return Angle(value); }
+// Standard orientation
+constexpr inline Angle from_stRad(double value) { return Angle(value); }
 
-constexpr inline double to_sRad(Angle quantity) { return quantity.internal(); }
+constexpr inline double to_stRad(Angle quantity) { return quantity.internal(); }
 
-constexpr inline Angle from_sDeg(double value) { return value * deg; }
+constexpr inline Angle from_stDeg(double value) { return value * deg; }
 
-constexpr inline double to_sDeg(Angle quantity) { return quantity.convert(deg); }
+constexpr inline double to_stDeg(Angle quantity) { return quantity.convert(deg); }
 
+constexpr inline Angle from_stRot(double value) { return value * rot; }
+
+constexpr inline double to_stRot(Angle quantity) { return quantity.convert(rot); }
+
+// Compass orientation
 constexpr inline Angle from_cRad(double value) { return 90 * deg - Angle(value); }
 
 constexpr inline double to_cRad(Angle quantity) { return quantity.internal(); }
@@ -82,3 +119,7 @@ constexpr inline double to_cRad(Angle quantity) { return quantity.internal(); }
 constexpr inline Angle from_cDeg(double value) { return (90 - value) * deg; }
 
 constexpr inline double to_cDeg(Angle quantity) { return (90 * deg - quantity).convert(deg); }
+
+constexpr inline Angle from_cRot(double value) { return (90 - value) * deg; }
+
+constexpr inline double to_cRot(Angle quantity) { return (90 * deg - quantity).convert(rot); }

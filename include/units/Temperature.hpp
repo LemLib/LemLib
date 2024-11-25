@@ -2,8 +2,29 @@
 
 #include "units/units.hpp"
 
-using Temperature = Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>,
-                             std::ratio<0>, std::ratio<0>>;
+class Temperature : public Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                                    std::ratio<1>, std::ratio<0>, std::ratio<0>> {
+    public:
+        explicit constexpr Temperature(double value)
+            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>,
+                       std::ratio<0>, std::ratio<0>>(value) {}
+
+        constexpr Temperature(Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                                       std::ratio<1>, std::ratio<0>, std::ratio<0>>
+                                  value)
+            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<1>,
+                       std::ratio<0>, std::ratio<0>>(value) {};
+};
+
+template <> struct LookupName<Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                                       std::ratio<1>, std::ratio<0>, std::ratio<0>>> {
+        using Named = Temperature;
+};
+
+inline std::ostream& operator<<(std::ostream& os, const Temperature& quantity) {
+    os << quantity.internal() << " k";
+    return os;
+}
 
 constexpr Temperature kelvin = Temperature(1.0);
 
@@ -29,14 +50,16 @@ namespace units {
 
 constexpr inline Temperature from_kelvin(double value) { return Temperature(value); }
 
-constexpr inline double to_kelvin(Temperature quantity) { return quantity.val(); }
+constexpr inline double to_kelvin(Temperature quantity) { return quantity.internal(); }
 
 constexpr inline Temperature from_celsius(double value) { return Temperature(value + 273.15); }
 
-constexpr inline double to_celsius(Temperature quantity) { return quantity.val() - 273.15; }
+constexpr inline double to_celsius(Temperature quantity) { return quantity.internal() - 273.15; }
 
 constexpr inline Temperature from_fahrenheit(double value) { return Temperature((value - 32) * (5.0 / 9.0) + 273.15); }
 
-constexpr inline double to_fahrenheit(Temperature quantity) { return (quantity.val() - 273.15) * (9.0 / 5.0) + 32; }
+constexpr inline double to_fahrenheit(Temperature quantity) {
+    return (quantity.internal() - 273.15) * (9.0 / 5.0) + 32;
+}
 
 } // namespace units
