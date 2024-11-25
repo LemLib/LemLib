@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pros/motor_group.hpp"
 #include "units/Pose.hpp"
+#include "hardware/Motor/MotorGroup.hpp"
 
 namespace lemlib::differential {
 /**
@@ -9,9 +9,9 @@ namespace lemlib::differential {
  */
 struct Drivetrain {
         /** the left side of the drivetrain */
-        pros::MotorGroup left;
+        lemlib::MotorGroup left;
         /** the right side of the drivetrain */
-        pros::MotorGroup right;
+        lemlib::MotorGroup right;
 };
 
 /**

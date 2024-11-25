@@ -17,8 +17,8 @@ namespace lemlib::differential {
  *     SimpleForward() {}
  *
  *     void calculate(Drivetrain& drivetrain, const ChassisState& state) override {
- *       drivetrain.left.move(127);
- *       drivetrain.right.move(127);
+ *       drivetrain.left.move(1);
+ *       drivetrain.right.move(1);
  *     }
  *
  *     bool isFinished() override {
