@@ -1,0 +1,87 @@
+name: format-code
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Get current date and week number
+      id: date
+      run: |
+          echo "::set-output name=date::$(date +'%Y-%m-%d')"
+          echo "::set-output name=week::$(($(date +'%U') / 2))"
+  
+    - name: Cache clang-format
+      id: cache
+      uses: actions/cache@v2
+      with:
+              path: /usr/lib/llvm-10/bin/clang-format
+              key: ${{ runner.os }}-clang-format-${{ steps.date.outputs.week }}
+              restore-keys: ${{ runner.os }}-clang-format-
+    
+    - name: Install clang-format
+      run: |
+                  if [ "${{ steps.cache.outputs.cache-hit }}" != "true" ]; then
+                    sudo apt-get install -y clang-format
+                  fi
+                  which clang-format
+
+    - name: Output clang-format version
+      run: clang-format --version
+
+    - name: Check for changes in .cpp, .hpp, .h files in src/lemlib and include/lemlib
+      id: check-file-changes
+      run: |
+        git fetch origin
+        changed_files=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }} -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h')
+        if [ -z "$changed_files" ]; then
+          echo "::set-output name=all_files::true"
+        else
+          echo "::set-output name=all_files::false"
+          echo "::set-output name=changed_files::$changed_files"
+        fi
+
+    - name: Format code
+      run: |
+        if [ "${{ steps.check-file-changes.outputs.all_files }}" == "true" ]; then
+          echo "No .cpp, .hpp, or .h files were changed in the last commit in src/lemlib and include/lemlib. Formatting all .cpp, .hpp, and .h files in these directories."
+          find ./src/lemlib ./include/lemlib -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | while read filename; do
+            clang-format -i $filename
+          done
+        else
+          echo "${{ steps.check-file-changes.outputs.changed_files }}" | while read filename; do
+            if [[ $filename == *.cpp || $filename == *.hpp || $filename == *.h ]]; then
+              clang-format -i $filename
+            fi
+          done
+        fi
+
+    - name: Check for changes
+      id: check-format-changes
+      run: |
+         git diff --exit-code -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h' || echo "::set-output name=changes::true"
+      continue-on-error: true
+
+    - name: Amend commit with formatting changes
+      run: |
+        if [[ "${{ steps.check-format-changes.outputs.changes }}" == "true" ]]; then
+          git config --local user.email "${{ github.event.pull_request.user.email }}"
+          git config --local user.name "${{ github.event.pull_request.user.login }}"
+          git add .
+          git commit --amend --no-edit
+          git push --force
+        fi
