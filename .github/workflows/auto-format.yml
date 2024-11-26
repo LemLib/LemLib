@@ -76,12 +76,16 @@ jobs:
          git diff --exit-code -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h' || echo "::set-output name=changes::true"
       continue-on-error: true
 
-    - name: Amend commit with formatting changes
+    - name: Commit or amend changes
       run: |
         if [[ "${{ steps.check-format-changes.outputs.changes }}" == "true" ]]; then
-          git config --local user.email "${{ github.event.pull_request.user.email }}"
-          git config --local user.name "${{ github.event.pull_request.user.login }}"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add .
-          git commit --amend --no-edit
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            git commit -m "Automated code formatting"
+          else
+            git commit --amend --no-edit
+          fi
           git push --force
         fi
