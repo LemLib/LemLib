@@ -1,12 +1,16 @@
 name: format-code
 
-on: [push]
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   format:
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
@@ -72,12 +76,12 @@ jobs:
          git diff --exit-code -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h' || echo "::set-output name=changes::true"
       continue-on-error: true
 
-    - name: Commit changes
+    - name: Amend commit with formatting changes
       run: |
         if [[ "${{ steps.check-format-changes.outputs.changes }}" == "true" ]]; then
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "${{ github.event.pull_request.user.email }}"
+          git config --local user.name "${{ github.event.pull_request.user.login }}"
           git add .
-          git commit -m "Automated code formatting"
-          git push
+          git commit --amend --no-edit
+          git push --force
         fi
