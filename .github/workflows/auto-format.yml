@@ -35,13 +35,14 @@ jobs:
     
     - name: Install clang-format
       run: |
-                  if [ "${{ steps.cache.outputs.cache-hit }}" != "true" ]; then
-                    sudo apt-get install -y clang-format
-                  fi
-                  which clang-format
+        if [ "${{ steps.cache.outputs.cache-hit }}" != "true" ]; then
+          sudo apt-get update
+          sudo apt-get install -y clang-format-18
+        fi
+        which clang-format-18
 
     - name: Output clang-format version
-      run: clang-format --version
+      run: clang-format-18 --version
 
     - name: Check for changes in .cpp, .hpp, .h files in src/lemlib and include/lemlib
       id: check-file-changes
@@ -60,12 +61,12 @@ jobs:
         if [ "${{ steps.check-file-changes.outputs.all_files }}" == "true" ]; then
           echo "No .cpp, .hpp, or .h files were changed in the last commit in src/lemlib and include/lemlib. Formatting all .cpp, .hpp, and .h files in these directories."
           find ./src/lemlib ./include/lemlib -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | while read filename; do
-            clang-format -i $filename
+            clang-format-18 -i $filename
           done
         else
           echo "${{ steps.check-file-changes.outputs.changed_files }}" | while read filename; do
             if [[ $filename == *.cpp || $filename == *.hpp || $filename == *.h ]]; then
-              clang-format -i $filename
+              clang-format-18 -i $filename
             fi
           done
         fi
