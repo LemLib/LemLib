@@ -2,19 +2,6 @@
 
 #include <functional>
 
-/**
- * @brief this macro can be used to greatly simplify passing motion algorithms to the motion handler
- *
- * @b Example:
- * @code {.cpp}
- * void autonomous() {
- *   MOVE_CUSTOM(simpleMotion())
- * }
- * @endcode
- *
- */
-#define MOVE_CUSTOM(f) lemlib::MotionHandler::move([&] { f; });
-
 namespace lemlib::MotionHandler {
 /**
  * @brief run a motion algorithm
