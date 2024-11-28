@@ -1,3 +1,4 @@
+# automatically format code using clang-format when a pull request is merged or manually triggered
 name: format-code
 
 on:
@@ -18,7 +19,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-
+    # Caches clang-format if not done in the past 2 weeks
     - name: Get current date and week number
       id: date
       run: |
@@ -35,14 +36,15 @@ jobs:
     
     - name: Install clang-format
       run: |
-                  if [ "${{ steps.cache.outputs.cache-hit }}" != "true" ]; then
-                    sudo apt-get install -y clang-format
-                  fi
-                  which clang-format
+        if [ "${{ steps.cache.outputs.cache-hit }}" != "true" ]; then
+          sudo apt-get update
+          sudo apt-get install -y clang-format-18
+        fi
+        which clang-format-18
 
     - name: Output clang-format version
-      run: clang-format --version
-
+      run: clang-format-18 --version
+    # Check all files in src/lemlib and include/lemlib for changes
     - name: Check for changes in .cpp, .hpp, .h files in src/lemlib and include/lemlib
       id: check-file-changes
       run: |
@@ -54,34 +56,38 @@ jobs:
           echo "::set-output name=all_files::false"
           echo "::set-output name=changed_files::$changed_files"
         fi
-
+    # Format changed files. If no files are changed, then check the whole directory
     - name: Format code
       run: |
         if [ "${{ steps.check-file-changes.outputs.all_files }}" == "true" ]; then
           echo "No .cpp, .hpp, or .h files were changed in the last commit in src/lemlib and include/lemlib. Formatting all .cpp, .hpp, and .h files in these directories."
           find ./src/lemlib ./include/lemlib -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | while read filename; do
-            clang-format -i $filename
+            clang-format-18 -i $filename
           done
         else
           echo "${{ steps.check-file-changes.outputs.changed_files }}" | while read filename; do
             if [[ $filename == *.cpp || $filename == *.hpp || $filename == *.h ]]; then
-              clang-format -i $filename
+              clang-format-18 -i $filename
             fi
           done
         fi
-
+    # Check for changes after formatting
     - name: Check for changes
       id: check-format-changes
       run: |
          git diff --exit-code -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h' || echo "::set-output name=changes::true"
       continue-on-error: true
-
-    - name: Amend commit with formatting changes
+    # If a PR is merged, amend the last commit with the formatted code. If manually triggered, commit the changes
+    - name: Commit or amend changes
       run: |
         if [[ "${{ steps.check-format-changes.outputs.changes }}" == "true" ]]; then
-          git config --local user.email "${{ github.event.pull_request.user.email }}"
-          git config --local user.name "${{ github.event.pull_request.user.login }}"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add .
-          git commit --amend --no-edit
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            git commit -m "Automated code formatting"
+          else
+            git commit --amend --no-edit
+          fi
           git push --force
         fi
