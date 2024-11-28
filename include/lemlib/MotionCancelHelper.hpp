@@ -58,6 +58,7 @@ class MotionCancelHelper {
          */
         bool wait(Time timeout);
     private:
+        bool firstIteration = true;
         Time prevTime;
         const int originalCompStatus;
 };
