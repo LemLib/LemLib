@@ -45,7 +45,7 @@ class MotionCancelHelper {
          *
          *   // if the loop starts at a global time of e.g 2015 msec, and each iteration
          *   // of the while loop takes 3 msec, the loop will still iterate at 2025,
-         *   // 2o35, 2045, etc.
+         *   // 2035, 2045, etc.
          *   while(helper.wait(10_msec)) {
          *     // motion stuff here
          *   }
