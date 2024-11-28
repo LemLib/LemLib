@@ -1,27 +1,36 @@
 #include "lemlib/MotionHandler.hpp"
-#include "pros/rtos.h"
+#include "pros/rtos.hpp"
+#include "pros/misc.h"
 
-namespace lemlib {
-void MotionHandler::move(std::function<void(void)> f) {
+namespace lemlib::MotionHandler {
+// initialize tasks
+static pros::Task motionTask = pros::Task([] {});
+static const pros::Task competitionCancelTask = pros::Task([] {
+    int lastStatus = pros::c::competition_get_status();
+    while (true) {
+        const int status = pros::c::competition_get_status();
+        if (status != lastStatus) cancel();
+        lastStatus = status;
+        pros::delay(5);
+    }
+});
+
+void move(std::function<void(void)> f) {
     // wait until there is no motion running
-    while (this->isMoving()) pros::delay(5);
+    while (isMoving()) pros::delay(5);
     // start the new motion
-    m_task = pros::Task(f);
+    motionTask = pros::Task(f);
 }
 
-bool MotionHandler::isMoving() {
+bool isMoving() {
     // check if the task is currently running
-    const std::uint32_t state = m_task.get_state();
+    const std::uint32_t state = motionTask.get_state();
     return state != pros::E_TASK_STATE_DELETED && state != pros::E_TASK_STATE_INVALID;
 }
 
-void MotionHandler::cancel() {
-    const std::uint32_t state = m_task.get_state();
+void cancel() {
+    const std::uint32_t state = motionTask.get_state();
     // if the task is currently running, notify the task
-    if (state == pros::E_TASK_STATE_DELETED || state == pros::E_TASK_STATE_INVALID) m_task.notify();
+    if (state == pros::E_TASK_STATE_DELETED || state == pros::E_TASK_STATE_INVALID) motionTask.notify();
 }
-
-MotionHandler::~MotionHandler() {
-    cancel(); // stop the current motion if the handler is deconstructed
-}
-} // namespace lemlib
+} // namespace lemlib::MotionHandler
