@@ -2,6 +2,17 @@
 
 #include <functional>
 
+/**
+ * @brief this macro can be used to greatly simplify passing motion algorithms to the motion handler
+ *
+ * @b Example:
+ * @code {.cpp}
+ * void autonomous() {
+ *   MOVE_CUSTOM(simpleMotion())
+ * }
+ * @endcode
+ *
+ */
 #define MOVE_CUSTOM(f) lemlib::MotionHandler::move([&] { f; });
 
 namespace lemlib::MotionHandler {
@@ -10,6 +21,7 @@ namespace lemlib::MotionHandler {
  *
  * @param f the motion function
  *
+ * @b Example:
  * @code {.cpp}
  * // a simple motion algorithm, as an example
  * void simpleMotion() {
@@ -40,6 +52,7 @@ void move(std::function<void(void)> f);
 /**
  * @brief cancel the currently running motion, if it exists
  *
+ * @b Example:
  * @code {.cpp}
  * // a simple motion algorithm, as an example
  * void simpleMotion() {
@@ -69,6 +82,7 @@ bool isMoving();
 /**
  * @brief cancel the currently running motion, if it exists
  *
+ * @b Example:
  * @code {.cpp}
  * // a simple motion algorithm, as an example
  * void simpleMotion() {
