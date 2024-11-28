@@ -5,8 +5,8 @@
 namespace lemlib::MotionHandler {
 // initialize tasks
 static pros::Task motionTask = pros::Task([] {});
+static int lastStatus = -1;
 static const pros::Task competitionCancelTask = pros::Task([] {
-    int lastStatus = pros::c::competition_get_status();
     while (true) {
         const int status = pros::c::competition_get_status();
         if (status != lastStatus) cancel();
@@ -16,6 +16,11 @@ static const pros::Task competitionCancelTask = pros::Task([] {
 });
 
 void move(std::function<void(void)> f) {
+    // prevent an edge case where the motion can be cancelled
+    // if its started immediately after the competition state changes
+    const int status = pros::c::competition_get_status();
+    if (status != lastStatus) cancel();
+    lastStatus = status;
     // wait until there is no motion running
     while (isMoving()) pros::delay(5);
     // start the new motion
