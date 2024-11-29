@@ -47,7 +47,7 @@ jobs:
 
     - name: Commit or amend changes
       run: |
-        if [[ "${{ env.changes }}" == "true" ]]; then
+        if [[ "${{ steps.check-format-changes.outputs.changes }}" == "true" ]]; then
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
@@ -57,3 +57,4 @@ jobs:
             git commit --amend --no-edit
           fi
           git push --force
+        fi
