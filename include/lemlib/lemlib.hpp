@@ -8,5 +8,5 @@
 
 #ifndef LEMLIB_NO_ALIAS
 namespace ll = lemlib;
-namespace mh = lemlib::MotionHandler;
+namespace mh = lemlib::motion_handler;
 #endif
