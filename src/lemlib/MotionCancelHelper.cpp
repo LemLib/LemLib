@@ -12,6 +12,7 @@ bool MotionCancelHelper::wait(Time timeout) {
     // if current time - previous time > timeout
     // then set previous time to current time
     // this is to prevent the motion iterating multiple times
+    // with no delay in between
     const int64_t now = int64_t(pros::millis());
     if (now - int64_t(prevTime) > int64_t(processedTimeout)) prevTime = now - processedTimeout;
     // only delay if this is not the first iteration
