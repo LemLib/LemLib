@@ -9,7 +9,7 @@ MotionCancelHelper::MotionCancelHelper()
 
 bool MotionCancelHelper::wait(Time timeout) {
     // only delay if this is not the first iteration
-    if (!firstIteration) pros::Task::delay_until(&prevTime, 10);
+    if (!firstIteration) pros::Task::delay_until(&prevTime, to_msec(timeout));
     else firstIteration = false;
 
     // if the competition state is not the same as when the motion started, then stop the motion
