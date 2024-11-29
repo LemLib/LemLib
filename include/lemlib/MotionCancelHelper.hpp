@@ -59,7 +59,7 @@ class MotionCancelHelper {
         bool wait(Time timeout);
     private:
         bool firstIteration = true;
-        Time prevTime;
+        std::uint32_t prevTime;
         const int originalCompStatus;
 };
 } // namespace lemlib
