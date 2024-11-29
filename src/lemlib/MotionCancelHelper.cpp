@@ -19,10 +19,11 @@ bool MotionCancelHelper::wait(Time timeout) {
     if (pros::c::competition_get_status() != originalCompStatus) return 0;
 
     const Time lastDuration = now - prevTime; // calculate how long the last iteration took
-    prevTime = now;
     // check how long to wait for a notification
     const Time notificationTimeout = (lastDuration > timeout) ? 0_msec : timeout - lastDuration;
     // check if there was a notification
-    return pros::Task::notify_take(true, to_msec(notificationTimeout)) == 0;
+    const bool shouldContinue = pros::Task::notify_take(true, to_msec(notificationTimeout)) == 0;
+    prevTime = from_msec(pros::millis());
+    return shouldContinue;
 }
 } // namespace lemlib
