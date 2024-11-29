@@ -13,7 +13,7 @@
  * }
  * @endcode
  */
-#define MOVE_CUSTOM(f) lemlib::MotionHandler::move([&] { f; });
+#define MOVE_CUSTOM(f) lemlib::motion_handler::move([&] { f; });
 
 /**
  * @brief this macro can be used to wait until a condition has been met
