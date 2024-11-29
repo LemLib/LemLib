@@ -9,7 +9,10 @@ void move(std::function<void(void)> f) {
     // wait until there is no motion running
     while (isMoving()) pros::delay(5);
     // start the new motion
-    motionTask = pros::Task(f);
+    motionTask = pros::Task([=] {
+        // only start the motion if it hasn't been cancelled yet
+        if (pros::Task::notify_take(true, 0) == 0) f();
+    });
 }
 
 bool isMoving() {
