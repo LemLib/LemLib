@@ -2,7 +2,7 @@
 
 #include <functional>
 
-namespace lemlib::MotionHandler {
+namespace lemlib::motion_handler {
 /**
  * @brief run a motion algorithm
  *
@@ -25,12 +25,12 @@ namespace lemlib::MotionHandler {
  * // runs during the autonomous period
  * void autonomous() {
  *   // pass the motion to the motion handler
- *   lemlib::MotionHandler::move([&] { simpleMotion(); });
+ *   lemlib::motion_handler::move([&] { simpleMotion(); });
  *   // "Hello World!" is printed immediately after the motion starts
  *   std::cout << "Hello World!" << std::endl;
  *   // but if we try to run another motion while one is still running,
  *   // it will wait until the last one stops running
- *   lemlib::MotionHandler::move([&] { simpleMotion(); });
+ *   lemlib::motion_handler::move([&] { simpleMotion(); });
  *   std::cout << "Last motion ended, new motion started!" << std::endl;
  * }
  * @endcode
@@ -56,12 +56,12 @@ void move(std::function<void(void)> f);
  * // runs during the autonomous period
  * void autonomous() {
  *   // pass the motion to the motion handler
- *   lemlib::MotionHandler::move([&] { simpleMotion(); });
- *   lemlib::MotionHandler::isMoving(); // returns true
+ *   lemlib::motion_handler::move([&] { simpleMotion(); });
+ *   lemlib::motion_handler::isMoving(); // returns true
  *   // cancel the motion
- *   lemlib::MotionHandler::cancel();
+ *   lemlib::motion_handler::cancel();
  *   pros::delay(10); // give the task time to stop
- *   lemlib::MotionHandler::isMoving(); // returns false
+ *   lemlib::motion_handler::isMoving(); // returns false
  * }
  * @endcode
  */
@@ -86,14 +86,14 @@ bool isMoving();
  * // runs during the autonomous period
  * void autonomous() {
  *   // pass the motion to the motion handler
- *   lemlib::MotionHandler::move([]{ simpleMotion(); });
- *   lemlib::MotionHandler::isMoving(); // returns true
+ *   lemlib::motion_handler::move([]{ simpleMotion(); });
+ *   lemlib::motion_handler::isMoving(); // returns true
  *   // cancel the motion
- *   lemlib::MotionHandler::cancel();
+ *   lemlib::motion_handler::cancel();
  *   pros::delay(10); // give the task time to stop
- *   lemlib::MotionHandler::isMoving(); // returns false
+ *   lemlib::motion_handler::isMoving(); // returns false
  * }
  * @endcode
  */
 void cancel();
-} // namespace lemlib::MotionHandler
+} // namespace lemlib::motion_handler
