@@ -16,45 +16,22 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: Check for changes in .cpp, .hpp, .h files in src/lemlib and include/lemlib
-      id: check-file-changes
-      run: |
-        git fetch origin
-        changed_files=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }} -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h')
-        if [ -z "$changed_files" ]; then
-          echo "all_files=true" >> $GITHUB_ENV
-        else
-          echo "all_files=false" >> $GITHUB_ENV
-          echo "changed_files=$changed_files" >> $GITHUB_ENV
-        fi
 
     - name: Format code
       uses: DoozyX/clang-format-lint-action@v0.18
       with:
-        clang-format-version: 18
-        files: |
-          ${{ env.changed_files }}
-        style: file
-
-    - name: Check for changes
-      id: check-format-changes
-      run: |
-         git diff --exit-code -- 'src/lemlib/*.cpp' 'src/lemlib/*.hpp' 'src/lemlib/*.h' 'include/lemlib/*.cpp' 'include/lemlib/*.hpp' 'include/lemlib/*.h' || echo "changes=true" >> $GITHUB_ENV
-      continue-on-error: true
+        source: './src/lemlib ./include/lemlib'
+        extensions: 'hpp,cpp'
+        clangFormatVersion: 18
+        inplace: true
 
     - name: Commit or amend changes
-      run: |
-        if [[ "${{ steps.check-format-changes.outputs.changes }}" == "true" ]]; then
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            git commit -m "Automated code formatting"
-          else
-            git commit --amend --no-edit
-          fi
-          git push --force
-        fi
+      uses: EndBug/add-and-commit@v9
+      with:
+        author_name: GitHub Action
+        author_email: action@github.com
+        message: |
+          ${{ github.event_name == 'workflow_dispatch' && 'Automated code formatting' || 'Amended code formatting' }}
+        push: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
