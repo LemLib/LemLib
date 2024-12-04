@@ -1,9 +1,10 @@
+# automatically format code using clang-format when a pull request is merged or manually triggered
 name: format-code
 
 on:
   pull_request:
-    types: [closed]
-  workflow_dispatch:
+    types: [closed]  # on merge pull request
+  workflow_dispatch: # allows manual triggering
 
 permissions:
   contents: write
@@ -17,21 +18,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Format code
-      uses: DoozyX/clang-format-lint-action@v0.18
+    - name: Format code # Outputs the correctly formatted code
+      uses: DoozyX/clang-format-lint-action@v0.18 
       with:
         source: './src/lemlib ./include/lemlib'
         extensions: 'hpp,cpp'
         clangFormatVersion: 18
-        inplace: true
-
-    - name: Commit or amend changes
+        inplace: true # Same as `clang-format -i`
+        
+    # Commits the correctly formatted files to the repository
+    - name: Commit changes 
       uses: EndBug/add-and-commit@v9
       with:
         author_name: GitHub Action
         author_email: action@github.com
-        message: |
-          ${{ github.event_name == 'workflow_dispatch' && 'Automated code formatting' || 'Amended code formatting' }}
+        message: Automated code formatting
         push: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
