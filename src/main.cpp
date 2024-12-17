@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "pros/motor_group.hpp"
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -78,6 +79,18 @@ lemlib::ExpoDriveCurve steerCurve(3, // joystick deadband out of 127
 // create the chassis
 lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
 
+// SmartMotor for macros
+pros::MotorGroup macroMotors({1}, pros::MotorGearset::green);
+pros::Rotation macroRotation(12);
+lemlib::PID macroPID(
+    10, 
+    0.4,
+    50,
+    0,
+    false
+);
+lemlib::SmartMotor macro(&macroMotors, &macroRotation, macroPID);
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -87,6 +100,7 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
+    macro.reset();
 
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
