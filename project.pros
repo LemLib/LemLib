@@ -4,6 +4,23 @@
         "project_name": "LemLib",
         "target": "v5",
         "templates": {
+            "LemLog": {
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\LemLog@0.1.0",
+                "metadata": {
+                    "origin": "local"
+                },
+                "name": "LemLog",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": "^4.1.1",
+                "system_files": [
+                    "include\\LemLog\\logger\\sinks\\terminal.hpp",
+                    "include\\LemLog\\logger\\logger.hpp",
+                    "firmware\\LemLog.a"
+                ],
+                "target": "v5",
+                "user_files": [],
+                "version": "0.1.0"
+            },
             "hardware": {
                 "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hardware@0.2.1",
                 "metadata": {
@@ -25,6 +42,23 @@
                 "target": "v5",
                 "user_files": [],
                 "version": "0.2.1"
+            },
+            "hot-cold-asset": {
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hot-cold-asset@1.0.0",
+                "metadata": {
+                    "origin": "local"
+                },
+                "name": "hot-cold-asset",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": "^4.1.0",
+                "system_files": [
+                    "firmware\\hot-cold-asset.a",
+                    "include\\hot-cold-asset\\asset.hpp",
+                    "firmware\\hot-cold-asset.mk"
+                ],
+                "target": "v5",
+                "user_files": [],
+                "version": "1.0.0"
             },
             "kernel": {
                 "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\kernel@4.1.1",
