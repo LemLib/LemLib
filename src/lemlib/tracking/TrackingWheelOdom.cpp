@@ -1,4 +1,7 @@
 #include "lemlib/tracking/TrackingWheelOdom.hpp"
+#include "lemlog/logger/logger.hpp"
+
+static logger::Helper helper("lemlib/odom/tracking_wheel_odom");
 
 namespace lemlib {
 TrackingWheel::TrackingWheel(Encoder* encoder, Length diameter, Length offset)
@@ -14,8 +17,7 @@ TrackingWheelOdometry::TrackingWheelOdometry(std::vector<Imu*> imus, std::vector
 
 void TrackingWheelOdometry::startTask(Time period) {
     // check if the task has been started yet
-    if (m_task == std::nullopt) {
-        // start the task
+    if (m_task == std::nullopt) { // start the task
         m_task = pros::Task([this, period] {
             // call the update member function periodically
             uint32_t prev = pros::millis();
@@ -30,7 +32,10 @@ void TrackingWheelOdometry::startTask(Time period) {
                 this->update();
                 pros::Task::delay_until(&prev, to_msec(period));
             }
+            helper.log(logger::Level::INFO, "tracking task started!");
         });
+    } else {
+        helper.log(logger::Level::WARN, "tried to start tracking task, but it has already been started!");
     }
 }
 }; // namespace lemlib
