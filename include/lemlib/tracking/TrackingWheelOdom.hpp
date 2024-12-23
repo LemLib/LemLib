@@ -143,6 +143,46 @@ class TrackingWheelOdometry {
          * @endcode
          */
         void setPose(units::Pose pose);
+        /**
+         * @brief start the tracking task. Sensors need to be calibrated beforehand
+         *
+         * Starts the tracking task if it has not been started yet.
+         * Nothing happens if the task has already been started.
+         * Sensors need to be calibrated before this function is called.
+         *
+         * @param period how long to wait before updating the task again. Defaults to 10 ms
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // create TrackingWheelOdom object
+         * lemlib::TrackingWheelOdom odom(...);
+         *
+         * void initialize() {
+         *   // calibrate sensors
+         *   imu.calibrate();
+         *   // start the tracking task
+         *   odom.startTask();
+         *   // now we can get position data
+         * }
+         * @endcode
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // create TrackingWheelOdom object
+         * lemlib::TrackingWheelOdom odom(...);
+         *
+         * void initialize() {
+         *   // calibrate sensors
+         *   imu.calibrate();
+         *   // start the tracking task
+         *   // and have it update every 20 milliseconds
+         *   // or, in other words, 50 times per second
+         *   odom.startTask(20_msec);
+         *   // now we can get position data
+         * }
+         * @endcode
+         */
+        void startTask(Time period = 10_msec);
     private:
         /**
          * @brief update the estimated pose
