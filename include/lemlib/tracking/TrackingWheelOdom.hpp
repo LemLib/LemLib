@@ -189,7 +189,7 @@ class TrackingWheelOdometry {
          *
          * This function should have its own dedicated task
          */
-        void update();
+        void update(Time period);
         std::optional<pros::Task> m_task = std::nullopt;
         std::vector<Imu*> m_Imus;
         std::vector<TrackingWheel> m_verticalWheels;

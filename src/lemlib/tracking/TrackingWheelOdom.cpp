@@ -18,24 +18,26 @@ TrackingWheelOdometry::TrackingWheelOdometry(std::vector<Imu*> imus, std::vector
 void TrackingWheelOdometry::startTask(Time period) {
     // check if the task has been started yet
     if (m_task == std::nullopt) { // start the task
-        m_task = pros::Task([this, period] {
-            // call the update member function periodically
-            uint32_t prev = pros::millis();
-            while (true) {
-                const uint32_t now = pros::millis();
-                const int64_t delta = now - prev;
-                // if current time - previous time > timeout
-                // then set previous time to current time
-                // this is to prevent the tracking task updating multiple times
-                // with no delay in between
-                if (delta > to_msec(period)) prev = now;
-                this->update();
-                pros::Task::delay_until(&prev, to_msec(period));
-            }
-            helper.log(logger::Level::INFO, "tracking task started!");
-        });
+        m_task = pros::Task([this, period] { this->update(period); });
+        helper.log(logger::Level::INFO, "tracking task started!");
     } else {
         helper.log(logger::Level::WARN, "tried to start tracking task, but it has already been started!");
+    }
+}
+
+void TrackingWheelOdometry::update(Time period) {
+    Time prevTime = from_msec(pros::millis());
+    while (true) {
+        const Time now = from_msec(pros::millis());
+        const Time deltaTime = now - prevTime;
+        // if current time - previous time > timeout
+        // then set previous time to current time
+        // this is to prevent the tracking task updating multiple times
+        // with no delay in between
+        if (deltaTime > period) prevTime = now;
+        uint32_t dummyPrevTime = to_msec(prevTime);
+        pros::Task::delay_until(&dummyPrevTime, to_msec(period));
+        prevTime = from_msec(dummyPrevTime);
     }
 }
 }; // namespace lemlib
