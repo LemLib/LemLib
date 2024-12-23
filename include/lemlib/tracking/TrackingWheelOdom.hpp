@@ -100,33 +100,6 @@ class TrackingWheelOdometry {
         TrackingWheelOdometry(std::vector<Imu*> imus, std::vector<TrackingWheel> verticalWheels,
                               std::vector<TrackingWheel> horizontalWheels);
         /**
-         * @brief calibrate the sensors and start the tracking task
-         *
-         * @param maxCalibrationTime the maximum time that can be spent calibrating. Defaults to 3 seconds
-         *
-         * @return 0 if no errors occurred during calibration
-         * @return 1 if a calibration error occurred, but a subsequent attempt was successful
-         * @return 2 if a calibration error occurred, but a substitute sensor will be used
-         * @return 3 if a calibration error occurred, but an alternative heading tracking method will be used
-         * @return 4 if a calibration error occurred, so the local x and/or y axis can't be tracked
-         * @return 5 if a calibration error occurred, so the heading can't be tracked
-         *
-         * @b Example:
-         * @code {.cpp}
-         * TrackingWheelOdometry odom(...);
-         *
-         * void initialize() {
-         *   // calibrate the sensors used for tracking
-         *   // try to calibrate for up to 2 seconds
-         *   odom.calibrate(2_sec);
-         *   // the code below will run as soon as the calibration is successful,
-         *   // or the timer has run out
-         *   std::cout << "Calibration Complete" << std::endl;
-         * }
-         * @endcode
-         */
-        int calibrate(Time maxCalibrationTime = 3_sec);
-        /**
          * @brief Get the estimated Pose of the robot
          *
          * @return units::Pose the estimated pose
