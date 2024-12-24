@@ -44,7 +44,7 @@
                 "version": "0.2.1"
             },
             "hot-cold-asset": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hot-cold-asset@1.0.0",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hot-cold-asset@1.0.1",
                 "metadata": {
                     "origin": "local"
                 },
@@ -52,13 +52,13 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.1.0",
                 "system_files": [
-                    "firmware\\hot-cold-asset.a",
+                    "firmware\\hot-cold-asset.mk",
                     "include\\hot-cold-asset\\asset.hpp",
-                    "firmware\\hot-cold-asset.mk"
+                    "firmware\\hot-cold-asset.a"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "1.0.0"
+                "version": "1.0.1"
             },
             "kernel": {
                 "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\kernel@4.1.1",
