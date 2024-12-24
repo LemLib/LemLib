@@ -183,6 +183,12 @@ class TrackingWheelOdometry {
          * @endcode
          */
         void startTask(Time period = 10_msec);
+        /**
+         * @brief Destroy the Tracking Wheel Odometry object. Stops the tracking task
+         *
+         * De-allocation of IMU pointers is up to the caller.
+         */
+        ~TrackingWheelOdometry();
     private:
         /**
          * @brief update the estimated pose

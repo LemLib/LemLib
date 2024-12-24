@@ -27,7 +27,7 @@ void TrackingWheelOdometry::startTask(Time period) {
 
 void TrackingWheelOdometry::update(Time period) {
     Time prevTime = from_msec(pros::millis());
-    while (true) {
+    while (pros::Task::notify_take(true, 0) == 0) {
         const Time now = from_msec(pros::millis());
         const Time deltaTime = now - prevTime;
         // if current time - previous time > timeout
@@ -40,4 +40,6 @@ void TrackingWheelOdometry::update(Time period) {
         prevTime = from_msec(dummyPrevTime);
     }
 }
+
+TrackingWheelOdometry::~TrackingWheelOdometry() { m_task->notify(); }
 }; // namespace lemlib
