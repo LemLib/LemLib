@@ -1,5 +1,5 @@
 #include "lemlib/tracking/TrackingWheelOdom.hpp"
-#include "lemlog/logger/logger.hpp"
+#include "LemLog/logger/logger.hpp"
 
 static logger::Helper helper("lemlib/odom/tracking_wheel_odom");
 
@@ -27,6 +27,7 @@ void TrackingWheelOdometry::startTask(Time period) {
 
 void TrackingWheelOdometry::update(Time period) {
     Time prevTime = from_msec(pros::millis());
+    // run until the task has been notified, which will probably never happen
     while (pros::Task::notify_take(true, 0) == 0) {
         const Time now = from_msec(pros::millis());
         const Time deltaTime = now - prevTime;
@@ -39,6 +40,7 @@ void TrackingWheelOdometry::update(Time period) {
         pros::Task::delay_until(&dummyPrevTime, to_msec(period));
         prevTime = from_msec(dummyPrevTime);
     }
+    helper.log(logger::Level::INFO, "tracking task stopped");
 }
 
 TrackingWheelOdometry::~TrackingWheelOdometry() { m_task->notify(); }
