@@ -29,6 +29,40 @@ struct TrackingWheel {
          * @endcode
          */
         TrackingWheel(Encoder* encoder, Length diameter, Length offset);
+        /**
+         * @brief Get the distance traveled by the tracking wheel since this function was last called.
+         * This function is not thread safe.
+         *
+         * It is recommended to set the angle of the encoder to 0 before starting to use this function.
+         *
+         * Since the internal encoder object is abstract, it's not known what values errno may be
+         * set to in case of a failure.
+         *
+         * @return INFINITY an error has occurred, setting errno
+         * @return Length the distance the tracking wheel has traveled since the last time
+         * the function was called
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void autonomous() {
+         *   // create tracking wheel
+         *   lemlib::V5RotationSensor encoder(3, true);
+         *   lemlib::TrackingWheel trackingWheel(&encoder, 2.75_in, -3_in);
+         *   // prevent weird values on the first cycle by setting the encoder
+         *   // angle to 0
+         *   trackingWheel.encoder->setAngle(0_stDeg);
+         *
+         *   // loop forever
+         *   while (true) {
+         *     std::cout << "distance traveled since last cycle: "
+         *               << trackingWheel.getDistanceTraveled()
+         *               << std::endl;
+         *     pros::delay(10);
+         *   }
+         * }
+         * @endcode
+         */
+        Length getDistanceTraveled();
         Encoder* const encoder;
         const Length diameter;
         const Length offset;

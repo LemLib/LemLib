@@ -9,6 +9,16 @@ TrackingWheel::TrackingWheel(Encoder* encoder, Length diameter, Length offset)
       diameter(diameter),
       offset(offset) {}
 
+Length TrackingWheel::getDistanceTraveled() {
+    // get encoder angle
+    const Angle angle = encoder->getAngle();
+    // error checking
+    if (angle == from_stDeg(INFINITY)) return from_m(INFINITY);
+    if (encoder->setAngle(0_stDeg) != 0) return from_m(INFINITY);
+    // return the length traveled using the arc-length formula
+    return M_PI * diameter * to_stRad(angle);
+}
+
 TrackingWheelOdometry::TrackingWheelOdometry(std::vector<Imu*> imus, std::vector<TrackingWheel> verticalWheels,
                                              std::vector<TrackingWheel> horizontalWheels)
     : m_Imus(imus),
