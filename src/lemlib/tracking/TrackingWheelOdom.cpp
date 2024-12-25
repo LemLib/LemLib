@@ -45,6 +45,15 @@ void TrackingWheelOdometry::update(Time period) {
     while (pros::Task::notify_take(true, 0) == 0) {
         const Time now = from_msec(pros::millis());
         const Time deltaTime = now - prevTime;
+
+        // step 1: get lateral deltas
+        std::vector<Length> localYLengths;
+        std::vector<Length> localXLengths;
+        for (TrackingWheel& wheel : m_verticalWheels) { localYLengths.push_back(wheel.getDistanceTraveled()); }
+        for (TrackingWheel& wheel : m_horizontalWheels) { localXLengths.push_back(wheel.getDistanceTraveled()); }
+
+        // step 2: error checking
+
         // if current time - previous time > timeout
         // then set previous time to current time
         // this is to prevent the tracking task updating multiple times
