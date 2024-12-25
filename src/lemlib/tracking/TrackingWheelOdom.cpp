@@ -25,6 +25,10 @@ void TrackingWheelOdometry::startTask(Time period) {
     }
 }
 
+// The implementation below is mostly based off of
+// the document written by 5225A (Pilons)
+// Here is a link to the original document
+// http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
 void TrackingWheelOdometry::update(Time period) {
     Time prevTime = from_msec(pros::millis());
     // run until the task has been notified, which will probably never happen

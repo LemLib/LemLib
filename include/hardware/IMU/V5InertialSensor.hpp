@@ -195,7 +195,61 @@ class V5InertialSensor : public Imu {
          * @endcode
          */
         int setRotation(Angle rotation) override;
+        /**
+         * @brief Set the gyro scalar for the IMU
+         *
+         * This function sets the scaling factor for the IMU.
+         * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
+         *
+         * @param scalar
+         * @return int 0 success
+         * @return INT_MAX error occurred, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::V5InertialSensor imu = pros::Imu(1);
+         *
+         *     // wait for the IMU to calibrate
+         *     imu.calibrate();
+         *     while (imu.isCalibrating()) {
+         *         pros::delay(10);
+         *     }
+         *
+         *     // set the gyro scalar of the IMU
+         *     imu.setGyroScalar(1.01);
+         * }
+         * @endcode
+         */
+        int setGyroScalar(double scalar) override;
+        /**
+         * @brief Get the gyro scalar for the IMU
+         *
+         * This function gets the scaling factor for the IMU.
+         * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
+         *
+         * @return double gyro scalar
+         * @return INT_MAX error occurred, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::V5InertialSensor imu = pros::Imu(1);
+         *
+         *     // wait for the IMU to calibrate
+         *     imu.calibrate();
+         *     while (imu.isCalibrating()) {
+         *         pros::delay(10);
+         *     }
+         *
+         *     // get the rotation of the IMU
+         *     std::cout << "IMU gyro scalar: " << imu.getGyroScalar() << std::endl;
+         * }
+         * @endcode
+         */
+        double getGyroScalar() override;
     private:
+        Angle m_offset = 0_stRot;
         pros::Imu m_imu;
 };
 } // namespace lemlib
