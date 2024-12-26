@@ -35,9 +35,9 @@ void TrackingWheelOdometry::startTask(Time period) {
     // check if the task has been started yet
     if (m_task == std::nullopt) { // start the task
         m_task = pros::Task([this, period] { this->update(period); });
-        helper.log(logger::Level::INFO, "tracking task started!");
+        helper.log(logger::Level::INFO, "Tracking task started!");
     } else {
-        helper.log(logger::Level::WARN, "tried to start tracking task, but it has already been started!");
+        helper.log(logger::Level::WARN, "Tried to start tracking task, but it has already been started!");
     }
 }
 
@@ -61,9 +61,9 @@ template <typename T, typename U> static void sanitizeData(std::vector<T>& data,
         if (element.internal() == INFINITY) {
             // output different warning messages based on the sensor type
             if constexpr (std::is_same_v<U, TrackingWheel>) {
-                helper.log(logger::Level::WARN, "failed to get data from tracking wheel, removing tracking wheel!");
+                helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
             } else if constexpr (std::is_same_v<U, Imu*>) {
-                helper.log(logger::Level::WARN, "failed to get data from IMU, removing IMU!");
+                helper.log(logger::Level::WARN, "Failed to get data from IMU, removing IMU!");
             }
             // remove the data and the sensor
             data.erase(data.begin() + i);
@@ -91,18 +91,18 @@ static Angle calculateHeading(std::vector<TrackingWheel>& trackingWheels) {
     const Length offset2 = trackingWheels.at(1).getOffset();
     // check that the offsets aren't the same
     if (offset1 == offset2) {
-        helper.log(logger::Level::WARN, "tracking wheel offsets are equal, removing one tracking wheel!");
+        helper.log(logger::Level::WARN, "Tracking wheel offsets are equal, removing one tracking wheel!");
         trackingWheels.erase(trackingWheels.begin() + 1);
         return calculateHeading(trackingWheels);
     }
     // check for errors
     if (distance1.internal() == INFINITY) {
-        helper.log(logger::Level::WARN, "failed to get data from tracking wheel, removing tracking wheel!");
+        helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
         trackingWheels.erase(trackingWheels.begin());
         return calculateHeading(trackingWheels);
     }
     if (distance2.internal() == INFINITY) {
-        helper.log(logger::Level::WARN, "failed to get data from tracking wheel, removing tracking wheel!");
+        helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
         trackingWheels.erase(trackingWheels.begin() + 1);
         return calculateHeading(trackingWheels);
     }
@@ -143,7 +143,7 @@ void TrackingWheelOdometry::update(Time period) {
         const Length deltaX = deltaXs.empty() ? 0_m : deltaXs.at(0);
         const Length deltaY = deltaYs.empty() ? 0_m : deltaYs.at(0);
 
-        // step 3: calculating change in heading
+        // step 3: calculate change in heading
         Angle theta = 0_stDeg;
         if (!thetas.empty()) { // prefer to use IMU to find the change in heading
             theta = thetas.at(0);
@@ -156,7 +156,7 @@ void TrackingWheelOdometry::update(Time period) {
             if (result.internal() == INFINITY) continue;
             else theta = result;
         } else { // we don't have enough data for odom
-            helper.log(logger::Level::ERROR, "Can't calculate heading: not enough data");
+            helper.log(logger::Level::ERROR, "Can't calculate heading, not enough data!");
             break;
         }
         const Angle deltaTheta = theta - m_pose.theta();
@@ -170,7 +170,7 @@ void TrackingWheelOdometry::update(Time period) {
         pros::Task::delay_until(&dummyPrevTime, to_msec(period));
         prevTime = from_msec(dummyPrevTime);
     }
-    helper.log(logger::Level::INFO, "tracking task stopped");
+    helper.log(logger::Level::INFO, "Tracking task stopped!");
 }
 
 TrackingWheelOdometry::~TrackingWheelOdometry() { m_task->notify(); }
