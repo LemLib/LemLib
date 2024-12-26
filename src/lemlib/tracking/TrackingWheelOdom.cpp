@@ -145,15 +145,16 @@ void TrackingWheelOdometry::update(Time period) {
 
         // step 3: calculate change in heading
         Angle theta = 0_stDeg;
+    calculateDeltaTheta:
         if (!thetas.empty()) { // prefer to use IMU to find the change in heading
             theta = thetas.at(0);
         } else if (m_horizontalWheels.size() >= 2) { // use horizontal encoders to calculate the change in heading
             const Angle result = calculateHeading(m_horizontalWheels);
-            if (result.internal() == INFINITY) continue;
+            if (result.internal() == INFINITY) goto calculateDeltaTheta;
             else theta = result;
         } else if (m_verticalWheels.size() >= 2) { // use vertical encoders to calculate the change in heading
             const Angle result = calculateHeading(m_verticalWheels);
-            if (result.internal() == INFINITY) continue;
+            if (result.internal() == INFINITY) goto calculateDeltaTheta;
             else theta = result;
         } else { // we don't have enough data for odom
             helper.log(logger::Level::ERROR, "Can't calculate heading, not enough data!");
