@@ -76,13 +76,13 @@ void TrackingWheelOdometry::update(Time period) {
         // step 2: error checking
         checkData(localXs, m_horizontalWheels);
         checkData(localYs, m_verticalWheels);
-        checkData()
+        checkData(localThetas, m_Imus);
 
-            // if current time - previous time > timeout
-            // then set previous time to current time
-            // this is to prevent the tracking task updating multiple times
-            // with no delay in between
-            if (deltaTime > period) prevTime = now;
+        // if current time - previous time > timeout
+        // then set previous time to current time
+        // this is to prevent the tracking task updating multiple times
+        // with no delay in between
+        if (deltaTime > period) prevTime = now;
         uint32_t dummyPrevTime = to_msec(prevTime);
         pros::Task::delay_until(&dummyPrevTime, to_msec(period));
         prevTime = from_msec(dummyPrevTime);

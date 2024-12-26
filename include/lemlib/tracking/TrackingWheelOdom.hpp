@@ -63,9 +63,9 @@ struct TrackingWheel {
          * @endcode
          */
         Length getDistanceTraveled();
-        Encoder* const encoder;
-        const Length diameter;
-        const Length offset;
+        Encoder* encoder;
+        Length diameter;
+        Length offset;
 };
 
 /**
