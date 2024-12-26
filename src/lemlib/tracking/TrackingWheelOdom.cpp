@@ -35,6 +35,20 @@ void TrackingWheelOdometry::startTask(Time period) {
     }
 }
 
+template <typename T, typename U> static void checkData(std::vector<T>& data, std::vector<U>& sensors) {
+    // go through all the data
+    for (int i = 0; i < data.size(); ++i) {
+        const T element = data.at(i);
+        // check if the data is good
+        if (element.internal() == INFINITY) {
+            // remove the data and the sensor
+            data.erase(data.begin() + i);
+            sensors.erase(sensors.begin() + i);
+            --i;
+        }
+    }
+}
+
 // The implementation below is mostly based off of
 // the document written by 5225A (Pilons)
 // Here is a link to the original document
@@ -46,19 +60,29 @@ void TrackingWheelOdometry::update(Time period) {
         const Time now = from_msec(pros::millis());
         const Time deltaTime = now - prevTime;
 
-        // step 1: get lateral deltas
-        std::vector<Length> localYLengths;
-        std::vector<Length> localXLengths;
-        for (TrackingWheel& wheel : m_verticalWheels) { localYLengths.push_back(wheel.getDistanceTraveled()); }
-        for (TrackingWheel& wheel : m_horizontalWheels) { localXLengths.push_back(wheel.getDistanceTraveled()); }
+        // step 1: get sensor data
+        std::vector<Length> localXs;
+        std::vector<Length> localYs;
+        std::vector<Angle> localThetas;
+        for (TrackingWheel& wheel : m_horizontalWheels) { localXs.push_back(wheel.getDistanceTraveled()); }
+        for (TrackingWheel& wheel : m_verticalWheels) { localYs.push_back(wheel.getDistanceTraveled()); }
+        for (Imu* imu : m_Imus) {
+            const Angle rotation = imu->getRotation();
+            // set imu angle so the next measurement will be the change in heading since this cycle
+            if (imu->setRotation(0_stDeg)) localThetas.push_back(from_stDeg(INFINITY));
+            else localThetas.push_back(rotation);
+        }
 
         // step 2: error checking
+        checkData(localXs, m_horizontalWheels);
+        checkData(localYs, m_verticalWheels);
+        checkData()
 
-        // if current time - previous time > timeout
-        // then set previous time to current time
-        // this is to prevent the tracking task updating multiple times
-        // with no delay in between
-        if (deltaTime > period) prevTime = now;
+            // if current time - previous time > timeout
+            // then set previous time to current time
+            // this is to prevent the tracking task updating multiple times
+            // with no delay in between
+            if (deltaTime > period) prevTime = now;
         uint32_t dummyPrevTime = to_msec(prevTime);
         pros::Task::delay_until(&dummyPrevTime, to_msec(period));
         prevTime = from_msec(dummyPrevTime);
