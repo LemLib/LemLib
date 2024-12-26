@@ -39,7 +39,7 @@ class TrackingWheel {
          * Since the internal encoder object is abstract, it's not known what values errno may be
          * set to in case of a failure.
          *
-         * @return INFINITY an error has occurred, setting errno
+         * @return INFINITY an error has occurred, possibly setting errno
          * @return Length the distance the tracking wheel has traveled since the last time
          * the function was called
          *
@@ -63,11 +63,75 @@ class TrackingWheel {
          * }
          * @endcode
          */
+        Length getDistanceDelta();
+        /**
+         * @brief Get the distance traveled by the tracking wheel
+         *
+         * Since the internal encoder object is abstract, it's not known what values errno may be
+         * set to in case of a failure.
+         *
+         * @return INFINITY an error has occurred, possibly setting errno
+         * @return Length the distance the tracking wheel has traveled since the last time
+         * the function was called
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void autonomous() {
+         *   // create tracking wheel
+         *   lemlib::V5RotationSensor encoder(3, true);
+         *   lemlib::TrackingWheel trackingWheel(&encoder, 2.75_in, -3_in);
+         *
+         *   // loop forever
+         *   while (true) {
+         *     std::cout << "distance traveled: "
+         *               << trackingWheel.getDistanceTraveled()
+         *               << std::endl;
+         *     pros::delay(10);
+         *   }
+         * }
+         * @endcode
+         */
         Length getDistanceTraveled();
+        /**
+         * @brief Get the offset of the tracking wheel
+         *
+         * @return Length the offset of the tracking wheel
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *   lemlib::V5RotationSensor encoder(3, true);
+         *   lemlib::TrackingWheel trackingWheel(&encoder, 2.75_in, -3_in);
+         *   std::cout << to_in(trackingWheel.getOffset()) << std::endl; // outputs -3
+         * }
+         * @endcode
+         */
+        Length getOffset();
+        /**
+         * @brief reset the tracking wheel encoder
+         *
+         * Since the internal encoder object is abstract, it's not known what values errno may be
+         * set to in case of a failure.
+         *
+         * @return INT_MAX an error has occurred, possibly setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *   lemlib::V5RotationSensor encoder(3, true);
+         *   encoder.setAngle(15_stDeg);
+         *   lemlib::TrackingWheel trackingWheel(&encoder, 2.75_in, -3_in);
+         *   trackingWheel.reset();
+         *   std::cout << to_in(encoder.getDistanceTraveled()) << std::endl; // outputs 0
+         * }
+         * @endcode
+         */
+        int reset();
     private:
-        Encoder* encoder;
-        Length diameter;
-        Length offset;
+        Encoder* m_encoder;
+        Length m_diameter;
+        Length m_offset;
+        Length m_lastTotal;
 };
 
 /**
@@ -232,6 +296,7 @@ class TrackingWheelOdometry {
          * This function should have its own dedicated task
          */
         void update(Time period);
+        units::Pose m_pose = {0_m, 0_m, 0_stDeg};
         std::optional<pros::Task> m_task = std::nullopt;
         std::vector<Imu*> m_Imus;
         std::vector<TrackingWheel> m_verticalWheels;
