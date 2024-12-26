@@ -8,10 +8,11 @@
 
 namespace lemlib {
 /**
- * @brief struct representing a tracking wheel
+ * @brief class representing a tracking wheel
  *
  */
-struct TrackingWheel {
+class TrackingWheel {
+    public:
         /**
          * @brief Construct a new Tracking Wheel object
          *
@@ -63,6 +64,7 @@ struct TrackingWheel {
          * @endcode
          */
         Length getDistanceTraveled();
+    private:
         Encoder* encoder;
         Length diameter;
         Length offset;
