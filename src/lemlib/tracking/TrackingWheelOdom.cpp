@@ -145,7 +145,7 @@ void TrackingWheelOdometry::update(Time period) {
 
         // step 3: calculate change in heading
         Angle theta = 0_stDeg;
-    calculateDeltaTheta:
+    calculateDeltaTheta: // forgive me using GOTO, but it's just for error handling
         if (!thetas.empty()) { // prefer to use IMU to find the change in heading
             theta = thetas.at(0);
         } else if (m_horizontalWheels.size() >= 2) { // use horizontal encoders to calculate the change in heading
@@ -161,6 +161,7 @@ void TrackingWheelOdometry::update(Time period) {
             break;
         }
         const Angle deltaTheta = theta - m_pose.theta();
+        const Angle averageTheta = m_pose.theta() + deltaTheta / 2;
 
         // if current time - previous time > timeout
         // then set previous time to current time
