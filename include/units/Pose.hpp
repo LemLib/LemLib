@@ -18,6 +18,8 @@ template <typename derivatives> class AbstractPose
         using Len = Divided<Length, Exponentiated<Time, derivatives>>;
         using Vector = Vector2D<Len>;
     public:
+        Divided<Angle, Exponentiated<Time, derivatives>> orientation; /** Orientation */
+
         /**
          * @brief Construct a new Pose object
          *
@@ -78,8 +80,6 @@ template <typename derivatives> class AbstractPose
         void setOrientation(Divided<Angle, Exponentiated<Time, derivatives>> orientation) {
             this->orientation = orientation;
         }
-    protected:
-        Divided<Angle, Exponentiated<Time, derivatives>> orientation; /** Orientation */
 };
 
 // Position Pose (Length, Angle)

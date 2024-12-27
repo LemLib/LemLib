@@ -11,11 +11,11 @@ namespace units {
  * @tparam T the type of quantity to use for the vector components
  */
 template <isQuantity T> class Vector3D {
-    protected:
+    public:
         T x; /** x component */
         T y; /** y component */
         T z; /** z component */
-    public:
+
         /**
          * @brief Construct a new Vector2D object
          *
@@ -35,7 +35,7 @@ template <isQuantity T> class Vector3D {
         Vector3D(T nx, T ny, T nz) : x(nx), y(ny), z(nz) {}
 
         /**
-         * @brief Create a new Vector3D object from polar coordinates
+         * @brief Create a new Vector3D object from spherical coordinates
          *
          * This constructor takes polar coordinates and converts them to cartesian coordinates
          *
@@ -44,7 +44,7 @@ template <isQuantity T> class Vector3D {
          */
         static Vector3D fromPolar(Vector3D<Angle>& t, T m) {
             m = m.abs();
-            return Vector2D<T>(m * cos(t.x), m * cos(t.y), m * cos(t.z));
+            return Vector3D<T>(m * cos(t.x), m * cos(t.y), m * cos(t.z));
         }
 
         /**
@@ -56,48 +56,6 @@ template <isQuantity T> class Vector3D {
         static Vector3D unitVector(Vector3D<Angle> t) { return fromPolar(t, (T)1.0); }
 
         /**
-         * @brief get the x component
-         *
-         * @return T x component
-         */
-        T getX() { return x; }
-
-        /**
-         * @brief get the y component
-         *
-         * @return T y component
-         */
-        T getY() { return y; }
-
-        /**
-         * @brief get the z component
-         *
-         * @return T z component
-         */
-        T getZ() { return z; }
-
-        /**
-         * @brief set the x component
-         *
-         * @param nx x component
-         */
-        void setX(T nx) { x = nx; }
-
-        /**
-         * @brief set the y component
-         *
-         * @param ny y component
-         */
-        void setY(T ny) { y = ny; }
-
-        /**
-         * @brief set the z component
-         *
-         * @param nz z component
-         */
-        void setZ(T nz) { z = nz; }
-
-        /**
          * @brief + operator overload
          *
          * This operator adds the x, y, and z components of two vectors
@@ -106,9 +64,7 @@ template <isQuantity T> class Vector3D {
          * @param other vector to add
          * @return Vector3D<T>
          */
-        Vector3D<T> operator+(Vector3D<T>& other) {
-            return Vector3D<T>(x + other.getX(), y + other.getY(), z + getZ());
-        }
+        Vector3D<T> operator+(Vector3D<T>& other) { return Vector3D<T>(x + other.x, y + other.y, z + other.z); }
 
         /**
          * @brief - operator overload
@@ -119,7 +75,7 @@ template <isQuantity T> class Vector3D {
          * @param other vector to subtract
          * @return Vector3D<T>
          */
-        Vector3D<T> operator-(Vector3D<T>& other) { return Vector3D<T>(x - other.getX(), y - other.getY()); }
+        Vector3D<T> operator-(Vector3D<T>& other) { return Vector3D<T>(x - other.x, y - other.y, z - other.z); }
 
         /**
          * @brief * operator overload
@@ -153,9 +109,9 @@ template <isQuantity T> class Vector3D {
          * @return Vector3D<T>&
          */
         Vector3D<T>& operator+=(Vector3D<T>& other) {
-            x += other.getX();
-            y += other.getY();
-            z += other.getZ();
+            x += other.x;
+            y += other.y;
+            z += other.z;
             return (*this);
         }
 
@@ -169,9 +125,9 @@ template <isQuantity T> class Vector3D {
          * @return Vector3D<T>&
          */
         Vector3D<T>& operator-=(Vector3D<T>& other) {
-            x -= other.getX();
-            y -= other.getY();
-            z -= other.getZ();
+            x -= other.x;
+            y -= other.y;
+            z -= other.z;
             return (*this);
         }
 
@@ -221,7 +177,7 @@ template <isQuantity T> class Vector3D {
          * @return R the dot product
          */
         template <isQuantity Q, isQuantity R = Multiplied<T, Q>> R dot(Vector3D<Q>& other) {
-            return (x * other.getX()) + (y * other.getY()) + (z * other.getZ());
+            return (x * other.x) + (y * other.y) + (z * other.z);
         }
 
         /**
@@ -269,9 +225,7 @@ template <isQuantity T> class Vector3D {
          * @param other the other vector
          * @return Vector3D<T>
          */
-        Vector3D<T> vectorTo(Vector3D<T>& other) {
-            return Vector2D<T>(other.getX() - x, other.getY() - y, other.getZ() - z);
-        }
+        Vector3D<T> vectorTo(Vector3D<T>& other) { return Vector2D<T>(other.x - x, other.y - y, other.z - z); }
 
         /**
          * @brief the angle between two vectors

@@ -299,6 +299,7 @@ template <isQuantity Q, isQuantity R> constexpr bool operator>(const Q& lhs, con
     constexpr Name operator""_##suffix(long double value) { return static_cast<double>(value) * multiple; }            \
     constexpr Name operator""_##suffix(unsigned long long value) { return static_cast<double>(value) * multiple; }     \
     constexpr inline Name from_##suffix(double value) { return value * multiple; }                                     \
+    constexpr inline Name from_##suffix(Number value) { return value.internal() * multiple; }                          \
     constexpr inline double to_##suffix(Name quantity) { return quantity.convert(multiple); }
 
 #define NEW_METRIC_PREFIXES(Name, base)                                                                                \
