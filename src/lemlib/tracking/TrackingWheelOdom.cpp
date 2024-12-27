@@ -144,22 +144,25 @@ void TrackingWheelOdometry::update(Time period) {
         const Length deltaY = deltaYs.empty() ? 0_m : deltaYs.at(0);
 
         // step 3: calculate change in heading
-        Angle theta = 0_stDeg;
-    calculateDeltaTheta: // forgive me using GOTO, but it's just for error handling
-        if (!thetas.empty()) { // prefer to use IMU to find the change in heading
-            theta = thetas.at(0);
-        } else if (m_horizontalWheels.size() >= 2) { // use horizontal encoders to calculate the change in heading
-            const Angle result = calculateHeading(m_horizontalWheels);
-            if (result.internal() == INFINITY) goto calculateDeltaTheta;
-            else theta = result;
-        } else if (m_verticalWheels.size() >= 2) { // use vertical encoders to calculate the change in heading
-            const Angle result = calculateHeading(m_verticalWheels);
-            if (result.internal() == INFINITY) goto calculateDeltaTheta;
-            else theta = result;
-        } else { // we don't have enough data for odom
-            helper.log(logger::Level::ERROR, "Can't calculate heading, not enough data!");
-            break;
-        }
+        const Angle theta = [&] {
+            while (true) {
+                if (!thetas.empty()) { // prefer to use IMU
+                    return thetas.at(0);
+                } else if (m_horizontalWheels.size() >= 2) { // use horizontal encoders
+                    const Angle result = calculateHeading(m_horizontalWheels);
+                    if (result.internal() == INFINITY) continue;
+                    else return result;
+                } else if (m_verticalWheels.size() >= 2) { // use vertical encoders
+                    const Angle result = calculateHeading(m_verticalWheels);
+                    if (result.internal() == INFINITY) continue;
+                    else return result;
+                } else { // we don't have enough data
+                    helper.log(logger::Level::ERROR, "Can't calculate heading, not enough data!");
+                    break;
+                }
+            }
+            return from_stDeg(INFINITY);
+        }();
         const Angle deltaTheta = theta - m_pose.theta();
         const Angle averageTheta = m_pose.theta() + deltaTheta / 2;
 
