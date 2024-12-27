@@ -44,6 +44,8 @@ void TrackingWheelOdometry::startTask(Time period) {
 /**
  * @brief Sanitize data from sensors used for odometry
  *
+ * TODO: use std::expected
+ *
  * This function checks if the data given equals INFINITY, and if it does, the data and the sensor
  * which reported the data is removed from their respective vectors.
  *
@@ -75,6 +77,8 @@ template <typename T, typename U> static void sanitizeData(std::vector<T>& data,
 
 /**
  * @brief calculate the heading given at least 2 tracking wheels
+ *
+ * TODO: use std::expected
  *
  * @param trackingWheels vector of tracking wheels which will be used to calculate the heading
  *
@@ -128,6 +132,7 @@ void TrackingWheelOdometry::update(Time period) {
         const Time deltaTime = now - prevTime;
 
         // step 1: get sensor data
+        // TODO: find some standard library function to make this cleaner
         std::vector<Length> deltaXs;
         std::vector<Length> deltaYs;
         std::vector<Angle> thetas;
