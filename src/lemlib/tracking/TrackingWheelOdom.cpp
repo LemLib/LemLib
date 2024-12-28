@@ -44,8 +44,6 @@ void TrackingWheelOdometry::startTask(Time period) {
 /**
  * @brief Sanitize data from sensors used for odometry
  *
- * TODO: use std::expected
- *
  * This function checks if the data given equals INFINITY, and if it does, the data and the sensor
  * which reported the data is removed from their respective vectors.
  *
@@ -55,7 +53,7 @@ void TrackingWheelOdometry::startTask(Time period) {
  * @param data the data to sanitize
  * @param sensors the sensors the data was gotten from
  */
-template <typename T, typename U> static void sanitizeData(std::vector<T>& data, std::vector<U>& sensors) {
+template <typename T, typename U> static T sanitizeData(const std::vector<T>& data, std::vector<U>& sensors) {
     // go through all the data
     for (int i = 0; i < data.size(); ++i) {
         const T element = data.at(i);
@@ -67,12 +65,13 @@ template <typename T, typename U> static void sanitizeData(std::vector<T>& data,
             } else if constexpr (std::is_same_v<U, Imu*>) {
                 helper.log(logger::Level::WARN, "Failed to get data from IMU, removing IMU!");
             }
-            // remove the data and the sensor
-            data.erase(data.begin() + i);
+            // remove the sensor
             sensors.erase(sensors.begin() + i);
             --i;
-        }
+        } else return element;
     }
+    // if no sensor data is available, return 0
+    return T(0.0);
 }
 
 /**
@@ -111,7 +110,7 @@ static Angle calculateHeading(std::vector<TrackingWheel>& trackingWheels) {
         return calculateHeading(trackingWheels);
     }
     // return the calculated heading
-    return from_stRad(((distance1 - distance2) / (offset1 - offset2)).internal());
+    return from_stRad((distance1 - distance2) / (offset1 - offset2));
 }
 
 /*
@@ -121,8 +120,10 @@ static Angle calculateHeading(std::vector<TrackingWheel>& trackingWheels) {
  */
 void TrackingWheelOdometry::update(Time period) {
     // reset the tracking wheels
-    for (TrackingWheel& trackingWheel : m_horizontalWheels) { trackingWheel.reset(); }
-    for (TrackingWheel& trackingWheel : m_verticalWheels) { trackingWheel.reset(); }
+    for (TrackingWheel& trackingWheel : m_horizontalWheels) trackingWheel.reset();
+    for (TrackingWheel& trackingWheel : m_verticalWheels) trackingWheel.reset();
+    // set the IMU so it's ready the same value odom is set to
+    for (Imu* imu : m_Imus) imu->setRotation(m_pose.orientation);
 
     // record the previous time, used for consistent loop timings
     Time prevTime = from_msec(pros::millis());
@@ -133,20 +134,29 @@ void TrackingWheelOdometry::update(Time period) {
 
         // step 1: get sensor data
         // TODO: find some standard library function to make this cleaner
-        std::vector<Length> deltaXs;
-        std::vector<Length> deltaYs;
-        std::vector<Angle> thetas;
-        for (TrackingWheel& wheel : m_horizontalWheels) { deltaXs.push_back(wheel.getDistanceDelta()); }
-        for (TrackingWheel& wheel : m_verticalWheels) { deltaYs.push_back(wheel.getDistanceDelta()); }
-        for (Imu* imu : m_Imus) { thetas.push_back(imu->getRotation()); }
+        const std::vector<Length> deltaXs = [&] {
+            std::vector<Length> result;
+            std::transform(m_horizontalWheels.begin(), m_horizontalWheels.end(), result.begin(),
+                           [](TrackingWheel& wheel) { return wheel.getDistanceDelta(); });
+            return result;
+        }();
+        const std::vector<Length> deltaYs = [&] {
+            std::vector<Length> result;
+            std::transform(m_verticalWheels.begin(), m_verticalWheels.end(), result.begin(),
+                           [](TrackingWheel& wheel) { return wheel.getDistanceDelta(); });
+            return result;
+        }();
+        const std::vector<Angle> thetas = [&] {
+            std::vector<Angle> result;
+            std::transform(m_Imus.begin(), m_Imus.end(), result.begin(), [](Imu* imu) { return imu->getRotation(); });
+            return result;
+        }();
 
         // step 2: sanitize data
-        sanitizeData(deltaXs, m_horizontalWheels);
-        sanitizeData(deltaYs, m_verticalWheels);
         sanitizeData(thetas, m_Imus);
         // if there are no measurements available, then assume delta is 0
-        const Length deltaX = deltaXs.empty() ? 0_m : deltaXs.at(0);
-        const Length deltaY = deltaYs.empty() ? 0_m : deltaYs.at(0);
+        const Length deltaX = sanitizeData(deltaXs, m_horizontalWheels);
+        const Length deltaY = sanitizeData(deltaYs, m_verticalWheels);
 
         // step 3: calculate change in heading
         const Angle theta = [&] {
