@@ -74,7 +74,7 @@ static Length findLateralDelta(std::vector<TrackingWheel>& sensors) {
  * @return INFINITY there's not enough tracking wheels to calculate the heading
  * @return Angle the heading
  */
-static std::optional<Angle> calculateHeading(std::vector<TrackingWheel>& trackingWheels) {
+static std::optional<Angle> calculateHeading(std::vector<TrackingWheel>& trackingWheels, Angle offset) {
     // check that there are enough tracking wheels
     if (trackingWheels.size() < 2) return std::nullopt;
     // get data
@@ -86,22 +86,27 @@ static std::optional<Angle> calculateHeading(std::vector<TrackingWheel>& trackin
     if (offset1 == offset2) {
         helper.log(logger::Level::WARN, "Tracking wheel offsets are equal, removing one tracking wheel!");
         trackingWheels.erase(trackingWheels.begin() + 1);
-        return calculateHeading(trackingWheels);
+        return calculateHeading(trackingWheels, offset);
     }
     // check for errors
     if (distance1.internal() == INFINITY) {
         helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
         trackingWheels.erase(trackingWheels.begin());
-        return calculateHeading(trackingWheels);
+        return calculateHeading(trackingWheels, offset);
     }
     if (distance2.internal() == INFINITY) {
         helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
         trackingWheels.erase(trackingWheels.begin() + 1);
-        return calculateHeading(trackingWheels);
+        return calculateHeading(trackingWheels, offset);
     }
     // return the calculated heading
-    return from_stRad((distance1 - distance2) / (offset1 - offset2));
+    return offset + from_stRad((distance1 - distance2) / (offset1 - offset2));
 }
+
+// problem:
+// the heading we calculate using tracking wheels may not be the same
+// as what the heading was set to
+// so, we'll need to offset it
 
 /*
  * The implementation below is based off of
@@ -135,13 +140,13 @@ void TrackingWheelOdometry::update(Time period) {
                     m_Imus.erase(m_Imus.begin() + i);
                     --i;
                     helper.log(logger::Level::WARN, "Failed to get data from IMU, removing IMU!");
-                } else return data;
+                } else return m_offset + data;
             }
             // if we don't have IMU data, try using horizontal tracking wheels
-            const std::optional<Angle> result = calculateHeading(m_horizontalWheels);
+            const std::optional<Angle> result = calculateHeading(m_horizontalWheels, m_offset);
             if (result != std::nullopt) return result;
             // try using vertical tracking wheels if there aren't any horizontal wheels available
-            return calculateHeading(m_verticalWheels);
+            return calculateHeading(m_verticalWheels, m_offset);
         }();
         if (theta == std::nullopt) { // error checking
             helper.log(logger::Level::ERROR, "Not enough sensors available!");

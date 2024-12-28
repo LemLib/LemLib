@@ -297,6 +297,7 @@ class TrackingWheelOdometry {
          */
         void update(Time period);
         units::Pose m_pose = {0_m, 0_m, 0_stDeg};
+        Angle m_offset = 0_stDeg;
         std::optional<pros::Task> m_task = std::nullopt;
         std::vector<Imu*> m_Imus;
         std::vector<TrackingWheel> m_verticalWheels;
