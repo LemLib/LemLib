@@ -25,7 +25,7 @@ template <typename derivatives> class AbstractPose
          *
          * This constructor initializes x, y, and orientation to 0
          */
-        AbstractPose() : Vector(), orientation(0.0) {}
+        constexpr AbstractPose() : Vector(), orientation(0.0) {}
 
         /**
          * @brief Construct a new Pose object
@@ -34,7 +34,7 @@ template <typename derivatives> class AbstractPose
          *
          * @param v position
          */
-        AbstractPose(Vector v) : Vector(v), orientation(0.0) {}
+        constexpr AbstractPose(Vector v) : Vector(v), orientation(0.0) {}
 
         /**
          * @brief Construct a new Pose object
@@ -42,7 +42,7 @@ template <typename derivatives> class AbstractPose
          * @param v position
          * @param orientation orientation
          */
-        AbstractPose(Vector v, Divided<Angle, Exponentiated<Time, derivatives>> orientation)
+        constexpr AbstractPose(Vector v, Divided<Angle, Exponentiated<Time, derivatives>> orientation)
             : Vector(v), orientation(orientation) {}
 
         /**
@@ -53,7 +53,7 @@ template <typename derivatives> class AbstractPose
          * @param x x position
          * @param y y position
          */
-        AbstractPose(Len x, Len y) : Vector(x, y), orientation(0.0) {}
+        constexpr AbstractPose(Len x, Len y) : Vector(x, y), orientation(0.0) {}
 
         /**
          * @brief Construct a new Pose object
@@ -62,7 +62,7 @@ template <typename derivatives> class AbstractPose
          * @param y y position
          * @param orientation orientation
          */
-        AbstractPose(Len x, Len y, Divided<Angle, Exponentiated<Time, derivatives>> orientation)
+        constexpr AbstractPose(Len x, Len y, Divided<Angle, Exponentiated<Time, derivatives>> orientation)
             : Vector(x, y), orientation(orientation) {}
 };
 

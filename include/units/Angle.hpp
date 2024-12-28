@@ -101,37 +101,25 @@ static inline Angle constrainAngle180(Angle in) {
 // Standard orientation
 constexpr inline Angle from_stRad(double value) { return Angle(value); }
 
-constexpr inline Angle from_stRad(Number value) { return Angle(value.internal()); }
-
 constexpr inline double to_stRad(Angle quantity) { return quantity.internal(); }
 
 constexpr inline Angle from_stDeg(double value) { return value * deg; }
 
-constexpr inline Angle from_stDeg(Number value) { return value * deg; }
-
 constexpr inline double to_stDeg(Angle quantity) { return quantity.convert(deg); }
 
 constexpr inline Angle from_stRot(double value) { return value * rot; }
-
-constexpr inline Angle from_stRot(Number value) { return value * rot; }
 
 constexpr inline double to_stRot(Angle quantity) { return quantity.convert(rot); }
 
 // Compass orientation
 constexpr inline Angle from_cRad(double value) { return 90 * deg - Angle(value); }
 
-constexpr inline Angle from_cRad(Number value) { return 90 * deg - Angle(value.internal()); }
-
 constexpr inline double to_cRad(Angle quantity) { return quantity.internal(); }
 
 constexpr inline Angle from_cDeg(double value) { return (90 - value) * deg; }
 
-constexpr inline Angle from_cDeg(Number value) { return (90 - value.internal()) * deg; }
-
 constexpr inline double to_cDeg(Angle quantity) { return (90 * deg - quantity).convert(deg); }
 
 constexpr inline Angle from_cRot(double value) { return (90 - value) * deg; }
-
-constexpr inline Angle from_cRot(Number value) { return (90 - value.internal()) * deg; }
 
 constexpr inline double to_cRot(Angle quantity) { return (90 * deg - quantity).convert(rot); }

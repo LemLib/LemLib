@@ -68,7 +68,7 @@ class Quantity {
         constexpr double internal() const { return value; }
 
         // TODO: document this
-        constexpr double convert(Self quantity) { return value / quantity.value; }
+        constexpr double convert(Self quantity) const { return value / quantity.value; }
 
         /**
          * @brief set the value of this quantity to its current value plus another quantity
@@ -261,7 +261,7 @@ template <isQuantity Q, isQuantity R> constexpr bool operator>(const Q& lhs, con
     return (lhs.internal() > rhs.internal());
 }
 
-#define NEW_UNIT(Name, suffix, m, l, t, i, a, o, j, n)                                                                 \
+#define NEW_UNIT(Name, suffix, m, l, t, i, a, o, j, n, ...)                                                            \
     class Name : public Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>,            \
                                  std::ratio<o>, std::ratio<j>, std::ratio<n>> {                                        \
         public:                                                                                                        \
@@ -273,6 +273,7 @@ template <isQuantity Q, isQuantity R> constexpr bool operator>(const Q& lhs, con
                                value)                                                                                  \
                 : Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>, std::ratio<o>,   \
                            std::ratio<j>, std::ratio<n>>(value) {};                                                    \
+            __VA_ARGS__                                                                                                \
     };                                                                                                                 \
     template <> struct LookupName<Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>,  \
                                            std::ratio<o>, std::ratio<j>, std::ratio<n>>> {                             \
@@ -312,7 +313,7 @@ template <isQuantity Q, isQuantity R> constexpr bool operator>(const Q& lhs, con
     NEW_UNIT_LITERAL(Name, u##base, base / 1E6)                                                                        \
     NEW_UNIT_LITERAL(Name, n##base, base / 1E9)
 
-NEW_UNIT(Number, num, 0, 0, 0, 0, 0, 0, 0, 0)
+NEW_UNIT(Number, num, 0, 0, 0, 0, 0, 0, 0, 0, constexpr operator double() { return this->value; })
 NEW_UNIT_LITERAL(Number, percent, num / 100.0);
 
 NEW_UNIT(Mass, kg, 1, 0, 0, 0, 0, 0, 0, 0)
