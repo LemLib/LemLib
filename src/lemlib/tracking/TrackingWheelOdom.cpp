@@ -42,36 +42,26 @@ void TrackingWheelOdometry::startTask(Time period) {
 }
 
 /**
- * @brief Sanitize data from sensors used for odometry
+ * @brief Find position delta given tracking wheels
  *
- * This function checks if the data given equals INFINITY, and if it does, the data and the sensor
- * which reported the data is removed from their respective vectors.
+ * This function checks if the data given equals INFINITY, and if it does, the tracking wheel
+ * which reported the data is removed its vectors.
  *
- * @tparam T the type of the data, assumed to be a unit (e.g Length, Angle)
- * @tparam U the type of the sensors
+ * @param sensors the sensors to get data from
  *
- * @param data the data to sanitize
- * @param sensors the sensors the data was gotten from
+ * @return Length the position delta
  */
-template <typename T, typename U> static T sanitizeData(const std::vector<T>& data, std::vector<U>& sensors) {
-    // go through all the data
-    for (int i = 0; i < data.size(); ++i) {
-        const T element = data.at(i);
-        // check if the data is good
-        if (element.internal() == INFINITY) {
-            // output different warning messages based on the sensor type
-            if constexpr (std::is_same_v<U, TrackingWheel>) {
-                helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
-            } else if constexpr (std::is_same_v<U, Imu*>) {
-                helper.log(logger::Level::WARN, "Failed to get data from IMU, removing IMU!");
-            }
-            // remove the sensor
+static Length findLateralDelta(std::vector<TrackingWheel>& sensors) {
+    for (int i = 0; i < sensors.size(); ++i) {
+        const Length data = sensors.at(i).getDistanceDelta();
+        if (data.internal() == INFINITY) { // error checking
             sensors.erase(sensors.begin() + i);
             --i;
-        } else return element;
+            helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
+        } else return data;
     }
-    // if no sensor data is available, return 0
-    return T(0.0);
+    // return 0 if no data was found
+    return 0_m;
 }
 
 /**
@@ -84,9 +74,9 @@ template <typename T, typename U> static T sanitizeData(const std::vector<T>& da
  * @return INFINITY there's not enough tracking wheels to calculate the heading
  * @return Angle the heading
  */
-static Angle calculateHeading(std::vector<TrackingWheel>& trackingWheels) {
+static std::optional<Angle> calculateHeading(std::vector<TrackingWheel>& trackingWheels) {
     // check that there are enough tracking wheels
-    if (trackingWheels.size() < 2) { return from_stDeg(INFINITY); }
+    if (trackingWheels.size() < 2) return std::nullopt;
     // get data
     const Length distance1 = trackingWheels.at(0).getDistanceTraveled();
     const Length distance2 = trackingWheels.at(1).getDistanceTraveled();
@@ -132,53 +122,33 @@ void TrackingWheelOdometry::update(Time period) {
         const Time now = from_msec(pros::millis());
         const Time deltaTime = now - prevTime;
 
-        // step 1: get sensor data
-        // TODO: find some standard library function to make this cleaner
-        const std::vector<Length> deltaXs = [&] {
-            std::vector<Length> result;
-            std::transform(m_horizontalWheels.begin(), m_horizontalWheels.end(), result.begin(),
-                           [](TrackingWheel& wheel) { return wheel.getDistanceDelta(); });
-            return result;
-        }();
-        const std::vector<Length> deltaYs = [&] {
-            std::vector<Length> result;
-            std::transform(m_verticalWheels.begin(), m_verticalWheels.end(), result.begin(),
-                           [](TrackingWheel& wheel) { return wheel.getDistanceDelta(); });
-            return result;
-        }();
-        const std::vector<Angle> thetas = [&] {
-            std::vector<Angle> result;
-            std::transform(m_Imus.begin(), m_Imus.end(), result.begin(), [](Imu* imu) { return imu->getRotation(); });
-            return result;
-        }();
+        // step 1: get tracking wheel deltas
+        const Length deltaX = findLateralDelta(m_horizontalWheels);
+        const Length deltaY = findLateralDelta(m_verticalWheels);
 
-        // step 2: sanitize data
-        sanitizeData(thetas, m_Imus);
-        // if there are no measurements available, then assume delta is 0
-        const Length deltaX = sanitizeData(deltaXs, m_horizontalWheels);
-        const Length deltaY = sanitizeData(deltaYs, m_verticalWheels);
-
-        // step 3: calculate change in heading
-        const Angle theta = [&] {
-            while (true) {
-                if (!thetas.empty()) { // prefer to use IMU
-                    return thetas.at(0);
-                } else if (m_horizontalWheels.size() >= 2) { // use horizontal encoders
-                    const Angle result = calculateHeading(m_horizontalWheels);
-                    if (result.internal() == INFINITY) continue;
-                    else return result;
-                } else if (m_verticalWheels.size() >= 2) { // use vertical encoders
-                    const Angle result = calculateHeading(m_verticalWheels);
-                    if (result.internal() == INFINITY) continue;
-                    else return result;
-                } else { // we don't have enough data
-                    helper.log(logger::Level::ERROR, "Can't calculate heading, not enough data!");
-                    break;
-                }
+        // step 2: calculate heading
+        const std::optional<Angle> theta = [&]() -> std::optional<Angle> {
+            // get data from IMUs
+            for (int i = 0; i < m_Imus.size(); ++i) {
+                const Angle data = m_Imus.at(i)->getRotation();
+                if (data.internal() == INFINITY) { // error checking
+                    m_Imus.erase(m_Imus.begin() + i);
+                    --i;
+                    helper.log(logger::Level::WARN, "Failed to get data from IMU, removing IMU!");
+                } else return data;
             }
-            return from_stDeg(INFINITY);
+            // if we don't have IMU data, try using horizontal tracking wheels
+            const std::optional<Angle> result = calculateHeading(m_horizontalWheels);
+            if (result != std::nullopt) return result;
+            // try using vertical tracking wheels if there aren't any horizontal wheels available
+            return calculateHeading(m_verticalWheels);
         }();
-        const Angle deltaTheta = theta - m_pose.theta();
+        if (theta == std::nullopt) { // error checking
+            helper.log(logger::Level::ERROR, "Not enough sensors available!");
+            break;
+        }
+
+        const Angle deltaTheta = *theta - m_pose.theta();
         const Angle averageTheta = m_pose.theta() + deltaTheta / 2;
 
         // if current time - previous time > timeout
@@ -190,6 +160,7 @@ void TrackingWheelOdometry::update(Time period) {
         pros::Task::delay_until(&dummyPrevTime, to_msec(period));
         prevTime = from_msec(dummyPrevTime);
     }
+
     helper.log(logger::Level::INFO, "Tracking task stopped!");
 }
 
