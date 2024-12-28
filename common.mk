@@ -21,7 +21,7 @@ SPACE := $() $()
 COMMA := ,
 
 C_STANDARD?=gnu11
-CXX_STANDARD?=gnu++23
+CXX_STANDARD?=gnu++20
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR))
