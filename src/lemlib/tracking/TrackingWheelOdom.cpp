@@ -103,11 +103,6 @@ static std::optional<Angle> calculateHeading(std::vector<TrackingWheel>& trackin
     return offset + from_stRad((distance1 - distance2) / (offset1 - offset2));
 }
 
-// problem:
-// the heading we calculate using tracking wheels may not be the same
-// as what the heading was set to
-// so, we'll need to offset it
-
 /*
  * The implementation below is based off of
  * the document written by 5225A (Pilons)
