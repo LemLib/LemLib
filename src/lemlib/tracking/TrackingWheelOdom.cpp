@@ -79,12 +79,11 @@ static TrackingWheelData findLateralDelta(std::vector<TrackingWheel>& sensors) {
  * @brief calculate the heading given at least 2 tracking wheels
  *
  * @param trackingWheels vector of tracking wheels which will be used to calculate the heading
- * @param offset the offset to apply
  *
  * @return std::nullopt there's not enough tracking wheels to calculate the heading
  * @return std::optional<Angle> the heading
  */
-static std::optional<Angle> calculateWheelHeading(std::vector<TrackingWheel>& trackingWheels, Angle offset) {
+static std::optional<Angle> calculateWheelHeading(std::vector<TrackingWheel>& trackingWheels) {
     // check that there are enough tracking wheels
     if (trackingWheels.size() < 2) return std::nullopt;
     // get data
@@ -96,33 +95,32 @@ static std::optional<Angle> calculateWheelHeading(std::vector<TrackingWheel>& tr
     if (offset1 == offset2) {
         helper.log(logger::Level::WARN, "Tracking wheel offsets are equal, removing one tracking wheel!");
         trackingWheels.erase(trackingWheels.begin() + 1);
-        return calculateWheelHeading(trackingWheels, offset);
+        return calculateWheelHeading(trackingWheels);
     }
     // check for errors
     if (distance1.internal() == INFINITY) {
         helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
         trackingWheels.erase(trackingWheels.begin());
-        return calculateWheelHeading(trackingWheels, offset);
+        return calculateWheelHeading(trackingWheels);
     }
     if (distance2.internal() == INFINITY) {
         helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
         trackingWheels.erase(trackingWheels.begin() + 1);
-        return calculateWheelHeading(trackingWheels, offset);
+        return calculateWheelHeading(trackingWheels);
     }
     // return the calculated heading
-    return offset + from_stRad((distance1 - distance2) / (offset1 - offset2));
+    return from_stRad((distance1 - distance2) / (offset1 - offset2));
 }
 
 /**
  * @brief calculate the heading given at least 1 IMU
  *
  * @param imus the vector of IMUs to get data from
- * @param offset the offset to apply
  *
  * @return std::nullopt there's not IMUs to calculate the heading
  * @return std::optional<Angle> the heading
  */
-static std::optional<Angle> calculateIMUHeading(std::vector<Imu*>& imus, Angle offset) {
+static std::optional<Angle> calculateIMUHeading(std::vector<Imu*>& imus) {
     for (int i = 0; i < imus.size(); ++i) {
         const Angle data = imus.at(i)->getRotation();
         if (data.internal() == INFINITY) { // error checking
@@ -153,10 +151,9 @@ void TrackingWheelOdometry::update(Time period) {
         const TrackingWheelData verticalData = findLateralDelta(m_verticalWheels);
 
         // step 2: calculate heading
-        const std::optional<Angle> thetaOpt =
-            calculateIMUHeading(m_Imus, m_offset)
-                .or_else(std::bind(&calculateWheelHeading, m_horizontalWheels, m_offset))
-                .or_else(std::bind(&calculateWheelHeading, m_verticalWheels, m_offset));
+        const std::optional<Angle> thetaOpt = calculateIMUHeading(m_Imus)
+                                                  .or_else(std::bind(&calculateWheelHeading, m_horizontalWheels))
+                                                  .or_else(std::bind(&calculateWheelHeading, m_verticalWheels));
         if (thetaOpt == std::nullopt) { // error checking
             helper.log(logger::Level::ERROR, "Not enough sensors available!");
             break;
