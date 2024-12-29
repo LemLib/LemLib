@@ -153,16 +153,18 @@ void TrackingWheelOdometry::update(Time period) {
         const TrackingWheelData verticalData = findLateralDelta(m_verticalWheels);
 
         // step 2: calculate heading
-        const std::optional<Angle> theta = calculateIMUHeading(m_Imus, m_offset)
-                                               .or_else(std::bind(&calculateWheelHeading, m_horizontalWheels, m_offset))
-                                               .or_else(std::bind(&calculateWheelHeading, m_verticalWheels, m_offset));
-        if (theta == std::nullopt) { // error checking
+        const std::optional<Angle> thetaOpt =
+            calculateIMUHeading(m_Imus, m_offset)
+                .or_else(std::bind(&calculateWheelHeading, m_horizontalWheels, m_offset))
+                .or_else(std::bind(&calculateWheelHeading, m_verticalWheels, m_offset));
+        if (thetaOpt == std::nullopt) { // error checking
             helper.log(logger::Level::ERROR, "Not enough sensors available!");
             break;
         }
+        const Angle theta = m_offset + *thetaOpt;
 
         // step 3: calculate change in local coordinates
-        const Angle deltaTheta = *theta - m_pose.theta();
+        const Angle deltaTheta = theta - m_pose.theta();
         const units::V2Position localPosition = [&] {
             const units::V2Position lateralDeltas = {horizontalData.distance, verticalData.distance};
             const units::V2Position lateralOffsets = {horizontalData.offset, verticalData.offset};
@@ -172,7 +174,7 @@ void TrackingWheelOdometry::update(Time period) {
 
         // step 4: set global position
         m_pose += localPosition.rotatedBy(m_pose.orientation + deltaTheta / 2);
-        m_pose.orientation = *theta;
+        m_pose.orientation = theta;
 
         // if current time - previous time > timeout
         // then set previous time to current time
