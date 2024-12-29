@@ -17,7 +17,7 @@ jobs:
 
       - name: Run LemLib/pros-build
         id: test
-        uses: LemLib/pros-build@v2.0.2
+        uses: LemLib/pros-build@v3.0.0
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
