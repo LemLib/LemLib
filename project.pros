@@ -134,7 +134,7 @@
                 "version": "4.1.1"
             },
             "units": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\units@0.4.0-beta",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\units@0.4.0-beta2",
                 "metadata": {
                     "origin": "local"
                 },
@@ -142,17 +142,17 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.1.1",
                 "system_files": [
-                    "include\\units\\Temperature.hpp",
-                    "include\\units\\Pose.hpp",
-                    "include\\units\\Angle.hpp",
-                    "include\\units\\units.hpp",
-                    "include\\units\\Vector2D.hpp",
                     "include\\units\\Vector3D.hpp",
-                    "firmware\\units.a"
+                    "include\\units\\Pose.hpp",
+                    "firmware\\units.a",
+                    "include\\units\\Vector2D.hpp",
+                    "include\\units\\Temperature.hpp",
+                    "include\\units\\units.hpp",
+                    "include\\units\\Angle.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.4.0-beta"
+                "version": "0.4.0-beta2"
             }
         },
         "upload_options": {},
