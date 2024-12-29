@@ -1,5 +1,6 @@
 #include "lemlib/tracking/TrackingWheelOdom.hpp"
 #include "LemLog/logger/logger.hpp"
+#include "units/Vector2D.hpp"
 
 static logger::Helper helper("lemlib/odom/tracking_wheel_odom");
 
@@ -42,6 +43,15 @@ void TrackingWheelOdometry::startTask(Time period) {
 }
 
 /**
+ * @brief struct representing data from a tracking wheel
+ *
+ */
+struct TrackingWheelData {
+        Length distance; /** the distance delta reported by the tracking wheel */
+        Length offset; /** the offset of the tracking wheel used to measure the distance */
+};
+
+/**
  * @brief Find position delta given tracking wheels
  *
  * This function checks if the data given equals INFINITY, and if it does, the tracking wheel
@@ -49,19 +59,20 @@ void TrackingWheelOdometry::startTask(Time period) {
  *
  * @param sensors the sensors to get data from
  *
- * @return Length the position delta
+ * @return LateralDelta the position delta
  */
-static Length findLateralDelta(std::vector<TrackingWheel>& sensors) {
+static TrackingWheelData findLateralDelta(std::vector<TrackingWheel>& sensors) {
     for (int i = 0; i < sensors.size(); ++i) {
-        const Length data = sensors.at(i).getDistanceDelta();
+        TrackingWheel& sensor = sensors.at(i);
+        const Length data = sensor.getDistanceDelta();
         if (data.internal() == INFINITY) { // error checking
             sensors.erase(sensors.begin() + i);
             --i;
             helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
-        } else return data;
+        } else return {data, sensor.getOffset()};
     }
     // return 0 if no data was found
-    return 0_m;
+    return {0_m, 0_m};
 }
 
 /**
@@ -130,12 +141,6 @@ static std::optional<Angle> calculateIMUHeading(std::vector<Imu*>& imus, Angle o
  * http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf
  */
 void TrackingWheelOdometry::update(Time period) {
-    // reset the tracking wheels
-    for (TrackingWheel& trackingWheel : m_horizontalWheels) trackingWheel.reset();
-    for (TrackingWheel& trackingWheel : m_verticalWheels) trackingWheel.reset();
-    // set the IMU so it's ready the same value odom is set to
-    for (Imu* imu : m_Imus) imu->setRotation(m_pose.orientation);
-
     // record the previous time, used for consistent loop timings
     Time prevTime = from_msec(pros::millis());
     // run until the task has been notified, which will probably never happen
@@ -144,8 +149,8 @@ void TrackingWheelOdometry::update(Time period) {
         const Time deltaTime = now - prevTime;
 
         // step 1: get tracking wheel deltas
-        const Length deltaX = findLateralDelta(m_horizontalWheels);
-        const Length deltaY = findLateralDelta(m_verticalWheels);
+        const TrackingWheelData horizontalData = findLateralDelta(m_horizontalWheels);
+        const TrackingWheelData verticalData = findLateralDelta(m_verticalWheels);
 
         // step 2: calculate heading
         const std::optional<Angle> theta = calculateIMUHeading(m_Imus, m_offset)
@@ -155,8 +160,19 @@ void TrackingWheelOdometry::update(Time period) {
             helper.log(logger::Level::ERROR, "Not enough sensors available!");
             break;
         }
+
+        // step 3: calculate change in local coordinates
         const Angle deltaTheta = *theta - m_pose.theta();
-        const Angle averageTheta = m_pose.theta() + deltaTheta / 2;
+        const units::V2Position localPosition = [&] {
+            const units::V2Position lateralDeltas = {horizontalData.distance, verticalData.distance};
+            const units::V2Position lateralOffsets = {horizontalData.offset, verticalData.offset};
+            if (deltaTheta == 0_stRad) return lateralDeltas; // prevent divide by 0
+            return 2 * units::sin(deltaTheta / 2) * (lateralDeltas / to_stRad(deltaTheta) + lateralOffsets);
+        }();
+
+        // step 4: set global position
+        m_pose += localPosition.rotatedBy(m_pose.orientation + deltaTheta / 2);
+        m_pose.orientation = *theta;
 
         // if current time - previous time > timeout
         // then set previous time to current time

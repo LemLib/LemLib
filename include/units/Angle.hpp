@@ -48,6 +48,8 @@ NEW_UNIT_LITERAL(AngularJerk, rpm3, rot / min / min / min)
 // Standard orientation
 constexpr Angle operator""_stRad(long double value) { return Angle(static_cast<double>(value)); }
 
+constexpr Angle operator""_stRad(unsigned long long value) { return Angle(static_cast<double>(value)); }
+
 constexpr Angle operator""_stDeg(long double value) { return static_cast<double>(value) * deg; }
 
 constexpr Angle operator""_stDeg(unsigned long long value) { return static_cast<double>(value) * deg; }
