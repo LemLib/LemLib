@@ -32,6 +32,13 @@ TrackingWheelOdometry::TrackingWheelOdometry(std::vector<Imu*> imus, std::vector
       m_verticalWheels(verticalWheels),
       m_horizontalWheels(horizontalWheels) {}
 
+units::Pose TrackingWheelOdometry::getPose() { return m_pose; }
+
+void TrackingWheelOdometry::setPose(units::Pose pose) {
+    m_offset += pose.orientation - m_pose.orientation;
+    m_pose = pose;
+}
+
 void TrackingWheelOdometry::startTask(Time period) {
     // check if the task has been started yet
     if (m_task == std::nullopt) { // start the task
