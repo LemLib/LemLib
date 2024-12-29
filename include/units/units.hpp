@@ -199,11 +199,15 @@ template <isQuantity Q> inline std::ostream& operator<<(std::ostream& os, const 
     return os;
 }
 
+template <isQuantity Q> constexpr Q operator+(Q rhs) { return rhs; }
+
 template <isQuantity Q, isQuantity R> constexpr Q operator+(Q lhs, R rhs)
     requires Isomorphic<Q, R>
 {
     return Q(lhs.internal() + rhs.internal());
 }
+
+template <isQuantity Q> constexpr Q operator-(Q rhs) { return Q(-rhs.internal()); }
 
 template <isQuantity Q, isQuantity R> constexpr Q operator-(Q lhs, R rhs)
     requires Isomorphic<Q, R>
