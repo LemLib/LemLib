@@ -29,7 +29,7 @@ Here's an example of the same function call from above, but with all of the defa
 chassis.turnToHeading(
     270,
     4000,
-    {.maxSpeed = 120}, // will never exceed 120
+    {.maxSpeed = 127}, // will never exceed 127
     true // this motion will not block execution
 ); 
 ```
