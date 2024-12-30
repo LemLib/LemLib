@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fmtlib/core.h"
 #include <string>
 
 namespace logger {
@@ -23,6 +24,24 @@ namespace logger {
 void addWhitelist(std::string s);
 
 /**
+ * @brief remove a topic from the whitelist
+ *
+ * Debug messages need their topic on the whitelist in order to be sent to the
+ * sinks
+ *
+ * @param s the topic to remove
+ *
+ * @b Example:
+ * @code {.cpp}
+ * void initialize() {
+ *   logger::removeWhitelist("lemlib/motions/boomerang");
+ *   logger::removeWhitelist("lemlib/motions/follow");
+ * }
+ * @endcode
+ */
+void removeWhitelist(std::string s);
+
+/**
  * @brief add a topic to the blacklist
  *
  * Messages with a level other than debug will be sent to the sinks unless the
@@ -41,6 +60,24 @@ void addWhitelist(std::string s);
 void addBlacklist(std::string s);
 
 /**
+ * @brief remove a topic from the blacklist
+ *
+ * Messages with a level other than debug will be sent to the sinks unless the
+ * topic is on the blacklist
+ *
+ * @param s the topic to remove
+ *
+ * @b Example:
+ * @code {.cpp}
+ * void initialize() {
+ *   logger::removeWhitelist("lemlib/motions/boomerang");
+ *   logger::removeWhitelist("lemlib/motions/follow");
+ * }
+ * @endcode
+ */
+void removeBlacklist(std::string s);
+
+/**
  * @brief Level enum class
  *
  */
@@ -50,6 +87,21 @@ enum class Level {
     WARN,
     ERROR,
 };
+
+/**
+ * @brief log a message with a level and topic
+ *
+ * Messages with a logging level of DEBUG must have the topic whitelisted,
+ * while all other messages are sent by default unless the topic is blacklisted
+ *
+ * @param level the level of the message, e.g INFO
+ * @param topic the topic of the message, e.g "lemlib/motions/boomerang"
+ * @param format the pre-formatted message, e.g. "Hello, {}!"
+ * @param args the arguments to be formatted into the message, e.g. "world"
+ *
+ * @tparam Args the types of the arguments to be formatted into the message
+ */
+static void log(Level level, std::string topic, std::string message);
 
 /**
  * @brief Logger Helper class. Used to send messages to all sinks
@@ -72,11 +124,13 @@ class Helper {
          * @endcode
          */
         Helper(std::string topic);
+
         /**
          * @brief Send a message to all sinks
          *
          * @param level the logging level of the message
-         * @param message the message to send
+         * @param format the message to be sent
+         * @param args the arguments to be formatted into the message
          *
          * @b Example:
          * @code {.cpp}
@@ -84,11 +138,18 @@ class Helper {
          *   // create a Helper
          *   logger::Helper helper("doSomething");
          *   // log an info message
-         *   helper.log(logger::Level::INFO, "Did something!");
+         *   helper.log(logger::Level::INFO, "Motor temperature: {}", 42);
          * }
          * @endcode
          */
-        void log(Level level, std::string message);
+        template <typename... Args>
+        void log(Level level, const std::string& format, Args&&... args) {
+            // format the message into a string using the provided arguments
+            std::string message =
+                fmt::format(format, std::forward<Args>(args)...);
+
+            logger::log(level, m_topic, message);
+        }
     private:
         const std::string m_topic;
 };
