@@ -14,14 +14,6 @@ class ExitCondition {
          */
         ExitCondition(const double range, const Time time);
         /**
-         * @brief Get the exit condition
-         *
-         * @return true the exit condition has been met
-         * @return false the exit condition has not been met
-         */
-        bool getExit();
-
-        /**
          * @brief Update the exit condition
          *
          * @param input the input to check
@@ -29,7 +21,6 @@ class ExitCondition {
          * @return false the exit condition has not been met
          */
         bool update(const double input);
-
         /**
          * @brief Resets the exit condition (the timer and the done flag)
          *

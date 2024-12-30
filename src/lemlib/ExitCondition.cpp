@@ -7,8 +7,6 @@ lemlib::ExitCondition::ExitCondition(const double range, const Time time)
       m_range(range),
       m_time(time) {}
 
-bool lemlib::ExitCondition::getExit() { return this->m_done; }
-
 bool lemlib::ExitCondition::update(const double input) {
     const Time currentTime = pros::millis() * msec;
     if (fabs(input) > this->m_range) this->m_startTime.reset();
