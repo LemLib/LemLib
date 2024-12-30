@@ -6,7 +6,7 @@ lemlib::PID::PID(double kP, double kI, double kD, double windupRange, bool signF
       m_windupRange(windupRange),
       m_signFlipReset(signFlipReset) {}
 
-lemlib::PID::PID(lemlib::Gains gains, double windupRange, bool signFlipReset)
+lemlib::PID::PID(const lemlib::Gains& gains, double windupRange, bool signFlipReset)
     : m_gains(gains),
       m_windupRange(windupRange),
       m_signFlipReset(signFlipReset) {}

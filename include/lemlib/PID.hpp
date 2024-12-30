@@ -35,7 +35,7 @@ class PID {
          * @param windupRange range at which integral is reset
          * @param signFlipReset whether to reset integral when error changes sign
          */
-        PID(Gains gains, double windupRange = 0, bool signFlipReset = false);
+        PID(const Gains& gains, double windupRange = 0, bool signFlipReset = false);
         /**
          * @brief Get the current gains
          *
