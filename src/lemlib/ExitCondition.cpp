@@ -3,22 +3,22 @@
 #include "pros/rtos.hpp"
 
 lemlib::ExitCondition::ExitCondition(const double range, const Time time)
-    : startTime(std::nullopt),
-      range(range),
-      time(time) {}
+    : m_startTime(std::nullopt),
+      m_range(range),
+      m_time(time) {}
 
-bool lemlib::ExitCondition::getExit() { return this->done; }
+bool lemlib::ExitCondition::getExit() { return this->m_done; }
 
 bool lemlib::ExitCondition::update(const double input) {
     const Time currentTime = pros::millis() * msec;
-    if (fabs(input) > this->range) this->startTime.reset();
-    else if (this->startTime == -1 * sec) this->startTime = currentTime;
-    else if (currentTime >= this->startTime.value() + this->time) this->done = true;
+    if (fabs(input) > this->m_range) this->m_startTime.reset();
+    else if (this->m_startTime == -1 * sec) this->m_startTime = currentTime;
+    else if (currentTime >= this->m_startTime.value() + this->m_time) this->m_done = true;
 
-    return this->done;
+    return this->m_done;
 }
 
 void lemlib::ExitCondition::reset() {
-    this->startTime.reset();
-    this->done = false;
+    this->m_startTime.reset();
+    this->m_done = false;
 }

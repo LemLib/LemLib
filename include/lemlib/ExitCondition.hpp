@@ -36,9 +36,9 @@ class ExitCondition {
          */
         void reset();
     private:
-        std::optional<Time> startTime;
-        const double range;
-        bool done = false;
-        const Time time;
+        std::optional<Time> m_startTime;
+        const double m_range;
+        bool m_done = false;
+        const Time m_time;
 };
 } // namespace lemlib
