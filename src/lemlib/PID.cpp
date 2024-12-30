@@ -1,8 +1,6 @@
 #include "lemlib/util.hpp"
 #include "lemlib/PID.hpp"
 
-#include "pros/rtos.hpp"
-
 lemlib::PID::PID(double kP, double kI, double kD, double windupRange, bool signFlipReset)
     : m_gains({kP, kI, kD}),
       windupRange(windupRange),
@@ -38,24 +36,3 @@ void lemlib::PID::reset() {
 void lemlib::PID::setSignFlipReset(bool signFlipReset) { this->signFlipReset = signFlipReset; }
 
 void lemlib::PID::setWindupRange(double windupRange) { this->windupRange = windupRange; }
-
-lemlib::ExitCondition::ExitCondition(const double range, const Time time)
-    : startTime(std::nullopt),
-      range(range),
-      time(time) {}
-
-bool lemlib::ExitCondition::getExit() { return this->done; }
-
-bool lemlib::ExitCondition::update(const double input) {
-    const Time currentTime = pros::millis() * msec;
-    if (fabs(input) > this->range) this->startTime.reset();
-    else if (this->startTime == -1 * sec) this->startTime = currentTime;
-    else if (currentTime >= this->startTime.value() + this->time) this->done = true;
-
-    return this->done;
-}
-
-void lemlib::ExitCondition::reset() {
-    this->startTime.reset();
-    this->done = false;
-}
