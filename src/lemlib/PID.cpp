@@ -14,30 +14,30 @@ lemlib::PID::PID(const lemlib::Gains& gains, double windupRange, bool signFlipRe
 
 lemlib::Gains lemlib::PID::getGains() { return m_gains; }
 
-void lemlib::PID::setGains(lemlib::Gains gains) { this->m_gains = gains; }
+void lemlib::PID::setGains(lemlib::Gains gains) { m_gains = gains; }
 
 double lemlib::PID::update(double error) {
-    Time dt = this->m_previousTime == 0_sec ? 0_msec : (pros::millis() * msec) - this->m_previousTime;
+    Time dt = m_previousTime == 0_sec ? 0_msec : (pros::millis() * msec) - m_previousTime;
 
-    this->m_integral += error * dt.convert(sec);
-    if (lemlib::sgn(error) != lemlib::sgn((this->m_previousError)) && this->m_signFlipReset) this->m_integral = 0;
-    if (fabs(error) > this->m_windupRange && this->m_windupRange != 0) this->m_integral = 0;
+    m_integral += error * dt.convert(sec);
+    if (lemlib::sgn(error) != lemlib::sgn((m_previousError)) && m_signFlipReset) m_integral = 0;
+    if (fabs(error) > m_windupRange && m_windupRange != 0) m_integral = 0;
 
-    const double derivative = (error - this->m_previousError) / dt.convert(sec);
-    this->m_previousError = error;
+    const double derivative = (error - m_previousError) / dt.convert(sec);
+    m_previousError = error;
 
-    return error * this->m_gains.kP + this->m_integral * this->m_gains.kI + derivative * this->m_gains.kD;
+    return error * m_gains.kP + m_integral * m_gains.kI + derivative * m_gains.kD;
 }
 
 void lemlib::PID::reset() {
-    this->m_previousError = 0;
-    this->m_integral = 0;
+    m_previousError = 0;
+    m_integral = 0;
 }
 
-void lemlib::PID::setSignFlipReset(bool signFlipReset) { this->m_signFlipReset = signFlipReset; }
+void lemlib::PID::setSignFlipReset(bool signFlipReset) { m_signFlipReset = signFlipReset; }
 
-bool lemlib::PID::getSignFlipReset() { return this->m_signFlipReset; }
+bool lemlib::PID::getSignFlipReset() { return m_signFlipReset; }
 
-void lemlib::PID::setWindupRange(double windupRange) { this->m_windupRange = windupRange; }
+void lemlib::PID::setWindupRange(double windupRange) { m_windupRange = windupRange; }
 
-double lemlib::PID::getWindupRange() { return this->m_windupRange; }
+double lemlib::PID::getWindupRange() { return m_windupRange; }

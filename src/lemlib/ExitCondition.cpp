@@ -9,14 +9,14 @@ lemlib::ExitCondition::ExitCondition(double range, Time time)
 
 bool lemlib::ExitCondition::update(double input) {
     const Time currentTime = pros::millis() * msec;
-    if (fabs(input) >= this->m_range) this->m_startTime.reset();
-    else if (this->m_startTime == -1 * sec) this->m_startTime = currentTime;
-    else if (currentTime >= this->m_startTime.value() + this->m_time) this->m_done = true;
+    if (fabs(input) >= m_range) m_startTime.reset();
+    else if (m_startTime == -1 * sec) m_startTime = currentTime;
+    else if (currentTime >= m_startTime.value() + m_time) m_done = true;
 
-    return this->m_done;
+    return m_done;
 }
 
 void lemlib::ExitCondition::reset() {
-    this->m_startTime.reset();
-    this->m_done = false;
+    m_startTime.reset();
+    m_done = false;
 }
