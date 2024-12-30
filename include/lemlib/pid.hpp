@@ -22,11 +22,14 @@ class PID {
         double update(double error);
 
         void reset();
-    private:
-        Gains gains;
 
-        const bool signFlipReset;
-        const double windupRange;
+        void setSignFlipReset(bool signFlipReset);
+        void setWindupRange(double windupRange);
+    private:
+        Gains m_gains;
+
+        bool signFlipReset;
+        double windupRange;
 
         double previousError = 0;
         double integral = 0;

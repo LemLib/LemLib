@@ -4,18 +4,18 @@
 #include "pros/rtos.hpp"
 
 lemlib::PID::PID(double kP, double kI, double kD, double windupRange, bool signFlipReset)
-    : gains({kP, kI, kD}),
+    : m_gains({kP, kI, kD}),
       windupRange(windupRange),
       signFlipReset(signFlipReset) {}
 
 lemlib::PID::PID(lemlib::Gains gains, double windupRange, bool signFlipReset)
-    : gains(gains),
+    : m_gains(gains),
       windupRange(windupRange),
       signFlipReset(signFlipReset) {}
 
-lemlib::Gains lemlib::PID::getGains() { return gains; }
+lemlib::Gains lemlib::PID::getGains() { return m_gains; }
 
-void lemlib::PID::setGains(lemlib::Gains gains) { this->gains = gains; }
+void lemlib::PID::setGains(lemlib::Gains gains) { this->m_gains = gains; }
 
 double lemlib::PID::update(double error) {
     this->integral += error;
@@ -25,13 +25,17 @@ double lemlib::PID::update(double error) {
     const double derivative = error - this->previousError;
     this->previousError = error;
 
-    return error * this->gains.kP + this->integral * this->gains.kI + derivative * this->gains.kD;
+    return error * this->m_gains.kP + this->integral * this->m_gains.kI + derivative * this->m_gains.kD;
 }
 
 void lemlib::PID::reset() {
     this->previousError = 0;
     this->integral = 0;
 }
+
+void lemlib::PID::setSignFlipReset(bool signFlipReset) { this->signFlipReset = signFlipReset; }
+
+void lemlib::PID::setWindupRange(double windupRange) { this->windupRange = windupRange; }
 
 lemlib::ExitCondition::ExitCondition(const double range, const Time time)
     : range(range),
