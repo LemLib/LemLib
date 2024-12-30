@@ -1,5 +1,5 @@
 #pragma once
 
 namespace lemlib {
-double sgn(double val);
-}
+template <typename T> T sgn(T val) { return (T(0) < val) - (val < T(0)); }
+} // namespace lemlib
