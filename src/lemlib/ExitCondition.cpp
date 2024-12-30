@@ -2,12 +2,12 @@
 
 #include "pros/rtos.hpp"
 
-lemlib::ExitCondition::ExitCondition(const double range, const Time time)
+lemlib::ExitCondition::ExitCondition(double range, Time time)
     : m_startTime(std::nullopt),
       m_range(range),
       m_time(time) {}
 
-bool lemlib::ExitCondition::update(const double input) {
+bool lemlib::ExitCondition::update(double input) {
     const Time currentTime = pros::millis() * msec;
     if (fabs(input) > this->m_range) this->m_startTime.reset();
     else if (this->m_startTime == -1 * sec) this->m_startTime = currentTime;

@@ -12,7 +12,7 @@ class ExitCondition {
          * @param range how far the input can be from 0 before the timer starts
          * @param time how long the input must be within the range before the exit condition is met
          */
-        ExitCondition(const double range, const Time time);
+        ExitCondition(double range, Time time);
         /**
          * @brief Update the exit condition
          *
@@ -20,7 +20,7 @@ class ExitCondition {
          * @return true the exit condition has been met
          * @return false the exit condition has not been met
          */
-        bool update(const double input);
+        bool update(double input);
         /**
          * @brief Resets the exit condition (the timer and the done flag)
          *
@@ -28,8 +28,8 @@ class ExitCondition {
         void reset();
     private:
         std::optional<Time> m_startTime;
-        const double m_range;
         bool m_done = false;
-        const Time m_time;
+        double m_range;
+        Time m_time;
 };
 } // namespace lemlib
