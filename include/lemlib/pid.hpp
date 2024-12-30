@@ -55,7 +55,7 @@ class PID {
          * @param error the error from the setpoint. Error is calculated as setpoint - current
          * @return double the control signal (output)
          */
-        double update(double error);
+        double update(double error, Time dt);
         /**
          * @brief Resets the integral and derivative values of the PID controller.
          *

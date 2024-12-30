@@ -17,12 +17,14 @@ lemlib::Gains lemlib::PID::getGains() { return m_gains; }
 
 void lemlib::PID::setGains(lemlib::Gains gains) { this->m_gains = gains; }
 
-double lemlib::PID::update(double error) {
-    this->integral += error;
+double lemlib::PID::update(double error, Time dt) {
+    if (dt <= 0_sec) return 0;
+
+    this->integral += error * dt.convert(sec);
     if (lemlib::sgn(error) != lemlib::sgn((this->previousError)) && this->signFlipReset) this->integral = 0;
     if (fabs(error) > this->windupRange && this->windupRange != 0) this->integral = 0;
 
-    const double derivative = error - this->previousError;
+    const double derivative = (error - this->previousError) / dt.convert(sec);
     this->previousError = error;
 
     return error * this->m_gains.kP + this->integral * this->m_gains.kI + derivative * this->m_gains.kD;
