@@ -5,6 +5,7 @@
 #endif
 
 #include "lemlib/MotionHandler.hpp"
+#include "lemlib/pid.hpp"
 
 #ifndef LEMLIB_NO_ALIAS
 namespace ll = lemlib;
