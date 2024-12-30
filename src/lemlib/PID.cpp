@@ -1,5 +1,6 @@
 #include "lemlib/util.hpp"
 #include "lemlib/PID.hpp"
+#include "pros/rtos.hpp"
 
 lemlib::PID::PID(double kP, double kI, double kD, double windupRange, bool signFlipReset)
     : m_gains({kP, kI, kD}),
@@ -15,8 +16,8 @@ lemlib::Gains lemlib::PID::getGains() { return m_gains; }
 
 void lemlib::PID::setGains(lemlib::Gains gains) { this->m_gains = gains; }
 
-double lemlib::PID::update(double error, Time dt) {
-    if (dt <= 0_sec) return 0;
+double lemlib::PID::update(double error) {
+    Time dt = this->m_previousTime == 0_sec ? 0_msec : (pros::millis() * msec) - this->m_previousTime;
 
     this->m_integral += error * dt.convert(sec);
     if (lemlib::sgn(error) != lemlib::sgn((this->m_previousError)) && this->m_signFlipReset) this->m_integral = 0;

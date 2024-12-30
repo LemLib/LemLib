@@ -54,7 +54,7 @@ class PID {
          * @param error the error from the setpoint. Error is calculated as setpoint - current
          * @return double the control signal (output)
          */
-        double update(double error, Time dt);
+        double update(double error);
         /**
          * @brief Resets the integral and derivative values of the PID controller.
          *
@@ -93,5 +93,7 @@ class PID {
 
         double m_previousError = 0;
         double m_integral = 0;
+
+        Time m_previousTime = 0_sec;
 };
 } // namespace lemlib
