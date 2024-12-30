@@ -1,6 +1,7 @@
 #pragma once
 
 #include "units/units.hpp"
+#include <optional>
 
 namespace lemlib {
 struct Gains {
@@ -45,7 +46,7 @@ class ExitCondition {
 
         void reset();
     private:
-        Time startTime = -1 * sec;
+        std::optional<Time> startTime;
         const double range;
         bool done = false;
         const Time time;
