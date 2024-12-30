@@ -4,6 +4,13 @@
 #include <optional>
 
 namespace lemlib {
+/**
+ * @brief Struct to hold PID gains.
+ *
+ * @param kP proportional gain
+ * @param kI integral gain
+ * @param kD derivative gain
+ */
 struct Gains {
         double kP = 0;
         double kI = 0;
@@ -12,19 +19,59 @@ struct Gains {
 
 class PID {
     public:
+        /**
+         * @brief Constructs a new PID controller
+         *
+         * @param kP proportional gain
+         * @param kI integral gain
+         * @param kD derivative gain
+         * @param windupRange range at which integral is reset
+         * @param signFlipReset whether to reset integral when error changes sign
+         */
         PID(double kP, double kI, double kD, double windupRange = 0, bool signFlipReset = false);
-
+        /**
+         * @brief Constructs a new PID controller
+         *
+         * @param gains the gains to use
+         * @param windupRange range at which integral is reset
+         * @param signFlipReset whether to reset integral when error changes sign
+         */
         PID(Gains gains, double windupRange = 0, bool signFlipReset = false);
-
+        /**
+         * @brief Get the current gains
+         *
+         * @return Gains the current gains
+         */
         Gains getGains();
-
+        /**
+         * @brief Set the new gains
+         *
+         * @param gains the new gains
+         */
         void setGains(Gains gains);
-
+        /**
+         * @brief Updates the PID controller using a given error, and outputs the next control signal.
+         *
+         * @param error the error from the setpoint. Error is calculated as setpoint - current
+         * @return double the control signal (output)
+         */
         double update(double error);
-
+        /**
+         * @brief Resets the integral and derivative values of the PID controller.
+         *
+         */
         void reset();
-
+        /**
+         * @brief Change whether the integral is reset when the error changes sign
+         *
+         * @param signFlipReset whether to reset the integral when the error changes sign
+         */
         void setSignFlipReset(bool signFlipReset);
+        /**
+         * @brief Set the windup range
+         *
+         * @param windupRange the new windup range
+         */
         void setWindupRange(double windupRange);
     private:
         Gains m_gains;
@@ -38,12 +85,34 @@ class PID {
 
 class ExitCondition {
     public:
+        /**
+         * @brief Create a new exit condition
+         *
+         * @param range how far the input can be from 0 before the timer starts
+         * @param time how long the input must be within the range before the exit condition is met
+         */
         ExitCondition(const double range, const Time time);
-
+        /**
+         * @brief Get the exit condition
+         *
+         * @return true the exit condition has been met
+         * @return false the exit condition has not been met
+         */
         bool getExit();
 
+        /**
+         * @brief Update the exit condition
+         *
+         * @param input the input to check
+         * @return true the exit condition has been met
+         * @return false the exit condition has not been met
+         */
         bool update(const double input);
 
+        /**
+         * @brief Resets the exit condition (the timer and the done flag)
+         *
+         */
         void reset();
     private:
         std::optional<Time> startTime;
