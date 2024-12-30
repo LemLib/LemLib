@@ -35,4 +35,8 @@ void lemlib::PID::reset() {
 
 void lemlib::PID::setSignFlipReset(bool signFlipReset) { this->m_signFlipReset = signFlipReset; }
 
+bool lemlib::PID::getSignFlipReset() { return this->m_signFlipReset; }
+
 void lemlib::PID::setWindupRange(double windupRange) { this->m_windupRange = windupRange; }
+
+double lemlib::PID::getWindupRange() { return this->m_windupRange; }

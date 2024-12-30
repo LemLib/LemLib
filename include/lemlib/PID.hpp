@@ -67,11 +67,24 @@ class PID {
          */
         void setSignFlipReset(bool signFlipReset);
         /**
+         * @brief Get the sign flip reset value
+         *
+         * @return true
+         * @return false
+         */
+        bool getSignFlipReset();
+        /**
          * @brief Set the windup range
          *
          * @param windupRange the new windup range
          */
         void setWindupRange(double windupRange);
+        /**
+         * @brief Get the windup range
+         *
+         * @return double
+         */
+        double getWindupRange();
     private:
         Gains m_gains;
 
