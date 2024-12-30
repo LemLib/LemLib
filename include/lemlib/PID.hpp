@@ -31,6 +31,8 @@ class PID {
          * @code {.cpp}
          * // create a new PID controller with gains of 1, 0.1, and 0.01, a windup range of 10, and sign flip reset
          * lemlib::PID pid(1, 0.1, 0.01, 10, true);
+         * // create a new PID controller with gains of 2, 0.5, and 0.1, with no windup range or sign flip reset
+         * lemlib::PID pid2(2, 0.5, 0.1);
          * @endcode
          */
         PID(double kP, double kI, double kD, double windupRange = 0, bool signFlipReset = false);
@@ -46,6 +48,9 @@ class PID {
          * // create a new PID controller with gains of 1, 0.1, and 0.01, a windup range of 10, and sign flip reset
          * lemlib::Gains gains = {1, 0.1, 0.01};
          * lemlib::PID pid(gains, 10, true);
+         * // create a new PID controller with gains of 2, 0.5, and 0.1, with no windup range or sign flip reset
+         * lemlib::Gains gains2 = {2, 0.5, 0.1};
+         * lemlib::PID pid2(gains2);
          * @endcode
          */
         PID(const Gains& gains, double windupRange = 0, bool signFlipReset = false);
