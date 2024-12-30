@@ -75,10 +75,10 @@ class PID {
     private:
         Gains m_gains;
 
-        bool signFlipReset;
-        double windupRange;
+        bool m_signFlipReset;
+        double m_windupRange;
 
-        double previousError = 0;
-        double integral = 0;
+        double m_previousError = 0;
+        double m_integral = 0;
 };
 } // namespace lemlib
