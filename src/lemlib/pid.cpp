@@ -1,5 +1,5 @@
 #include "lemlib/util.hpp"
-#include "lemlib/pid.hpp"
+#include "lemlib/PID.hpp"
 
 #include "pros/rtos.hpp"
 
