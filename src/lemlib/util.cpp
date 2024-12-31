@@ -12,3 +12,11 @@ Angle lemlib::angleError(Angle target, Angle position, lemlib::AngularDirection 
         default: return std::remainder(error.convert(deg), 360) * deg; // units does not have a remainder function
     }
 }
+
+double lemlib::slew(double target, double current, double maxChange) {
+    double change = target - current;
+    if (maxChange == 0) return target;
+    if (change > maxChange) change = maxChange;
+    else if (change < -maxChange) change = -maxChange;
+    return current + change;
+}

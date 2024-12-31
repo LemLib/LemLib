@@ -17,4 +17,5 @@ template <typename T> constexpr T sgn(T val) { return (T(0) < val) - (val < T(0)
 enum class AngularDirection { CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, AUTO };
 
 Angle angleError(Angle target, Angle position, AngularDirection direction = AngularDirection::AUTO);
+double slew(double target, double current, double maxChange);
 } // namespace lemlib
