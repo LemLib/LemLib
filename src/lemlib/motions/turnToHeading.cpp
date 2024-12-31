@@ -35,15 +35,11 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
 
         targetTheta = heading;
 
-        // check if settling
         const Angle rawDeltaTheta = angleError(targetTheta, pose.theta());
-        if (previousRawDeltaTheta == std::nullopt) previousRawDeltaTheta = rawDeltaTheta;
-        if (units::sgn(rawDeltaTheta) != units::sgn(previousRawDeltaTheta.value())) settling = true;
+        settling = previousRawDeltaTheta && units::sgn(rawDeltaTheta) != units::sgn(previousRawDeltaTheta.value());
         previousRawDeltaTheta = rawDeltaTheta;
 
-        // calculate delta theta
-        if (settling) deltaTheta = angleError(targetTheta, pose.theta());
-        else deltaTheta = angleError(targetTheta, pose.theta(), params.direction);
+        deltaTheta = angleError(targetTheta, pose.theta(), settling ? AngularDirection::AUTO : params.direction);
         if (previousDeltaTheta == std::nullopt) previousDeltaTheta = deltaTheta;
 
         // motion chaining
