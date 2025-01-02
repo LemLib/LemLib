@@ -2,6 +2,7 @@
 
 #include "lemlib/ExitCondition.hpp"
 #include "lemlib/util.hpp"
+#include "pros/motor_group.hpp"
 #include "units/Angle.hpp"
 #include "units/units.hpp"
 #include "units/Pose.hpp"
@@ -21,6 +22,8 @@ struct TurnToHeadingSettings {
         ExitCondition angularLargeExit;
         ExitCondition angularSmallExit;
         std::function<units::Pose()> poseGetter;
+        std::shared_ptr<pros::MotorGroup> leftMotors;
+        std::shared_ptr<pros::MotorGroup> rightMotors;
 };
 
 void turnToHeading(Angle heading, Time timeout, TurnToHeadingParams params, TurnToHeadingSettings settings);
