@@ -1,13 +1,12 @@
 #include "lemlib/motions/turnToHeading.hpp"
-#include "pros/apix.h"
+#include "MotionCancelHelper.hpp"
 #include <optional>
 
 void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingParams params,
                            lemlib::TurnToHeadingSettings settings) {
     params.minSpeed = abs(params.minSpeed);
 
-    // TODO: Motion handler stuff
-    // TODO: Timer
+    lemlib::MotionCancelHelper helper;
 
     settings.angularLargeExit.reset();
     settings.angularSmallExit.reset();
@@ -25,7 +24,7 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
     double previousMotorPower = 0.0;
     double motorPower = 0.0;
 
-    while (!settings.angularLargeExit.update(deltaTheta.convert(deg)) &&
+    while (helper.wait(10_msec) && !settings.angularLargeExit.update(deltaTheta.convert(deg)) &&
            !settings.angularSmallExit.update(deltaTheta.convert(deg))) {
         // get the robot's current position
         units::Pose pose = settings.poseGetter();
@@ -57,15 +56,9 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
         // move the motors
         settings.leftMotors.move(motorPower);
         settings.rightMotors.move(-motorPower);
-
-        pros::delay(10);
     }
 
     // stop the drivetrain
     settings.leftMotors.move(0);
     settings.rightMotors.move(0);
-
-    // TODO: do stuff with angle traveled
-
-    // TODO: end the motion
 }
