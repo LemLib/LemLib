@@ -6,7 +6,7 @@
 #include "units/Angle.hpp"
 #include "units/units.hpp"
 #include "units/Pose.hpp"
-#include "lemlib/pid.hpp"
+#include "lemlib/PID.hpp"
 #include <functional>
 
 namespace lemlib {
