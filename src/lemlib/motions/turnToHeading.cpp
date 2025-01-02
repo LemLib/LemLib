@@ -15,8 +15,8 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
     std::optional<Angle> previousRawDeltaTheta = std::nullopt;
     std::optional<Angle> previousDeltaTheta = std::nullopt;
     Angle startingTheta = settings.poseGetter().theta();
-    Angle targetTheta = heading;
     lemlib::Timer timer(timeout);
+    Angle targetTheta = heading;
     Angle deltaTheta = 0_stRot;
 
     bool settling = false;

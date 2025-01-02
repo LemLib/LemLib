@@ -41,7 +41,7 @@ template <isQuantity Q> class ExitCondition {
          */
         bool update(Q input) {
             const Time currentTime = pros::millis() * msec;
-            if (fabs(input) >= m_range) m_startTime.reset();
+            if (units::abs(input) >= m_range) m_startTime.reset();
             else if (m_startTime == -1 * sec) m_startTime = currentTime;
             else if (currentTime >= m_startTime.value() + m_time) m_done = true;
 
