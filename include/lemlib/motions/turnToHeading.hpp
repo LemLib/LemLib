@@ -41,12 +41,8 @@ struct TurnToHeadingParams {
 struct TurnToHeadingSettings {
         /** the angular PID that is used to turn the robot */
         PID angularPID;
-        /** the large exit condition (e.g. when the robot is within a larger proximity to the target for a long period
-         * of time. */
-        ExitCondition angularLargeExit;
-        /** the small exit condition (e.g. when the robot is within a smaller proximity to the target for a long period
-         * of time.) */
-        ExitCondition angularSmallExit;
+        /** the exit conditions that will cause the robot to stop moving */
+        ExitConditionGroup exitConditions;
         /** this function should return the estimated pose of the robot, typically by the tracking wheel odometry. */
         std::function<units::Pose()> poseGetter;
         /** the left motor group of the drivetrain */
