@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lemlog/logger/logger.hpp"
+#include "lemlog/logger/Sink.hpp"
 
 namespace logger {
 /**
@@ -9,11 +9,12 @@ namespace logger {
 class SDCard : public Sink {
     public:
         SDCard(std::string filename = ".log", bool logTimestamp = true);
-        void send(Level level, std::string topic, std::string message) override;
+        SinkStatus write(Level level, const std::string& topic,
+                         const std::string& message) override;
     private:
         std::string formatTimestamp(long long ms);
 
         std::string filename;
         bool logTimestamp;
 };
-}
+} // namespace logger

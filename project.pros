@@ -5,7 +5,7 @@
         "target": "v5",
         "templates": {
             "LemLog": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\LemLog@0.1.2",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\LemLog@0.2.0",
                 "metadata": {
                     "origin": "local"
                 },
@@ -13,14 +13,15 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.1.1",
                 "system_files": [
-                    "include\\LemLog\\logger\\sinks\\terminal.hpp",
-                    "include\\LemLog\\logger\\logger.hpp",
+                    "include\\LemLog\\logger\\sinks\\sd-card.hpp",
                     "firmware\\LemLog.a",
-                    "include\\LemLog\\logger\\sinks\\sd-card.hpp"
+                    "include\\LemLog\\logger\\Sink.hpp",
+                    "include\\LemLog\\logger\\Helper.hpp",
+                    "include\\LemLog\\logger\\sinks\\terminal.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.1.2"
+                "version": "0.2.0"
             },
             "fmtlib": {
                 "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\fmtlib@11.1.1",
@@ -155,7 +156,7 @@
                 "version": "4.1.1"
             },
             "units": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\units@0.4.0",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\units@0.4.1",
                 "metadata": {
                     "origin": "local"
                 },
@@ -164,16 +165,16 @@
                 "supported_kernels": "^4.1.1",
                 "system_files": [
                     "firmware\\units.a",
-                    "include\\units\\Pose.hpp",
+                    "include\\units\\units.hpp",
                     "include\\units\\Angle.hpp",
-                    "include\\units\\Vector2D.hpp",
-                    "include\\units\\Vector3D.hpp",
                     "include\\units\\Temperature.hpp",
-                    "include\\units\\units.hpp"
+                    "include\\units\\Vector3D.hpp",
+                    "include\\units\\Vector2D.hpp",
+                    "include\\units\\Pose.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.4.0"
+                "version": "0.4.1"
             }
         },
         "upload_options": {},

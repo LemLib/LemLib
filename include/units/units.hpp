@@ -130,7 +130,7 @@ void quantityChecker(Quantity<Mass, Length, Time, Current, Angle, Temperature, L
 template <typename Q>
 concept isQuantity = requires(Q q) { quantityChecker(q); };
 
-// Isomorphic concept - used to ensure unit equivalecy
+// Isomorphic concept - used to ensure unit equivalency
 template <typename Q, typename... Quantities>
 concept Isomorphic = ((std::convertible_to<Q, Quantities> && std::convertible_to<Quantities, Q>) && ...);
 
@@ -356,6 +356,57 @@ inline std::ostream& operator<<(std::ostream& os, const Number& quantity) {
 constexpr inline Number from_num(double value) { return Number(value); }
 
 constexpr inline double to_num(Number quantity) { return quantity.internal(); }
+
+#define NEW_NUM_TO_DOUBLE_COMPARISON(op)                                                                               \
+    constexpr bool operator op(Number lhs, double rhs) { return (lhs.internal() op rhs); }                             \
+    constexpr bool operator op(double lhs, Number rhs) { return (lhs op rhs.internal()); }
+
+NEW_NUM_TO_DOUBLE_COMPARISON(==)
+NEW_NUM_TO_DOUBLE_COMPARISON(!=)
+NEW_NUM_TO_DOUBLE_COMPARISON(<=)
+NEW_NUM_TO_DOUBLE_COMPARISON(>=)
+NEW_NUM_TO_DOUBLE_COMPARISON(<)
+NEW_NUM_TO_DOUBLE_COMPARISON(>)
+
+#define NEW_NUM_AND_DOUBLE_OPERATION(op)                                                                               \
+    constexpr Number operator op(Number lhs, double rhs) { return (lhs.internal() op rhs); }                           \
+    constexpr Number operator op(double lhs, Number rhs) { return (lhs op rhs.internal()); }
+
+NEW_NUM_AND_DOUBLE_OPERATION(+)
+NEW_NUM_AND_DOUBLE_OPERATION(-)
+NEW_NUM_AND_DOUBLE_OPERATION(*)
+NEW_NUM_AND_DOUBLE_OPERATION(/)
+
+#define NEW_NUM_AND_DOUBLE_ASSIGNMENT(op)                                                                              \
+    constexpr void operator op##=(Number& lhs, double rhs) { lhs = lhs.internal() op rhs; }                            \
+    constexpr void operator op##=(double& lhs, Number rhs) { lhs = lhs op rhs.internal(); }
+
+NEW_NUM_AND_DOUBLE_ASSIGNMENT(+)
+NEW_NUM_AND_DOUBLE_ASSIGNMENT(-)
+NEW_NUM_AND_DOUBLE_ASSIGNMENT(*)
+NEW_NUM_AND_DOUBLE_ASSIGNMENT(/)
+
+constexpr Number& operator++(Number& lhs, int) {
+    lhs += 1;
+    return lhs;
+}
+
+constexpr Number operator++(Number& lhs) {
+    Number copy = lhs;
+    lhs += 1;
+    return copy;
+}
+
+constexpr Number& operator--(Number& lhs, int) {
+    lhs -= 1;
+    return lhs;
+}
+
+constexpr Number operator--(Number& lhs) {
+    Number copy = lhs;
+    lhs -= 1;
+    return copy;
+}
 
 NEW_UNIT_LITERAL(Number, percent, num / 100)
 
