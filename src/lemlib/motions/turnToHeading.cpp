@@ -24,7 +24,7 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
     double previousMotorPower = 0.0;
     double motorPower = 0.0;
 
-    while (helper.wait(10_msec) && !timer.isDone() && !settings.exitConditions.update(deltaTheta.convert(deg))) {
+    while (helper.wait(10_msec) && !timer.isDone() && !settings.exitConditions.update(deltaTheta)) {
         // get the robot's current position
         units::Pose pose = settings.poseGetter();
 

@@ -42,7 +42,7 @@ struct TurnToHeadingSettings {
         /** the angular PID that is used to turn the robot */
         PID angularPID;
         /** the exit conditions that will cause the robot to stop moving */
-        ExitConditionGroup exitConditions;
+        ExitConditionGroup<Angle> exitConditions;
         /** this function should return the estimated pose of the robot, typically by the tracking wheel odometry. */
         std::function<units::Pose()> poseGetter;
         /** the left motor group of the drivetrain */
