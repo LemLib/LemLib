@@ -59,15 +59,15 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
         previousMotorPower = motorPower;
 
         // move the motors
-        settings.leftMotors->move(motorPower);
-        settings.rightMotors->move(-motorPower);
+        settings.leftMotors.move(motorPower);
+        settings.rightMotors.move(-motorPower);
 
         pros::delay(10);
     }
 
     // stop the drivetrain
-    settings.leftMotors->move(0);
-    settings.rightMotors->move(0);
+    settings.leftMotors.move(0);
+    settings.rightMotors.move(0);
 
     // TODO: do stuff with angle traveled
 

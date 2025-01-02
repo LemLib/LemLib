@@ -22,8 +22,8 @@ struct TurnToHeadingSettings {
         ExitCondition angularLargeExit;
         ExitCondition angularSmallExit;
         std::function<units::Pose()> poseGetter;
-        std::shared_ptr<pros::MotorGroup> leftMotors;
-        std::shared_ptr<pros::MotorGroup> rightMotors;
+        pros::MotorGroup& leftMotors;
+        pros::MotorGroup& rightMotors;
 };
 
 void turnToHeading(Angle heading, Time timeout, TurnToHeadingParams params, TurnToHeadingSettings settings);
