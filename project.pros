@@ -23,26 +23,6 @@
                 "user_files": [],
                 "version": "0.2.0"
             },
-            "fmtlib": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\fmtlib@11.1.1",
-                "metadata": {
-                    "origin": "local"
-                },
-                "name": "fmtlib",
-                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
-                "supported_kernels": "^4.1.1",
-                "system_files": [
-                    "include\\fmtlib\\core.h",
-                    "firmware\\fmtlib.a",
-                    "include\\fmtlib\\base.h",
-                    "include\\fmtlib\\format-inl.h",
-                    "include\\fmtlib\\format.h",
-                    "include\\fmtlib\\args.h"
-                ],
-                "target": "v5",
-                "user_files": [],
-                "version": "11.1.1"
-            },
             "hardware": {
                 "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hardware@0.2.2",
                 "metadata": {
