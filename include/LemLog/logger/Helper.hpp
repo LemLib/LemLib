@@ -2,7 +2,7 @@
 
 #include <format>
 #include <string>
-#include "lemlog/logger/Sink.hpp"
+#include "LemLog/logger/Sink.hpp"
 
 namespace logger {
 /**
@@ -10,8 +10,7 @@ namespace logger {
  *
  */
 class Helper {
-        friend void log(Level level, const std::string& topic,
-                        const std::string& message);
+        friend void log(Level level, const std::string& topic, const std::string& message);
     public:
         /**
          * @brief Construct a new Helper object
@@ -53,8 +52,7 @@ class Helper {
          * @endcode
          */
 
-        template <typename... Args>
-        void log(Level level, std::string_view format, Args&&... args) const {
+        template <typename... Args> void log(Level level, std::string_view format, Args&&... args) const {
             const auto& formatted_args = std::make_format_args(args...);
 
             // Create the format_args object using std::forward
