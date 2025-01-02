@@ -2,6 +2,7 @@
 
 #include "units/units.hpp"
 #include <optional>
+#include <vector>
 
 namespace lemlib {
 class ExitCondition {
@@ -48,5 +49,48 @@ class ExitCondition {
         bool m_done = false;
         double m_range;
         Time m_time;
+};
+
+class ExitConditionGroup {
+    public:
+        /**
+         * @brief Create a new exit condition group
+         *
+         * @param exitConditions the exit conditions to check
+         */
+        ExitConditionGroup(std::vector<ExitCondition> exitConditions);
+        /**
+         * @brief Update the exit condition group
+         *
+         * @param input the input to check
+         * @return true
+         * @return false
+         */
+        bool update(double input);
+        /**
+         * @brief Resets the exit condition group
+         *
+         */
+        void reset();
+        /**
+         * @brief Set the exit conditions in the group
+         *
+         * @param exitConditions the new list of exit conditions
+         */
+        void setExitConditions(std::vector<ExitCondition> exitConditions);
+        /**
+         * @brief Get the exit conditions in the group
+         *
+         * @return std::vector<ExitCondition> the exit conditions
+         */
+        std::vector<ExitCondition> getExitConditions();
+        /**
+         * @brief Add an exit condition to the group
+         *
+         * @param exitCondition the exit condition to add
+         */
+        void addExitCondition(ExitCondition exitCondition);
+    private:
+        std::vector<ExitCondition> m_exitConditions;
 };
 } // namespace lemlib
