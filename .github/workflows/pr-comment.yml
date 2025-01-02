@@ -1,7 +1,7 @@
 name: Add Template to Pull Request 
 on:
   workflow_run:
-    workflows: ['Build Template']
+    workflows: ['PROS Build Template']
     types: [completed]
 jobs:
   pr_comment:

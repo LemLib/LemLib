@@ -1,6 +1,7 @@
 #pragma once
 
 #include "units/Angle.hpp"
+#include "units/units.hpp"
 
 namespace lemlib {
 class Imu {
@@ -58,6 +59,29 @@ class Imu {
          * @return INT_MAX error occurred, setting errno
          */
         virtual int setRotation(Angle rotation) = 0;
+        /**
+         * @brief Set the gyro scalar for the IMU
+         *
+         * This function sets the scaling factor for the IMU.
+         * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
+         *
+         * @param scalar
+         * @return int 0 success
+         * @return INT_MAX error occurred, setting errno
+         */
+        virtual int setGyroScalar(double scalar);
+        /**
+         * @brief Get the gyro scalar for the IMU
+         *
+         * This function gets the scaling factor for the IMU.
+         * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
+         *
+         * @return double gyro scalar
+         * @return INFINITY error occurred, setting errno
+         */
+        virtual double getGyroScalar();
         virtual ~Imu() = default;
+    protected:
+        double m_gyroScalar = 1.0;
 };
 } // namespace lemlib

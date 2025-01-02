@@ -26,6 +26,50 @@ inline std::ostream& operator<<(std::ostream& os, const Angle& quantity) {
     return os;
 }
 
+/**
+ * @brief DO NOT USE
+ *
+ * this class prevents conversion errors from compass angles to angles in standard position.
+ *
+ * consider the following:
+ * 0_cDeg gets converted to standard position angles internally, so it's converted to 90
+ * -0_cDeg is converted to standard position angles internally, and only afterwards is the
+ * negative applied, so now it equals -90 internally
+ *
+ * This class solves this problem by introducing the CAngle type. You can do things like
+ * negate it, multiply it, etc. without messing up the angle. However, this class can
+ * only be created through string literals, you can't do something like
+ * CAngle angle = 2_cDeg;
+ * because the constructor is private. However, you can do
+ * Angle angle = 2_cDeg;
+ */
+class CAngle {
+        // make string literals friends, so they have access to the constructor
+        friend constexpr CAngle operator""_cRad(long double value);
+        friend constexpr CAngle operator""_cRad(unsigned long long value);
+        friend constexpr CAngle operator""_cDeg(long double value);
+        friend constexpr CAngle operator""_cDeg(unsigned long long value);
+        friend constexpr CAngle operator""_cRot(long double value);
+        friend constexpr CAngle operator""_cRot(unsigned long long value);
+    public:
+        // we don't want CAngle to have move, copy, or assignment operators
+        constexpr CAngle& operator=(const CAngle&) = delete;
+        constexpr CAngle(const CAngle&) = delete;
+
+        // make CAngle able to be implicitly converted to Angle
+        constexpr operator Angle() const { return Angle(M_PI_2 - this->value); }
+
+        constexpr CAngle operator-() const { return CAngle(-this->value); }
+
+        constexpr CAngle operator+() const { return CAngle(this->value); }
+    private:
+        const double value;
+
+        constexpr CAngle(double value) : value(value) {}
+};
+
+constexpr bool operator==(Angle lhs, CAngle rhs) { return lhs == Angle(rhs); }
+
 constexpr Angle rad = Angle(1.0);
 constexpr Angle deg = Angle(M_PI / 180);
 constexpr Angle rot = Angle(M_TWOPI);
@@ -59,17 +103,21 @@ constexpr Angle operator""_stRot(long double value) { return static_cast<double>
 constexpr Angle operator""_stRot(unsigned long long value) { return static_cast<double>(value) * rot; }
 
 // Compass orientation
-constexpr Angle operator""_cRad(long double value) { return 90_stDeg - Angle(static_cast<double>(value)); }
+constexpr CAngle operator""_cRad(long double value) { return CAngle(static_cast<double>(value)); }
 
-constexpr Angle operator""_cRad(unsigned long long value) { return 90_stDeg - Angle(static_cast<double>(value)); }
+constexpr CAngle operator""_cRad(unsigned long long value) { return CAngle(static_cast<double>(value)); }
 
-constexpr Angle operator""_cDeg(long double value) { return 90_stDeg - static_cast<double>(value) * deg; }
+constexpr CAngle operator""_cDeg(long double value) { return CAngle(static_cast<double>(value) * deg.internal()); }
 
-constexpr Angle operator""_cDeg(unsigned long long value) { return 90_stDeg - static_cast<double>(value) * deg; }
+constexpr CAngle operator""_cDeg(unsigned long long value) {
+    return CAngle(static_cast<double>(value) * deg.internal());
+}
 
-constexpr Angle operator""_cRot(long double value) { return 90_stDeg - static_cast<double>(value) * rot; }
+constexpr CAngle operator""_cRot(long double value) { return CAngle(static_cast<double>(value) * rot.internal()); }
 
-constexpr Angle operator""_cRot(unsigned long long value) { return 90_stDeg - static_cast<double>(value) * rot; }
+constexpr CAngle operator""_cRot(unsigned long long value) {
+    return CAngle(static_cast<double>(value) * rot.internal());
+}
 
 // Angle functions
 namespace units {
@@ -99,27 +147,27 @@ static inline Angle constrainAngle180(Angle in) {
 
 // Angle to/from operators
 // Standard orientation
-constexpr inline Angle from_stRad(double value) { return Angle(value); }
+constexpr inline Angle from_stRad(Number value) { return Angle(value.internal()); }
 
 constexpr inline double to_stRad(Angle quantity) { return quantity.internal(); }
 
-constexpr inline Angle from_stDeg(double value) { return value * deg; }
+constexpr inline Angle from_stDeg(Number value) { return value * deg; }
 
 constexpr inline double to_stDeg(Angle quantity) { return quantity.convert(deg); }
 
-constexpr inline Angle from_stRot(double value) { return value * rot; }
+constexpr inline Angle from_stRot(Number value) { return value * rot; }
 
 constexpr inline double to_stRot(Angle quantity) { return quantity.convert(rot); }
 
 // Compass orientation
-constexpr inline Angle from_cRad(double value) { return 90 * deg - Angle(value); }
+constexpr inline Angle from_cRad(Number value) { return 90 * deg - Angle(value.internal()); }
 
 constexpr inline double to_cRad(Angle quantity) { return quantity.internal(); }
 
-constexpr inline Angle from_cDeg(double value) { return (90 - value) * deg; }
+constexpr inline Angle from_cDeg(Number value) { return (90 - value.internal()) * deg; }
 
 constexpr inline double to_cDeg(Angle quantity) { return (90 * deg - quantity).convert(deg); }
 
-constexpr inline Angle from_cRot(double value) { return (90 - value) * deg; }
+constexpr inline Angle from_cRot(Number value) { return (90 - value.internal()) * deg; }
 
 constexpr inline double to_cRot(Angle quantity) { return (90 * deg - quantity).convert(rot); }

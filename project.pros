@@ -5,7 +5,7 @@
         "target": "v5",
         "templates": {
             "LemLog": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\LemLog@0.1.0",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\LemLog@0.2.0",
                 "metadata": {
                     "origin": "local"
                 },
@@ -13,16 +13,38 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.1.1",
                 "system_files": [
-                    "include\\LemLog\\logger\\sinks\\terminal.hpp",
-                    "include\\LemLog\\logger\\logger.hpp",
-                    "firmware\\LemLog.a"
+                    "include\\LemLog\\logger\\sinks\\sd-card.hpp",
+                    "firmware\\LemLog.a",
+                    "include\\LemLog\\logger\\Sink.hpp",
+                    "include\\LemLog\\logger\\Helper.hpp",
+                    "include\\LemLog\\logger\\sinks\\terminal.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.1.0"
+                "version": "0.2.0"
+            },
+            "fmtlib": {
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\fmtlib@11.1.1",
+                "metadata": {
+                    "origin": "local"
+                },
+                "name": "fmtlib",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": "^4.1.1",
+                "system_files": [
+                    "include\\fmtlib\\core.h",
+                    "firmware\\fmtlib.a",
+                    "include\\fmtlib\\base.h",
+                    "include\\fmtlib\\format-inl.h",
+                    "include\\fmtlib\\format.h",
+                    "include\\fmtlib\\args.h"
+                ],
+                "target": "v5",
+                "user_files": [],
+                "version": "11.1.1"
             },
             "hardware": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hardware@0.2.1",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hardware@0.2.2",
                 "metadata": {
                     "origin": "local"
                 },
@@ -30,21 +52,21 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.1.1",
                 "system_files": [
-                    "include\\hardware\\Encoder\\V5RotationSensor.hpp",
-                    "include\\hardware\\Encoder\\Encoder.hpp",
                     "include\\hardware\\Motor\\MotorGroup.hpp",
-                    "include\\hardware\\Imu\\Imu.hpp",
                     "include\\hardware\\Motor\\Motor.hpp",
-                    "firmware\\hardware.a",
+                    "include\\hardware\\Imu\\Imu.hpp",
+                    "include\\hardware\\Encoder\\Encoder.hpp",
                     "include\\hardware\\Imu\\V5InertialSensor.hpp",
-                    "include\\hardware\\Encoder\\ADIEncoder.hpp"
+                    "include\\hardware\\Encoder\\V5RotationSensor.hpp",
+                    "include\\hardware\\Encoder\\ADIEncoder.hpp",
+                    "firmware\\hardware.a"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.2.1"
+                "version": "0.2.2"
             },
             "hot-cold-asset": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hot-cold-asset@1.0.0",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hot-cold-asset@1.0.1",
                 "metadata": {
                     "origin": "local"
                 },
@@ -52,13 +74,13 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.1.0",
                 "system_files": [
-                    "firmware\\hot-cold-asset.a",
+                    "firmware\\hot-cold-asset.mk",
                     "include\\hot-cold-asset\\asset.hpp",
-                    "firmware\\hot-cold-asset.mk"
+                    "firmware\\hot-cold-asset.a"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "1.0.0"
+                "version": "1.0.1"
             },
             "kernel": {
                 "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\kernel@4.1.1",
@@ -134,7 +156,7 @@
                 "version": "4.1.1"
             },
             "units": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\units@0.3.2",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\units@0.4.1",
                 "metadata": {
                     "origin": "local"
                 },
@@ -142,17 +164,17 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.1.1",
                 "system_files": [
-                    "include\\units\\Vector3D.hpp",
                     "firmware\\units.a",
-                    "include\\units\\Pose.hpp",
-                    "include\\units\\Temperature.hpp",
-                    "include\\units\\Vector2D.hpp",
+                    "include\\units\\units.hpp",
                     "include\\units\\Angle.hpp",
-                    "include\\units\\units.hpp"
+                    "include\\units\\Temperature.hpp",
+                    "include\\units\\Vector3D.hpp",
+                    "include\\units\\Vector2D.hpp",
+                    "include\\units\\Pose.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.3.2"
+                "version": "0.4.1"
             }
         },
         "upload_options": {},

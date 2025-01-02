@@ -1,5 +1,6 @@
 #include "pros/motor_group.hpp"
 #include "hardware/Motor/Motor.hpp"
+#include "units/Angle.hpp"
 #include <vector>
 
 namespace lemlib {
@@ -334,6 +335,23 @@ class MotorGroup : Encoder {
          */
         std::vector<Temperature> getTemperatures();
         /**
+         * @brief set the output velocity of the motors
+         *
+         * @param outputVelocity the theoretical maximum output velocity of the motor group, after gearing, to set
+         * @return int 0 success
+         * @return INT_MAX error occurred, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::MotorGroup motorGroup({1, -2, 3}, 360_rpm);
+         *     // set the output velocity to 450 rpm
+         *     motorGroup.setOutputVelocity(450_rpm);
+         * }
+         * @endcode
+         */
+        int setOutputVelocity(AngularVelocity outputVelocity);
+        /**
          * @brief Get the number of connected motors in the group
          *
          * @return int the number of connected motors in the group
@@ -495,7 +513,7 @@ class MotorGroup : Encoder {
          * @return const std::vector<Motor> vector of lemlib::Motor objects
          */
         const std::vector<Motor> getMotors();
-        const AngularVelocity m_outputVelocity;
+        AngularVelocity m_outputVelocity;
         /**
          * This member variable is a vector of motor information
          *

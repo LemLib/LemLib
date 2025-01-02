@@ -68,7 +68,7 @@ class Quantity {
         constexpr double internal() const { return value; }
 
         // TODO: document this
-        constexpr double convert(Self quantity) { return value / quantity.value; }
+        constexpr double convert(Self quantity) const { return value / quantity.value; }
 
         /**
          * @brief set the value of this quantity to its current value plus another quantity
@@ -130,7 +130,7 @@ void quantityChecker(Quantity<Mass, Length, Time, Current, Angle, Temperature, L
 template <typename Q>
 concept isQuantity = requires(Q q) { quantityChecker(q); };
 
-// Isomorphic concept - used to ensure unit equivalecy
+// Isomorphic concept - used to ensure unit equivalency
 template <typename Q, typename... Quantities>
 concept Isomorphic = ((std::convertible_to<Q, Quantities> && std::convertible_to<Quantities, Q>) && ...);
 
@@ -199,11 +199,15 @@ template <isQuantity Q> inline std::ostream& operator<<(std::ostream& os, const 
     return os;
 }
 
+template <isQuantity Q> constexpr Q operator+(Q rhs) { return rhs; }
+
 template <isQuantity Q, isQuantity R> constexpr Q operator+(Q lhs, R rhs)
     requires Isomorphic<Q, R>
 {
     return Q(lhs.internal() + rhs.internal());
 }
+
+template <isQuantity Q> constexpr Q operator-(Q rhs) { return Q(-rhs.internal()); }
 
 template <isQuantity Q, isQuantity R> constexpr Q operator-(Q lhs, R rhs)
     requires Isomorphic<Q, R>
@@ -292,13 +296,14 @@ template <isQuantity Q, isQuantity R> constexpr bool operator>(const Q& lhs, con
         return os;                                                                                                     \
     }                                                                                                                  \
     constexpr inline Name from_##suffix(double value) { return Name(value); }                                          \
+    constexpr inline Name from_##suffix(Number value) { return Name(value.internal()); }                               \
     constexpr inline double to_##suffix(Name quantity) { return quantity.internal(); }
 
 #define NEW_UNIT_LITERAL(Name, suffix, multiple)                                                                       \
     [[maybe_unused]] constexpr Name suffix = multiple;                                                                 \
     constexpr Name operator""_##suffix(long double value) { return static_cast<double>(value) * multiple; }            \
     constexpr Name operator""_##suffix(unsigned long long value) { return static_cast<double>(value) * multiple; }     \
-    constexpr inline Name from_##suffix(double value) { return value * multiple; }                                     \
+    constexpr inline Name from_##suffix(Number value) { return value.internal() * multiple; }                          \
     constexpr inline double to_##suffix(Name quantity) { return quantity.convert(multiple); }
 
 #define NEW_METRIC_PREFIXES(Name, base)                                                                                \
@@ -311,8 +316,99 @@ template <isQuantity Q, isQuantity R> constexpr bool operator>(const Q& lhs, con
     NEW_UNIT_LITERAL(Name, u##base, base / 1E6)                                                                        \
     NEW_UNIT_LITERAL(Name, n##base, base / 1E9)
 
-NEW_UNIT(Number, num, 0, 0, 0, 0, 0, 0, 0, 0)
-NEW_UNIT_LITERAL(Number, percent, num / 100.0);
+/* Number is a special type, because it can be implicitly converted to and from any arithmetic type */
+class Number : public Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                               std::ratio<0>, std::ratio<0>> {
+    public:
+        template <typename T> constexpr Number(T value)
+            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                       std::ratio<0>, std::ratio<0>>(double(value)) {}
+
+        constexpr Number(Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                                  std::ratio<0>, std::ratio<0>, std::ratio<0>>
+                             value)
+            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                       std::ratio<0>, std::ratio<0>>(value) {};
+};
+
+template <> struct LookupName<Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                                       std::ratio<0>, std::ratio<0>, std::ratio<0>>> {
+        using Named = Number;
+};
+
+[[maybe_unused]] constexpr Number num = Number(1.0);
+
+constexpr Number operator""_num(long double value) {
+    return Number(Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                           std::ratio<0>, std::ratio<0>>(static_cast<double>(value)));
+}
+
+constexpr Number operator""_num(unsigned long long value) {
+    return Number(Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                           std::ratio<0>, std::ratio<0>>(static_cast<double>(value)));
+}
+
+inline std::ostream& operator<<(std::ostream& os, const Number& quantity) {
+    os << quantity.internal() << " " << num;
+    return os;
+}
+
+constexpr inline Number from_num(double value) { return Number(value); }
+
+constexpr inline double to_num(Number quantity) { return quantity.internal(); }
+
+#define NEW_NUM_TO_DOUBLE_COMPARISON(op)                                                                               \
+    constexpr bool operator op(Number lhs, double rhs) { return (lhs.internal() op rhs); }                             \
+    constexpr bool operator op(double lhs, Number rhs) { return (lhs op rhs.internal()); }
+
+NEW_NUM_TO_DOUBLE_COMPARISON(==)
+NEW_NUM_TO_DOUBLE_COMPARISON(!=)
+NEW_NUM_TO_DOUBLE_COMPARISON(<=)
+NEW_NUM_TO_DOUBLE_COMPARISON(>=)
+NEW_NUM_TO_DOUBLE_COMPARISON(<)
+NEW_NUM_TO_DOUBLE_COMPARISON(>)
+
+#define NEW_NUM_AND_DOUBLE_OPERATION(op)                                                                               \
+    constexpr Number operator op(Number lhs, double rhs) { return (lhs.internal() op rhs); }                           \
+    constexpr Number operator op(double lhs, Number rhs) { return (lhs op rhs.internal()); }
+
+NEW_NUM_AND_DOUBLE_OPERATION(+)
+NEW_NUM_AND_DOUBLE_OPERATION(-)
+NEW_NUM_AND_DOUBLE_OPERATION(*)
+NEW_NUM_AND_DOUBLE_OPERATION(/)
+
+#define NEW_NUM_AND_DOUBLE_ASSIGNMENT(op)                                                                              \
+    constexpr void operator op##=(Number& lhs, double rhs) { lhs = lhs.internal() op rhs; }                            \
+    constexpr void operator op##=(double& lhs, Number rhs) { lhs = lhs op rhs.internal(); }
+
+NEW_NUM_AND_DOUBLE_ASSIGNMENT(+)
+NEW_NUM_AND_DOUBLE_ASSIGNMENT(-)
+NEW_NUM_AND_DOUBLE_ASSIGNMENT(*)
+NEW_NUM_AND_DOUBLE_ASSIGNMENT(/)
+
+constexpr Number& operator++(Number& lhs, int) {
+    lhs += 1;
+    return lhs;
+}
+
+constexpr Number operator++(Number& lhs) {
+    Number copy = lhs;
+    lhs += 1;
+    return copy;
+}
+
+constexpr Number& operator--(Number& lhs, int) {
+    lhs -= 1;
+    return lhs;
+}
+
+constexpr Number operator--(Number& lhs) {
+    Number copy = lhs;
+    lhs -= 1;
+    return copy;
+}
+
+NEW_UNIT_LITERAL(Number, percent, num / 100)
 
 NEW_UNIT(Mass, kg, 1, 0, 0, 0, 0, 0, 0, 0)
 NEW_UNIT_LITERAL(Mass, g, kg / 1000)
