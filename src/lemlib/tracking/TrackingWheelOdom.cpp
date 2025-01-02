@@ -1,5 +1,5 @@
 #include "lemlib/tracking/TrackingWheelOdom.hpp"
-#include "LemLog/logger/logger.hpp"
+#include "LemLog/logger/Helper.hpp"
 #include "units/Vector2D.hpp"
 
 static logger::Helper helper("lemlib/odom/tracking_wheel_odom");
