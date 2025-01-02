@@ -1,5 +1,6 @@
 #include "lemlib/motions/turnToHeading.hpp"
 #include "lemlib/MotionCancelHelper.hpp"
+#include "LemLog/logger/Helper.hpp"
 #include "lemlib/Timer.hpp"
 #include <optional>
 
@@ -8,6 +9,7 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
     params.minSpeed = abs(params.minSpeed);
 
     lemlib::MotionCancelHelper helper;
+    logger::Helper logger("lemlib/motions/turnToHeading");
 
     settings.exitConditions.reset();
     settings.angularPID.reset();
@@ -23,6 +25,8 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
 
     double previousMotorPower = 0.0;
     double motorPower = 0.0;
+
+    logger.log(logger::Level::INFO, "Turning to {} deg", heading.convert(deg));
 
     while (helper.wait(10_msec) && !timer.isDone() && !settings.exitConditions.update(deltaTheta)) {
         // get the robot's current position
@@ -46,6 +50,8 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
         motorPower = lemlib::respectSpeeds(motorPower, previousMotorPower, params.maxSpeed, params.minSpeed,
                                            units::abs(deltaTheta) > 20_stDeg ? settings.angularPID.getGains().slew : 0);
         previousMotorPower = motorPower;
+
+        logger.log(logger::Level::DEBUG, "Turning with {} power, error: {}", motorPower, deltaTheta);
 
         // move the motors
         settings.leftMotors.move(motorPower);
