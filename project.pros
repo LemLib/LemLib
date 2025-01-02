@@ -135,6 +135,25 @@
                 ],
                 "version": "4.1.1"
             },
+            "lemlog": {
+                "location": "/Users/quademaiello/Library/Application Support/PROS/templates/lemlog@0.2.1",
+                "metadata": {
+                    "origin": "local"
+                },
+                "name": "lemlog",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": "^4.1.1",
+                "system_files": [
+                    "include/lemlog/logger/sinks/terminal.hpp",
+                    "firmware/lemlog.a",
+                    "include/lemlog/logger/sinks/sd-card.hpp",
+                    "include/lemlog/logger/Helper.hpp",
+                    "include/lemlog/logger/Sink.hpp"
+                ],
+                "target": "v5",
+                "user_files": [],
+                "version": "0.2.1"
+            },
             "units": {
                 "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\units@0.4.1",
                 "metadata": {
