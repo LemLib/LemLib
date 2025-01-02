@@ -1,5 +1,6 @@
 #include "lemlib/motions/turnToHeading.hpp"
-#include "MotionCancelHelper.hpp"
+#include "lemlib/MotionCancelHelper.hpp"
+#include "lemlib/Timer.hpp"
 #include <optional>
 
 void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingParams params,
@@ -15,8 +16,8 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
     std::optional<Angle> previousRawDeltaTheta = std::nullopt;
     std::optional<Angle> previousDeltaTheta = std::nullopt;
     Angle startingTheta = settings.poseGetter().theta();
-    Angle angleTraveled = 0_stRot;
     Angle targetTheta = heading;
+    lemlib::Timer timer(timeout);
     Angle deltaTheta = 0_stRot;
 
     bool settling = false;
@@ -24,15 +25,10 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
     double previousMotorPower = 0.0;
     double motorPower = 0.0;
 
-    while (helper.wait(10_msec) && !settings.angularLargeExit.update(deltaTheta.convert(deg)) &&
+    while (helper.wait(10_msec) && !timer.isDone() && !settings.angularLargeExit.update(deltaTheta.convert(deg)) &&
            !settings.angularSmallExit.update(deltaTheta.convert(deg))) {
         // get the robot's current position
         units::Pose pose = settings.poseGetter();
-
-        // update angle traveled
-        angleTraveled = units::abs(lemlib::angleError(pose.theta(), startingTheta));
-
-        targetTheta = heading;
 
         const Angle rawDeltaTheta = angleError(targetTheta, pose.theta());
         settling = previousRawDeltaTheta && units::sgn(rawDeltaTheta) != units::sgn(previousRawDeltaTheta.value());
