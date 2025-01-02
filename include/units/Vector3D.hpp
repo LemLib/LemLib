@@ -11,17 +11,17 @@ namespace units {
  * @tparam T the type of quantity to use for the vector components
  */
 template <isQuantity T> class Vector3D {
-    protected:
+    public:
         T x; /** x component */
         T y; /** y component */
         T z; /** z component */
-    public:
+
         /**
          * @brief Construct a new Vector2D object
          *
          * This constructor initializes x, y, and z to 0
          */
-        Vector3D() : x(0.0), y(0.0), z(0.0) {}
+        constexpr Vector3D() : x(0.0), y(0.0), z(0.0) {}
 
         /**
          * @brief Construct a new Vector2D object
@@ -32,19 +32,19 @@ template <isQuantity T> class Vector3D {
          * @param ny y component
          * @param nz z component
          */
-        Vector3D(T nx, T ny, T nz) : x(nx), y(ny), z(nz) {}
+        constexpr Vector3D(T nx, T ny, T nz) : x(nx), y(ny), z(nz) {}
 
         /**
-         * @brief Create a new Vector3D object from polar coordinates
+         * @brief Create a new Vector3D object from spherical coordinates
          *
          * This constructor takes polar coordinates and converts them to cartesian coordinates
          *
          * @param t angle
          * @param m magnitude
          */
-        static Vector3D fromPolar(Vector3D<Angle>& t, T m) {
+        constexpr static Vector3D fromPolar(const Vector3D<Angle>& t, T m) {
             m = m.abs();
-            return Vector2D<T>(m * cos(t.x), m * cos(t.y), m * cos(t.z));
+            return Vector3D<T>(m * cos(t.x), m * cos(t.y), m * cos(t.z));
         }
 
         /**
@@ -53,159 +53,143 @@ template <isQuantity T> class Vector3D {
          * @param t angle
          * @return Vector3D
          */
-        static Vector3D unitVector(Vector3D<Angle> t) { return fromPolar(t, (T)1.0); }
+        constexpr static Vector3D unitVector(const Vector3D<Angle>& t) { return fromPolar(t, (T)1.0); }
 
         /**
-         * @brief get the x component
+         * @brief + operator overload. Adds the components of two vectors
          *
-         * @return T x component
-         */
-        T getX() { return x; }
-
-        /**
-         * @brief get the y component
-         *
-         * @return T y component
-         */
-        T getY() { return y; }
-
-        /**
-         * @brief get the z component
-         *
-         * @return T z component
-         */
-        T getZ() { return z; }
-
-        /**
-         * @brief set the x component
-         *
-         * @param nx x component
-         */
-        void setX(T nx) { x = nx; }
-
-        /**
-         * @brief set the y component
-         *
-         * @param ny y component
-         */
-        void setY(T ny) { y = ny; }
-
-        /**
-         * @brief set the z component
-         *
-         * @param nz z component
-         */
-        void setZ(T nz) { z = nz; }
-
-        /**
-         * @brief + operator overload
-         *
-         * This operator adds the x, y, and z components of two vectors
          * {a, b, c} + {d, e, f} = {a + d, b + e, c + f}
          *
          * @param other vector to add
          * @return Vector3D<T>
          */
-        Vector3D<T> operator+(Vector3D<T>& other) {
-            return Vector3D<T>(x + other.getX(), y + other.getY(), z + getZ());
+        constexpr Vector3D<T> operator+(const Vector3D<T>& other) const {
+            return Vector3D<T>(this->x + other.x, this->y + other.y, this->z + other.z);
         }
 
         /**
-         * @brief - operator overload
+         * @brief - operator overload. Subtracts the components of two vectors
          *
-         * This operator subtracts the x, y, and z components of two vectors
          * {a, b, c} - {d, e, f} = {a - d, b - e, c - f}
          *
          * @param other vector to subtract
          * @return Vector3D<T>
          */
-        Vector3D<T> operator-(Vector3D<T>& other) { return Vector3D<T>(x - other.getX(), y - other.getY()); }
+        constexpr Vector3D<T> operator-(const Vector3D<T>& other) const {
+            return Vector3D<T>(this->x - other.x, this->y - other.y, this->z - other.z);
+        }
 
         /**
-         * @brief * operator overload
+         * @brief * operator overload. Multiplies a vector by a double
          *
-         * This operator multiplies the x, y, and z components of a vector by a scalar
-         * a * {b, c, d} = {a * b, a * c, a * d}
+         * {a, b} * c = {a * c, b * c}
          *
-         * @param factor scalar to multiply by
-         * @return Vector3D<T>
+         * @param factor the double to multiple the vector by
+         * @return Vector2D<T>
          */
-        Vector3D<T> operator*(double factor) { return Vector3D<T>(x * factor, y * factor, z * factor); }
+        constexpr Vector3D<T> operator*(double factor) const {
+            return Vector3D<T>(this->x * factor, this->y * factor, this->z * factor);
+        }
 
         /**
-         * @brief / operator overload
+         * @brief * operator overload. Multiplies a vector by a quantity
          *
-         * This operator divides the x, y, and z components of a vector by a scalar
+         * {a, b, c} * d = {a * d, b * d, c * d}
+         *
+         * @tparam Q the type of quantity to multiply the vector with
+         * @tparam R the quantity type of the resulting vector
+         *
+         * @param factor the quantity to multiple the vector by
+         * @return Vector3D<R>
+         */
+        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> constexpr Vector3D<R> operator*(Q factor) const {
+            return Vector3D<R>(this->x * factor, this->y * factor, this->z * factor);
+        }
+
+        /**
+         * @brief / operator overload. Multiplies a vector by a double
+         *
          * {a, b, c} / d = {a / d, b / d, c / d}
          *
-         * @param factor scalar to divide by
+         * @param factor the double to multiple the vector by
          * @return Vector3D<T>
          */
-        Vector3D<T> operator/(double factor) { return Vector3D<T>(x / factor, y / factor, z / factor); }
+        constexpr Vector3D<T> operator/(double factor) const {
+            return Vector3D<T>(this->x / factor, this->y / factor, this->z / factor);
+        }
 
         /**
-         * @brief += operator overload
+         * @brief / operator overload. Multiplies a vector by a quantity
          *
-         * This operator adds the x, y, and z components of two vectors and stores the result in the calling vector
+         * {a, b, c} / d = {a / d, b / d, c / d}
+         *
+         * @tparam Q the type of quantity to multiply the vector with
+         * @tparam R the quantity type of the resulting vector
+         *
+         * @param factor the quantity to multiple the vector by
+         * @return Vector3D<R>
+         */
+        template <isQuantity Q, isQuantity R = Divided<T, Q>> constexpr Vector3D<R> operator/(Q factor) const {
+            return Vector3D<R>(this->x / factor, this->y / factor, this->z / factor);
+        }
+
+        /**
+         * @brief += operator overload. Adds the components of two vectors and stores the result
+         *
          * {a, b, c} += {d, e, f} => {a + d, b + e, c + f}
          *
          * @param other vector to add
          * @return Vector3D<T>&
          */
-        Vector3D<T>& operator+=(Vector3D<T>& other) {
-            x += other.getX();
-            y += other.getY();
-            z += other.getZ();
+        constexpr Vector3D<T>& operator+=(const Vector3D<T>& other) {
+            this->x += other.x;
+            this->y += other.y;
+            this->z += other.z;
             return (*this);
         }
 
         /**
-         * @brief -= operator overload
+         * @brief -= operator overload. Subtracts the components of two vectors and stores the result
          *
-         * This operator subtracts the x, y, and z components of two vectors and stores the result in the calling vector
          * {a, b, c} -= {d, e, f} => {a - d, b - e, c - f}
          *
          * @param other vector to subtract
          * @return Vector3D<T>&
          */
-        Vector3D<T>& operator-=(Vector3D<T>& other) {
-            x -= other.getX();
-            y -= other.getY();
-            z -= other.getZ();
+        constexpr Vector3D<T>& operator-=(const Vector3D<T>& other) {
+            this->x -= other.x;
+            this->y -= other.y;
+            this->z -= other.z;
             return (*this);
         }
 
         /**
-         * @brief *= operator overload
+         * @brief *= operator overload. Multiplies the components of a vector by a scalar and stores the result.
          *
-         * This operator multiplies the x, y, and z components of a vector by a scalar and stores the result in the
-         * calling vector
          * a *= {b, c, d} => {a * b, a * c, a * d}
          *
          * @param factor scalar to multiply by
          * @return Vector3D<T>&
          */
-        Vector3D<T>& operator*=(double factor) {
-            x *= factor;
-            y *= factor;
-            z *= factor;
+        constexpr Vector3D<T>& operator*=(double factor) {
+            this->x *= factor;
+            this->y *= factor;
+            this->z *= factor;
             return (*this);
         }
 
         /**
-         * @brief /= operator overload
+         * @brief /= operator overload. Divides the components of a vector by a scalar and stores the result
          *
-         * This operator divides the x, y, and z components of a vector by a scalar and stores the result in the
-         * calling vector
          * {a, b, c} /= d => {a / d, b / d, c / d}
          *
          * @param factor scalar to divide by
          * @return Vector3D<T>&
          */
-        Vector3D<T>& operator/=(double factor) {
-            x /= factor;
-            y /= factor;
-            z /= factor;
+        constexpr Vector3D<T>& operator/=(double factor) {
+            this->x /= factor;
+            this->y /= factor;
+            this->z /= factor;
             return (*this);
         }
 
@@ -220,8 +204,8 @@ template <isQuantity T> class Vector3D {
          * @param other the vector to calculate the dot product with
          * @return R the dot product
          */
-        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> R dot(Vector3D<Q>& other) {
-            return (x * other.getX()) + (y * other.getY()) + (z * other.getZ());
+        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> constexpr R dot(const Vector3D<Q>& other) const {
+            return (this->x * other.x) + (this->y * other.y) + (this->z * other.z);
         }
 
         /**
@@ -237,8 +221,10 @@ template <isQuantity T> class Vector3D {
          * @param other the vector to calculate the cross product with
          * @return Vector3D<R> the cross product
          */
-        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> Vector3D<R> cross(Vector3D<Q>& other) {
-            return Vector3D<R>(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
+        template <isQuantity Q, isQuantity R = Multiplied<T, Q>>
+        constexpr Vector3D<R> cross(const Vector3D<Q>& other) const {
+            return Vector3D<R>(this->y * other.z - this->z * other.y, this->z * other.x - this->x * other.z,
+                               this->x * other.y - this->y * other.x);
         }
 
         /**
@@ -246,9 +232,9 @@ template <isQuantity T> class Vector3D {
          *
          * @return Angle
          */
-        Vector3D<Angle> theta() {
+        constexpr Vector3D<Angle> theta() const {
             const T mag = magnitude();
-            return Vector3D<Angle>(acos(x / mag), acos(y / mag), acos(z / mag));
+            return Vector3D<Angle>(acos(this->x / mag), acos(this->y / mag), acos(this->z / mag));
         }
 
         /**
@@ -256,22 +242,7 @@ template <isQuantity T> class Vector3D {
          *
          * @return T
          */
-        T magnitude() { return sqrt(square(x) + square(y) + square(z)); }
-
-        /**
-         * @brief difference between two vectors
-         *
-         * TODO: figure out if this is even necessary, you could just use the - operator overload
-         *
-         * This function calculates the difference between two vectors
-         * a.vectorTo(b) = {b.x - a.x, b.y - a.y, b.z - a.z}
-         *
-         * @param other the other vector
-         * @return Vector3D<T>
-         */
-        Vector3D<T> vectorTo(Vector3D<T>& other) {
-            return Vector2D<T>(other.getX() - x, other.getY() - y, other.getZ() - z);
-        }
+        constexpr T magnitude() const { return sqrt(square(this->x) + square(this->y) + square(this->z)); }
 
         /**
          * @brief the angle between two vectors
@@ -279,7 +250,9 @@ template <isQuantity T> class Vector3D {
          * @param other the other vector
          * @return Angle
          */
-        Angle angleTo(Vector3D<T>& other) { return units::acos(dot(other) / (magnitude() * other.magnitude())); }
+        constexpr Angle angleTo(const Vector3D<T>& other) const {
+            return acos(dot(other) / (magnitude() * other.magnitude()));
+        }
 
         /**
          * @brief get the distance between two vectors
@@ -287,7 +260,7 @@ template <isQuantity T> class Vector3D {
          * @param other the other vector
          * @return T
          */
-        T distanceTo(Vector3D<T>& other) { return vectorTo(other).magnitude(); }
+        constexpr T distanceTo(const Vector3D<T>& other) const { return vectorTo(other).magnitude(); }
 
         /**
          * @brief normalize the vector
@@ -296,22 +269,19 @@ template <isQuantity T> class Vector3D {
          *
          * @return Vector3D<T>
          */
-        Vector3D<T> normalize() {
-            T m = magnitude();
-            return Vector2D<T>(x / m, y / m, z / m);
-        }
+        constexpr Vector3D<T> normalize() { return (*this) / magnitude(); }
 
         /**
          * @brief rotate the vector by an angle
          *
          * @param angle
          */
-        void rotateBy(Vector3D<Angle>& angle) {
+        constexpr void rotateBy(const Vector3D<Angle>& angle) {
             const T m = magnitude();
             const Vector3D<Angle> t = theta() + angle;
-            x = m * cos(t.x);
-            y = m * cos(t.y);
-            z = m * cos(t.z);
+            this->x = m * cos(t.x);
+            this->y = m * cos(t.y);
+            this->z = m * cos(t.z);
         }
 
         /**
@@ -319,11 +289,11 @@ template <isQuantity T> class Vector3D {
          *
          * @param angle
          */
-        void rotateTo(Vector3D<Angle>& angle) {
+        constexpr void rotateTo(const Vector3D<Angle>& angle) {
             const T m = magnitude();
-            x = m * cos(angle.x);
-            y = m * cos(angle.y);
-            z = m * cos(angle.z);
+            this->x = m * cos(angle.x);
+            this->y = m * cos(angle.y);
+            this->z = m * cos(angle.z);
         }
 
         /**
@@ -332,10 +302,8 @@ template <isQuantity T> class Vector3D {
          * @param angle
          * @return Vector3D<T>
          */
-        Vector3D<T> rotatedBy(Vector3D<Angle> angle) {
-            T m = magnitude();
-            Angle t = theta() + angle;
-            return fromPolar(t, m);
+        constexpr Vector3D<T> rotatedBy(const Vector3D<Angle>& angle) const {
+            return fromPolar(theta() + angle, magnitude());
         }
 
         /**
@@ -344,11 +312,39 @@ template <isQuantity T> class Vector3D {
          * @param angle
          * @return Vector3D<T>
          */
-        Vector3D<T> rotatedTo(Angle angle) {
-            T m = magnitude();
-            return fromPolar(angle, m);
-        }
+        constexpr Vector3D<T> rotatedTo(Angle angle) const { return fromPolar(angle, magnitude()); }
 };
+
+/**
+ * @brief * operator overload. Multiplies a scalar and a vector
+ *
+ * a * {b, c, d} = {a * b, a * c, a * d}
+ *
+ * @tparam Q1 the quantity type of the scalar
+ * @tparam Q2 the quantity type of the vector
+ * @tparam Q3 the type of quantity to use for the result
+ *
+ * @param lhs the scalar on the left hand side
+ * @param rhs the vector on the right hand side
+ * @return Q3 the product
+ */
+template <isQuantity Q1, isQuantity Q2, isQuantity Q3 = Multiplied<Q1, Q2>>
+constexpr Vector3D<Q3> operator*(Q1 lhs, const Vector3D<Q2>& rhs) {
+    return rhs * lhs;
+}
+
+/**
+ * @brief * operator overload. Multiplies a double and a vector
+ *
+ * a * {b, c, d} = {a * b, a * c, a * d}
+ *
+ * @tparam Q the quantity type of the vector
+ *
+ * @param lhs the scalar on the left hand side
+ * @param rhs the vector on the right hand side
+ * @return Vector3D<Q> the product
+ */
+template <isQuantity Q> constexpr Vector3D<Q> operator*(double lhs, const Vector3D<Q>& rhs) { return rhs * lhs; }
 
 // define some common vector types
 typedef Vector3D<Length> V3Position;

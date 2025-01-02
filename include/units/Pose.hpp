@@ -18,12 +18,14 @@ template <typename derivatives> class AbstractPose
         using Len = Divided<Length, Exponentiated<Time, derivatives>>;
         using Vector = Vector2D<Len>;
     public:
+        Divided<Angle, Exponentiated<Time, derivatives>> orientation; /** Orientation */
+
         /**
          * @brief Construct a new Pose object
          *
          * This constructor initializes x, y, and orientation to 0
          */
-        AbstractPose() : Vector(), orientation(0.0) {}
+        constexpr AbstractPose() : Vector(), orientation(0.0) {}
 
         /**
          * @brief Construct a new Pose object
@@ -32,7 +34,7 @@ template <typename derivatives> class AbstractPose
          *
          * @param v position
          */
-        AbstractPose(Vector v) : Vector(v), orientation(0.0) {}
+        constexpr AbstractPose(Vector v) : Vector(v), orientation(0.0) {}
 
         /**
          * @brief Construct a new Pose object
@@ -40,7 +42,7 @@ template <typename derivatives> class AbstractPose
          * @param v position
          * @param orientation orientation
          */
-        AbstractPose(Vector v, Divided<Angle, Exponentiated<Time, derivatives>> orientation)
+        constexpr AbstractPose(Vector v, Divided<Angle, Exponentiated<Time, derivatives>> orientation)
             : Vector(v), orientation(orientation) {}
 
         /**
@@ -51,7 +53,7 @@ template <typename derivatives> class AbstractPose
          * @param x x position
          * @param y y position
          */
-        AbstractPose(Len x, Len y) : Vector(x, y), orientation(0.0) {}
+        constexpr AbstractPose(Len x, Len y) : Vector(x, y), orientation(0.0) {}
 
         /**
          * @brief Construct a new Pose object
@@ -60,26 +62,8 @@ template <typename derivatives> class AbstractPose
          * @param y y position
          * @param orientation orientation
          */
-        AbstractPose(Len x, Len y, Divided<Angle, Exponentiated<Time, derivatives>> orientation)
+        constexpr AbstractPose(Len x, Len y, Divided<Angle, Exponentiated<Time, derivatives>> orientation)
             : Vector(x, y), orientation(orientation) {}
-
-        /**
-         * @brief Get the orientation
-         *
-         * @return Angle orientation
-         */
-        Divided<Angle, Exponentiated<Time, derivatives>> getOrientation() { return orientation; }
-
-        /**
-         * @brief Set the orientation
-         *
-         * @param orientation orientation
-         */
-        void setOrientation(Divided<Angle, Exponentiated<Time, derivatives>> orientation) {
-            this->orientation = orientation;
-        }
-    protected:
-        Divided<Angle, Exponentiated<Time, derivatives>> orientation; /** Orientation */
 };
 
 // Position Pose (Length, Angle)

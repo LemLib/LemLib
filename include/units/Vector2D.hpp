@@ -11,17 +11,17 @@ namespace units {
  * @tparam T the type of quantity to use for the vector components
  */
 template <isQuantity T> class Vector2D {
-    protected:
+    public:
         T x; /** x component */
         T y; /** y component */
-    public:
+
         /**
          * @brief Construct a new Vector2D object
          *
          * This constructor initializes x and y to 0
          *
          */
-        Vector2D() : x(0.0), y(0.0) {}
+        constexpr Vector2D() : x(0.0), y(0.0) {}
 
         /**
          * @brief Construct a new Vector2D object
@@ -31,7 +31,7 @@ template <isQuantity T> class Vector2D {
          * @param nx x component
          * @param ny y component
          */
-        Vector2D(T nx, T ny) : x(nx), y(ny) {}
+        constexpr Vector2D(T nx, T ny) : x(nx), y(ny) {}
 
         /**
          * @brief Create a new Vector2D object from polar coordinates
@@ -41,8 +41,8 @@ template <isQuantity T> class Vector2D {
          * @param t angle
          * @param m magnitude
          */
-        static Vector2D fromPolar(Angle t, T m) {
-            m = m.abs();
+        constexpr static Vector2D fromPolar(Angle t, T m) {
+            m = abs(m);
             t = constrainAngle360(t);
             return Vector2D<T>(m * cos(t), m * sin(t));
         }
@@ -53,196 +53,165 @@ template <isQuantity T> class Vector2D {
          * @param t angle
          * @return Vector2D
          */
-        static Vector2D unitVector(Angle t) { return fromPolar(t, (T)1.0); }
+        constexpr static Vector2D unitVector(Angle t) { return fromPolar(t, (T)1.0); }
 
         /**
-         * @brief get the x component
+         * @brief + operator overload. Adds the x and y components of two vectors
          *
-         * @return T x component
-         */
-        T getX() { return x; }
-
-        /**
-         * @brief get the y component
-         *
-         * @return T y component
-         */
-        T getY() { return y; }
-
-        /**
-         * @brief set the x component
-         *
-         * @param nx x component
-         */
-        void setX(T nx) { x = nx; }
-
-        /**
-         * @brief set the y component
-         *
-         * @param ny y component
-         */
-        void setY(T ny) { y = ny; }
-
-        /**
-         * @brief + operator overload
-         *
-         * This operator adds the x and y components of two vectors
          * {a, b} + {c, d} = {a + c, b + d}
          *
          * @param other vector to add
          * @return Vector2D<T>
          */
-        Vector2D<T> operator+(Vector2D<T>& other) { return Vector2D<T>(x + other.getX(), y + other.getY()); }
+        constexpr Vector2D<T> operator+(const Vector2D<T>& other) const {
+            return Vector2D<T>(this->x + other.x, this->y + other.y);
+        }
 
         /**
-         * @brief - operator overload
+         * @brief - operator overload. Substracts the x and y components of two vectors
          *
-         * This operator subtracts the x and y components of two vectors
          * {a, b} - {c, d} = {a - c, b - d}
          *
          * @param other vector to subtract
          * @return Vector2D<T>
          */
-        Vector2D<T> operator-(Vector2D<T>& other) { return Vector2D<T>(x - other.getX(), y - other.getY()); }
+        constexpr Vector2D<T> operator-(const Vector2D<T>& other) const {
+            return Vector2D<T>(this->x - other.x, this->y - other.y);
+        }
 
         /**
-         * @brief * operator overload
+         * @brief * operator overload. Multiplies a vector by a double
          *
-         * This operator multiplies the x and y components of a vector by a scalar
-         * a * {b, c} = {a * b, a * c}
+         * {a, b} * c = {a * c, b * c}
          *
-         * @param factor scalar to multiply by
+         * @param factor the double to multiple the vector by
          * @return Vector2D<T>
          */
-        Vector2D<T> operator*(double factor) { return Vector2D<T>(x * factor, y * factor); }
+        constexpr Vector2D<T> operator*(double factor) const { return Vector2D<T>(this->x * factor, this->y * factor); }
 
         /**
-         * @brief / operator overload
+         * @brief * operator overload. Multiplies a vector by a quantity
          *
-         * This operator divides the x and y components of a vector by a scalar
-         * {a, b} / c = {a / c, b / c}
+         * {a, b} * c = {a * c, b * c}
          *
-         * @param factor scalar to divide by
-         * @return Vector2D<T>
+         * @tparam Q the type of quantity to multiply the vector with
+         * @tparam R the quantity type of the resulting vector
+         *
+         * @param factor the quantity to multiple the vector by
+         * @return Vector2D<R>
          */
-        Vector2D<T> operator/(double factor) { return Vector2D<T>(x / factor, y / factor); }
-
-        /**
-         * @brief += operator overload
-         *
-         * This operator adds the x and y components of two vectors and stores the result in the calling vector
-         * {a, b} += {c, d} => {a + c, b + d}
-         *
-         * @param other vector to add
-         * @return Vector2D<T>&
-         */
-        Vector2D<T>& operator+=(Vector2D<T>& other) {
-            x += other.getX();
-            y += other.getY();
-            return (*this);
+        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> constexpr Vector2D<R> operator*(Q factor) const {
+            return Vector2D<R>(this->x * factor, this->y * factor);
         }
 
         /**
-         * @brief -= operator overload
+         * @brief * operator overload. Finds the dot product of 2 Vector2D objects
          *
-         * This operator subtracts the x and y components of two vectors and stores the result in the calling vector
-         * {a, b} -= {c, d} => {a - c, b - d}
-         *
-         * @param other vector to subtract
-         * @return Vector2D<T>&
-         */
-        Vector2D<T>& operator-=(Vector2D<T>& other) {
-            x -= other.getX();
-            y -= other.getY();
-            return (*this);
-        }
-
-        /**
-         * @brief *= operator overload
-         *
-         * This operator multiplies the x and y components of a vector by a scalar and stores the result in the
-         * calling vector
-         * a *= {b, c} => {a * b, a * c}
-         *
-         * @param factor scalar to multiply by
-         * @return Vector2D<T>&
-         */
-        Vector2D<T>& operator*=(double factor) {
-            x *= factor;
-            y *= factor;
-            return (*this);
-        }
-
-        /**
-         * @brief /= operator overload
-         *
-         * This operator divides the x and y components of a vector by a scalar and stores the result in the
-         * calling vector
-         * {a, b} /= c => {a / c, b / c}
-         *
-         * @param factor scalar to divide by
-         * @return Vector2D<T>&
-         */
-        Vector2D<T>& operator/=(double factor) {
-            x /= factor;
-            y /= factor;
-            return (*this);
-        }
-
-        /**
-         * @brief dot product of 2 Vector2D objects
-         *
-         * This function calculates the dot product of two vectors
-         * a.dot(b) = (a.x * b.x) + (a.y * b.y)
+         * {a, b} * {c, d} = (a * c) + (b * d)
          *
          * @tparam Q the type of quantity to use for the other vector
          * @tparam R the type of quantity to use for the result
          * @param other the vector to calculate the dot product with
          * @return R the dot product
          */
-        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> R dot(Vector2D<Q>& other) {
-            return (x * other.getX()) + (y * other.getY());
+        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> constexpr R operator*(const Vector2D<Q>& other) const {
+            return (this->x * other.x) + (this->y * other.y);
         }
 
         /**
-         * @brief cross product of 2 Vector2D objects
+         * @brief / operator overload. Divides a vector by a double
          *
-         * This function calculates the cross product of two vectors
-         * a.cross(b) = (a.x * b.y) - (a.y * b.x)
+         * {a, b} / c = {a / c, b / c}
          *
-         * @tparam Q the type of quantity to use for the other vector
-         * @tparam R the type of quantity to use for the result
-         * @param other the vector to calculate the cross product with
-         * @return R the cross product
+         * @param factor the double to multiple the vector by
+         * @return Vector2D<T>
          */
-        template <isQuantity Q, isQuantity R = Multiplied<T, Q>> R cross(Vector2D<Q>& other) {
-            return (x * other.getY()) - (y * other.getX());
+        constexpr Vector2D<T> operator/(double factor) const { return Vector2D<T>(this->x / factor, this->y / factor); }
+
+        /**
+         * @brief / operator overload. Divides a vector by a quantity
+         *
+         * {a, b} / c = {a / c, b / c}
+         *
+         * @tparam Q the type of quantity to divide the vector with
+         * @tparam R the quantity type of the resulting vector
+         *
+         * @param factor the quantity to divide the vector by
+         * @return Vector2D<T>
+         */
+        template <isQuantity Q, isQuantity R = Divided<T, Q>> Vector2D<R> constexpr operator/(Q factor) const {
+            return Vector2D<R>(this->x / factor, this->y / factor);
         }
 
         /**
-         * @brief angle of the vector
+         * @brief += operator overload. Adds the components of two vectors and stores the result
+         *
+         * {a, b} += {c, d} => {a + c, b + d}
+         *
+         * @param other vector to add
+         * @return Vector2D<T>&
+         */
+        constexpr Vector2D<T>& operator+=(const Vector2D<T>& other) {
+            this->x += other.x;
+            this->y += other.y;
+            return (*this);
+        }
+
+        /**
+         * @brief -= operator overload. Subtracts the components of two vectors and stores the result
+         *
+         * {a, b} -= {c, d} => {a - c, b - d}
+         *
+         * @param other vector to subtract
+         * @return Vector2D<T>&
+         */
+        constexpr Vector2D<T>& operator-=(const Vector2D<T>& other) {
+            this->x -= other.x;
+            this->y -= other.y;
+            return (*this);
+        }
+
+        /**
+         * @brief *= operator overload. Multiplies the components of a vector by a scalar and stores the result
+         *
+         * {a, b} *= c => {a * c, b * c}
+         *
+         * @param factor scalar to multiply by
+         * @return Vector2D<T>&
+         */
+        constexpr Vector2D<T>& operator*=(double factor) {
+            this->x *= factor;
+            this->y *= factor;
+            return (*this);
+        }
+
+        /**
+         * @brief /= operator overload. Divides the components of a vector by a scalar and stores the result
+         *
+         * {a, b} /= c => {a / c, b / c}
+         *
+         * @param factor scalar to divide by
+         * @return Vector2D<T>&
+         */
+        constexpr Vector2D<T>& operator/=(double factor) {
+            this->x /= factor;
+            this->y /= factor;
+            return (*this);
+        }
+
+        /**
+         * @brief angle of the vector from the origin
          *
          * @return Angle
          */
-        Angle theta() { return atan2(y, x); }
+        constexpr Angle theta() const { return atan2(this->y, this->x); }
 
         /**
          * @brief magnitude of the vector
          *
          * @return T
          */
-        T magnitude() { return sqrt(square(x) + square(y)); }
-
-        /**
-         * @brief difference between two vectors
-         *
-         * This function calculates the difference between two vectors
-         * a.vectorTo(b) = {b.x - a.x, b.y - a.y}
-         *
-         * @param other the other vector
-         * @return Vector2D<T>
-         */
-        Vector2D<T> vectorTo(Vector2D<T>& other) { return Vector2D<T>(other.getX() - x, other.getY() - y); }
+        constexpr T magnitude() const { return sqrt(square(this->x) + square(this->y)); }
 
         /**
          * @brief the angle between two vectors
@@ -250,7 +219,7 @@ template <isQuantity T> class Vector2D {
          * @param other the other vector
          * @return Angle
          */
-        Angle angleTo(Vector2D<T>& other) { return atan2(other.getY() - y, other.getX() - x); }
+        constexpr Angle angleTo(const Vector2D<T>& other) const { return atan2(other.y - this->y, other.x - this->x); }
 
         /**
          * @brief get the distance between two vectors
@@ -258,7 +227,9 @@ template <isQuantity T> class Vector2D {
          * @param other the other vector
          * @return T
          */
-        T distanceTo(Vector2D<T>& other) { return sqrt(square(x - other.getX(), 2) + square(y - other.getY(), 2)); }
+        constexpr T distanceTo(const Vector2D<T>& other) const {
+            return sqrt(square(this->x - other.x, 2) + square(this->y - other.y, 2));
+        }
 
         /**
          * @brief normalize the vector
@@ -267,21 +238,18 @@ template <isQuantity T> class Vector2D {
          *
          * @return Vector2D<T>
          */
-        Vector2D<T> normalize() {
-            T m = magnitude();
-            return Vector2D<T>(x / m, y / m);
-        }
+        constexpr Vector2D<T> normalize() const { return (*this) / magnitude(); }
 
         /**
          * @brief rotate the vector by an angle
          *
          * @param angle
          */
-        void rotateBy(Angle angle) {
-            T m = magnitude();
-            Angle t = theta() + angle;
-            x = m * cos(t);
-            y = m * sin(t);
+        constexpr void rotateBy(Angle angle) {
+            const T m = magnitude();
+            const Angle t = theta() + angle;
+            this->x = m * cos(t);
+            this->y = m * sin(t);
         }
 
         /**
@@ -289,10 +257,10 @@ template <isQuantity T> class Vector2D {
          *
          * @param angle
          */
-        void rotateTo(Angle angle) {
-            T m = magnitude();
-            x = m * cos(angle);
-            y = m * sin(angle);
+        constexpr void rotateTo(Angle angle) {
+            const T m = magnitude();
+            this->x = m * cos(angle);
+            this->y = m * sin(angle);
         }
 
         /**
@@ -301,11 +269,7 @@ template <isQuantity T> class Vector2D {
          * @param angle
          * @return Vector2D<T>
          */
-        Vector2D<T> rotatedBy(Angle angle) {
-            T m = magnitude();
-            Angle t = theta() + angle;
-            return fromPolar(t, m);
-        }
+        constexpr Vector2D<T> rotatedBy(Angle angle) const { return fromPolar(theta() + angle, magnitude()); }
 
         /**
          * @brief get a copy of this vector rotated to an angle
@@ -313,11 +277,39 @@ template <isQuantity T> class Vector2D {
          * @param angle
          * @return Vector2D<T>
          */
-        Vector2D<T> rotatedTo(Angle angle) {
-            T m = magnitude();
-            return fromPolar(angle, m);
-        }
+        constexpr Vector2D<T> rotatedTo(Angle angle) const { return fromPolar(angle, magnitude()); }
 };
+
+/**
+ * @brief * operator overload. Multiplies a quantity and a vector
+ *
+ * a * {b, c} = {a * b, a * c}
+ *
+ * @tparam Q1 the quantity type of the scalar
+ * @tparam Q2 the quantity type of the vector
+ * @tparam Q3 the type of quantity to use for the result
+ *
+ * @param lhs the scalar on the left hand side
+ * @param rhs the vector on the right hand side
+ * @return Vector2D<Q3> the product
+ */
+template <isQuantity Q1, isQuantity Q2, isQuantity Q3 = Multiplied<Q1, Q2>>
+constexpr Vector2D<Q3> operator*(Q1 lhs, const Vector2D<Q2>& rhs) {
+    return rhs * lhs;
+}
+
+/**
+ * @brief * operator overload. Multiplies a double and a vector
+ *
+ * a * {b, c} = {a * b, a * c}
+ *
+ * @tparam Q the quantity type of the vector
+ *
+ * @param lhs the scalar on the left hand side
+ * @param rhs the vector on the right hand side
+ * @return Vector2D<Q> the product
+ */
+template <isQuantity Q> constexpr Vector2D<Q> operator*(double lhs, const Vector2D<Q>& rhs) { return rhs * lhs; }
 
 // define some common vector types
 typedef Vector2D<Length> V2Position;

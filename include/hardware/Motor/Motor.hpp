@@ -478,6 +478,23 @@ class Motor : public Encoder {
          * @endcode
          */
         Temperature getTemperature() const;
+        /**
+         * @brief set the output velocity of the motor
+         *
+         * @param outputVelocity the theoretical maximum output velocity of the motor, after gearing, to set
+         * @return int 0 success
+         * @return INT_MAX error occurred, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor(1, 360_rpm);
+         *     // set the output velocity to 450 rpm
+         *     motor.setOutputVelocity(450_rpm);
+         * }
+         * @endcode
+         */
+        int setOutputVelocity(AngularVelocity outputVelocity);
     private:
         AngularVelocity m_outputVelocity;
         Angle m_offset = 0_stDeg;
