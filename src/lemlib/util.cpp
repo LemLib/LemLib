@@ -20,3 +20,18 @@ double lemlib::slew(double target, double current, double maxChange) {
     else if (change < -maxChange) change = -maxChange;
     return current + change;
 }
+
+double lemlib::respectSpeeds(double power, double previous, double max, double min, double slew) {
+    // respect maximum speed
+    if (power > max) power = max;
+    else if (power < -max) power = -max;
+
+    // optionally slew if enabled
+    if (slew != 0) power = lemlib::slew(power, previous, slew);
+
+    // respect minimum speed
+    if (power < 0 && power > -min) power = -min;
+    else if (power > 0 && power < min) power = min;
+
+    return power;
+}

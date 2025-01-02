@@ -18,4 +18,5 @@ enum class AngularDirection { CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, AUTO };
 
 Angle angleError(Angle target, Angle position, AngularDirection direction = AngularDirection::AUTO);
 double slew(double target, double current, double maxChange);
+double respectSpeeds(double power, double previous, double max, double min, double slew);
 } // namespace lemlib

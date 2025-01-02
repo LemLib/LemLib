@@ -50,12 +50,8 @@ void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingPar
         // calculate speed
         motorPower = settings.angularPID.update(deltaTheta.convert(deg));
 
-        if (motorPower > params.maxSpeed) motorPower = params.maxSpeed;
-        else if (motorPower < -params.maxSpeed) motorPower = -params.maxSpeed;
-        if (units::abs(deltaTheta) > 20_stDeg)
-            motorPower = lemlib::slew(motorPower, previousMotorPower, settings.angularPID.getGains().slew);
-        if (motorPower < 0 && motorPower > -params.minSpeed) motorPower = -params.minSpeed;
-        else if (motorPower > 0 && motorPower < params.minSpeed) motorPower = params.minSpeed;
+        motorPower = lemlib::respectSpeeds(motorPower, previousMotorPower, params.maxSpeed, params.minSpeed,
+                                           units::abs(deltaTheta) > 20_stDeg ? settings.angularPID.getGains().slew : 0);
         previousMotorPower = motorPower;
 
         // move the motors
