@@ -16,6 +16,10 @@ temp.errors
 *.ini
 .d/
 
+# liblvgl
+firmware/liblvgl.a
+include/liblvgl/*
+
 # template files
 *.zip
 
