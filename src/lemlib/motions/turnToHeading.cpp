@@ -51,7 +51,7 @@ void lemlib::turnToHeading(AngleRange heading, Time timeout, lemlib::TurnToHeadi
                                            units::abs(deltaTheta) > 20_stDeg ? settings.angularPID.getGains().slew : 0);
         previousMotorPower = motorPower;
 
-        logger.log(logger::Level::DEBUG, "Turning with {} power, error: {}", motorPower, deltaTheta);
+        logger.log(logger::Level::DEBUG, "Turning with {} power, error: {}", motorPower, deltaTheta.convert(deg));
 
         // move the motors
         settings.leftMotors.move(motorPower);
