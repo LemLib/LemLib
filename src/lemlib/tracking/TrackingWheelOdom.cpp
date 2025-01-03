@@ -26,7 +26,7 @@ Length TrackingWheel::getOffset() { return m_offset; }
 
 int TrackingWheel::reset() { return m_encoder->setAngle(0_stDeg); }
 
-TrackingWheelOdometry::TrackingWheelOdometry(std::vector<Imu*> imus, std::vector<TrackingWheel> verticalWheels,
+TrackingWheelOdometry::TrackingWheelOdometry(std::vector<IMU*> imus, std::vector<TrackingWheel> verticalWheels,
                                              std::vector<TrackingWheel> horizontalWheels)
     : m_Imus(imus),
       m_verticalWheels(verticalWheels),
@@ -127,7 +127,7 @@ static std::optional<Angle> calculateWheelHeading(std::vector<TrackingWheel>& tr
  * @return std::nullopt there's not IMUs to calculate the heading
  * @return std::optional<Angle> the heading
  */
-static std::optional<Angle> calculateIMUHeading(std::vector<Imu*>& imus) {
+static std::optional<Angle> calculateIMUHeading(std::vector<IMU*>& imus) {
     for (int i = 0; i < imus.size(); ++i) {
         const Angle data = imus.at(i)->getRotation();
         if (data.internal() == INFINITY) { // error checking

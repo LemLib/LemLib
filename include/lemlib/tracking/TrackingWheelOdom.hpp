@@ -197,7 +197,7 @@ class TrackingWheelOdometry {
          * lemlib::TrackingWheelOdometry odom({}, {verticalWheel}, {horizontalWheel1, horizontalWheel2});
          * @endcode
          */
-        TrackingWheelOdometry(std::vector<Imu*> imus, std::vector<TrackingWheel> verticalWheels,
+        TrackingWheelOdometry(std::vector<IMU*> imus, std::vector<TrackingWheel> verticalWheels,
                               std::vector<TrackingWheel> horizontalWheels);
         /**
          * @brief Get the estimated Pose of the robot
@@ -299,7 +299,7 @@ class TrackingWheelOdometry {
         units::Pose m_pose = {0_m, 0_m, 0_stDeg};
         Angle m_offset = 0_stDeg;
         std::optional<pros::Task> m_task = std::nullopt;
-        std::vector<Imu*> m_Imus;
+        std::vector<IMU*> m_Imus;
         std::vector<TrackingWheel> m_verticalWheels;
         std::vector<TrackingWheel> m_horizontalWheels;
 };
