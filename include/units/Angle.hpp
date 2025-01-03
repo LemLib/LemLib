@@ -68,6 +68,29 @@ class CAngle {
         constexpr CAngle(double value) : value(value) {}
 };
 
+/**
+ * @brief Angle Distance class
+ *
+ * yet another helper class to manage the compass angle fiasco (it's getting nuked on May 15 2025)
+ *
+ * consider the following:
+ * Angle exitRange1 = 0_cDeg;
+ * Angle exitRange2 = 0_stDeg;
+ *
+ * It is expected that exitRange1 and exitRange2 is equal to each other.
+ * However, this is not the case. 0_cDeg gets converted to 90_stDeg
+ * implicitly. So, yet another helper class is necessary (hooray)
+ *
+ */
+class AngleRange : public Angle {
+    public:
+        explicit constexpr AngleRange(double value) : Angle(fabs(value)) {}
+
+        constexpr AngleRange(Angle value) : Angle(units::abs(value)) {}
+
+        constexpr AngleRange(CAngle value) : Angle(units::abs(Angle(value) - Angle(M_PI_2))) {}
+};
+
 constexpr bool operator==(Angle lhs, CAngle rhs) { return lhs == Angle(rhs); }
 
 constexpr Angle rad = Angle(1.0);
