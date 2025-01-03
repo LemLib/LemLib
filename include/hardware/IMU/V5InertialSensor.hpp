@@ -4,7 +4,7 @@
 #include "pros/imu.hpp"
 
 namespace lemlib {
-class V5InertialSensor : public Imu {
+class V5InertialSensor : public IMU {
     public:
         /**
          * @brief Construct a new V5 Inertial Sensor

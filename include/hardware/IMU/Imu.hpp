@@ -1,10 +1,9 @@
 #pragma once
 
 #include "units/Angle.hpp"
-#include "units/units.hpp"
 
 namespace lemlib {
-class Imu {
+class IMU {
     public:
         /**
          * @brief calibrate the IMU
@@ -80,7 +79,7 @@ class Imu {
          * @return INFINITY error occurred, setting errno
          */
         virtual double getGyroScalar();
-        virtual ~Imu() = default;
+        virtual ~IMU() = default;
     protected:
         double m_gyroScalar = 1.0;
 };

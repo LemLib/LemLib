@@ -17,7 +17,7 @@ namespace lemlib {
  * motor in the group is functioning properly, the MotorGroup will not throw any errors. In addition, errno will be set
  * to whatever error was thrown last, as there may be multiple motors in a motor group.
  */
-class MotorGroup : Encoder {
+class MotorGroup : public Encoder {
     public:
         /**
          * @brief Construct a new Motor Group
