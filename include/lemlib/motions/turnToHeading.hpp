@@ -28,7 +28,7 @@ struct TurnToHeadingParams {
         int minSpeed = 0;
         /** angle between the robot and target point where the movement will exit. Only has an effect if minSpeed is
          * non-zero.*/
-        Angle earlyExitRange = 0_cRot;
+        AngleRange earlyExitRange = 0_cRot;
 };
 
 /**
@@ -42,7 +42,7 @@ struct TurnToHeadingSettings {
         /** the angular PID that is used to turn the robot */
         PID angularPID;
         /** the exit conditions that will cause the robot to stop moving */
-        ExitConditionGroup<Angle> exitConditions;
+        ExitConditionGroup<AngleRange> exitConditions;
         /** this function should return the estimated pose of the robot, typically by the tracking wheel odometry. */
         std::function<units::Pose()> poseGetter;
         /** the left motor group of the drivetrain */
@@ -75,5 +75,5 @@ struct TurnToHeadingSettings {
  * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
  * chassis.turnToHeading(45_cDeg, 2_sec, {.minSpeed = 60, .earlyExitRange = 5_cDeg});
  */
-void turnToHeading(Angle heading, Time timeout, TurnToHeadingParams params, TurnToHeadingSettings settings);
+void turnToHeading(AngleRange heading, Time timeout, TurnToHeadingParams params, TurnToHeadingSettings settings);
 } // namespace lemlib

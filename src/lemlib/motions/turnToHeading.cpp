@@ -4,7 +4,7 @@
 #include "lemlib/Timer.hpp"
 #include <optional>
 
-void lemlib::turnToHeading(Angle heading, Time timeout, lemlib::TurnToHeadingParams params,
+void lemlib::turnToHeading(AngleRange heading, Time timeout, lemlib::TurnToHeadingParams params,
                            lemlib::TurnToHeadingSettings settings) {
     params.minSpeed = abs(params.minSpeed);
 
