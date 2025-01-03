@@ -136,7 +136,7 @@
                 "version": "4.1.1"
             },
             "units": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\units@0.4.1",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\units@0.4.2",
                 "metadata": {
                     "origin": "local"
                 },
@@ -145,16 +145,16 @@
                 "supported_kernels": "^4.1.1",
                 "system_files": [
                     "firmware\\units.a",
-                    "include\\units\\units.hpp",
-                    "include\\units\\Angle.hpp",
                     "include\\units\\Temperature.hpp",
-                    "include\\units\\Vector3D.hpp",
                     "include\\units\\Vector2D.hpp",
-                    "include\\units\\Pose.hpp"
+                    "include\\units\\Angle.hpp",
+                    "include\\units\\units.hpp",
+                    "include\\units\\Pose.hpp",
+                    "include\\units\\Vector3D.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.4.1"
+                "version": "0.4.2"
             }
         },
         "upload_options": {},
