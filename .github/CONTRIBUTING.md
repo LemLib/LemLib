@@ -174,7 +174,7 @@ You can improve the documentation by:
 
 Changes should be requested via a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](https://github.com/LemLib/LemLib/blob/master/.github/PULL_REQUEST_TEMPLATE.md) to structure your pull request. Additionally, you should verify that the documentation builds correctly on your machine.
 
-You can do so by installing Doxygen, and all of the python dependencies listed in `docs/requirements.txt`. Once you've done that, run the following commands to render the documentation:
+You can do so by installing [Doxygen](https://www.doxygen.nl/download.html), and all of the python dependencies listed in `docs/requirements.txt`. Once you've done that, run the following commands to render the documentation:
 
 ```sh
 cd docs
