@@ -2,7 +2,7 @@
 
 #include <format>
 #include <string>
-#include "LemLog/logger/Sink.hpp"
+#include "lemlog/logger/Sink.hpp"
 
 namespace logger {
 /**
@@ -10,7 +10,8 @@ namespace logger {
  *
  */
 class Helper {
-        friend void log(Level level, const std::string& topic, const std::string& message);
+        friend void log(Level level, const std::string& topic,
+                        const std::string& message);
     public:
         /**
          * @brief Construct a new Helper object
@@ -52,7 +53,8 @@ class Helper {
          * @endcode
          */
 
-        template <typename... Args> void log(Level level, std::string_view format, Args&&... args) const {
+        template <typename... Args>
+        void log(Level level, std::string_view format, Args&&... args) const {
             const auto& formatted_args = std::make_format_args(args...);
 
             // Create the format_args object using std::forward
@@ -60,6 +62,26 @@ class Helper {
 
             // Log the formatted message
             logger::log(level, m_topic, message);
+        }
+
+        template <typename... Args>
+        void debug(std::string_view format, Args&&... args) const {
+            log(Level::DEBUG, format, std::forward<Args>(args)...);
+        }
+
+        template <typename... Args>
+        void info(std::string_view format, Args&&... args) const {
+            log(Level::INFO, format, std::forward<Args>(args)...);
+        }
+
+        template <typename... Args>
+        void warn(std::string_view format, Args&&... args) const {
+            log(Level::WARN, format, std::forward<Args>(args)...);
+        }
+
+        template <typename... Args>
+        void error(std::string_view format, Args&&... args) const {
+            log(Level::ERROR, format, std::forward<Args>(args)...);
         }
     private:
         const std::string m_topic;
