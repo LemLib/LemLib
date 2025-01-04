@@ -1,7 +1,7 @@
 #include "main.h"
 #include "lemlog/logger/sinks/terminal.hpp"
 #include "hardware/Motor/MotorGroup.hpp"
-#include "hardware/encoder/ADIEncoder.hpp"
+#include "hardware/Encoder/ADIEncoder.hpp"
 #include "hardware/IMU/V5InertialSensor.hpp"
 #include "lemlib/tracking/TrackingWheelOdom.hpp"
 
