@@ -146,6 +146,8 @@ Here is a list of recommended extensions:
 - [Material Icon Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme) for improved visual grepping of files
 - [MyST-Markdown](https://marketplace.visualstudio.com/items?itemName=ExecutableBookProject.myst-highlight) for previewing markdown files with MyST extensions
 - [PROS](https://marketplace.visualstudio.com/items?itemName=sigbots.pros) to build and upload your code
+- [Clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) to make sure your code is formatted according to our [Styleguides](#💄Styleguides)
+
 
 > If asked to disable the IntelliSense in favor of clangd, do so.
 
