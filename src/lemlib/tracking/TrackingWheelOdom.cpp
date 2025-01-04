@@ -11,7 +11,7 @@ TrackingWheel::TrackingWheel(Encoder* encoder, Length diameter, Length offset)
       m_offset(offset),
       m_lastTotal(to_stRad(encoder->getAngle()) * M_PI * diameter) {}
 
-Length TrackingWheel::getDistanceTraveled() { return to_stRad(m_encoder->getAngle()) * M_PI * m_diameter; }
+Length TrackingWheel::getDistanceTraveled() { return to_stRot(m_encoder->getAngle()) * M_PI * m_diameter; }
 
 Length TrackingWheel::getDistanceDelta() {
     // calculate delta
