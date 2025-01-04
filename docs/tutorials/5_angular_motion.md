@@ -50,7 +50,7 @@ Here's an example of how you'd use it:
 
 ```cpp
 // turn to the point (53, 53) with a timeout of 1000 ms
-chassis.turnTo(53, 53, 1000);
+chassis.turnToPoint(53, 53, 1000);
 ```
 
 Similar to `turnToHeading`, the motion also takes two optional arguments, `params` and `async`. 
