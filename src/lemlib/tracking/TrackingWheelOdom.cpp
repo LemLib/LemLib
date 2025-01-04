@@ -1,15 +1,44 @@
 #include "lemlib/tracking/TrackingWheelOdom.hpp"
+#include "hardware/Encoder/V5RotationSensor.hpp"
+#include "hardware/Encoder/ADIEncoder.hpp"
 #include "LemLog/logger/Helper.hpp"
 #include "units/Vector2D.hpp"
 
 static logger::Helper helper("lemlib/odom/tracking_wheel_odom");
 
 namespace lemlib {
-TrackingWheel::TrackingWheel(Encoder* encoder, Length diameter, Length offset)
+TrackingWheel::TrackingWheel(Encoder* encoder, Length diameter, Length offset, Number ratio)
     : m_encoder(encoder),
       m_diameter(diameter),
       m_offset(offset),
-      m_lastTotal(to_stRad(encoder->getAngle()) * M_PI * diameter) {}
+      m_ratio(ratio),
+      m_lastTotal(to_stRot(encoder->getAngle()) * M_PI * diameter * m_ratio) {}
+
+TrackingWheel::TrackingWheel(ReversibleSmartPort port, Length diameter, Length offset, Number ratio)
+    : m_encoder(new V5RotationSensor(port)),
+      m_diameter(diameter),
+      m_offset(offset),
+      m_ratio(ratio),
+      m_lastTotal(to_stRot(m_encoder->getAngle()) * M_PI * diameter * m_ratio),
+      m_deallocate(true) {}
+
+TrackingWheel::TrackingWheel(ADIPort topPort, ADIPort bottomPort, bool reversed, Length diameter, Length offset,
+                             Number ratio)
+    : m_encoder(new ADIEncoder(topPort, bottomPort, reversed)),
+      m_diameter(diameter),
+      m_offset(offset),
+      m_ratio(ratio),
+      m_lastTotal(to_stRot(m_encoder->getAngle()) * M_PI * diameter * m_ratio),
+      m_deallocate(true) {}
+
+TrackingWheel::TrackingWheel(SmartPort expanderPort, ADIPort topPort, ADIPort bottomPort, bool reversed,
+                             Length diameter, Length offset, Number ratio)
+    : m_encoder(new ADIEncoder(expanderPort, topPort, bottomPort, reversed)),
+      m_diameter(diameter),
+      m_offset(offset),
+      m_ratio(ratio),
+      m_lastTotal(to_stRot(m_encoder->getAngle()) * M_PI * diameter * m_ratio),
+      m_deallocate(true) {}
 
 Length TrackingWheel::getDistanceTraveled() { return to_stRot(m_encoder->getAngle()) * M_PI * m_diameter; }
 
@@ -25,6 +54,10 @@ Length TrackingWheel::getDistanceDelta() {
 Length TrackingWheel::getOffset() { return m_offset; }
 
 int TrackingWheel::reset() { return m_encoder->setAngle(0_stDeg); }
+
+TrackingWheel::~TrackingWheel() {
+    if (m_deallocate) delete m_encoder;
+}
 
 TrackingWheelOdometry::TrackingWheelOdometry(std::vector<IMU*> imus, std::vector<TrackingWheel> verticalWheels,
                                              std::vector<TrackingWheel> horizontalWheels)
