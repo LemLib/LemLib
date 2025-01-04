@@ -3,24 +3,25 @@
 #include "pros/misc.h"
 
 namespace lemlib {
-MotionCancelHelper::MotionCancelHelper()
-    : originalCompStatus(pros::c::competition_get_status()),
-      prevTime(pros::millis()) {}
+MotionCancelHelper::MotionCancelHelper(Time period)
+    : m_originalCompStatus(pros::c::competition_get_status()),
+      m_prevTime(pros::millis()),
+      m_period(period) {}
 
-bool MotionCancelHelper::wait(Time timeout) {
-    const std::uint32_t processedTimeout = to_msec(timeout);
+bool MotionCancelHelper::wait() {
+    const std::uint32_t processedTimeout = to_msec(m_period);
     // if current time - previous time > timeout
     // then set previous time to current time
     // this is to prevent the motion iterating multiple times
     // with no delay in between
     const int64_t now = int64_t(pros::millis());
-    if (now - int64_t(prevTime) > int64_t(processedTimeout)) prevTime = now - processedTimeout;
+    if (now - int64_t(m_prevTime) > int64_t(processedTimeout)) m_prevTime = now - processedTimeout;
     // only delay if this is not the first iteration
-    if (!firstIteration) pros::Task::delay_until(&prevTime, processedTimeout);
-    else firstIteration = false;
+    if (!m_firstIteration) pros::Task::delay_until(&m_prevTime, processedTimeout);
+    else m_firstIteration = false;
 
     // if the competition state is not the same as when the motion started, then stop the motion
-    if (pros::c::competition_get_status() != originalCompStatus) return 0;
+    if (pros::c::competition_get_status() != m_originalCompStatus) return 0;
 
     // check if there was a notification
     return pros::Task::notify_take(true, 0) == 0;

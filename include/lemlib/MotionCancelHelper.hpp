@@ -13,15 +13,17 @@ class MotionCancelHelper {
         /**
          * @brief Construct a new Motion Cancel Helper object
          *
+         * @param period how often to update
+         *
          * @b Example:
          * @code {.cpp}
          * void myMotion() {
          *   // construct the cancellation helper
-         *   lemlib::MotionCancelHelper helper;
+         *   lemlib::MotionCancelHelper helper(10_msec);
          * }
          * @endcode
          */
-        MotionCancelHelper();
+        MotionCancelHelper(Time period);
         /**
          * @brief wait a certain amount of time
          *
@@ -34,19 +36,18 @@ class MotionCancelHelper {
          * The amount of time it waits is dependent on how long each iteration of the
          * while loop its in takes. See example below.
          *
-         * @param timeout how long to wait
          * @returns true if the motion should continue, false otherwise
          *
          * @b Example:
          * @code {.cpp}
          * void myMotion() {
          *   // create an instance of the motion cancellation helper
-         *   lemlib::MotionCancelHelper helper;
+         *   lemlib::MotionCancelHelper helper(10_msec);
          *
          *   // if the loop starts at a global time of e.g 2015 msec, and each iteration
          *   // of the while loop takes 3 msec, the loop will still iterate at 2025,
          *   // 2035, 2045, etc.
-         *   while(helper.wait(10_msec)) {
+         *   while(helper.wait()) {
          *     // motion stuff here
          *   }
          *
@@ -56,10 +57,11 @@ class MotionCancelHelper {
          * }
          * @endcode
          */
-        bool wait(Time timeout);
+        bool wait();
     private:
-        bool firstIteration = true;
-        std::uint32_t prevTime;
-        const int originalCompStatus;
+        bool m_firstIteration = true;
+        std::uint32_t m_prevTime;
+        const int m_originalCompStatus;
+        const Time m_period;
 };
 } // namespace lemlib
