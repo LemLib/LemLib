@@ -14,6 +14,7 @@ struct Gains {
         double kP = 0;
         double kI = 0;
         double kD = 0;
+        double slew = 0;
 };
 
 class PID {
