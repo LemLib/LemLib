@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hardware/encoder/Encoder.hpp"
-#include "hardware/IMU/Imu.hpp"
+#include "hardware/IMU/IMU.hpp"
 #include "pros/rtos.hpp"
 #include "units/Pose.hpp"
 #include <vector>
