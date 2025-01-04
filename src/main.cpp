@@ -10,7 +10,7 @@ logger::Terminal terminal;
 lemlib::MotorGroup rightDrive({8, 10}, 360_rpm);
 lemlib::MotorGroup leftDrive({18, 19}, 360_rpm);
 
-lemlib::ADIEncoder vEncoder('E', 'F', false);
+lemlib::ADIEncoder vEncoder('E', 'F', true);
 lemlib::ADIEncoder hEncoder('G', 'H', false);
 
 lemlib::V5InertialSensor imu(1);
@@ -30,6 +30,7 @@ void initialize() {
     pros::delay(3200);
     odom.startTask();
     pros::delay(100);
+    odom.setPose({0_in, 0_in, 45_cDeg});
     while (true) {
         auto p = odom.getPose();
         pros::lcd::print(0, "X: %f", to_in(p.x));

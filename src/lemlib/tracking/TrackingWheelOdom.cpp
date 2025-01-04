@@ -116,7 +116,7 @@ static std::optional<Angle> calculateWheelHeading(std::vector<TrackingWheel>& tr
         return calculateWheelHeading(trackingWheels);
     }
     // return the calculated heading
-    return from_stRad((distance1 - distance2) / (offset1 - offset2));
+    return from_stRad((distance1 - distance2) / (offset1 - offset2)) + 90_stDeg;
 }
 
 /**
