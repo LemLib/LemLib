@@ -168,7 +168,7 @@ void TrackingWheelOdometry::update(Time period) {
         const Angle theta = m_offset + *thetaOpt;
 
         // step 3: calculate change in local coordinates
-        const Angle deltaTheta = theta - m_pose.theta();
+        const Angle deltaTheta = theta - m_pose.orientation;
         const units::V2Position localPosition = [&] {
             const units::V2Position lateralDeltas = {horizontalData.distance, verticalData.distance};
             const units::V2Position lateralOffsets = {horizontalData.offset, verticalData.offset};
