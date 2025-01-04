@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pros/motors.hpp"
-#include "hardware/encoder/Encoder.hpp"
+#include "hardware/Encoder/Encoder.hpp"
 #include "units/Temperature.hpp"
 
 namespace lemlib {
