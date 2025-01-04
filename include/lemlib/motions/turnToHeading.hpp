@@ -75,5 +75,5 @@ struct TurnToHeadingSettings {
  * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
  * chassis.turnToHeading(45_cDeg, 2_sec, {.minSpeed = 60, .earlyExitRange = 5_cDeg});
  */
-void turnToHeading(AngleRange heading, Time timeout, TurnToHeadingParams params, TurnToHeadingSettings settings);
+void turnToHeading(Angle heading, Time timeout, TurnToHeadingParams params, TurnToHeadingSettings settings);
 } // namespace lemlib
