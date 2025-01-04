@@ -2,6 +2,7 @@
 
 #include "pros/motors.hpp"
 #include "hardware/Encoder/Encoder.hpp"
+#include "hardware/Port.hpp"
 #include "units/Temperature.hpp"
 
 namespace lemlib {
@@ -25,26 +26,9 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        Motor(int port, AngularVelocity outputVelocity);
+        Motor(ReversibleSmartPort port, AngularVelocity outputVelocity);
         /**
-         * @brief Construct a new Motor object
-         *
-         * @param port the port of the motor
-         * @param reversed whether the motor is reversed or not
-         * @param outputVelocity the maximum theoretical velocity of the motor
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     // construct a new Motor object on port 1, which is not reversed,
-         *     // and powers a mechanism spinning at 600 rpm
-         *     lemlib::Motor motor(1, false, 600_rpm);
-         * }
-         * @endcode
-         */
-        Motor(uint8_t port, bool reversed, AngularVelocity outputVelocity);
-        /**
-         * @brief Construct a new Motor object
+         * @brief Create a new Motor object
          *
          * @param motor the pros motor object to get the port from
          * @param outputVelocity the maximum theoretical velocity of the motor
@@ -55,11 +39,11 @@ class Motor : public Encoder {
          *     // create a pros motor on port 1, which is reversed
          *     pros::Motor prosMotor(-1);
          *     // create a motor which is reversed, on port 1, and spins at 200 rpm
-         *     lemlib::Motor motor(prosMotor, 200_rpm);
+         *     lemlib::Motor motor = lemlib::Motor::from_pros_motor(prosMotor, 200_rpm);
          * }
          * @endcode
          */
-        Motor(const pros::Motor motor, AngularVelocity outputVelocity);
+        static Motor from_pros_motor(const pros::Motor motor, AngularVelocity outputVelocity);
         /**
          * @brief move the motor at a percent power from -1.0 to +1.0
          *
@@ -402,7 +386,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int getPort() const;
+        ReversibleSmartPort getPort() const;
         /**
          * @brief Get the current limit of the motor
          *
@@ -498,6 +482,6 @@ class Motor : public Encoder {
     private:
         AngularVelocity m_outputVelocity;
         Angle m_offset = 0_stDeg;
-        int m_port;
+        ReversibleSmartPort m_port;
 };
 } // namespace lemlib

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hardware/Encoder/Encoder.hpp"
+#include "hardware/Port.hpp"
 #include "pros/rotation.hpp"
 
 namespace lemlib {
@@ -10,19 +11,6 @@ namespace lemlib {
  */
 class V5RotationSensor : public Encoder {
     public:
-        /**
-         * @brief Construct a new V5 Rotation Sensor
-         *
-         * @param encoder the pros::Rotation object to use
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     lemlib::V5RotationSensor encoder = pros::Rotation(1);
-         * }
-         * @endcode
-         */
-        V5RotationSensor(pros::Rotation encoder);
         /**
          * @brief Construct a new V5 Rotation Sensor
          *
@@ -36,22 +24,20 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        V5RotationSensor(std::int8_t port);
+        V5RotationSensor(ReversibleSmartPort port);
         /**
-         * @brief Construct a new V5 Rotation Sensor
+         * @brief Create a new V5 Rotation Sensor
          *
-         * @param port the port of the rotation sensor
-         * @param reversed whether the sensor should be reversed or not
+         * @param encoder the pros::Rotation object to use
          *
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     // rotation sensor on port 1, which is not reversed
-         *     lemlib::V5RotationSensor encoder(1, false);
+         *     lemlib::V5RotationSensor encoder = lemlib::V5RotationSensor::from_pros_rot(pros::Rotation(1));
          * }
          * @endcode
          */
-        V5RotationSensor(std::uint8_t port, bool reversed);
+        static V5RotationSensor from_pros_rot(pros::Rotation encoder);
         /**
          * @brief whether the V5 Rotation Sensor is connected
          *

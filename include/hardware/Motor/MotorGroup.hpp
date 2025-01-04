@@ -1,5 +1,6 @@
 #include "pros/motor_group.hpp"
 #include "hardware/Motor/Motor.hpp"
+#include "hardware/Port.hpp"
 #include "units/Angle.hpp"
 #include <vector>
 
@@ -34,9 +35,9 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        MotorGroup(std::initializer_list<int> ports, AngularVelocity outputVelocity);
+        MotorGroup(std::initializer_list<ReversibleSmartPort> ports, AngularVelocity outputVelocity);
         /**
-         * @brief Construct a new Motor Group
+         * @brief Create a new Motor Group
          *
          * @param group the pros motor group to get the ports from
          * @param outputVelocity the theoretical maximum output velocity of the motor group, after gearing
@@ -52,7 +53,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        MotorGroup(const pros::MotorGroup group, AngularVelocity outputVelocity);
+        static MotorGroup from_pros_group(const pros::MotorGroup group, AngularVelocity outputVelocity);
         /**
          * @brief move the motors at a percent power from -1.0 to +1.0
          *
@@ -394,7 +395,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int addMotor(int port);
+        int addMotor(ReversibleSmartPort port);
         /**
          * @brief Add a motor to the motor group
          *
@@ -461,7 +462,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        void removeMotor(int port);
+        void removeMotor(ReversibleSmartPort port);
         /**
          * @brief Remove a motor from the motor group
          *
@@ -481,7 +482,7 @@ class MotorGroup : public Encoder {
         void removeMotor(Motor motor);
     private:
         struct MotorInfo {
-                int port;
+                ReversibleSmartPort port;
                 bool connectedLastCycle;
                 Angle offset;
         };
@@ -503,7 +504,7 @@ class MotorGroup : public Encoder {
          * @return 0 on success
          * @return INT_MAX on failure, setting errno
          */
-        Angle configureMotor(int port);
+        Angle configureMotor(ReversibleSmartPort port);
         BrakeMode m_brakeMode = BrakeMode::COAST;
         /**
          * @brief Get motors in the motor group as a vector of lemlib::Motor objects
