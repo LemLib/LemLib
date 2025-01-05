@@ -46,4 +46,7 @@ struct MoveToPoseSettings {
         /** the right motor group of the drivetrain */
         pros::MotorGroup& rightMotors;
 };
+
+void moveToPose(Length x, Length y, AngleRange theta, Time timeout, MoveToPoseParams params,
+                MoveToPoseSettings settings);
 } // namespace lemlib
