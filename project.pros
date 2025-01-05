@@ -13,15 +13,15 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.1.1",
                 "system_files": [
-                    "firmware\\hardware.a",
+                    "include\\hardware\\Encoder\\V5RotationSensor.hpp",
                     "include\\hardware\\Encoder\\ADIEncoder.hpp",
                     "include\\hardware\\IMU\\V5InertialSensor.hpp",
                     "include\\hardware\\Motor\\MotorGroup.hpp",
-                    "include\\hardware\\IMU\\IMU.hpp",
-                    "include\\hardware\\Encoder\\Encoder.hpp",
-                    "include\\hardware\\Encoder\\V5RotationSensor.hpp",
                     "include\\hardware\\Motor\\Motor.hpp",
-                    "include\\hardware\\Port.hpp"
+                    "include\\hardware\\Encoder\\Encoder.hpp",
+                    "include\\hardware\\IMU\\IMU.hpp",
+                    "include\\hardware\\Port.hpp",
+                    "firmware\\hardware.a"
                 ],
                 "target": "v5",
                 "user_files": [],

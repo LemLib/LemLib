@@ -1,3 +1,5 @@
+#pragma once
+
 #include "pros/motor_group.hpp"
 #include "hardware/Motor/Motor.hpp"
 #include "hardware/Port.hpp"
