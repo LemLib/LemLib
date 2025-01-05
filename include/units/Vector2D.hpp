@@ -228,7 +228,7 @@ template <isQuantity T> class Vector2D {
          * @return T
          */
         constexpr T distanceTo(const Vector2D<T>& other) const {
-            return sqrt(square(this->x - other.x, 2) + square(this->y - other.y, 2));
+            return sqrt(square(this->x - other.x) + square(this->y - other.y));
         }
 
         /**
