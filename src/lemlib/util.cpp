@@ -35,3 +35,28 @@ double lemlib::respectSpeeds(double power, double previous, double max, double m
 
     return power;
 }
+
+double lemlib::getCurvature(units::Pose pose, units::Pose other) {
+    // calculate whether the pose is on the left or right side of the circle
+    double side = units::sgn(units::sin(pose.orientation) * (other.x - pose.x) -
+                             units::cos(pose.orientation) * (other.y - pose.y));
+    // calculate center point and radius
+    Number a = -units::tan(pose.orientation);
+    Number c = units::tan(pose.orientation) * pose.x.convert(in) - pose.y.convert(in);
+    Number x = units::abs(a * other.x.convert(in) - other.y.convert(in) + c) / units::sqrt(units::square(a) + 1);
+    Number d = units::hypot(other.x - pose.x, other.y - pose.y).convert(in);
+
+    return (side * ((2 * x) / units::square(d))).internal();
+}
+
+std::tuple<double, double> lemlib::ratioSpeeds(double lateral, double angular, double maxSpeed) {
+    double leftPower = lateral + angular;
+    double rightPower = lateral - angular;
+    const double ratio = std::max(std::fabs(leftPower), std::fabs(rightPower)) / maxSpeed;
+    if (ratio > 1) {
+        leftPower /= ratio;
+        rightPower /= ratio;
+    }
+
+    return {leftPower, rightPower};
+}

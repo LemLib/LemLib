@@ -1,7 +1,7 @@
 #pragma once
 
+#include "hardware/Motor/MotorGroup.hpp"
 #include "lemlib/ExitCondition.hpp"
-#include "pros/motor_group.hpp"
 #include "units/Angle.hpp"
 #include "lemlib/PID.hpp"
 #include "units/Pose.hpp"
@@ -18,8 +18,8 @@ struct MoveToPoseParams {
         bool forwards = true;
         double horizontalDrift = 0;
         double lead = 0.6;
-        int maxSpeed = 1;
-        int minSpeed = 0;
+        double maxSpeed = 1;
+        double minSpeed = 0;
         Length earlyExitRange = 0_in;
 };
 
@@ -42,9 +42,9 @@ struct MoveToPoseSettings {
         /** this function should return the estimated pose of the robot, typically by the tracking wheel odometry. */
         std::function<units::Pose()> poseGetter;
         /** the left motor group of the drivetrain */
-        pros::MotorGroup& leftMotors;
+        lemlib::MotorGroup& leftMotors;
         /** the right motor group of the drivetrain */
-        pros::MotorGroup& rightMotors;
+        lemlib::MotorGroup& rightMotors;
 };
 
 void moveToPose(Length x, Length y, AngleRange theta, Time timeout, MoveToPoseParams params,
