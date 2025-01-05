@@ -38,10 +38,10 @@ struct TurnToAnyParams {
         /** the direction the robot should turn in. AUTO by default */
         AngularDirection direction = AngularDirection::AUTO;
         /** the maximum speed the robot can turn at. Value between 0-1. 1 by default */
-        int maxSpeed = 1;
+        double maxSpeed = 1;
         /** the minimum speed the robot can turn at. If set to a non-zero value, the `it conditions will switch to less
          * accurate but smoother ones. Value between 0-1. 0 by default */
-        int minSpeed = 0;
+        double minSpeed = 0;
         /** angle between the robot and target point where the movement will exit. Only has an effect if minSpeed is
          * non-zero.*/
         AngleRange earlyExitRange = 0_cRot;
