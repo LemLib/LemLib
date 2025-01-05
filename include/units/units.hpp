@@ -502,6 +502,12 @@ template <isQuantity Q, isQuantity R> constexpr Q min(const Q& lhs, const R& rhs
     return (lhs < rhs ? lhs : rhs);
 }
 
+template <isQuantity Q> constexpr Number sgn(const Q& lhs) {
+    if (lhs.internal() > 0) return 1;
+    if (lhs.internal() < 0) return -1;
+    return 0;
+}
+
 template <int R, isQuantity Q, isQuantity S = Exponentiated<Q, std::ratio<R>>> constexpr S pow(const Q& lhs) {
     return S(std::pow(lhs.internal(), R));
 }
