@@ -39,7 +39,7 @@ struct TurnToAnyParams {
         AngularDirection direction = AngularDirection::AUTO;
         /** the maximum speed the robot can turn at. Value between 0-1. 1 by default */
         double maxSpeed = 1;
-        /** the minimum speed the robot can turn at. If set to a non-zero value, the `it conditions will switch to less
+        /** the minimum speed the robot can turn at. If set to a non-zero value, the exit conditions will switch to less
          * accurate but smoother ones. Value between 0-1. 0 by default */
         double minSpeed = 0;
         /** angle between the robot and target point where the movement will exit. Only has an effect if minSpeed is
@@ -48,9 +48,9 @@ struct TurnToAnyParams {
 };
 
 /**
- * @brief Settings for turnToAny
+ * @brief Settings for turnTo
  *
- * We use a struct to simplify customization. Chassis::turnToHeading has many
+ * We use a struct to simplify customization. turnTo has many
  * parts of the robot that need to be passed to it. By passing a struct to the
  * function, we can have named parameters, overcoming the c/c++ limitation
  */
@@ -68,9 +68,9 @@ struct TurnToAnySettings {
 };
 
 /**
- * @brief Parameters for Chassis::moveToPoint
+ * @brief Parameters for turnToPoint
  *
- * We use a struct to simplify customization. Chassis::moveToPoint has many
+ * We use a struct to simplify customization. turnToPoint has many
  * parameters and specifying them all just to set one optional param harms
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
