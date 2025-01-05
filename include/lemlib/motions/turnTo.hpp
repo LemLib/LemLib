@@ -10,8 +10,20 @@
 #include "hardware/Motor/MotorGroup.hpp"
 #include <functional>
 
-
 namespace lemlib {
+/**
+ * @brief Enum class DriveSide
+ *
+ * When using swing turns, the user needs to specify what side of the drivetrain should be locked
+ * we could just use an integer or boolean for this, but using an enum class improves readability
+ *
+ * This enum class only has 2 values, LEFT and RIGHT
+ */
+enum class DriveSide {
+    LEFT, /** lock the left side of the drivetrain */
+    RIGHT /** lock the right side of the drivetrain */
+};
+
 /**
  * @brief Parameters for turnToAny
  *
@@ -21,6 +33,8 @@ namespace lemlib {
  * parameters, overcoming the c/c++ limitation
  */
 struct TurnToAnyParams {
+        /** @todo Document */
+        std::optional<lemlib::DriveSide> lockedSide;
         /** the direction the robot should turn in. AUTO by default */
         AngularDirection direction = AngularDirection::AUTO;
         /** the maximum speed the robot can turn at. Value between 0-1. 1 by default */
@@ -67,19 +81,6 @@ struct TurnToPointParams : TurnToAnyParams {
 };
 
 /**
- * @brief Enum class DriveSide
- *
- * When using swing turns, the user needs to specify what side of the drivetrain should be locked
- * we could just use an integer or boolean for this, but using an enum class improves readability
- *
- * This enum class only has 2 values, LEFT and RIGHT
- */
-enum class DriveSide {
-    LEFT, /** lock the left side of the drivetrain */
-    RIGHT /** lock the right side of the drivetrain */
-};
-
-/**
  * @warning This is not intended to be used by ordinary users. It is instead to be used to share functionality between
  * the various turning motions.
  *
@@ -93,8 +94,7 @@ enum class DriveSide {
  *
  * @todo investigate using OOP and inheritance as a cleaner method
  */
-void turnToAny(std::function<Angle()> targetSource, std::function<void(double)> output, Time timeout,
-               TurnToAnyParams& params, TurnToAnySettings& settings);
+void turnToAny(std::function<Angle()> targetSource, Time timeout, TurnToAnyParams& params, TurnToAnySettings& settings);
 
 /**
  * @brief Turn the chassis so it is facing the target heading
@@ -104,6 +104,7 @@ void turnToAny(std::function<Angle()> targetSource, std::function<void(double)> 
  * @param params struct to simulate named parameters
  * @param async whether the function should be run asynchronously. true by default
  *
+ * @todo Update example
  * @b Example
  * @code {.cpp}
  * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
@@ -123,7 +124,7 @@ void turnToAny(std::function<Angle()> targetSource, std::function<void(double)> 
  * chassis.turnToHeading(45, 2000, {.minSpeed = 60, .earlyExitRange = 5});
  * @endcode
  */
-void turnToHeading(Angle heading, Time timeout, TurnToAnyParams params, TurnToAnySettings settings);
+void turnTo(Angle heading, Time timeout, TurnToAnyParams params, TurnToAnySettings settings);
 
 /**
  * @brief Turn the chassis so it is facing the target point
@@ -134,6 +135,7 @@ void turnToHeading(Angle heading, Time timeout, TurnToAnyParams params, TurnToAn
  * @param params struct to simulate named parameters
  * @param async whether the function should be run asynchronously. true by default
  *
+ * @todo Update example
  * @b Example
  * @code {.cpp}
  * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
@@ -156,83 +158,5 @@ void turnToHeading(Angle heading, Time timeout, TurnToAnyParams params, TurnToAn
  * chassis.turnToPoint(7.5, 7.5, 2000, {.minSpeed = 60, .earlyExitRange = 5});
  * @endcode
  */
-void turnToPoint(units::Vector2D<Length> target, Time timeout, TurnToPointParams params, TurnToAnySettings settings);
-
-/**
- * @brief Turn the chassis so it is facing the target heading, but only by moving one half of the drivetrain
- *
- * @param theta heading location
- * @param lockedSide side of the drivetrain that is locked
- * @param timeout longest time the robot can spend moving
- * @param params struct to simulate named parameters
- * @param async whether the function should be run asynchronously. true by default
- *
- * @b Example
- * @code {.cpp}
- * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
- * // turn the robot to face heading 135, with a timeout of 1000ms
- * // and lock the left side of the drivetrain
- * chassis.swingToHeading(135, DriveSide::LEFT, 1000);
- * // turn the robot to face heading 230.5 with a timeout of 2000ms
- * // and a maximum speed of 60
- * // and lock the right side of the drivetrain
- * chassis.swingToHeading(230.5, DriveSide::RIGHT, 2000, {.maxSpeed = 60});
- * // turn the robot to face heading -90 with a timeout of 1500ms
- * // and turn counterclockwise
- * // and lock the left side of the drivetrain
- * chassis.swingToHeading(-90, DriveSide::LEFT, 1500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
- * // turn the robot to face heading 90 with a timeout of 500ms
- * // with a minSpeed of 20 and a maxSpeed of 60
- * // and lock the right side of the drivetrain
- * chassis.swingToHeading(90, DriveSide::RIGHT, 500, {.maxSpeed = 60, .minSpeed = 20});
- * // turn the robot to face heading 45 with a timeout of 2000ms
- * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
- * // and lock the left side of the drivetrain
- * chassis.swingToHeading(45, DriveSide::LEFT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
- * @endcode
- */
-void swingToHeading(Angle heading, DriveSide lockedSide, Time timeout, TurnToAnyParams params,
-                    TurnToAnySettings settings);
-
-/**
- * @brief Turn the chassis so it is facing the target point, but only by moving one half of the drivetrain
- *
- * @param x x location
- * @param y y location
- * @param lockedSide side of the drivetrain that is locked
- * @param timeout longest time the robot can spend moving
- * @param params struct to simulate named parameters
- * @param async whether the function should be run asynchronously. true by default
- *
- * @b Example
- * @code {.cpp}
- * chassis.setPose(0, 0, 0); // set the pose of the chassis to x = 0, y = 0, theta = 0
- * // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
- * // and lock the left side of the drivetrain
- * chassis.swingToPoint(45, -45, DriveSide::LEFT, 1000);
- * // turn the robot to face the point x = 45, y = -45, with a timeout of 1000ms
- * // but face the point with the back of the robot
- * // and lock the right side of the drivetrain
- * chassis.swingToPoint(45, -45, DriveSide::RIGHT, 1000, {.forwards = false});
- * // turn the robot to face the point x = -20, 32.5 with a timeout of 2000ms
- * // and a maximum speed of 60
- * // and lock the left side of the drivetrain
- * chassis.swingToPoint(-20, 32.5, DriveSide::LEFT, 2000, {.maxSpeed = 60});
- * // turn the robot to face the point x = -30, y = 22.5 with a timeout of 1500ms
- * // and turn counterclockwise
- * // and lock the right side of the drivetrain
- * chassis.swingToPoint(-30, 22.5, DriveSide::RIGHT, 1500, {.direction =
- * AngularDirection::CCW_COUNTERCLOCKWISE});
- * // turn the robot to face the point x = 10, y = 10 with a timeout of 500ms
- * // with a minSpeed of 20 and a maxSpeed of 60
- * // and lock the left side of the drivetrain
- * chassis.swingToPoint(10, 10, DriveSide::LEFT, 500, {.maxSpeed = 60, .minSpeed = 20});
- * // turn the robot to face the point x = 7.5, y = 7.5 with a timeout of 2000ms
- * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
- * // and lock the right side of the drivetrain
- * chassis.swingToPoint(7.5, 7.5, DriveSide::RIGHT, 2000, {.minSpeed = 60, .earlyExitRange = 5});
- * @endcode
- */
-void swingToPoint(units::Vector2D<Length> target, DriveSide lockedSide, Time timeout, TurnToPointParams params,
-                  TurnToAnySettings settings);
+void turnTo(units::Vector2D<Length> target, Time timeout, TurnToPointParams params, TurnToAnySettings settings);
 } // namespace lemlib

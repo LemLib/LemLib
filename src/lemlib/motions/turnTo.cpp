@@ -10,8 +10,19 @@
 
 logger::Helper logHelper("lemlib/motions/turnToAny");
 
-void lemlib::turnToAny(std::function<Angle()> targetSource, std::function<void(double)> outputSetter, Time timeout,
-                       TurnToAnyParams& params, TurnToAnySettings& settings) {
+/**
+ * @brief Get the Locked Motors object
+ *
+ * @param lockedSide Which side is locked
+ * @param settings Contains the motor groups
+ * @return lemlib::MotorGroup& Locked motor group
+ */
+static inline lemlib::MotorGroup& getLockedMotors(lemlib::DriveSide lockedSide, lemlib::TurnToAnySettings& settings) {
+    return (lockedSide == lemlib::DriveSide::LEFT) ? settings.leftMotors : settings.rightMotors;
+};
+
+void lemlib::turnToAny(std::function<Angle()> targetSource, Time timeout, TurnToAnyParams& params,
+                       TurnToAnySettings& settings) {
     logHelper.info("Turning to any!");
 
     // sanitize inputs
@@ -26,6 +37,35 @@ void lemlib::turnToAny(std::function<Angle()> targetSource, std::function<void(d
     Angle deltaTheta = Angle(INFINITY);
     bool settling = false;
     double previousMotorPower = 0.0;
+
+    // Set brake mode, but remember previous brake mode to reset to
+    std::optional<BrakeMode> oldBrakeMode = [&] -> std::optional<BrakeMode> {
+        if (auto lockedSide = params.lockedSide)
+            return std::make_optional(getLockedMotors(*lockedSide, settings).getBrakeMode());
+        else return std::nullopt;
+    }();
+
+    // Determine appropriate method to motors based on lockedSide.
+    auto moveMotors = [&] -> std::function<void(double)> {
+        if (auto lockedSide = params.lockedSide) {
+            if (lockedSide == lemlib::DriveSide::LEFT) {
+                return [&](double motorPower) {
+                    settings.leftMotors.brake();
+                    settings.rightMotors.move(-motorPower);
+                };
+            } else { // lockedSide == lemlib::DriveSide::RIGHT
+                return [&](double motorPower) {
+                    settings.leftMotors.move(motorPower);
+                    settings.rightMotors.brake();
+                };
+            }
+        } else { // lockedSide == std::nullopt
+            return [&](double motorPower) {
+                settings.leftMotors.move(motorPower);
+                settings.rightMotors.move(-motorPower);
+            };
+        }
+    }();
 
     lemlib::MotionCancelHelper helper(10_msec); // cancel helper
     // loop until the motion has been cancelled, the timer is done, or an exit condition has been met
@@ -72,8 +112,7 @@ void lemlib::turnToAny(std::function<Angle()> targetSource, std::function<void(d
                                          units::abs(deltaTheta) > 20_stDeg ? settings.angularPID.getGains().slew : 0);
         }();
 
-        // move the motors
-        outputSetter(motorPower);
+        moveMotors(motorPower);
 
         logHelper.debug("Turning with {} power, error: {} deg", motorPower, to_stDeg(deltaTheta));
     }
@@ -81,80 +120,19 @@ void lemlib::turnToAny(std::function<Angle()> targetSource, std::function<void(d
     settings.leftMotors.move(0);
     settings.rightMotors.move(0);
 
+    if (auto lockedSide = params.lockedSide) getLockedMotors(*lockedSide, settings).setBrakeMode(*oldBrakeMode);
+
     logHelper.info("Finished turning to any, current heading {} cDeg", to_cDeg(settings.poseGetter().orientation));
 }
 
-static std::function<void(double)> createOutputForTurn(lemlib::TurnToAnySettings& settings) {
-    return [&](double motorPower) {
-        settings.leftMotors.move(motorPower);
-        settings.rightMotors.move(-motorPower);
-    };
+// TODO: Add logs
+void lemlib::turnTo(Angle heading, Time timeout, TurnToAnyParams params, TurnToAnySettings settings) {
+    turnToAny([&] { return heading; }, timeout, params, settings);
 }
 
-static std::function<void(double)> createOutputForSwing(lemlib::DriveSide lockedSide,
-                                                        lemlib::TurnToAnySettings& settings) {
-    if (lockedSide == lemlib::DriveSide::LEFT) {
-        return [&](double motorPower) {
-            settings.leftMotors.brake();
-            settings.rightMotors.move(-motorPower);
-        };
-    } else { // lockedSide == lemlib::DriveSide::RIGHT
-        return [&](double motorPower) {
-            settings.leftMotors.move(motorPower);
-            settings.rightMotors.brake();
-        };
-    }
-}
-
-static std::function<Angle(void)> createTargetSourceForHeading(Angle target) {
-    return [&] { return target; };
-}
-
-static std::function<Angle(void)> createTargetSourceForPoint(units::Vector2D<Length> target,
-                                                             lemlib::TurnToPointParams& params,
-                                                             lemlib::TurnToAnySettings& settings) {
+// TODO: Add logs
+void lemlib::turnTo(units::Vector2D<Length> target, Time timeout, TurnToPointParams params,
+                    TurnToAnySettings settings) {
     const Angle offset = params.forwards ? 0_stDeg : 180_stDeg;
-    return [&] { return settings.poseGetter().angleTo(target) + offset; };
-}
-
-void lemlib::turnToHeading(Angle heading, Time timeout, TurnToAnyParams params, TurnToAnySettings settings) {
-    turnToAny(createTargetSourceForHeading(heading), createOutputForTurn(settings), timeout, params, settings);
-}
-
-void lemlib::turnToPoint(units::Vector2D<Length> target, Time timeout, TurnToPointParams params,
-                         TurnToAnySettings settings) {
-    turnToAny(createTargetSourceForPoint(target, params, settings), createOutputForTurn(settings), timeout, params,
-              settings);
-}
-
-void lemlib::swingToHeading(Angle target, DriveSide lockedSide, Time timeout, TurnToAnyParams params,
-                            TurnToAnySettings settings) {
-    MotorGroup& lockedMotorGroup = (lockedSide == DriveSide::LEFT) ? settings.leftMotors : settings.rightMotors;
-    // Remember previous brake mode to reset to
-    BrakeMode oldBrakeMode = lockedMotorGroup.getBrakeMode();
-
-    // Lock locked side of drive
-    lockedMotorGroup.setBrakeMode(BrakeMode::HOLD);
-
-    turnToAny(createTargetSourceForHeading(target), createOutputForSwing(lockedSide, settings), timeout, params,
-              settings);
-
-    // Reset brake mode
-    lockedMotorGroup.setBrakeMode(oldBrakeMode);
-}
-
-void lemlib::swingToPoint(units::Vector2D<Length> target, DriveSide lockedSide, Time timeout, TurnToPointParams params,
-                          TurnToAnySettings settings) {
-    MotorGroup& lockedMotorGroup = (lockedSide == DriveSide::LEFT) ? settings.leftMotors : settings.rightMotors;
-    // Remember previous brake mode to reset to
-    BrakeMode oldBrakeMode = lockedMotorGroup.getBrakeMode();
-
-    // Lock locked side of drive
-    lockedMotorGroup.setBrakeMode(BrakeMode::HOLD);
-
-    turnToAny(createTargetSourceForPoint(target, params, settings), createOutputForSwing(lockedSide, settings), timeout,
-              params, settings);
-
-    // Reset brake mode
-    lockedMotorGroup.setBrakeMode(oldBrakeMode);
+    turnToAny([&] { return settings.poseGetter().angleTo(target) + offset; }, timeout, params, settings);
 }
