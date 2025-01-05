@@ -200,13 +200,6 @@ template <isQuantity T> class Vector2D {
         }
 
         /**
-         * @brief angle of the vector from the origin
-         *
-         * @return Angle
-         */
-        constexpr Angle theta() const { return atan2(this->y, this->x); }
-
-        /**
          * @brief magnitude of the vector
          *
          * @return T
@@ -241,44 +234,17 @@ template <isQuantity T> class Vector2D {
         constexpr Vector2D<T> normalize() const { return (*this) / magnitude(); }
 
         /**
-         * @brief rotate the vector by an angle
-         *
-         * @param angle
-         */
-        constexpr void rotateBy(Angle angle) {
-            const T m = magnitude();
-            const Angle t = theta() + angle;
-            this->x = m * cos(t);
-            this->y = m * sin(t);
-        }
-
-        /**
-         * @brief rotate the vector to an angle
-         *
-         * @param angle
-         */
-        constexpr void rotateTo(Angle angle) {
-            const T m = magnitude();
-            this->x = m * cos(angle);
-            this->y = m * sin(angle);
-        }
-
-        /**
          * @brief get a copy of this vector rotated by an angle
          *
          * @param angle
          * @return Vector2D<T>
          */
-        constexpr Vector2D<T> rotatedBy(Angle angle) const { return fromPolar(theta() + angle, magnitude()); }
-
-        /**
-         * @brief get a copy of this vector rotated to an angle
-         *
-         * @param angle
-         * @return Vector2D<T>
-         */
-        constexpr Vector2D<T> rotatedTo(Angle angle) const { return fromPolar(angle, magnitude()); }
+        constexpr Vector2D<T> rotatedBy(Angle angle) const {
+            return fromPolar(Vector2D<T>({T(0.0), T(0.0)}).angleTo(*this) + angle, magnitude());
+        }
 };
+
+template <typename T> inline constexpr Vector2D<T> origin({T(0.0), T(0.0)});
 
 /**
  * @brief * operator overload. Multiplies a quantity and a vector
