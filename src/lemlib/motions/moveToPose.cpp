@@ -6,7 +6,7 @@
 #include "lemlib/util.hpp"
 #include <cmath>
 
-logger::Helper logHelper("lemlib/motions/moveToPose");
+static logger::Helper logHelper("lemlib/motions/moveToPose");
 
 void lemlib::moveToPose(Length x, Length y, AngleRange theta, Time timeout, lemlib::MoveToPoseParams params,
                         lemlib::MoveToPoseSettings settings) {
@@ -34,7 +34,7 @@ void lemlib::moveToPose(Length x, Length y, AngleRange theta, Time timeout, leml
     // create the target pose
     units::Pose target(x, y, theta);
     // if we are moving backwards, we need to flip the orientation
-    if (!params.forwards) target.orientation = units::mod(target.theta() + 180_stDeg, 360_stDeg);
+    if (!params.forwards) target.orientation = units::mod(target.orientation + 180_stDeg, 360_stDeg);
 
     lemlib::MotionCancelHelper helper(10_msec); // cancel helper
     // loop until the motion has been cancelled, the timer is done, or an exit condition has been met
@@ -128,5 +128,5 @@ void lemlib::moveToPose(Length x, Length y, AngleRange theta, Time timeout, leml
 
     logHelper.info("Finished moving to {} in, {} in, {} cDeg, current pose {} in, {} in, {} cDeg", x.convert(in),
                    y.convert(in), to_cDeg(theta), settings.poseGetter().x.convert(in),
-                   settings.poseGetter().y.convert(in), to_cDeg(settings.poseGetter().theta()));
+                   settings.poseGetter().y.convert(in), to_cDeg(settings.poseGetter().orientation));
 }
