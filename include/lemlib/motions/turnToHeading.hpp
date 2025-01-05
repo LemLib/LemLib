@@ -11,7 +11,7 @@
 
 namespace lemlib {
 /**
- * @brief Parameters for Chassis::turnToHeading
+ * @brief Parameters for turnToHeading
  *
  * We use a struct to simplify customization. Chassis::turnToHeading has many
  * parameters and specifying them all just to set one optional param ruins
@@ -32,7 +32,7 @@ struct TurnToHeadingParams {
 };
 
 /**
- * @brief Settings for Chassis::turnToHeading
+ * @brief Settings for turnToHeading
  *
  * We use a struct to simplify customization. Chassis::turnToHeading has many
  * parts of the robot that need to be passed to it. By passing a struct to the
