@@ -1,9 +1,12 @@
 #include "main.h"
+#include "hardware/Motor/Motor.hpp"
+#include "lemlib/MotionHandler.hpp"
 #include "lemlog/logger/sinks/terminal.hpp"
 #include "hardware/Motor/MotorGroup.hpp"
 #include "hardware/Encoder/ADIEncoder.hpp"
 #include "hardware/IMU/V5InertialSensor.hpp"
 #include "lemlib/tracking/TrackingWheelOdom.hpp"
+#include "lemlib/motions/turnTo.hpp"
 
 logger::Terminal terminal;
 
@@ -42,6 +45,48 @@ void initialize() {
 
 void disabled() {}
 
-void autonomous() {}
+void autonomous() {
+    using lemlib::motion_handler::move;
+    odom.setPose({0_in, 0_in, 0_cDeg});
+
+    leftDrive.setBrakeMode(lemlib::BrakeMode::COAST);
+    rightDrive.setBrakeMode(lemlib::BrakeMode::COAST);
+
+    lemlib::TurnToAnySettings turnToSettings {
+        .angularPID = lemlib::PID(0, 0, 0),
+        .exitConditions = lemlib::ExitConditionGroup<AngleRange>(std::vector<lemlib::ExitCondition<AngleRange>> {}),
+        .poseGetter = [&] { return odom.getPose(); },
+        .leftMotors = leftDrive,
+        .rightMotors = rightDrive};
+
+    // turnToHeading
+    move([&] { lemlib::turnTo(-90_cDeg, 1000_msec, {}, turnToSettings); });
+
+    // turnToPoint (params syntax needs work)
+    move([&] { lemlib::turnTo({0_in, 100_in}, 1000_msec, {lemlib::TurnToAnyParams {}, false}, turnToSettings); });
+
+    // swingToHeading
+    move([&] {
+        lemlib::turnTo(0_cDeg, 1000_msec,
+                       {
+                           .lockedSide = lemlib::DriveSide::LEFT,
+                           .minSpeed = 1,
+                       },
+                       turnToSettings);
+    });
+
+    // swingToPoint (params syntax needs work)
+    move([&] {
+        lemlib::turnTo(units::Vector2D {1000_kmps2, .1_mph2} * 10_day * .1_sec, 1000_msec,
+                       {lemlib::TurnToAnyParams {
+                           .lockedSide = lemlib::DriveSide::RIGHT,
+                           .direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE,
+                           .maxSpeed = .5,
+                       }},
+                       turnToSettings);
+    });
+
+    // Once motions are over, test if motors are still in coast mode
+}
 
 void opcontrol() {}
