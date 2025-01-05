@@ -323,11 +323,11 @@
                 "system_files": [
                     "include\\units\\Pose.hpp",
                     "include\\units\\Temperature.hpp",
-                    "include\\units\\units.hpp",
                     "include\\units\\Vector3D.hpp",
+                    "include\\units\\Angle.hpp",
                     "firmware\\units.a",
-                    "include\\units\\Vector2D.hpp",
-                    "include\\units\\Angle.hpp"
+                    "include\\units\\units.hpp",
+                    "include\\units\\Vector2D.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],

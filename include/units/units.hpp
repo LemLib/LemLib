@@ -544,8 +544,6 @@ template <isQuantity Q1, isQuantity Q2> constexpr Q1 copysign(const Q1& lhs, con
     return Q1(std::copysign(lhs.internal(), rhs.internal()));
 }
 
-template <isQuantity Q> constexpr int sgn(const Q& lhs) { return lhs.internal() < 0 ? -1 : 1; }
-
 template <isQuantity Q> constexpr bool signbit(const Q& lhs) { return std::signbit(lhs.internal()); }
 
 template <isQuantity Q, isQuantity R, isQuantity S> constexpr Q clamp(const Q& lhs, const R& lo, const S& hi)
