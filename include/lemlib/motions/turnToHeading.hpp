@@ -1,8 +1,8 @@
 #pragma once
 
+#include "hardware/Motor/MotorGroup.hpp"
 #include "lemlib/ExitCondition.hpp"
 #include "lemlib/util.hpp"
-#include "pros/motor_group.hpp"
 #include "units/Angle.hpp"
 #include "units/units.hpp"
 #include "units/Pose.hpp"
@@ -46,9 +46,9 @@ struct TurnToHeadingSettings {
         /** this function should return the estimated pose of the robot, typically by the tracking wheel odometry. */
         std::function<units::Pose()> poseGetter;
         /** the left motor group of the drivetrain */
-        pros::MotorGroup& leftMotors;
+        lemlib::MotorGroup& leftMotors;
         /** the right motor group of the drivetrain */
-        pros::MotorGroup& rightMotors;
+        lemlib::MotorGroup& rightMotors;
 };
 
 /**
