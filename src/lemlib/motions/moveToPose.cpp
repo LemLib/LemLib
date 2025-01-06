@@ -89,7 +89,8 @@ void lemlib::moveToPose(Length x, Length y, AngleRange theta, Time timeout, leml
         lateralOut = std::clamp(lateralOut, -params.maxSpeed, params.maxSpeed);
         angularOut = std::clamp(angularOut, -params.maxSpeed, params.maxSpeed);
 
-        if (!close) lateralOut = lemlib::slew(lateralOut, previousLateralOut, settings.lateralPID.getGains().slew);
+        if (!close && lateralOut < 0)
+            lateralOut = lemlib::slew(lateralOut, previousLateralOut, settings.lateralPID.getGains().slew);
 
         // constrain lateral output by max speed it can travel at without slipping
         const double radius = 1 / fabs(lemlib::getCurvature(pose, carrot));
