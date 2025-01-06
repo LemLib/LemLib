@@ -4,7 +4,7 @@
 #include "lemlib/Timer.hpp"
 #include <optional>
 
-logger::Helper logHelper("lemlib/motions/turnToHeading");
+static logger::Helper logHelper("lemlib/motions/turnToHeading");
 
 void lemlib::turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParams params,
                            lemlib::TurnToHeadingSettings settings) {
