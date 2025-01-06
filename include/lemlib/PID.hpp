@@ -168,6 +168,6 @@ class PID {
         double m_previousError = 0;
         double m_integral = 0;
 
-        Time m_previousTime = 0_sec;
+        std::optional<Time> m_previousTime = std::nullopt;
 };
 } // namespace lemlib
