@@ -4,21 +4,23 @@
 #include "lemlib/Timer.hpp"
 #include <optional>
 
-logger::Helper logHelper("lemlib/motions/turnToHeading");
+namespace lemlib {
 
-void lemlib::turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParams params,
-                           lemlib::TurnToHeadingSettings settings) {
+static logger::Helper logHelper("lemlib/motions/turnToHeading");
+
+void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParams params,
+                   TurnToHeadingSettings settings) {
     logHelper.info("Turning to {} cDeg", to_cDeg(targetHeading));
 
     // sanitize inputs
-    params.minSpeed = abs(params.minSpeed);
+    params.minSpeed = fabs(params.minSpeed);
     // reset PIDs
     settings.exitConditions.reset();
     settings.angularPID.reset();
     // initialize persistent variables
     std::optional<Angle> previousRawDeltaTheta = std::nullopt;
     std::optional<Angle> previousDeltaTheta = std::nullopt;
-    lemlib::Timer timer(timeout);
+    Timer timer(timeout);
     Angle deltaTheta = Angle(INFINITY);
     bool settling = false;
     double previousMotorPower = 0.0;
@@ -45,16 +47,16 @@ void lemlib::turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHead
 
         // calculate speed
         const double motorPower = [&] {
-            const double raw = settings.angularPID.update(deltaTheta.convert(deg));
-            return lemlib::respectSpeeds(motorPower, previousMotorPower, params.maxSpeed, params.minSpeed,
-                                         units::abs(deltaTheta) > 20_stDeg ? settings.angularPID.getGains().slew : 0);
+            const double raw = settings.angularPID.update(to_stDeg(deltaTheta));
+            return respectSpeeds(motorPower, previousMotorPower, params.maxSpeed, params.minSpeed,
+                                 units::abs(deltaTheta) > 20_stDeg ? settings.angularPID.getGains().slew : 0);
         }();
 
-        // move the motors
-        settings.leftMotors.move(motorPower);
-        settings.rightMotors.move(-motorPower);
-
         logHelper.debug("Turning with {} power, error: {} deg", motorPower, to_stDeg(deltaTheta));
+
+        // move the motors
+        // settings.leftMotors.move(motorPower);
+        // settings.rightMotors.move(-motorPower);
     }
 
     logHelper.info("Finished turning to {} cDeg, current heading {} cDeg", to_cDeg(targetHeading),
@@ -64,3 +66,4 @@ void lemlib::turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHead
     settings.leftMotors.move(0);
     settings.rightMotors.move(0);
 }
+} // namespace lemlib
