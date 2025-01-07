@@ -6,6 +6,7 @@
 #include <iostream>
 #include <utility>
 #include <algorithm>
+#include <format>
 
 // define M_PI if not already defined
 #ifndef M_PI
@@ -44,21 +45,24 @@ class Quantity {
          *
          * This constructor initializes the value to 0
          */
-        explicit constexpr Quantity() : value(0) {}
+        explicit constexpr Quantity()
+            : value(0) {}
 
         /**
          * @brief construct a new Quantity object
          *
          * @param value the value to initialize the quantity with
          */
-        explicit constexpr Quantity(double value) : value(value) {}
+        explicit constexpr Quantity(double value)
+            : value(value) {}
 
         /**
          * @brief construct a new Quantity object
          *
          * @param other the quantity to copy
          */
-        constexpr Quantity(Self const& other) : value(other.value) {}
+        constexpr Quantity(Self const& other)
+            : value(other.value) {}
 
         /**
          * @brief get the value of the quantity in its base unit type
@@ -329,6 +333,12 @@ class Number : public Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std:
                              value)
             : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
                        std::ratio<0>, std::ratio<0>>(value) {};
+};
+
+template <> struct std::formatter<Number> : std::formatter<int> {
+        auto format(const Number& id, std::format_context& ctx) const {
+            return std::formatter<int>::format(id.internal(), ctx);
+        }
 };
 
 template <> struct LookupName<Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,

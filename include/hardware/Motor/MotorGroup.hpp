@@ -81,7 +81,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int move(double percent);
+        int move(Number percent);
         /**
          * @brief move the motors at a given angular velocity
          *

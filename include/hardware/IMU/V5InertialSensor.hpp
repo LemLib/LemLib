@@ -222,7 +222,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        int setGyroScalar(double scalar) override;
+        int setGyroScalar(Number scalar) override;
         /**
          * @brief Get the gyro scalar for the IMU
          *
@@ -248,7 +248,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        double getGyroScalar() override;
+        Number getGyroScalar() override;
     private:
         Angle m_offset = 0_stRot;
         pros::Imu m_imu;

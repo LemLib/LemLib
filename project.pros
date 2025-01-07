@@ -5,7 +5,7 @@
         "target": "v5",
         "templates": {
             "hardware": {
-                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hardware@0.4.1",
+                "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hardware@0.4.2",
                 "metadata": {
                     "origin": "local"
                 },
@@ -13,19 +13,19 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.1.1",
                 "system_files": [
-                    "include\\hardware\\Encoder\\V5RotationSensor.hpp",
                     "include\\hardware\\Encoder\\ADIEncoder.hpp",
-                    "include\\hardware\\IMU\\V5InertialSensor.hpp",
-                    "include\\hardware\\Motor\\MotorGroup.hpp",
-                    "include\\hardware\\Motor\\Motor.hpp",
+                    "include\\hardware\\Encoder\\V5RotationSensor.hpp",
                     "include\\hardware\\Encoder\\Encoder.hpp",
+                    "include\\hardware\\IMU\\V5InertialSensor.hpp",
                     "include\\hardware\\IMU\\IMU.hpp",
+                    "include\\hardware\\Motor\\MotorGroup.hpp",
+                    "firmware\\hardware.a",
                     "include\\hardware\\Port.hpp",
-                    "firmware\\hardware.a"
+                    "include\\hardware\\Motor\\Motor.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.4.1"
+                "version": "0.4.2"
             },
             "hot-cold-asset": {
                 "location": "C:\\Users\\Liam Teale\\AppData\\Roaming\\PROS\\templates\\hot-cold-asset@1.0.1",
