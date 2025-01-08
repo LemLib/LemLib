@@ -8,7 +8,7 @@
 #include "units/units.hpp"
 #include <optional>
 
-logger::Helper logHelper("lemlib/motions/turnToAny");
+static logger::Helper logHelper("lemlib/motions/turnToAny");
 
 /**
  * @brief Get the Locked Motors object
