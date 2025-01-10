@@ -39,14 +39,22 @@ enum class SlewDirection { INCREASING, DECREASING, ALL };
  *
  * @param target the requested new value of the changing value
  * @param current the value to be constrained
- * @param maxChange the maximum change allowed per second
- * @param deltaTime the change in time
+ * @param maxChange the maximum change allowed
  * @param directionLimit in which direction to restrict the change. All directions by default
  *
  * @return Number the value with the constrained change
+ *
+ * @b Example
+ * @code {.cpp}
+ * slew(20, 0, 10); // output: 10
+ * slew(20, 0, 10, SlewDirection::INCREASING); // output: 20
+ * slew(20, 0, 10, SlewDirection::DECREASING) // output: 10
+ * slew(20, 15, 10); // output: 20
+ * slew(-5, 10, 10); // output: 0
+ * slew(-5, 10, 10, SlewDirection::DECREASING); // output: -5
+ * @endcode
  */
-Number slew(Number target, Number current, Number maxChange, Time deltaTime,
-            SlewDirection restrictDirection = SlewDirection::ALL);
+Number slew(Number target, Number current, Number maxChangeRate, SlewDirection restrictDirection = SlewDirection::ALL);
 
 /**
  * @brief Constrain a value so it's absolute value is greater than some value but less than some other value
@@ -59,11 +67,11 @@ Number slew(Number target, Number current, Number maxChange, Time deltaTime,
  *
  * @b Example:
  * @code {.cpp}
- * respectSpeeds(20, 5, 30);  // output: 20
- * respectSpeeds(0, 5, 30);   // output: 5
- * respectSpeeds(40, 5, 30);  // output: 30
+ * respectSpeeds(20, 5, 30); // output: 20
+ * respectSpeeds(0, 5, 30); // output: 5
+ * respectSpeeds(40, 5, 30); // output: 30
  * respectSpeeds(-20, 5, 30); // output: -20
- * respectSpeeds(-2, 5, 30);  // output: -55
+ * respectSpeeds(-2, 5, 30); // output: -55
  * respectSpeeds(-40, 5, 30); // output: -30
  * @endcode
  */

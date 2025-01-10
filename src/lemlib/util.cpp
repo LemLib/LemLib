@@ -23,13 +23,14 @@ Number slew(Number target, Number current, Number maxChange, Time deltaTime, Sle
     if (restrictDirection == SlewDirection::DECREASING && change > 0) return target;
 
     // check if the change is within the limit
-    if (units::abs(change) > units::abs(maxChange)) return current + (maxChange * units::sgn(change));
+    if (units::abs(change) > units::abs(maxChange * to_sec(deltaTime)))
+        return current + (maxChange * units::sgn(change));
 
     // return the target if no restriction is necessary
     return target;
 }
 
-Number respectSpeeds(Number power, Number max, Number min) {
+Number constrainPower(Number power, Number max, Number min) {
     // respect minimum speed
     if (units::abs(power) < min) power = units::sgn(power) * min;
     // respect maximum speed

@@ -23,7 +23,7 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
     Timer timer(timeout);
     Angle deltaTheta = Angle(INFINITY);
     bool settling = false;
-    double previousMotorPower = 0.0;
+    Number prevMotorPower = 0.0;
 
     lemlib::MotionCancelHelper helper(10_msec); // cancel helper
     // loop until the motion has been cancelled, the timer is done, or an exit condition has been met
@@ -46,17 +46,17 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
         if (params.minSpeed != 0 && units::sgn(deltaTheta) != units::sgn(previousDeltaTheta.value())) break;
 
         // calculate speed
-        const double motorPower = [&] {
-            const double raw = settings.angularPID.update(to_stDeg(deltaTheta));
-            return respectSpeeds(motorPower, previousMotorPower, params.maxSpeed, params.minSpeed,
-                                 units::abs(deltaTheta) > 20_stDeg ? settings.angularPID.getGains().slew : 0);
+        const Number motorPower = [&] {
+            const Number raw = settings.angularPID.update(to_stDeg(deltaTheta));
+            const Number slewed = slew(motorPower, prevMotorPower, settings.angularPID.getGains().slew);
+            return constrainPower(motorPower, params.maxSpeed, params.minSpeed);
         }();
 
         logHelper.debug("Turning with {} power, error: {} deg", motorPower, to_stDeg(deltaTheta));
 
         // move the motors
-        // settings.leftMotors.move(motorPower);
-        // settings.rightMotors.move(-motorPower);
+        settings.leftMotors.move(motorPower);
+        settings.rightMotors.move(-motorPower);
     }
 
     logHelper.info("Finished turning to {} cDeg, current heading {} cDeg", to_cDeg(targetHeading),
