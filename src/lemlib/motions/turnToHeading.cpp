@@ -10,7 +10,7 @@ static logger::Helper logHelper("lemlib/motions/turnToHeading");
 
 void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParams params,
                    TurnToHeadingSettings settings) {
-    logHelper.info("Turning to {} cDeg", to_cDeg(targetHeading));
+    logHelper.info("Turning to {:.2f} cDeg", to_cDeg(targetHeading));
 
     // sanitize inputs
     params.minSpeed = fabs(params.minSpeed);
@@ -52,14 +52,14 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
             return constrainPower(motorPower, params.maxSpeed, params.minSpeed);
         }();
 
-        logHelper.debug("Turning with {} power, error: {} deg", motorPower, to_stDeg(deltaTheta));
+        logHelper.debug("Turning with {:.4f} power, error: {:.2f} stDeg", motorPower, to_stDeg(deltaTheta));
 
         // move the motors
         settings.leftMotors.move(motorPower);
         settings.rightMotors.move(-motorPower);
     }
 
-    logHelper.info("Finished turning to {} cDeg, current heading {} cDeg", to_cDeg(targetHeading),
+    logHelper.info("Finished turning to {:.2f} cDeg, current heading {:.2f} cDeg", to_cDeg(targetHeading),
                    to_cDeg(settings.poseGetter().orientation));
 
     // stop the drivetrain
