@@ -4,8 +4,10 @@
 #include <cmath>
 #include <ratio>
 #include <iostream>
+#include <type_traits>
 #include <utility>
 #include <algorithm>
+#include <format>
 
 // define M_PI if not already defined
 #ifndef M_PI
@@ -114,6 +116,21 @@ class Quantity {
         }
 };
 
+/* Number is a special type, because it can be implicitly converted to and from any arithmetic type */
+class Number : public Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                               std::ratio<0>, std::ratio<0>> {
+    public:
+        template <typename T> constexpr Number(T value)
+            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                       std::ratio<0>, std::ratio<0>>(double(value)) {}
+
+        constexpr Number(Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                                  std::ratio<0>, std::ratio<0>, std::ratio<0>>
+                             value)
+            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
+                       std::ratio<0>, std::ratio<0>>(value) {};
+};
+
 template <typename Q> struct LookupName {
         using Named = Q;
 };
@@ -166,6 +183,38 @@ template <isQuantity Q, typename quotient> using Rooted = Named<
              std::ratio_divide<typename Q::time, quotient>, std::ratio_divide<typename Q::current, quotient>,
              std::ratio_divide<typename Q::angle, quotient>, std::ratio_divide<typename Q::temperature, quotient>,
              std::ratio_divide<typename Q::luminosity, quotient>, std::ratio_divide<typename Q::moles, quotient>>>;
+
+template <isQuantity Q> struct std::formatter<Q> : std::formatter<double> {
+        auto format(const Q& quantity, std::format_context& ctx) const {
+            constinit static std::array<std::pair<intmax_t, intmax_t>, 8> dims {{
+                {Q::mass::num, Q::mass::den},
+                {Q::length::num, Q::length::den},
+                {Q::time::num, Q::time::den},
+                {Q::current::num, Q::current::den},
+                {Q::angle::num, Q::angle::den},
+                {Q::temperature::num, Q::temperature::den},
+                {Q::luminosity::num, Q::luminosity::den},
+                {Q::moles::num, Q::moles::den},
+            }};
+            std::array<const char*, 8> prefixes {"_kg", "_m", "_s", "_A", "_rad", "_K", "_cd", "_mol"};
+
+            auto out = ctx.out();
+
+            // Format the quantity value
+            out = std::formatter<double>::format(quantity.internal(), ctx);
+
+            // Add dimensions and prefixes
+            for (size_t i = 0; i != 8; i++) {
+                if (dims[i].first != 0) {
+                    out = std::format_to(out, "{}", prefixes[i]);
+                    if (dims[i].first != 1 || dims[i].second != 1) { out = std::format_to(out, "^{}", dims[i].first); }
+                    if (dims[i].second != 1) { out = std::format_to(out, "/{}", dims[i].second); }
+                }
+            }
+
+            return out;
+        }
+};
 
 inline void unit_printer_helper(std::ostream& os, double quantity,
                                 const std::array<std::pair<intmax_t, intmax_t>, 8>& dims) {
@@ -221,12 +270,18 @@ template <isQuantity Q> constexpr Q operator*(double multiple, Q quantity) { ret
 
 template <isQuantity Q> constexpr Q operator/(Q quantity, double divisor) { return Q(quantity.internal() / divisor); }
 
-template <isQuantity Q1, isQuantity Q2, isQuantity Q3 = Multiplied<Q1, Q2>> Q3 constexpr operator*(Q1 lhs, Q2 rhs) {
-    return Q3(lhs.internal() * rhs.internal());
+template <isQuantity Q1, isQuantity Q2>
+std::conditional_t<std::is_same_v<Number, Multiplied<Q1, Q2>>, double, Multiplied<Q1, Q2>> constexpr operator*(Q1 lhs,
+                                                                                                               Q2 rhs) {
+    return std::conditional_t<std::is_same_v<Number, Multiplied<Q1, Q2>>, double, Multiplied<Q1, Q2>>(lhs.internal() *
+                                                                                                      rhs.internal());
 }
 
-template <isQuantity Q1, isQuantity Q2, isQuantity Q3 = Divided<Q1, Q2>> Q3 constexpr operator/(Q1 lhs, Q2 rhs) {
-    return Q3(lhs.internal() / rhs.internal());
+template <isQuantity Q1, isQuantity Q2>
+std::conditional_t<std::is_same_v<Number, Multiplied<Q1, Q2>>, double, Divided<Q1, Q2>> constexpr operator/(Q1 lhs,
+                                                                                                            Q2 rhs) {
+    return std::conditional_t<std::is_same_v<Number, Multiplied<Q1, Q2>>, double, Divided<Q1, Q2>>(lhs.internal() /
+                                                                                                   rhs.internal());
 }
 
 template <isQuantity Q, isQuantity R> constexpr bool operator==(const Q& lhs, const R& rhs)
@@ -291,6 +346,12 @@ template <isQuantity Q, isQuantity R> constexpr bool operator>(const Q& lhs, con
         return Name(Quantity<std::ratio<m>, std::ratio<l>, std::ratio<t>, std::ratio<i>, std::ratio<a>, std::ratio<o>, \
                              std::ratio<j>, std::ratio<n>>(static_cast<double>(value)));                               \
     }                                                                                                                  \
+    template <> struct std::formatter<Name> : std::formatter<double> {                                                 \
+            auto format(const Name& number, std::format_context& ctx) const {                                          \
+                auto formatted_double = std::formatter<double>::format(number.internal(), ctx);                        \
+                return std::format_to(formatted_double, "_" #suffix);                                                  \
+            }                                                                                                          \
+    };                                                                                                                 \
     inline std::ostream& operator<<(std::ostream& os, const Name& quantity) {                                          \
         os << quantity.internal() << " " << #suffix;                                                                   \
         return os;                                                                                                     \
@@ -316,23 +377,6 @@ template <isQuantity Q, isQuantity R> constexpr bool operator>(const Q& lhs, con
     NEW_UNIT_LITERAL(Name, u##base, base / 1E6)                                                                        \
     NEW_UNIT_LITERAL(Name, n##base, base / 1E9)
 
-/* Number is a special type, because it can be implicitly converted to and from any arithmetic type */
-class Number : public Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
-                               std::ratio<0>, std::ratio<0>> {
-    public:
-        template <typename T> constexpr Number(T value)
-            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
-                       std::ratio<0>, std::ratio<0>>(double(value)) {}
-
-        template <typename T> constexpr explicit operator T() { return T(value); }
-
-        constexpr Number(Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
-                                  std::ratio<0>, std::ratio<0>, std::ratio<0>>
-                             value)
-            : Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
-                       std::ratio<0>, std::ratio<0>>(value) {};
-};
-
 template <> struct LookupName<Quantity<std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>,
                                        std::ratio<0>, std::ratio<0>, std::ratio<0>>> {
         using Named = Number;
@@ -350,6 +394,12 @@ constexpr Number operator""_num(unsigned long long value) {
                            std::ratio<0>, std::ratio<0>>(static_cast<double>(value)));
 }
 
+template <> struct std::formatter<Number> : std::formatter<double> {
+        auto format(const Number& number, std::format_context& ctx) const {
+            return std::formatter<double>::format(number.internal(), ctx);
+        }
+};
+
 inline std::ostream& operator<<(std::ostream& os, const Number& quantity) {
     os << quantity.internal() << " " << num;
     return os;
@@ -363,31 +413,38 @@ constexpr inline double to_num(Number quantity) { return quantity.internal(); }
     constexpr bool operator op(Number lhs, double rhs) { return (lhs.internal() op rhs); }                             \
     constexpr bool operator op(double lhs, Number rhs) { return (lhs op rhs.internal()); }
 
+namespace units_double_ops {
 NEW_NUM_TO_DOUBLE_COMPARISON(==)
 NEW_NUM_TO_DOUBLE_COMPARISON(!=)
 NEW_NUM_TO_DOUBLE_COMPARISON(<=)
 NEW_NUM_TO_DOUBLE_COMPARISON(>=)
 NEW_NUM_TO_DOUBLE_COMPARISON(<)
 NEW_NUM_TO_DOUBLE_COMPARISON(>)
+} // namespace units_double_ops
 
 #define NEW_NUM_AND_DOUBLE_OPERATION(op)                                                                               \
     constexpr Number operator op(Number lhs, double rhs) { return (lhs.internal() op rhs); }                           \
     constexpr Number operator op(double lhs, Number rhs) { return (lhs op rhs.internal()); }
 
+namespace units_double_ops {
 NEW_NUM_AND_DOUBLE_OPERATION(+)
 NEW_NUM_AND_DOUBLE_OPERATION(-)
 NEW_NUM_AND_DOUBLE_OPERATION(*)
 NEW_NUM_AND_DOUBLE_OPERATION(/)
+} // namespace units_double_ops
 
 #define NEW_NUM_AND_DOUBLE_ASSIGNMENT(op)                                                                              \
     constexpr void operator op##=(Number& lhs, double rhs) { lhs = lhs.internal() op rhs; }                            \
     constexpr void operator op##=(double& lhs, Number rhs) { lhs = lhs op rhs.internal(); }
 
+namespace units_double_ops {
 NEW_NUM_AND_DOUBLE_ASSIGNMENT(+)
 NEW_NUM_AND_DOUBLE_ASSIGNMENT(-)
 NEW_NUM_AND_DOUBLE_ASSIGNMENT(*)
 NEW_NUM_AND_DOUBLE_ASSIGNMENT(/)
+} // namespace units_double_ops
 
+namespace units_double_ops {
 constexpr Number& operator++(Number& lhs, int) {
     lhs += 1;
     return lhs;
@@ -409,6 +466,7 @@ constexpr Number operator--(Number& lhs) {
     lhs -= 1;
     return copy;
 }
+} // namespace units_double_ops
 
 NEW_UNIT_LITERAL(Number, percent, num / 100)
 
@@ -585,12 +643,14 @@ template <isQuantity Q, isQuantity R> constexpr Q round(const Q& lhs, const R& r
 
 // Convert an angular unit `Q` to a linear unit correctly;
 // mostly useful for velocities
-template <isQuantity Q> Quantity<typename Q::mass, typename Q::angle, typename Q::time, typename Q::current,
-                                 typename Q::length, typename Q::temperature, typename Q::luminosity, typename Q::moles>
-toLinear(Quantity<typename Q::mass, typename Q::length, typename Q::time, typename Q::current, typename Q::angle,
-                  typename Q::temperature, typename Q::luminosity, typename Q::moles>
-             angular,
-         Length diameter) {
+template <isQuantity Q>
+Quantity<typename Q::mass, typename Q::angle, typename Q::time, typename Q::current, typename Q::length,
+         typename Q::temperature, typename Q::luminosity,
+         typename Q::moles> constexpr toLinear(Quantity<typename Q::mass, typename Q::length, typename Q::time,
+                                                        typename Q::current, typename Q::angle, typename Q::temperature,
+                                                        typename Q::luminosity, typename Q::moles>
+                                                   angular,
+                                               Length diameter) {
     return unit_cast<Quantity<typename Q::mass, typename Q::angle, typename Q::time, typename Q::current,
                               typename Q::length, typename Q::temperature, typename Q::luminosity, typename Q::moles>>(
         angular * (diameter / 2.0));
@@ -598,12 +658,15 @@ toLinear(Quantity<typename Q::mass, typename Q::length, typename Q::time, typena
 
 // Convert an linear unit `Q` to a angular unit correctly;
 // mostly useful for velocities
-template <isQuantity Q> Quantity<typename Q::mass, typename Q::angle, typename Q::time, typename Q::current,
-                                 typename Q::length, typename Q::temperature, typename Q::luminosity, typename Q::moles>
-toAngular(Quantity<typename Q::mass, typename Q::length, typename Q::time, typename Q::current, typename Q::angle,
-                   typename Q::temperature, typename Q::luminosity, typename Q::moles>
-              linear,
-          Length diameter) {
+template <isQuantity Q>
+Quantity<typename Q::mass, typename Q::angle, typename Q::time, typename Q::current, typename Q::length,
+         typename Q::temperature, typename Q::luminosity,
+         typename Q::moles> constexpr toAngular(Quantity<typename Q::mass, typename Q::length, typename Q::time,
+                                                         typename Q::current, typename Q::angle,
+                                                         typename Q::temperature, typename Q::luminosity,
+                                                         typename Q::moles>
+                                                    linear,
+                                                Length diameter) {
     return unit_cast<Quantity<typename Q::mass, typename Q::angle, typename Q::time, typename Q::current,
                               typename Q::length, typename Q::temperature, typename Q::luminosity, typename Q::moles>>(
         linear / (diameter / 2.0));
