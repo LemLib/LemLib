@@ -41,9 +41,13 @@ TrackingWheel::TrackingWheel(SmartPort expanderPort, ADIPort topPort, ADIPort bo
       m_lastTotal(to_stRot(m_encoder->getAngle()) * M_PI * diameter * m_ratio),
       m_deallocate(true) {}
 
-Length TrackingWheel::getDistanceTraveled() { return to_stRot(m_encoder->getAngle()) * M_PI * m_diameter; }
+Length TrackingWheel::getDistanceTraveled() {
+    std::lock_guard lock(m_mutex);
+    return to_stRot(m_encoder->getAngle()) * M_PI * m_diameter;
+}
 
 Length TrackingWheel::getDistanceDelta() {
+    std::lock_guard lock(m_mutex);
     // calculate delta
     const Length total = this->getDistanceTraveled();
     const Length delta = total - m_lastTotal;

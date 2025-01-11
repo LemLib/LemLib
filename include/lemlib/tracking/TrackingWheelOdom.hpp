@@ -193,6 +193,7 @@ class TrackingWheel {
          */
         ~TrackingWheel();
     private:
+        pros::Mutex m_mutex;
         Encoder* m_encoder;
         Length m_diameter;
         Length m_offset;
