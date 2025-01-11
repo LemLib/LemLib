@@ -3,6 +3,7 @@
 #include "hardware/Encoder/ADIEncoder.hpp"
 #include "LemLog/logger/Helper.hpp"
 #include "units/Vector2D.hpp"
+#include <mutex>
 
 static logger::Helper helper("lemlib/odom/tracking_wheel_odom");
 
@@ -68,6 +69,7 @@ TrackingWheelOdometry::TrackingWheelOdometry(std::vector<IMU*> imus, std::vector
 units::Pose TrackingWheelOdometry::getPose() { return m_pose; }
 
 void TrackingWheelOdometry::setPose(units::Pose pose) {
+    std::lock_guard lock(m_mutex);
     m_offset += pose.orientation - m_pose.orientation;
     m_pose = pose;
 }
@@ -183,6 +185,9 @@ void TrackingWheelOdometry::update(Time period) {
     Time prevTime = from_msec(pros::millis());
     // run until the task has been notified, which will probably never happen
     while (pros::Task::notify_take(true, 0) == 0) {
+        // take the mutex
+        std::lock_guard lock(m_mutex);
+
         const Time now = from_msec(pros::millis());
         const Time deltaTime = now - prevTime;
 

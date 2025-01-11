@@ -363,6 +363,7 @@ class TrackingWheelOdometry {
          * This function should have its own dedicated task
          */
         void update(Time period);
+        pros::Mutex m_mutex;
         units::Pose m_pose = {0_m, 0_m, 0_cDeg};
         Angle m_offset = 0_stDeg;
         std::optional<pros::Task> m_task = std::nullopt;
