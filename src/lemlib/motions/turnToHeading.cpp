@@ -77,8 +77,8 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
                         helper.getDelta());
 
         // move the motors
-        // settings.leftMotors.move(-motorPower);
-        // settings.rightMotors.move(motorPower);
+        settings.leftMotors.move(-motorPower);
+        settings.rightMotors.move(motorPower);
     }
 
     logHelper.info("Finished turning to {:.2f} cDeg, current heading {:.2f} cDeg", to_cDeg(targetHeading),
