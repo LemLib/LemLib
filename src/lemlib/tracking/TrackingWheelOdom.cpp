@@ -66,7 +66,10 @@ TrackingWheelOdometry::TrackingWheelOdometry(std::vector<IMU*> imus, std::vector
       m_verticalWheels(verticalWheels),
       m_horizontalWheels(horizontalWheels) {}
 
-units::Pose TrackingWheelOdometry::getPose() { return m_pose; }
+units::Pose TrackingWheelOdometry::getPose() {
+    std::lock_guard lock(m_mutex);
+    return m_pose;
+}
 
 void TrackingWheelOdometry::setPose(units::Pose pose) {
     std::lock_guard lock(m_mutex);
