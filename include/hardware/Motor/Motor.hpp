@@ -68,7 +68,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int move(double percent);
+        int move(Number percent);
         /**
          * @brief move the motor at a given angular velocity
          *

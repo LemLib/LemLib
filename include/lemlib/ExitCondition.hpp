@@ -20,8 +20,7 @@ template <isQuantity Q> class ExitCondition {
          * lemlib::ExitCondition exitCondition(250, 200_msec);
          */
         ExitCondition(Q range, Time time)
-            : m_startTime(std::nullopt),
-              m_range(range),
+            : m_range(range),
               m_time(time) {}
 
         /**
@@ -40,6 +39,7 @@ template <isQuantity Q> class ExitCondition {
          * }
          */
         bool update(Q input) {
+            if (m_startTime == std::nullopt) m_startTime = from_msec(pros::millis());
             const Time currentTime = pros::millis() * msec;
             if (units::abs(input) >= m_range) m_startTime.reset();
             else if (m_startTime == -1 * sec) m_startTime = currentTime;
@@ -61,7 +61,7 @@ template <isQuantity Q> class ExitCondition {
             m_done = false;
         }
     private:
-        std::optional<Time> m_startTime;
+        std::optional<Time> m_startTime = std::nullopt;
         bool m_done = false;
         Q m_range;
         Time m_time;

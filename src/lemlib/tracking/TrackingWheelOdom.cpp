@@ -59,8 +59,8 @@ TrackingWheel::~TrackingWheel() {
     if (m_deallocate) delete m_encoder;
 }
 
-TrackingWheelOdometry::TrackingWheelOdometry(std::vector<IMU*> imus, std::vector<TrackingWheel> verticalWheels,
-                                             std::vector<TrackingWheel> horizontalWheels)
+TrackingWheelOdometry::TrackingWheelOdometry(std::vector<IMU*> imus, std::vector<TrackingWheel*> verticalWheels,
+                                             std::vector<TrackingWheel*> horizontalWheels)
     : m_Imus(imus),
       m_verticalWheels(verticalWheels),
       m_horizontalWheels(horizontalWheels) {}
@@ -101,15 +101,15 @@ struct TrackingWheelData {
  *
  * @return LateralDelta the position delta
  */
-static TrackingWheelData findLateralDelta(std::vector<TrackingWheel>& sensors) {
+static TrackingWheelData findLateralDelta(std::vector<TrackingWheel*>& sensors) {
     for (int i = 0; i < sensors.size(); ++i) {
-        TrackingWheel& sensor = sensors.at(i);
-        const Length data = sensor.getDistanceDelta();
+        TrackingWheel* sensor = sensors.at(i);
+        const Length data = sensor->getDistanceDelta();
         if (data.internal() == INFINITY) { // error checking
             sensors.erase(sensors.begin() + i);
             --i;
             helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
-        } else return {data, sensor.getOffset()};
+        } else return {data, sensor->getOffset()};
     }
     // return 0 if no data was found
     return {0_m, 0_m};
@@ -123,14 +123,14 @@ static TrackingWheelData findLateralDelta(std::vector<TrackingWheel>& sensors) {
  * @return std::nullopt there's not enough tracking wheels to calculate the heading
  * @return std::optional<Angle> the heading
  */
-static std::optional<Angle> calculateWheelHeading(std::vector<TrackingWheel>& trackingWheels) {
+static std::optional<Angle> calculateWheelHeading(std::vector<TrackingWheel*>& trackingWheels) {
     // check that there are enough tracking wheels
     if (trackingWheels.size() < 2) return std::nullopt;
     // get data
-    const Length distance1 = trackingWheels.at(0).getDistanceTraveled();
-    const Length distance2 = trackingWheels.at(1).getDistanceTraveled();
-    const Length offset1 = trackingWheels.at(0).getOffset();
-    const Length offset2 = trackingWheels.at(1).getOffset();
+    const Length distance1 = trackingWheels.at(0)->getDistanceTraveled();
+    const Length distance2 = trackingWheels.at(1)->getDistanceTraveled();
+    const Length offset1 = trackingWheels.at(0)->getOffset();
+    const Length offset2 = trackingWheels.at(1)->getOffset();
     // check that the offsets aren't the same
     if (offset1 == offset2) {
         helper.log(logger::Level::WARN, "Tracking wheel offsets are equal, removing one tracking wheel!");

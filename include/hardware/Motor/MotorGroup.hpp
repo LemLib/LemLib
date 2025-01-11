@@ -1,3 +1,5 @@
+#pragma once
+
 #include "pros/motor_group.hpp"
 #include "hardware/Motor/Motor.hpp"
 #include "hardware/Port.hpp"
@@ -79,7 +81,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int move(double percent);
+        int move(Number percent);
         /**
          * @brief move the motors at a given angular velocity
          *
