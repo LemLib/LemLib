@@ -28,7 +28,7 @@ Number slew(Number target, Number current, Number maxChangeRate, Time deltaTime,
 
     // check if the change is within the limit
     if (units::abs(change) > units::abs(maxChangeRate * to_sec(deltaTime)))
-        return current + (maxChangeRate * units::sgn(change));
+        return current + (maxChangeRate * to_sec(deltaTime) * units::sgn(change));
 
     // return the target if no restriction is necessary
     return target;

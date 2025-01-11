@@ -38,7 +38,7 @@ void initialize() {
             pros::delay(10);
         }
     });
-    lemlib::turnToHeading(90_cDeg, 100_sec, {},
+    lemlib::turnToHeading(90_cDeg, 100_sec, {.slew = 1},
                           {
                               .angularPID = pid,
                               .exitConditions = std::vector<lemlib::ExitCondition<AngleRange>>({exitCondition}),

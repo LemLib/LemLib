@@ -4,6 +4,9 @@
 #include "lemlib/Timer.hpp"
 #include <optional>
 
+using namespace units;
+using namespace units_double_ops;
+
 namespace lemlib {
 
 static logger::Helper logHelper("lemlib/motions/turnToHeading");
@@ -13,7 +16,7 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
     logHelper.info("Turning to {:.2f} cDeg", to_cDeg(targetHeading));
 
     // sanitize inputs
-    params.minSpeed = fabs(params.minSpeed);
+    params.minSpeed = abs(params.minSpeed);
     // reset PIDs
     settings.exitConditions.reset();
     settings.angularPID.reset();
@@ -63,13 +66,15 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
         // calculate speed
         const Number motorPower = [&] {
             Number raw = settings.angularPID.update(to_stDeg(deltaTheta));
-            if (!settling) {
-                raw = slew(raw, prevMotorPower, settings.angularPID.getGains().slew, helper.getDelta(), slewDirection);
-            }
+            if (!settling) { raw = slew(raw, prevMotorPower, params.slew, helper.getDelta(), slewDirection); }
             return constrainPower(raw, params.maxSpeed, params.minSpeed);
         }();
 
-        logHelper.debug("Turning with {:.4f} power, error: {:.2f} stDeg", motorPower, to_stDeg(deltaTheta));
+        // record previous motor power
+        prevMotorPower = motorPower;
+
+        logHelper.debug("Turning with {:.4f} power, error: {:.2f} stDeg, dt: {:.4f}", motorPower, to_stDeg(deltaTheta),
+                        helper.getDelta());
 
         // move the motors
         // settings.leftMotors.move(-motorPower);
