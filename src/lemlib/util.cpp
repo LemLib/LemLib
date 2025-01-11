@@ -17,6 +17,9 @@ Angle angleError(Angle target, Angle position, AngularDirection direction) {
 
 Number slew(Number target, Number current, Number maxChangeRate, Time deltaTime, SlewDirection restrictDirection) {
     using namespace units_double_ops; // enable operator overloads for Number and double
+
+    if (maxChangeRate == 0) return target;
+
     const Number change = target - current;
 
     // only restrict change for specified directions
