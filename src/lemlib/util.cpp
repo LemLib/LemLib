@@ -15,7 +15,8 @@ Angle angleError(Angle target, Angle position, AngularDirection direction) {
     }
 }
 
-Number slew(Number target, Number current, Number maxChange, Time deltaTime, SlewDirection restrictDirection) {
+Number slew(Number target, Number current, Number maxChangeRate, Time deltaTime, SlewDirection restrictDirection) {
+    using namespace units_double_ops; // enable operator overloads for Number and double
     const Number change = target - current;
 
     // only restrict change for specified directions
@@ -23,8 +24,8 @@ Number slew(Number target, Number current, Number maxChange, Time deltaTime, Sle
     if (restrictDirection == SlewDirection::DECREASING && change > 0) return target;
 
     // check if the change is within the limit
-    if (units::abs(change) > units::abs(maxChange * to_sec(deltaTime)))
-        return current + (maxChange * units::sgn(change));
+    if (units::abs(change) > units::abs(maxChangeRate * to_sec(deltaTime)))
+        return current + (maxChangeRate * units::sgn(change));
 
     // return the target if no restriction is necessary
     return target;

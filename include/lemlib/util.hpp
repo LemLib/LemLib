@@ -39,7 +39,8 @@ enum class SlewDirection { INCREASING, DECREASING, ALL };
  *
  * @param target the requested new value of the changing value
  * @param current the value to be constrained
- * @param maxChange the maximum change allowed
+ * @param maxChangeRate the maximum rate of change
+ * @param deltaTime the change in time since the last iteration
  * @param directionLimit in which direction to restrict the change. All directions by default
  *
  * @return Number the value with the constrained change
@@ -54,7 +55,8 @@ enum class SlewDirection { INCREASING, DECREASING, ALL };
  * slew(-5, 10, 10, SlewDirection::DECREASING); // output: -5
  * @endcode
  */
-Number slew(Number target, Number current, Number maxChangeRate, SlewDirection restrictDirection = SlewDirection::ALL);
+Number slew(Number target, Number current, Number maxChangeRate, Time deltaTime,
+            SlewDirection restrictDirection = SlewDirection::ALL);
 
 /**
  * @brief Constrain a value so it's absolute value is greater than some value but less than some other value

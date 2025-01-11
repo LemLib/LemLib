@@ -5,10 +5,12 @@
 namespace lemlib {
 MotionCancelHelper::MotionCancelHelper(Time period)
     : m_originalCompStatus(pros::c::competition_get_status()),
-      m_prevTime(pros::millis()),
+      m_prevTime(pros::millis() - to_msec(period)),
+      m_prevPrevTime(pros::millis() - to_msec(period)),
       m_period(period) {}
 
 bool MotionCancelHelper::wait() {
+    m_prevPrevTime = from_msec(m_prevTime);
     const std::uint32_t processedTimeout = to_msec(m_period);
     // if current time - previous time > timeout
     // then set previous time to current time
@@ -26,4 +28,6 @@ bool MotionCancelHelper::wait() {
     // check if there was a notification
     return pros::Task::notify_take(true, 0) == 0;
 }
+
+Time MotionCancelHelper::getDelta() { return from_msec(pros::millis()) - m_prevPrevTime; }
 } // namespace lemlib

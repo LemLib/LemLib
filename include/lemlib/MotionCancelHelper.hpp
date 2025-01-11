@@ -58,9 +58,28 @@ class MotionCancelHelper {
          * @endcode
          */
         bool wait();
+        /**
+         * @brief Get the amount of time between the current iteration and the last iteration
+         *
+         * @return Time the time between the current iteration and the last iteration
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void myMotion() {
+         *   // create an instance of the motion cancellation helper
+         *   lemlib::MotionCancelHelper helper(10_msec);
+         *
+         *   while(helper.wait()) {
+         *     helper.getDelta(); // this will return 10_msec unless there isn't enough CPU time
+         *   }
+         * }
+         * @endcode
+         */
+        Time getDelta();
     private:
         bool m_firstIteration = true;
         std::uint32_t m_prevTime;
+        Time m_prevPrevTime = 0_msec;
         const int m_originalCompStatus;
         const Time m_period;
 };

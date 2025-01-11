@@ -17,6 +17,15 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
     // reset PIDs
     settings.exitConditions.reset();
     settings.angularPID.reset();
+    // figure out which way to limit acceleration
+    const SlewDirection slewDirection = [&] {
+        if (params.direction == AngularDirection::CCW_COUNTERCLOCKWISE) return SlewDirection::INCREASING;
+        if (params.direction == AngularDirection::CW_CLOCKWISE) return SlewDirection::DECREASING;
+        const Angle orientation = settings.poseGetter().orientation;
+        const Angle error = angleError(targetHeading, orientation, AngularDirection::AUTO);
+        if (error > 0_stDeg) return SlewDirection::INCREASING;
+        else return SlewDirection::DECREASING;
+    }();
     // initialize persistent variables
     std::optional<Angle> previousRawDeltaTheta = std::nullopt;
     std::optional<Angle> previousDeltaTheta = std::nullopt;
@@ -47,16 +56,18 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
 
         // calculate speed
         const Number motorPower = [&] {
-            const Number raw = settings.angularPID.update(to_stDeg(deltaTheta));
-            const Number slewed = slew(motorPower, prevMotorPower, settings.angularPID.getGains().slew);
-            return constrainPower(motorPower, params.maxSpeed, params.minSpeed);
+            Number raw = settings.angularPID.update(to_stDeg(deltaTheta));
+            if (!settling) {
+                raw = slew(raw, prevMotorPower, settings.angularPID.getGains().slew, helper.getDelta(), slewDirection);
+            }
+            return constrainPower(raw, params.maxSpeed, params.minSpeed);
         }();
 
         logHelper.debug("Turning with {:.4f} power, error: {:.2f} stDeg", motorPower, to_stDeg(deltaTheta));
 
         // move the motors
-        settings.leftMotors.move(motorPower);
-        settings.rightMotors.move(-motorPower);
+        settings.leftMotors.move(-motorPower);
+        settings.rightMotors.move(motorPower);
     }
 
     logHelper.info("Finished turning to {:.2f} cDeg, current heading {:.2f} cDeg", to_cDeg(targetHeading),
