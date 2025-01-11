@@ -27,8 +27,8 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
         else return SlewDirection::DECREASING;
     }();
     // initialize persistent variables
-    std::optional<Angle> previousRawDeltaTheta = std::nullopt;
-    std::optional<Angle> previousDeltaTheta = std::nullopt;
+    std::optional<Angle> prevRawDeltaTheta = std::nullopt;
+    std::optional<Angle> prevDeltaTheta = std::nullopt;
     Timer timer(timeout);
     Angle deltaTheta = Angle(INFINITY);
     bool settling = false;
@@ -43,16 +43,22 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
         // calculate deltaTheta
         deltaTheta = [&] {
             const Angle raw = angleError(targetHeading, pose.orientation);
-            settling = previousRawDeltaTheta && units::sgn(raw) != units::sgn(previousRawDeltaTheta.value());
-            previousRawDeltaTheta = raw;
-            if (previousDeltaTheta == std::nullopt) previousDeltaTheta = deltaTheta;
-            return angleError(targetHeading, pose.orientation, settling ? AngularDirection::AUTO : params.direction);
+            if (prevRawDeltaTheta != std::nullopt && (units::sgn(raw) != units::sgn(prevRawDeltaTheta.value())))
+                settling = true;
+            prevRawDeltaTheta = raw;
+            const Angle error =
+                angleError(targetHeading, pose.orientation, settling ? AngularDirection::AUTO : params.direction);
+            if (prevDeltaTheta == std::nullopt) prevDeltaTheta = error;
+            return error;
         }();
 
         // motion chaining
         // exit the motion to immediately continue to the next one
         if (params.minSpeed != 0 && units::abs(deltaTheta) < params.earlyExitRange) break;
-        if (params.minSpeed != 0 && units::sgn(deltaTheta) != units::sgn(previousDeltaTheta.value())) break;
+        if (params.minSpeed != 0 && units::sgn(deltaTheta) != units::sgn(prevDeltaTheta.value())) break;
+
+        // record prevDeltaTheta
+        prevDeltaTheta = deltaTheta;
 
         // calculate speed
         const Number motorPower = [&] {
@@ -66,8 +72,8 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
         logHelper.debug("Turning with {:.4f} power, error: {:.2f} stDeg", motorPower, to_stDeg(deltaTheta));
 
         // move the motors
-        settings.leftMotors.move(-motorPower);
-        settings.rightMotors.move(motorPower);
+        // settings.leftMotors.move(-motorPower);
+        // settings.rightMotors.move(motorPower);
     }
 
     logHelper.info("Finished turning to {:.2f} cDeg, current heading {:.2f} cDeg", to_cDeg(targetHeading),
@@ -76,5 +82,7 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
     // stop the drivetrain
     settings.leftMotors.move(0);
     settings.rightMotors.move(0);
+
+    while (true) { pros::delay(10); }
 }
 } // namespace lemlib
