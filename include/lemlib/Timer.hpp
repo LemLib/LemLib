@@ -1,6 +1,7 @@
 #pragma once
 
 #include "units/units.hpp"
+#include "pros/rtos.hpp"
 
 namespace lemlib {
 class Timer {
@@ -194,6 +195,7 @@ class Timer {
     private:
         void update();
 
+        pros::Mutex m_mutex;
         Time m_period;
         Time m_lastTime = 0_sec;
         Time m_timeWaited = 0_sec;
