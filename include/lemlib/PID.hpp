@@ -1,7 +1,6 @@
 #pragma once
 
 #include "units/units.hpp"
-#include "pros/rtos.hpp"
 
 namespace lemlib {
 /**
@@ -160,8 +159,6 @@ class PID {
          */
         double getWindupRange();
     private:
-        pros::Mutex m_mutex;
-
         Gains m_gains;
 
         bool m_signFlipReset;

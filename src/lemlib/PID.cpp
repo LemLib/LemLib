@@ -1,7 +1,6 @@
 #include "lemlib/util.hpp"
 #include "lemlib/PID.hpp"
 #include "pros/rtos.hpp"
-#include <mutex>
 
 namespace lemlib {
 
@@ -17,13 +16,9 @@ PID::PID(const Gains& gains, double windupRange, bool signFlipReset)
 
 Gains PID::getGains() { return m_gains; }
 
-void PID::setGains(lemlib::Gains gains) {
-    std::lock_guard lock(m_mutex);
-    m_gains = gains;
-}
+void PID::setGains(lemlib::Gains gains) { m_gains = gains; }
 
 double PID::update(double error) {
-    std::lock_guard lock(m_mutex);
     // find time delta
     const Time now = from_msec(pros::millis());
     // if this is the first iteration, previousTime won't be set
@@ -43,27 +38,19 @@ double PID::update(double error) {
     if (fabs(error) > m_windupRange && m_windupRange != 0) m_integral = 0;
 
     // output. error * kP + integral * kP + derivative * kD
-
     return error * m_gains.kP + m_integral * m_gains.kI + derivative * m_gains.kD;
 }
 
 void lemlib::PID::reset() {
-    std::lock_guard lock(m_mutex);
     m_previousError = 0;
     m_integral = 0;
 }
 
-void lemlib::PID::setSignFlipReset(bool signFlipReset) {
-    std::lock_guard lock(m_mutex);
-    m_signFlipReset = signFlipReset;
-}
+void lemlib::PID::setSignFlipReset(bool signFlipReset) { m_signFlipReset = signFlipReset; }
 
 bool lemlib::PID::getSignFlipReset() { return m_signFlipReset; }
 
-void lemlib::PID::setWindupRange(double windupRange) {
-    std::lock_guard lock(m_mutex);
-    m_windupRange = windupRange;
-}
+void lemlib::PID::setWindupRange(double windupRange) { m_windupRange = windupRange; }
 
 double lemlib::PID::getWindupRange() { return m_windupRange; }
 
