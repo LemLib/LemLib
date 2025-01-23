@@ -23,7 +23,7 @@ jobs:
       with:
         source: './src/lemlib ./include/lemlib'
         extensions: 'hpp,cpp'
-        clangFormatVersion: 18
+        clangFormatVersion: 19
         inplace: true # Same as `clang-format -i`
         
     # Commits the correctly formatted files to the repository
