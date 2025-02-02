@@ -51,7 +51,7 @@ The [tutorials](https://lemlib.readthedocs.io/en/stable/tutorials/1_getting_star
 ## FAQ
 _**1. Help! Why is my controller vibrating?**_
 If your controller vibrated more than once, your inertial sensor calibration failed.
-Check if its connected to the right port and try again.
+Check if it's connected to the right port and try again.
 
 _**2. What drivetrains are supported?**_
 Only tank/differential.
