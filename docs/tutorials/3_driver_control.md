@@ -102,7 +102,7 @@ void opcontrol() {
 ```
 
 ## Curvature Drive
-Curvature drive is a lesser-know, yet powerful, method. We give the robot a forwards/backwards speed, and the curvature of an arc. The greater the curvature, the more the robot turns. Its similar to arcade but performs better when turning. Below is an example of single stick and double stick curvature drive:
+Curvature drive is a lesser-know, yet powerful, method. We give the robot a forwards/backwards speed, and the curvature of an arc. The greater the curvature, the more the robot turns. It's similar to arcade but performs better when turning. Below is an example of single stick and double stick curvature drive:
 
 ### Single Stick Curvature
 
