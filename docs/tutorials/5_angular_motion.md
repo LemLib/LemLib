@@ -66,7 +66,7 @@ Swing motions are unique in that they only use half the drivetrain to move.
 Here's an example of how you'd use a swing turn:
 
 ```cpp
-chassis.setPose(0,0,0); // the robot now things that its at (0,0) with heading of 0 degrees
+chassis.setPose(0,0,0); // the robot now thinks that it's at (0,0) with heading of 0 degrees
 chassis.swingToHeading(45, 4000); // swing to face 45 degrees, with a timeout of 4000 ms
 ```
 

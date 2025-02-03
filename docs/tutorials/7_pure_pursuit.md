@@ -61,5 +61,5 @@ void autonomous() {
 In the above example, the robot reads the path in "example.txt", has a timeout of 2000 milliseconds, and a lookahead distance of 15 inches. After it finishes following the path, it will read the path in "example2.txt" and follow it. The robot will be going backwards this time, so the last parameter is set to false.
 
 ```{attention}
-The position of the robot when it starts following the path is critical. It does not need to be very close, but it is easy to accidentally make the robot start at the end of the path than at the start of the path. You can identify the end of the path with the checkered flag at the end of the path. If you do make this mistake, it will seem that the robot is barely moving, not moving where its supposed to, or even not moving at all. 
+The position of the robot when it starts following the path is critical. It does not need to be very close, but it is easy to accidentally make the robot start at the end of the path than at the start of the path. You can identify the end of the path with the checkered flag at the end of the path. If you do make this mistake, it will seem that the robot is barely moving, not moving where it's supposed to, or even not moving at all. 
 ```
