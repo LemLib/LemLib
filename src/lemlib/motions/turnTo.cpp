@@ -1,8 +1,10 @@
-#include "lemlib/motions/turnToHeading.hpp"
+#include "lemlib/motions/turnTo.hpp"
 #include "lemlib/MotionCancelHelper.hpp"
 #include "LemLog/logger/Helper.hpp"
 #include "lemlib/Timer.hpp"
+#include "lemlib/util.hpp"
 #include <optional>
+#include <variant>
 
 using namespace units;
 using namespace units_double_ops;
@@ -11,9 +13,32 @@ namespace lemlib {
 
 static logger::Helper logHelper("lemlib/motions/turnToHeading");
 
-void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParams params,
-                   TurnToHeadingSettings settings) {
-    logHelper.info("Turning to {:.2f} cDeg", to_cDeg(targetHeading));
+/**
+ * @brief Calculate the error
+ *
+ * This helper function calculates the angular error.
+ *
+ * @param target the target
+ * @param pose the current pose
+ * @param direction what direction to force motion, optionally. Nullopt by default
+ *
+ * @return Angle the angular error
+ */
+static Angle calculateError(const std::variant<Angle, V2Position>& target, const Pose& pose,
+                            std::optional<AngularDirection> direction = std::nullopt) {
+    // if the target is an angle
+    if (std::holds_alternative<Angle>(target)) return angleError(std::get<Angle>(target), pose.orientation, direction);
+    // otherwise, the target is a pose
+    else return pose.angleTo(std::get<V2Position>(target));
+}
+
+void turnTo(std::variant<Angle, V2Position> target, TurnToParams params, TurnToSettings settings) {
+    // print debug info
+    if (std::holds_alternative<Angle>(target)) {
+        logHelper.info("Turning to {:.2f}_cDeg", to_cDeg(std::get<Angle>(target)));
+    } else {
+        logHelper.info("Turning to face {:.2f}", std::get<V2Position>(target));
+    }
 
     // sanitize inputs
     params.minSpeed = abs(params.minSpeed);
@@ -24,18 +49,27 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
     const SlewDirection slewDirection = [&] {
         if (params.direction == AngularDirection::CCW_COUNTERCLOCKWISE) return SlewDirection::INCREASING;
         if (params.direction == AngularDirection::CW_CLOCKWISE) return SlewDirection::DECREASING;
-        const Angle orientation = settings.poseGetter().orientation;
-        const Angle error = angleError(targetHeading, orientation, AngularDirection::AUTO);
+        const Pose pose = settings.poseGetter();
+        const Angle error = calculateError(target, pose);
         if (error > 0_stDeg) return SlewDirection::INCREASING;
         else return SlewDirection::DECREASING;
     }();
     // initialize persistent variables
     std::optional<Angle> prevRawDeltaTheta = std::nullopt;
     std::optional<Angle> prevDeltaTheta = std::nullopt;
-    Timer timer(timeout);
+    Timer timer(params.timeout ? *params.timeout : from_sec(INFINITY));
     Angle deltaTheta = Angle(INFINITY);
     bool settling = false;
     Number prevMotorPower = 0.0;
+
+    // save original brake modes
+    const BrakeMode leftBrakeMode = settings.leftMotors.getBrakeMode();
+    const BrakeMode rightBrakeMode = settings.rightMotors.getBrakeMode();
+    // lock one side of the drivetrain if requested
+    if (params.lockedSide) {
+        if (*params.lockedSide == TurnToParams::LockedSide::LEFT) settings.leftMotors.setBrakeMode(BrakeMode::BRAKE);
+        else settings.rightMotors.setBrakeMode(BrakeMode::BRAKE);
+    }
 
     lemlib::MotionCancelHelper helper(10_msec); // cancel helper
     // loop until the motion has been cancelled, the timer is done, or an exit condition has been met
@@ -45,12 +79,10 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
 
         // calculate deltaTheta
         deltaTheta = [&] {
-            const Angle raw = angleError(targetHeading, pose.orientation);
-            if (prevRawDeltaTheta != std::nullopt && (units::sgn(raw) != units::sgn(prevRawDeltaTheta.value())))
-                settling = true;
+            const Angle raw = calculateError(target, pose);
+            settling = prevRawDeltaTheta != std::nullopt && (sgn(raw) != sgn(prevRawDeltaTheta.value()));
             prevRawDeltaTheta = raw;
-            const Angle error =
-                angleError(targetHeading, pose.orientation, settling ? AngularDirection::AUTO : params.direction);
+            const Angle error = calculateError(target, pose, settling ? std::nullopt : params.direction);
             if (prevDeltaTheta == std::nullopt) prevDeltaTheta = error;
             return error;
         }();
@@ -66,13 +98,14 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
         // calculate speed
         const Number motorPower = [&] {
             Number raw = settings.angularPID.update(to_stDeg(deltaTheta));
-            if (!settling) { raw = slew(raw, prevMotorPower, params.slew, helper.getDelta(), slewDirection); }
+            if (!settling) raw = slew(raw, prevMotorPower, params.slew, helper.getDelta(), slewDirection);
             return constrainPower(raw, params.maxSpeed, params.minSpeed);
         }();
 
         // record previous motor power
         prevMotorPower = motorPower;
 
+        // print debug info
         logHelper.debug("Turning with {:.4f} power, error: {:.2f} stDeg, dt: {:.4f}", motorPower, to_stDeg(deltaTheta),
                         helper.getDelta());
 
@@ -81,13 +114,15 @@ void turnToHeading(Angle targetHeading, Time timeout, lemlib::TurnToHeadingParam
         settings.rightMotors.move(motorPower);
     }
 
-    logHelper.info("Finished turning to {:.2f} cDeg, current heading {:.2f} cDeg", to_cDeg(targetHeading),
-                   to_cDeg(settings.poseGetter().orientation));
+    // apply original brake modes
+    settings.leftMotors.setBrakeMode(leftBrakeMode);
+    settings.rightMotors.setBrakeMode(rightBrakeMode);
 
     // stop the drivetrain
     settings.leftMotors.move(0);
     settings.rightMotors.move(0);
 
-    while (true) { pros::delay(10); }
+    // print debug info
+    logHelper.debug("Finished turning");
 }
 } // namespace lemlib

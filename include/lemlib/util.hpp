@@ -3,10 +3,6 @@
 #include "units/Angle.hpp"
 
 namespace lemlib {
-template <typename T> constexpr T sgn(T val) { return (T(0) < val) - (val < T(0)); }
-
-// TODO: move to appropriate file
-// taken from v0.5
 /**
  * @brief AngularDirection
  *
@@ -14,7 +10,7 @@ template <typename T> constexpr T sgn(T val) { return (T(0) < val) - (val < T(0)
  * This enum class has 3 values: CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, and AUTO
  * AUTO will make the robot turn in the shortest direction, and will be the most used value
  */
-enum class AngularDirection { CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, AUTO };
+enum class AngularDirection { CW_CLOCKWISE, CCW_COUNTERCLOCKWISE };
 
 /**
  * @brief Calculate the error between two angles
@@ -22,9 +18,10 @@ enum class AngularDirection { CW_CLOCKWISE, CCW_COUNTERCLOCKWISE, AUTO };
  * @param target the target angle
  * @param position the current angle
  * @param direction which direction the robot should turn in. Defaults to AUTO
+ *
  * @return Angle the error between the two angles
  */
-Angle angleError(Angle target, Angle position, AngularDirection direction = AngularDirection::AUTO);
+Angle angleError(Angle target, Angle position, std::optional<AngularDirection> direction = std::nullopt);
 
 /**
  * @brief SlewDirection

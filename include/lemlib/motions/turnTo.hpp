@@ -5,9 +5,11 @@
 #include "lemlib/ExitCondition.hpp"
 #include "lemlib/util.hpp"
 #include "lemlib/PID.hpp"
+#include "units/Vector2D.hpp"
 #include <functional>
 
 namespace lemlib {
+
 /**
  * @brief Parameters for Chassis::turnToHeading
  *
@@ -16,16 +18,20 @@ namespace lemlib {
  * readability. By passing a struct to the function, we can have named
  * parameters, overcoming the c/c++ limitation
  */
-struct TurnToHeadingParams {
+struct TurnToParams {
+        enum class LockedSide { LEFT, RIGHT };
+        /** the longest time the robot can spend moving before exiting. Optional */
+        std::optional<Time> timeout = std::nullopt;
+        /** which side of the drivetrain to lock, if any. Used for swing turns */
+        std::optional<LockedSide> lockedSide = std::nullopt;
         /** the direction the robot should turn in. AUTO by default */
-        AngularDirection direction = AngularDirection::AUTO;
+        std::optional<AngularDirection> direction = std::nullopt;
         /** the maximum speed the robot can turn at. Value between 0-1. 1 by default */
         Number maxSpeed = 1;
         /** the minimum speed the robot can turn at. If set to a non-zero value, the `it conditions will switch to less
          * accurate but smoother ones. Value between 0-1. 0 by default */
         Number minSpeed = 0;
-        /** how much the power (from -1 to +1) can increase per second. Defaults to 0
-         */
+        /** how much the power (from -1 to +1) can increase per second. Defaults to 0 */
         Number slew = 0;
         /** angle between the robot and target point where the movement will exit. Only has an effect if minSpeed is
          * non-zero.*/
@@ -39,7 +45,7 @@ struct TurnToHeadingParams {
  * parts of the robot that need to be passed to it. By passing a struct to the
  * function, we can have named parameters, overcoming the c/c++ limitation
  */
-struct TurnToHeadingSettings {
+struct TurnToSettings {
         /** the angular PID that is used to turn the robot */
         PID angularPID;
         /** the exit conditions that will cause the robot to stop moving */
@@ -53,28 +59,11 @@ struct TurnToHeadingSettings {
 };
 
 /**
- * @brief Turn the robot to face a specific heading
+ * @brief Turn the robot to face a heading or position
  *
- * @param heading the heading to turn to
- * @param timeout the longest time the robot can spend moving before exiting
+ * @param target the target to turn to. Can be an angle, or a position
  * @param params struct containing parameters for the turn
  * @param settings struct containing settings for the turn
- *
- * @b Example
- * @code {.cpp}
- * // turn to a heading of 135 degrees with a timeout of 1 second
- * turnToHeading(135_cDeg, 1_sec)
- * // turn to a heading of 230.5 degrees with a timeout of 2 seconds and a maximum speed of 60
- * turnToHeading(230.5_cDeg, 2_sec, { .maxSpeed = 60 })
- * // turn the robot to face -90 degrees with a timeout of 1.5 seconds
- * // and turn counterclockwise
- * chassis.turnToHeading(-90_cDeg, 1.5_sec, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
- * // turn the robot to face 90 degrees with a timeout of 500ms
- * // with a minSpeed of 20 and a maxSpeed of 60
- * chassis.turnToHeading(90_cDeg, 500_msec, {.maxSpeed = 60, .minSpeed = 20});
- * // turn the robot to face 45 degrees with a timeout of 2 seconds
- * // and a minSpeed of 60, and exit the movement if the robot is within 5 degrees of the target
- * chassis.turnToHeading(45_cDeg, 2_sec, {.minSpeed = 60, .earlyExitRange = 5_cDeg});
  */
-void turnToHeading(Angle targetHeading, Time timeout, TurnToHeadingParams params, TurnToHeadingSettings settings);
+void turnTo(std::variant<Angle, units::V2Position> target, TurnToParams params, TurnToSettings settings);
 } // namespace lemlib
