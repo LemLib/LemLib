@@ -11,7 +11,7 @@ using namespace units_double_ops;
 
 namespace lemlib {
 
-static logger::Helper logHelper("lemlib/motions/turnToHeading");
+static logger::Helper logHelper("lemlib/motions/turnTo");
 
 /**
  * @brief Calculate the error
@@ -41,11 +41,6 @@ void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams p
         // logHelper.info("Turning to face {:.2f}", std::get<V2Position>(target));
     }
 
-    // sanitize inputs
-    params.minSpeed = abs(params.minSpeed);
-    // reset PIDs
-    settings.exitConditions.reset();
-    settings.angularPID.reset();
     // figure out which way to limit acceleration
     const SlewDirection slewDirection = [&] {
         if (params.direction == AngularDirection::CCW_COUNTERCLOCKWISE) return SlewDirection::INCREASING;
