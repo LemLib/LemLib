@@ -75,7 +75,7 @@ void turnTo(std::variant<Angle, V2Position> target, TurnToParams params, TurnToS
     // loop until the motion has been cancelled, the timer is done, or an exit condition has been met
     while (helper.wait() && !timer.isDone() && !settings.exitConditions.update(deltaTheta)) {
         // get the robot's current position
-        const units::Pose pose = settings.poseGetter();
+        const Pose pose = settings.poseGetter();
 
         // calculate deltaTheta
         deltaTheta = [&] {
@@ -89,8 +89,8 @@ void turnTo(std::variant<Angle, V2Position> target, TurnToParams params, TurnToS
 
         // motion chaining
         // exit the motion to immediately continue to the next one
-        if (params.minSpeed != 0 && units::abs(deltaTheta) < params.earlyExitRange) break;
-        if (params.minSpeed != 0 && units::sgn(deltaTheta) != units::sgn(prevDeltaTheta.value())) break;
+        if (params.minSpeed != 0 && abs(deltaTheta) < params.earlyExitRange) break;
+        if (params.minSpeed != 0 && sgn(deltaTheta) != sgn(prevDeltaTheta.value())) break;
 
         // record prevDeltaTheta
         prevDeltaTheta = deltaTheta;
