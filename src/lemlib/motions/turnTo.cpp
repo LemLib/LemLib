@@ -24,7 +24,7 @@ static logger::Helper logHelper("lemlib/motions/turnToHeading");
  *
  * @return Angle the angular error
  */
-static Angle calculateError(const std::variant<Angle, V2Position>& target, const Pose& pose,
+static Angle calculateError(std::variant<Angle, V2Position> target, const Pose& pose,
                             std::optional<AngularDirection> direction = std::nullopt) {
     // if the target is an angle
     if (std::holds_alternative<Angle>(target)) return angleError(std::get<Angle>(target), pose.orientation, direction);
