@@ -2,17 +2,14 @@
 
 namespace lemlib {
 
-Angle angleError(Angle target, Angle position, AngularDirection direction) {
+Angle angleError(Angle target, Angle position, std::optional<AngularDirection> direction) {
     // Wrap the angle to be within 0pi and 2pi radians
     target = units::mod(units::mod(target, 1_stRot) + 1_stRot, 1_stRot);
 
     Angle error = target - position;
-
-    switch (direction) {
-        case AngularDirection::CW_CLOCKWISE: return error < 0_stRot ? error + 1_stRot : error;
-        case AngularDirection::CCW_COUNTERCLOCKWISE: return error > 0_stRot ? error - 1_stRot : error;
-        default: return from_stDeg(std::remainder(to_stDeg(error), 360)); // units does not have a remainder function
-    }
+    if (!direction) return from_stDeg(std::remainder(to_stDeg(error), 360));
+    if (direction == AngularDirection::CW_CLOCKWISE) return error < 0_stRot ? error + 1_stRot : error;
+    else return error > 0_stRot ? error - 1_stRot : error;
 }
 
 Number slew(Number target, Number current, Number maxChangeRate, Time deltaTime, SlewDirection restrictDirection) {

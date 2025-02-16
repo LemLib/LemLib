@@ -20,8 +20,6 @@ namespace lemlib {
  */
 struct TurnToParams {
         enum class LockedSide { LEFT, RIGHT };
-        /** the longest time the robot can spend moving before exiting. Optional */
-        std::optional<Time> timeout = std::nullopt;
         /** which side of the drivetrain to lock, if any. Used for swing turns */
         std::optional<LockedSide> lockedSide = std::nullopt;
         /** the direction the robot should turn in. AUTO by default */
@@ -62,8 +60,9 @@ struct TurnToSettings {
  * @brief Turn the robot to face a heading or position
  *
  * @param target the target to turn to. Can be an angle, or a position
+ * @param timeout the maximum amount of time the motion can run for
  * @param params struct containing parameters for the turn
  * @param settings struct containing settings for the turn
  */
-void turnTo(std::variant<Angle, units::V2Position> target, TurnToParams params, TurnToSettings settings);
+void turnTo(std::variant<Angle, units::V2Position> target, Time timeout, TurnToParams params, TurnToSettings settings);
 } // namespace lemlib

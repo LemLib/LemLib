@@ -3,7 +3,7 @@
 #include "hardware/Motor/MotorGroup.hpp"
 #include "hardware/IMU/V5InertialSensor.hpp"
 #include "lemlib/tracking/TrackingWheelOdom.hpp"
-#include "lemlib/motions/turnToHeading.hpp"
+#include "lemlib/motions/turnTo.hpp"
 #include "pros/llemu.hpp"
 
 logger::Terminal terminal;
@@ -38,14 +38,14 @@ void initialize() {
             pros::delay(10);
         }
     });
-    lemlib::turnToHeading(90_cDeg, 100_sec, {.slew = 1},
-                          {
-                              .angularPID = pid,
-                              .exitConditions = std::vector<lemlib::ExitCondition<AngleRange>>({exitCondition}),
-                              .poseGetter = [] -> units::Pose { return odom.getPose(); },
-                              .leftMotors = leftDrive,
-                              .rightMotors = rightDrive,
-                          });
+    lemlib::turnTo(90_cDeg, 100_sec, {.slew = 1},
+                   {
+                       .angularPID = pid,
+                       .exitConditions = std::vector<lemlib::ExitCondition<AngleRange>>({exitCondition}),
+                       .poseGetter = [] -> units::Pose { return odom.getPose(); },
+                       .leftMotors = leftDrive,
+                       .rightMotors = rightDrive,
+                   });
 }
 
 void disabled() {}

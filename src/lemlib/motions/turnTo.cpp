@@ -32,12 +32,13 @@ static Angle calculateError(std::variant<Angle, V2Position> target, const Pose& 
     else return pose.angleTo(std::get<V2Position>(target));
 }
 
-void turnTo(std::variant<Angle, V2Position> target, TurnToParams params, TurnToSettings settings) {
+void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams params, TurnToSettings settings) {
     // print debug info
     if (std::holds_alternative<Angle>(target)) {
         logHelper.info("Turning to {:.2f}_cDeg", to_cDeg(std::get<Angle>(target)));
     } else {
-        logHelper.info("Turning to face {:.2f}", std::get<V2Position>(target));
+        // TODO: fix units
+        // logHelper.info("Turning to face {:.2f}", std::get<V2Position>(target));
     }
 
     // sanitize inputs
@@ -57,7 +58,7 @@ void turnTo(std::variant<Angle, V2Position> target, TurnToParams params, TurnToS
     // initialize persistent variables
     std::optional<Angle> prevRawDeltaTheta = std::nullopt;
     std::optional<Angle> prevDeltaTheta = std::nullopt;
-    Timer timer(params.timeout ? *params.timeout : from_sec(INFINITY));
+    Timer timer(timeout);
     Angle deltaTheta = Angle(INFINITY);
     bool settling = false;
     Number prevMotorPower = 0.0;
