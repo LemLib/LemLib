@@ -47,7 +47,7 @@ void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams param
         const Length lateralError = pose.distanceTo(target) * cos(angleError(pose.orientation, pose.angleTo(target)));
 
         // check exit conditions
-        if (settings.exitConditions.update(lateralError)) break;
+        if (settings.exitConditions.update(lateralError) && close) break;
         if (params.minLateralSpeed != 0 && ((normal * pose - k) * (normal * lastPose - k)).internal() <= 0) break;
         lastPose = pose;
 
