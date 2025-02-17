@@ -11,15 +11,18 @@ namespace lemlib {
 
 struct MoveToPointParams {
         bool reversed = false;
-        Number maxSpeed = 1;
-        Number minSpeed = 0;
+        Number maxLateralSpeed = 1;
+        Number minLateralSpeed = 0;
+        Number maxAngularSpeed = 1;
+        Number lateralSlew = INFINITY;
+        Number angularSlew = INFINITY;
         Length earlyExitRange = 0_in;
 };
 
 struct MoveToPointSettings {
         PID angularPID;
         PID lateralPID;
-        ExitConditionGroup<AngleRange> exitConditions;
+        ExitConditionGroup<Length> exitConditions;
         std::function<units::Pose()> poseGetter;
         lemlib::MotorGroup& leftMotors;
         lemlib::MotorGroup& rightMotors;

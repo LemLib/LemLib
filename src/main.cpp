@@ -9,7 +9,7 @@
 logger::Terminal terminal;
 
 lemlib::MotorGroup rightDrive({8, 10}, 360_rpm);
-lemlib::MotorGroup leftDrive({-18, -19}, 360_rpm);
+lemlib::MotorGroup leftDrive({-1, 11, -12, 13}, 360_rpm);
 
 lemlib::V5InertialSensor imu(1);
 

@@ -269,7 +269,7 @@ template <isQuantity T> class Vector3D {
          *
          * @return Vector3D<T>
          */
-        constexpr Vector3D<T> normalize() { return (*this) / magnitude(); }
+        constexpr Vector3D<Number> normalize() { return (*this) / magnitude(); }
 
         /**
          * @brief rotate the vector by an angle
