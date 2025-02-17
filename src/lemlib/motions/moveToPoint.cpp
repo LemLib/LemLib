@@ -12,8 +12,7 @@ namespace lemlib {
 static logger::Helper logHelper("lemlib/motions/moveToPoint");
 
 void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams params, MoveToPointSettings settings) {
-    // TODO: print debug info
-    // logHelper.info(...)
+    logHelper.info("moving to point {}", target);
 
     // initialize persistent variables
     const Angle initialAngle = settings.poseGetter().angleTo(target);
@@ -34,9 +33,8 @@ void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams param
         // check if the robot is close enough to start settling
         if (!close && pose.distanceTo(target) < 7.5_in) {
             close = true;
-            // TODO: fix units, so that _num is not needed
-            params.maxLateralSpeed = max(abs(prevLateralOut), 4.7_num);
-            params.maxAngularSpeed = max(abs(prevLateralOut), 4.7_num);
+            params.maxLateralSpeed = max(abs(prevLateralOut), 4.7);
+            params.maxAngularSpeed = max(abs(prevLateralOut), 4.7);
         }
 
         // calculate error
@@ -52,7 +50,7 @@ void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams param
         lastPose = pose;
 
         // get lateral and angular outputs
-        const Number lateralOut = [&] {
+        const Number lateralOut = [&] -> Number {
             // get raw output from PID
             auto out = settings.lateralPID.update(to_in(lateralError));
             // apply restrictions on maximum speed
@@ -66,9 +64,9 @@ void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams param
             prevLateralOut = out;
             return out;
         }();
-        const Number angularOut = [&] {
+        const Number angularOut = [&] -> Number {
             // if settling, disable turning
-            if (close) return 0_num;
+            if (close) return 0;
             // get raw output from PID
             auto out = settings.angularPID.update(to_stDeg(angularError));
             // apply restrictions on maximum speed
@@ -79,6 +77,11 @@ void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams param
             prevAngularOut = out;
             return out;
         }();
+
+        // print debug info
+        logHelper.debug("Moving with {:.4f} lateral power, {:.4f} angular power, {:.4f} lateral error, {:.4f} angular "
+                        "error, {:.4f} dt",
+                        lateralOut, angularOut, lateralError, angularError, helper.getDelta());
 
         // calculate drivetrain outputs
         const auto out = desaturate(lateralOut, angularOut);

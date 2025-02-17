@@ -34,12 +34,8 @@ static Angle calculateError(std::variant<Angle, V2Position> target, const Pose& 
 
 void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams params, TurnToSettings settings) {
     // print debug info
-    if (std::holds_alternative<Angle>(target)) {
-        logHelper.info("Turning to {:.2f}_cDeg", to_cDeg(std::get<Angle>(target)));
-    } else {
-        // TODO: fix units
-        // logHelper.info("Turning to face {:.2f}", std::get<V2Position>(target));
-    }
+    if (std::holds_alternative<Angle>(target)) logHelper.info("Turning to {:.2f}", std::get<Angle>(target));
+    else logHelper.info("Turning to face point {:.2f}", std::get<V2Position>(target));
 
     // figure out which way to limit acceleration
     const SlewDirection slewDirection = [&] {
@@ -117,8 +113,5 @@ void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams p
     // stop the drivetrain
     settings.leftMotors.move(0);
     settings.rightMotors.move(0);
-
-    // print debug info
-    logHelper.debug("Finished turning");
 }
 } // namespace lemlib
