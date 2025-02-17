@@ -75,4 +75,22 @@ Number slew(Number target, Number current, Number maxChangeRate, Time deltaTime,
  * @endcode
  */
 Number constrainPower(Number power, Number max, Number min);
+
+struct DriveOutputs {
+        Number left;
+        Number right;
+};
+
+/**
+ * @brief calculate desaturated motor outputs
+ *
+ * Given a lateral output and an angular output, calculate the left and right side drivetrain velocities such that the
+ * drivetrain output does not exceed 1
+ *
+ * @param lateralOutput
+ * @param angularOutput
+ *
+ * @return DriveOutputs
+ */
+DriveOutputs desaturate(Number lateralOutput, Number angularOutput);
 } // namespace lemlib

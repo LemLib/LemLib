@@ -38,4 +38,13 @@ Number constrainPower(Number power, Number max, Number min) {
     power = std::clamp(power, -max, max);
     return power;
 }
+
+DriveOutputs desaturate(Number lateralOutput, Number angularOutput) {
+    const Number left = lateralOutput - angularOutput;
+    const Number right = lateralOutput + angularOutput;
+    const Number sum = units::abs(left) + units::abs(right);
+    if (sum <= 1.0_num) return {left, right};
+    else return {left / sum, right / sum};
+}
+
 } // namespace lemlib

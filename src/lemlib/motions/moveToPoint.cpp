@@ -51,20 +51,7 @@ void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams param
         if (params.minLateralSpeed != 0 && ((normal * pose - k) * (normal * lastPose - k)).internal() <= 0) break;
         lastPose = pose;
 
-        // get outputs
-        const Number angularOut = [&] {
-            // if settling, disable turning
-            if (close) return 0_num;
-            // get raw output from PID
-            auto out = settings.angularPID.update(to_stDeg(angularError));
-            // apply restrictions on maximum speed
-            out = clamp(out, -params.maxAngularSpeed, params.maxAngularSpeed);
-            // slew except when settling
-            out = slew(out, prevAngularOut, params.angularSlew, helper.getDelta());
-            // update previous value
-            prevAngularOut = out;
-            return out;
-        }();
+        // get lateral and angular outputs
         const Number lateralOut = [&] {
             // get raw output from PID
             auto out = settings.lateralPID.update(to_in(lateralError));
@@ -79,6 +66,25 @@ void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams param
             prevLateralOut = out;
             return out;
         }();
+        const Number angularOut = [&] {
+            // if settling, disable turning
+            if (close) return 0_num;
+            // get raw output from PID
+            auto out = settings.angularPID.update(to_stDeg(angularError));
+            // apply restrictions on maximum speed
+            out = clamp(out, -params.maxAngularSpeed, params.maxAngularSpeed);
+            // slew except when settling
+            out = slew(out, prevAngularOut, params.angularSlew, helper.getDelta());
+            // update previous value
+            prevAngularOut = out;
+            return out;
+        }();
+
+        // calculate drivetrain outputs
+        const auto out = desaturate(lateralOut, angularOut);
+        // move the drivetrain
+        settings.leftMotors.move(out.left);
+        settings.rightMotors.move(out.right);
     }
 }
 
