@@ -352,3 +352,27 @@ typedef Vector3D<LinearVelocity> V3Velocity;
 typedef Vector3D<LinearAcceleration> V3Acceleration;
 typedef Vector3D<Force> V3Force;
 } // namespace units
+
+template <typename T> struct std::formatter<units::Vector3D<T>> : std::formatter<T> {
+        // Optionally parse format specifiers for T
+        constexpr auto parse(auto& ctx) { return formatter<T>::parse(ctx); }
+
+        auto format(const units::Vector3D<T>& vector, format_context& ctx) const {
+            auto it = ctx.out();
+            it = format_to(it, "(");
+
+            // Format vector.x using the base formatter<T>
+            it = static_cast<const formatter<T>*>(this)->format(vector.x, ctx);
+            it = format_to(it, ", ");
+
+            // Format vector.y using the base formatter<T>
+            it = static_cast<const formatter<T>*>(this)->format(vector.y, ctx);
+            it = format_to(it, ", ");
+
+            // Format vector.z using the base formatter<T>
+            it = static_cast<const formatter<T>*>(this)->format(vector.z, ctx);
+            it = format_to(it, ")");
+
+            return it;
+        }
+};

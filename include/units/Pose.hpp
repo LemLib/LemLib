@@ -74,3 +74,31 @@ using VelocityPose = AbstractPose<std::ratio<1>>;
 using AccelerationPose = AbstractPose<std::ratio<2>>;
 
 } // namespace units
+
+template <> struct std::formatter<units::Pose, char> : std::formatter<double, char> {
+        // Parse specifiers (using the base class's parse function)
+        template <typename ParseContext> constexpr auto parse(ParseContext& ctx) {
+            // Call parse on the current object (base class subobject)
+            return std::formatter<double, char>::parse(ctx);
+        }
+
+        // Format the units::Pose object
+        template <typename FormatContext> auto format(const units::Pose& vector, FormatContext& ctx) const {
+            auto it = ctx.out();
+            it = format_to(it, "(");
+
+            // Create temporary formatter objects for Length and Angle
+            std::formatter<Length, char> fmtLength {};
+            std::formatter<Angle, char> fmtAngle {};
+
+            // Use the temporary objects to format each component.
+            it = fmtLength.format(vector.x, ctx);
+            it = format_to(it, ", ");
+            it = fmtLength.format(vector.y, ctx);
+            it = format_to(it, ", ");
+            it = fmtAngle.format(vector.orientation, ctx);
+            it = format_to(it, ")");
+
+            return it;
+        }
+};

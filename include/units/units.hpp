@@ -548,96 +548,143 @@ NEW_UNIT(Luminosity, candela, 0, 0, 0, 0, 0, 0, 1, 0);
 NEW_UNIT(Moles, mol, 0, 0, 0, 0, 0, 0, 0, 1);
 
 namespace units {
-template <isQuantity Q> constexpr Q abs(const Q& lhs) { return Q(std::abs(lhs.internal())); }
-
-template <isQuantity Q, isQuantity R> constexpr Q max(const Q& lhs, const R& rhs)
-    requires Isomorphic<Q, R>
-{
-    return (lhs > rhs ? lhs : rhs);
+// Helper: if T is arithmetic, convert it to Number; otherwise leave it unchanged.
+template <typename T> constexpr auto to_quantity(T value) -> std::conditional_t<std::is_arithmetic_v<T>, Number, T> {
+    if constexpr (std::is_arithmetic_v<T>) return Number(value);
+    else return value;
 }
 
-template <isQuantity Q, isQuantity R> constexpr Q min(const Q& lhs, const R& rhs)
-    requires Isomorphic<Q, R>
-{
-    return (lhs < rhs ? lhs : rhs);
+// abs: works with either a quantity or an arithmetic value.
+template <typename T> constexpr auto abs(const T& lhs) {
+    auto q = to_quantity(lhs);
+    using Q = decltype(q);
+    return Q(std::abs(q.internal()));
 }
 
-template <isQuantity Q> constexpr Number sgn(const Q& lhs) {
-    if (lhs.internal() > 0) return 1;
-    if (lhs.internal() < 0) return -1;
-    return 0;
+// max: converts both arguments; a static_assert ensures the resulting quantities are isomorphic.
+template <typename T, typename U> constexpr auto max(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    static_assert(Isomorphic<decltype(qlhs), decltype(qrhs)>, "max: Quantities must be isomorphic");
+    return (qlhs > qrhs ? qlhs : qrhs);
 }
 
-template <int R, isQuantity Q, isQuantity S = Exponentiated<Q, std::ratio<R>>> constexpr S pow(const Q& lhs) {
-    return S(std::pow(lhs.internal(), R));
+// min: similar to max.
+template <typename T, typename U> constexpr auto min(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    static_assert(Isomorphic<decltype(qlhs), decltype(qrhs)>, "min: Quantities must be isomorphic");
+    return (qlhs < qrhs ? qlhs : qrhs);
 }
 
-template <isQuantity Q, isQuantity S = Exponentiated<Q, std::ratio<2>>> constexpr S square(const Q& lhs) {
-    return pow<2>(lhs);
+// sgn: always returns a Number.
+template <typename T> constexpr auto sgn(const T& lhs) {
+    auto q = to_quantity(lhs);
+    if (q.internal() > 0) return Number(1);
+    if (q.internal() < 0) return Number(-1);
+    return Number(0);
 }
 
-template <isQuantity Q, isQuantity S = Exponentiated<Q, std::ratio<3>>> constexpr S cube(const Q& lhs) {
-    return pow<3>(lhs);
+// pow: now accepts an arithmetic or quantity value.
+template <int R, typename T> constexpr auto pow(const T& lhs) {
+    auto q = to_quantity(lhs);
+    using Q = decltype(q);
+    using S = Exponentiated<Q, std::ratio<R>>;
+    return S(std::pow(q.internal(), R));
 }
 
-template <int R, isQuantity Q, isQuantity S = Rooted<Q, std::ratio<R>>> constexpr S root(const Q& lhs) {
-    return S(std::pow(lhs.internal(), 1.0 / R));
+// square and cube call pow with 2 or 3.
+template <typename T> constexpr auto square(const T& lhs) { return pow<2>(lhs); }
+
+template <typename T> constexpr auto cube(const T& lhs) { return pow<3>(lhs); }
+
+// root: similarly for roots.
+template <int R, typename T> constexpr auto root(const T& lhs) {
+    auto q = to_quantity(lhs);
+    using Q = decltype(q);
+    using S = Rooted<Q, std::ratio<R>>;
+    return S(std::pow(q.internal(), 1.0 / R));
 }
 
-template <isQuantity Q, isQuantity S = Rooted<Q, std::ratio<2>>> constexpr S sqrt(const Q& lhs) { return root<2>(lhs); }
+template <typename T> constexpr auto sqrt(const T& lhs) { return root<2>(lhs); }
 
-template <isQuantity Q, isQuantity S = Rooted<Q, std::ratio<3>>> constexpr S cbrt(const Q& lhs) { return root<3>(lhs); }
+template <typename T> constexpr auto cbrt(const T& lhs) { return root<3>(lhs); }
 
-template <isQuantity Q, isQuantity R> constexpr Q hypot(const Q& lhs, const R& rhs)
-    requires Isomorphic<Q, R>
-{
-    return Q(std::hypot(lhs.internal(), rhs.internal()));
+// hypot: requires the two quantities be isomorphic.
+template <typename T, typename U> constexpr auto hypot(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    static_assert(Isomorphic<decltype(qlhs), decltype(qrhs)>, "hypot: Quantities must be isomorphic");
+    return decltype(qlhs)(std::hypot(qlhs.internal(), qrhs.internal()));
 }
 
-template <isQuantity Q, isQuantity R> constexpr Q mod(const Q& lhs, const R& rhs)
-    requires Isomorphic<Q, R>
-{
-    return Q(std::fmod(lhs.internal(), rhs.internal()));
+// mod: using std::fmod.
+template <typename T, typename U> constexpr auto mod(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    static_assert(Isomorphic<decltype(qlhs), decltype(qrhs)>, "mod: Quantities must be isomorphic");
+    return decltype(qlhs)(std::fmod(qlhs.internal(), qrhs.internal()));
 }
 
-template <isQuantity Q, isQuantity R> constexpr Q remainder(const Q& lhs, const R& rhs) {
-    return Q(std::remainder(lhs.internal(), rhs.internal()));
+// remainder: using std::remainder.
+template <typename T, typename U> constexpr auto remainder(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    return decltype(qlhs)(std::remainder(qlhs.internal(), qrhs.internal()));
 }
 
-template <isQuantity Q1, isQuantity Q2> constexpr Q1 copysign(const Q1& lhs, const Q2& rhs) {
-    return Q1(std::copysign(lhs.internal(), rhs.internal()));
+// copysign: applies std::copysign.
+template <typename T, typename U> constexpr auto copysign(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    return decltype(qlhs)(std::copysign(qlhs.internal(), qrhs.internal()));
 }
 
-template <isQuantity Q> constexpr bool signbit(const Q& lhs) { return std::signbit(lhs.internal()); }
-
-template <isQuantity Q, isQuantity R, isQuantity S> constexpr Q clamp(const Q& lhs, const R& lo, const S& hi)
-    requires Isomorphic<Q, R, S>
-{
-    return Q(std::clamp(lhs.internal(), lo.internal(), hi.internal()));
+// signbit: returns a bool.
+template <typename T> constexpr auto signbit(const T& lhs) {
+    auto q = to_quantity(lhs);
+    return std::signbit(q.internal());
 }
 
-template <isQuantity Q, isQuantity R> constexpr Q ceil(const Q& lhs, const R& rhs)
-    requires Isomorphic<Q, R>
-{
-    return Q(std::ceil(lhs.internal() / rhs.internal()) * rhs.internal());
+// clamp: requires three isomorphic quantities.
+template <typename T, typename U, typename V> constexpr auto clamp(const T& lhs, const U& lo, const V& hi) {
+    auto qlhs = to_quantity(lhs);
+    auto qlo = to_quantity(lo);
+    auto qhi = to_quantity(hi);
+    static_assert(Isomorphic<decltype(qlhs), decltype(qlo), decltype(qhi)>, "clamp: Quantities must be isomorphic");
+    return decltype(qlhs)(std::clamp(qlhs.internal(), qlo.internal(), qhi.internal()));
 }
 
-template <isQuantity Q, isQuantity R> constexpr Q floor(const Q& lhs, const R& rhs)
-    requires Isomorphic<Q, R>
-{
-    return Q(std::floor(lhs.internal() / rhs.internal()) * rhs.internal());
+// ceil: rounds up to a multiple of rhs.
+template <typename T, typename U> constexpr auto ceil(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    static_assert(Isomorphic<decltype(qlhs), decltype(qrhs)>, "ceil: Quantities must be isomorphic");
+    return decltype(qlhs)(std::ceil(qlhs.internal() / qrhs.internal()) * qrhs.internal());
 }
 
-template <isQuantity Q, isQuantity R> constexpr Q trunc(const Q& lhs, const R& rhs)
-    requires Isomorphic<Q, R>
-{
-    return Q(std::trunc(lhs.internal() / rhs.internal()) * rhs.internal());
+// floor: rounds down.
+template <typename T, typename U> constexpr auto floor(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    static_assert(Isomorphic<decltype(qlhs), decltype(qrhs)>, "floor: Quantities must be isomorphic");
+    return decltype(qlhs)(std::floor(qlhs.internal() / qrhs.internal()) * qrhs.internal());
 }
 
-template <isQuantity Q, isQuantity R> constexpr Q round(const Q& lhs, const R& rhs)
-    requires Isomorphic<Q, R>
-{
-    return Q(std::round(lhs.internal() / rhs.internal()) * rhs.internal());
+// trunc: rounds toward zero.
+template <typename T, typename U> constexpr auto trunc(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    static_assert(Isomorphic<decltype(qlhs), decltype(qrhs)>, "trunc: Quantities must be isomorphic");
+    return decltype(qlhs)(std::trunc(qlhs.internal() / qrhs.internal()) * qrhs.internal());
+}
+
+// round: rounds to the nearest.
+template <typename T, typename U> constexpr auto round(const T& lhs, const U& rhs) {
+    auto qlhs = to_quantity(lhs);
+    auto qrhs = to_quantity(rhs);
+    static_assert(Isomorphic<decltype(qlhs), decltype(qrhs)>, "round: Quantities must be isomorphic");
+    return decltype(qlhs)(std::round(qlhs.internal() / qrhs.internal()) * qrhs.internal());
 }
 } // namespace units
 
