@@ -1,95 +1,85 @@
 ---
-Language: Cpp
-AccessModifierOffset: -2
+Language:        Cpp
+AccessModifierOffset: 0
 AlignAfterOpenBracket: Align
-AlignArrayOfStructures: Left
+AlignArrayOfStructures: None
 AlignConsecutiveAssignments: None
-AlignConsecutiveBitFields: Consecutive
+AlignConsecutiveBitFields: None
 AlignConsecutiveDeclarations: None
-AlignConsecutiveMacros: Consecutive
-AlignConsecutiveShortCaseStatements:
-  Enabled: false
-AlignEscapedNewlines: LeftWithLastLine
+AlignConsecutiveMacros: None
+AlignEscapedNewlines: Right
 AlignOperands: Align
-AlignTrailingComments: Never
+AlignTrailingComments: false
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
-AllowBreakBeforeNoexceptSpecifier: OnlyWithParen
-AllowShortBlocksOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: Always
 AllowShortCaseLabelsOnASingleLine: true
-AllowShortCompoundRequirementOnASingleLine: true
-AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Empty
-AllowShortIfStatementsOnASingleLine: WithoutElse
-AllowShortLambdasOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
-BinPackArguments: false
-BinPackParameters: false
+AlwaysBreakTemplateDeclarations: No
+BinPackArguments: true
+BinPackParameters: true
 BitFieldColonSpacing: Both
-BreakAdjacentStringLiterals: false
-BreakAfterAttributes: Always
-BreakAfterReturnType: None
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: false
+  AfterControlStatement: Never
+  AfterEnum: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterObjCDeclaration: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterExternBlock: false
+  BeforeCatch: false
+  BeforeElse: false
+  BeforeLambdaBody: false
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+BreakAfterJavaFieldAnnotations: false
 BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Attach
-BreakBeforeConceptDeclarations: Always
-BreakBeforeInlineASMColon: Never
-BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: BeforeColon
-BreakFunctionDefinitionParameters: false
-BreakInheritanceList: AfterComma
+BreakInheritanceList: BeforeColon
 BreakStringLiterals: true
-BreakTemplateDeclarations: Yes
-ColumnLimit: 80
+ColumnLimit: 120
 CompactNamespaces: false
-ContinuationIndentWidth: 2
-Cpp11BracedListStyle: false
+ConstructorInitializerIndentWidth: 4
+Cpp11BracedListStyle: true
 EmptyLineAfterAccessModifier: Never
-EmptyLineBeforeAccessModifier: Always
-FixNamespaceComments: true
-IncludeBlocks: Merge
-IndentAccessModifiers: false
-IndentCaseBlocks: true
+EmptyLineBeforeAccessModifier: Never
+IndentAccessModifiers: true
 IndentCaseLabels: true
-IndentExternBlock: NoIndent
-IndentGotoLabels: false
-IndentPPDirectives: BeforeHash
-IndentRequiresClause: true
+IndentExternBlock: AfterExternBlock
+IndentGotoLabels: true
 IndentWidth: 4
 IndentWrappedFunctionNames: false
-InsertBraces: false
-InsertNewlineAtEOF: true
-LambdaBodyIndentation: Signature
-MaxEmptyLinesToKeep: 1
-NamespaceIndentation: None
-PPIndentWidth: -1
+KeepEmptyLinesAtTheStartOfBlocks: false
 PackConstructorInitializers: Never
 PointerAlignment: Left
-QualifierAlignment: Custom
-QualifierOrder: [friend, inline, static, constexpr, const, volatile, restrict, type]
+ReferenceAlignment: Left
 ReflowComments: true
-RequiresClausePosition: OwnLine
-RequiresExpressionIndentation: OuterScope
 SeparateDefinitionBlocks: Always
-SortIncludes: CaseSensitive
-SortUsingDeclarations: Lexicographic
-SpaceAfterCStyleCast: false
-SpaceAfterLogicalNot: false
-SpaceAfterTemplateKeyword: false
+SortIncludes: false
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeCaseColon: false
 SpaceBeforeCpp11BracedList: true
+SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
 SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
 SpaceInEmptyBlock: false
 SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 1
-SpacesInAngles: Never
-SpacesInLineCommentPrefix:
-  Minimum: 1
-  Maximum: -1
-SpacesInParens: Never
-SpacesInSquareBrackets: false
-Standard: Latest
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+TabWidth: 4
 UseTab: Never
