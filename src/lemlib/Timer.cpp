@@ -21,7 +21,8 @@ Time Timer::getTimeSet() {
 
 Time Timer::getTimeLeft() {
     this->update();
-    const Time delta = m_period - m_timeWaited; // calculate how much time is left
+    const Time delta =
+      m_period - m_timeWaited; // calculate how much time is left
     return (delta > 0_sec) ? delta : 0_sec; // return 0 if timer is done
 }
 

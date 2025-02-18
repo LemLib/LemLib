@@ -5,8 +5,12 @@ namespace lemlib {
 
 using namespace units;
 
-PID::PID(Number kP, Number kI, Number kD, Number windupRange, bool signFlipReset)
-    : m_gains({kP, kI, kD}),
+PID::PID(Number kP,
+         Number kI,
+         Number kD,
+         Number windupRange,
+         bool signFlipReset)
+    : m_gains({ kP, kI, kD }),
       m_windupRange(windupRange),
       m_signFlipReset(signFlipReset) {}
 
@@ -15,9 +19,13 @@ PID::PID(const Gains& gains, Number windupRange, bool signFlipReset)
       m_windupRange(windupRange),
       m_signFlipReset(signFlipReset) {}
 
-Gains PID::getGains() { return m_gains; }
+Gains PID::getGains() {
+    return m_gains;
+}
 
-void PID::setGains(lemlib::Gains gains) { m_gains = gains; }
+void PID::setGains(lemlib::Gains gains) {
+    m_gains = gains;
+}
 
 Number PID::update(Number error) {
     // find time delta
@@ -28,7 +36,8 @@ Number PID::update(Number error) {
     m_previousTime = now;
 
     // calculate the derivative (change in error / time passed)
-    const Number derivative = (dt != 0_sec) ? (error - m_previousError) / to_sec(dt) : 0;
+    const Number derivative =
+      (dt != 0_sec) ? (error - m_previousError) / to_sec(dt) : 0;
     m_previousError = error;
 
     // calculate the integral (change in error * time passed)
@@ -39,7 +48,8 @@ Number PID::update(Number error) {
     if (abs(error) > m_windupRange && m_windupRange != 0) m_integral = 0;
 
     // output. error * kP + integral * kP + derivative * kD
-    return error * m_gains.kP + m_integral * m_gains.kI + derivative * m_gains.kD;
+    return error * m_gains.kP + m_integral * m_gains.kI +
+           derivative * m_gains.kD;
 }
 
 void lemlib::PID::reset() {
@@ -47,12 +57,20 @@ void lemlib::PID::reset() {
     m_integral = 0;
 }
 
-void lemlib::PID::setSignFlipReset(bool signFlipReset) { m_signFlipReset = signFlipReset; }
+void lemlib::PID::setSignFlipReset(bool signFlipReset) {
+    m_signFlipReset = signFlipReset;
+}
 
-bool lemlib::PID::getSignFlipReset() { return m_signFlipReset; }
+bool lemlib::PID::getSignFlipReset() {
+    return m_signFlipReset;
+}
 
-void lemlib::PID::setWindupRange(Number windupRange) { m_windupRange = windupRange; }
+void lemlib::PID::setWindupRange(Number windupRange) {
+    m_windupRange = windupRange;
+}
 
-Number lemlib::PID::getWindupRange() { return m_windupRange; }
+Number lemlib::PID::getWindupRange() {
+    return m_windupRange;
+}
 
 } // namespace lemlib
