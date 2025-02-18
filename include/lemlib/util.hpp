@@ -1,6 +1,6 @@
 #pragma once
 
-#include "units/Angle.hpp"
+#include "units/Pose.hpp"
 
 namespace lemlib {
 /**
@@ -93,4 +93,6 @@ struct DriveOutputs {
  * @return DriveOutputs
  */
 DriveOutputs desaturate(Number lateralOutput, Number angularOutput);
+
+Curvature getSignedTangentArcCurvature(units::Pose start, units::V2Position end);
 } // namespace lemlib

@@ -88,7 +88,7 @@ void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams p
 
         // calculate speed
         const Number motorPower = [&] {
-            Number raw = settings.angularPID.update(to_stDeg(deltaTheta));
+            Number raw = settings.angularPID.update(to_stRad(deltaTheta));
             if (!settling) raw = slew(raw, prevMotorPower, params.slew, helper.getDelta(), slewDirection);
             return constrainPower(raw, params.maxSpeed, params.minSpeed);
         }();

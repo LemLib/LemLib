@@ -51,7 +51,7 @@ void moveToPoint(V2Position target, Time timeout, MoveToPointParams params, Move
         // get lateral and angular outputs
         const Number lateralOut = [&] -> Number {
             // get raw output from PID
-            auto out = settings.lateralPID.update(to_in(lateralError));
+            auto out = settings.lateralPID.update(to_m(lateralError));
             // apply restrictions on maximum speed
             out = clamp(out, -params.maxLateralSpeed, params.maxLateralSpeed);
             // slew except when settling
@@ -67,7 +67,7 @@ void moveToPoint(V2Position target, Time timeout, MoveToPointParams params, Move
             // if settling, disable turning
             if (close) return 0;
             // get raw output from PID
-            auto out = settings.angularPID.update(to_stDeg(angularError));
+            auto out = settings.angularPID.update(to_stRad(angularError));
             // apply restrictions on maximum speed
             out = clamp(out, -params.maxAngularSpeed, params.maxAngularSpeed);
             // slew except when settling
