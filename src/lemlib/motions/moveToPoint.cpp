@@ -10,10 +10,7 @@ namespace lemlib {
 
 static logger::Helper logHelper("lemlib/motions/moveToPoint");
 
-void moveToPoint(V2Position target,
-                 Time timeout,
-                 MoveToPointParams params,
-                 MoveToPointSettings settings) {
+void moveToPoint(V2Position target, Time timeout, MoveToPointParams params, MoveToPointSettings settings) {
     logHelper.info("moving to point {}", target);
 
     // initialize persistent variables
@@ -24,8 +21,7 @@ void moveToPoint(V2Position target,
     Number prevAngularOut = 0;
     V2Position lastPose = settings.poseGetter();
     const V2Position normal = target - lastPose;
-    const Area k =
-      normal * (target + params.earlyExitRange * lastPose.normalize());
+    const Area k = normal * (target + params.earlyExitRange * lastPose.normalize());
 
     lemlib::MotionCancelHelper helper(10_msec); // cancel helper
     // loop until the motion has been cancelled, or the timer is done
@@ -41,21 +37,15 @@ void moveToPoint(V2Position target,
         }
 
         // calculate error
-        const Length lateralError =
-          pose.distanceTo(target) *
-          cos(angleError(pose.orientation, pose.angleTo(target)));
+        const Length lateralError = pose.distanceTo(target) * cos(angleError(pose.orientation, pose.angleTo(target)));
         const Angle angularError = [&] {
-            const Angle adjustedTheta =
-              params.reversed ? pose.orientation + 180_stDeg : pose.orientation;
+            const Angle adjustedTheta = params.reversed ? pose.orientation + 180_stDeg : pose.orientation;
             return angleError(adjustedTheta, pose.angleTo(target));
         }();
 
         // check exit conditions
         if (settings.exitConditions.update(lateralError) && close) break;
-        if (params.minLateralSpeed != 0 &&
-            ((normal * pose - k) * (normal * lastPose - k)).internal() <= 0) {
-            break;
-        }
+        if (params.minLateralSpeed != 0 && ((normal * pose - k) * (normal * lastPose - k)).internal() <= 0) break;
         lastPose = pose;
 
         // get lateral and angular outputs
@@ -65,19 +55,10 @@ void moveToPoint(V2Position target,
             // apply restrictions on maximum speed
             out = clamp(out, -params.maxLateralSpeed, params.maxLateralSpeed);
             // slew except when settling
-            out = close ? out :
-                          slew(out,
-                               prevLateralOut,
-                               params.lateralSlew,
-                               helper.getDelta());
+            out = close ? out : slew(out, prevLateralOut, params.lateralSlew, helper.getDelta());
             // apply restrictions on minimum speed
-            if (!close && params.reversed) {
-                out =
-                  clamp(out, -params.maxLateralSpeed, -params.minLateralSpeed);
-            } else if (!close && !params.reversed) {
-                out =
-                  clamp(out, params.minLateralSpeed, params.maxLateralSpeed);
-            }
+            if (!close && params.reversed) out = clamp(out, -params.maxLateralSpeed, -params.minLateralSpeed);
+            else if (!close && !params.reversed) out = clamp(out, params.minLateralSpeed, params.maxLateralSpeed);
             // update previous value
             prevLateralOut = out;
             return out;
@@ -90,36 +71,16 @@ void moveToPoint(V2Position target,
             // apply restrictions on maximum speed
             out = clamp(out, -params.maxAngularSpeed, params.maxAngularSpeed);
             // slew except when settling
-            out =
-              slew(out, prevAngularOut, params.angularSlew, helper.getDelta());
+            out = slew(out, prevAngularOut, params.angularSlew, helper.getDelta());
             // update previous value
             prevAngularOut = out;
             return out;
         }();
 
         // print debug info
-        logHelper.debug("Moving with {:.4f} lateral power, {:.4f} angular "
-                        "power, " "{:.4f} " "lateral error, {:.4f} angular " "e"
-                                                                             "r"
-                                                                             "r"
-                                                                             "o"
-                                                                             "r"
-                                                                             ","
-                                                                             " "
-                                                                             "{"
-                                                                             ":"
-                                                                             "."
-                                                                             "4"
-                                                                             "f"
-                                                                             "}"
-                                                                             " "
-                                                                             "d"
-                                                                             "t",
-                        lateralOut,
-                        angularOut,
-                        lateralError,
-                        angularError,
-                        helper.getDelta());
+        logHelper.debug("Moving with {:.4f} lateral power, {:.4f} angular power, {:.4f} lateral error, {:.4f} angular "
+                        "error, {:.4f} dt",
+                        lateralOut, angularOut, lateralError, angularError, helper.getDelta());
 
         // calculate drivetrain outputs
         const auto out = desaturate(lateralOut, angularOut);

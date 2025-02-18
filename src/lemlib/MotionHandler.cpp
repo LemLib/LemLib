@@ -20,8 +20,7 @@ bool isMoving() {
     if (motionTask == std::nullopt) return false;
     // check if the task is currently running
     const std::uint32_t state = motionTask->get_state();
-    return state != pros::E_TASK_STATE_DELETED &&
-           state != pros::E_TASK_STATE_INVALID;
+    return state != pros::E_TASK_STATE_DELETED && state != pros::E_TASK_STATE_INVALID;
 }
 
 void cancel() {
