@@ -7,12 +7,10 @@
 using namespace units;
 
 namespace lemlib {
+
 static logger::Helper logHelper("lemlib/motions/moveToPose");
 
-void moveToPose(Pose target,
-                Time timeout,
-                MoveToPoseParams params,
-                MoveToPoseSettings settings) {
+void moveToPose(Pose target, Time timeout, MoveToPoseParams params, MoveToPoseSettings settings) {
     // initialize persistent variables
     Pose lastPose = settings.poseGetter();
     Timer timer(timeout);
@@ -34,9 +32,7 @@ void moveToPose(Pose target,
         // find the carrot point
         const V2Position carrot = [&] -> V2Position {
             if (close) return target;
-            return target -
-                   V2Position::fromPolar(target.orientation,
-                                         params.lead * pose.distanceTo(target));
+            return target - V2Position::fromPolar(target.orientation, params.lead * pose.distanceTo(target));
         }();
 
         // calculate error
@@ -44,23 +40,15 @@ void moveToPose(Pose target,
             Length out = pose.distanceTo(target);
             // only use cosine scaling while settling
             // but always use the sign of the scalar
-            const Number scalar =
-              cos(angleError(pose.orientation, pose.angleTo(carrot)));
-            if (close) {
-                out *= scalar;
-            } else {
-                out *= sgn(scalar);
-            }
+            const Number scalar = cos(angleError(pose.orientation, pose.angleTo(carrot)));
+            if (close) out *= scalar;
+            else out *= sgn(scalar);
             return out;
         }();
         const Angle angularError = [&] {
-            const Angle adjustedTheta =
-              params.reversed ? pose.orientation + 180_stDeg : pose.orientation;
-            if (close) {
-                return angleError(adjustedTheta, target.orientation);
-            } else {
-                return angleError(adjustedTheta, pose.angleTo(carrot));
-            }
+            const Angle adjustedTheta = params.reversed ? pose.orientation + 180_stDeg : pose.orientation;
+            if (close) return angleError(adjustedTheta, target.orientation);
+            else return angleError(adjustedTheta, pose.angleTo(carrot));
         }();
 
         // update exit conditions
