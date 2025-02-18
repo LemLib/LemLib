@@ -4,7 +4,6 @@
 namespace lemlib {
 
 using namespace units;
-using namespace units_double_ops;
 
 PID::PID(Number kP, Number kI, Number kD, Number windupRange, bool signFlipReset)
     : m_gains({kP, kI, kD}),

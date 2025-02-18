@@ -5,13 +5,12 @@
 #include "lemlib/util.hpp"
 
 using namespace units;
-using namespace units_double_ops;
 
 namespace lemlib {
 
 static logger::Helper logHelper("lemlib/motions/moveToPoint");
 
-void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams params, MoveToPointSettings settings) {
+void moveToPoint(V2Position target, Time timeout, MoveToPointParams params, MoveToPointSettings settings) {
     logHelper.info("moving to point {}", target);
 
     // initialize persistent variables
@@ -38,11 +37,11 @@ void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams param
         }
 
         // calculate error
+        const Length lateralError = pose.distanceTo(target) * cos(angleError(pose.orientation, pose.angleTo(target)));
         const Angle angularError = [&] {
             const Angle adjustedTheta = params.reversed ? pose.orientation + 180_stDeg : pose.orientation;
             return angleError(adjustedTheta, pose.angleTo(target));
         }();
-        const Length lateralError = pose.distanceTo(target) * cos(angleError(pose.orientation, pose.angleTo(target)));
 
         // check exit conditions
         if (settings.exitConditions.update(lateralError) && close) break;

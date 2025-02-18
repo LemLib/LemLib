@@ -8,8 +8,10 @@
 
 namespace lemlib {
 
-struct MoveToPointParams {
+struct MoveToPoseParams {
         bool reversed = false;
+        Number driftCompensation = 2; // TODO: figure out how we're going to deal with a user defined default
+        Number lead = 0.6;
         Number maxLateralSpeed = 1;
         Number minLateralSpeed = 0;
         Number maxAngularSpeed = 1;
@@ -18,15 +20,16 @@ struct MoveToPointParams {
         Length earlyExitRange = 0_in;
 };
 
-struct MoveToPointSettings {
+struct MoveToPoseSettings {
         PID angularPID;
         PID lateralPID;
-        ExitConditionGroup<Length> exitConditions;
+        ExitConditionGroup<Length> lateralExitConditions;
+        ExitConditionGroup<AngleRange> angularExitConditions;
         std::function<units::Pose()> poseGetter;
         lemlib::MotorGroup& leftMotors;
         lemlib::MotorGroup& rightMotors;
 };
 
-void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams params, MoveToPointSettings settings);
+void moveToPose(units::Pose target, Time timeout, MoveToPoseParams params, MoveToPoseSettings settings);
 
 }; // namespace lemlib

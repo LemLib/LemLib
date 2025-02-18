@@ -7,7 +7,6 @@
 #include <variant>
 
 using namespace units;
-using namespace units_double_ops;
 
 namespace lemlib {
 
