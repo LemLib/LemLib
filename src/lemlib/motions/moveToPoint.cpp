@@ -17,11 +17,9 @@ void moveToPoint(V2Position target, Time timeout, MoveToPointParams params, Move
     const Angle initialAngle = settings.poseGetter().angleTo(target);
     Timer timer(timeout);
     bool close = false;
+    std::optional<bool> prevSide = std::nullopt;
     Number prevLateralOut = 0;
     Number prevAngularOut = 0;
-    V2Position lastPose = settings.poseGetter();
-    const V2Position normal = target - lastPose;
-    const Area k = normal * (target + params.earlyExitRange * lastPose.normalize());
 
     lemlib::MotionCancelHelper helper(10_msec); // cancel helper
     // loop until the motion has been cancelled, or the timer is done
@@ -45,8 +43,15 @@ void moveToPoint(V2Position target, Time timeout, MoveToPointParams params, Move
 
         // check exit conditions
         if (settings.exitConditions.update(lateralError) && close) break;
-        if (params.minLateralSpeed != 0 && ((normal * pose - k) * (normal * lastPose - k)).internal() <= 0) break;
-        lastPose = pose;
+        {
+            const bool side = (pose.y - target.y) * -sin(initialAngle) <=
+                              (pose.x - target.x) * cos(initialAngle) + params.earlyExitRange;
+            if (prevSide == std::nullopt) prevSide = side;
+            const bool sameSide = side == prevSide;
+            // exit if close
+            if (!sameSide && params.minLateralSpeed != 0) break;
+            prevSide = side;
+        }
 
         // get lateral and angular outputs
         const Number lateralOut = [&] -> Number {
