@@ -208,15 +208,5 @@
     "supported_kernels": "^3.7.3",
     "target": "v5",
     "version": "0.2.0"
-  },
-  {
-    "metadata": {
-      "location": "https://github.com/LemLib/LemLib/releases/download/0.1.0/LemLib%400.1.0.zip"
-    },
-    "name": "LemLib",
-    "py/object": "pros.conductor.templates.base_template.BaseTemplate",
-    "supported_kernels": "^3.7.3",
-    "target": "v5",
-    "version": "0.1.0"
   }
 ]
