@@ -7,7 +7,7 @@
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * \copyright (c) 2017-2023, Purdue University ACM SIGBots.
+ * \copyright (c) 2017-2024, Purdue University ACM SIGBots.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -101,7 +101,7 @@ class Port {
 	 * #define EXT_ADI_SMART_PORT 1
 	 * 
 	 * void initialize() {
-	 *   pros::adi::Port sensor ({{ EXT_ADI_SMART_PORT , ANALOG_SENSOR_PORT }}, E_ADI_ANALOG_IN);
+	 *   pros::adi::Port sensor ({ EXT_ADI_SMART_PORT , ANALOG_SENSOR_PORT }, E_ADI_ANALOG_IN);
 	 *   // Displays the value of E_ADI_ANALOG_IN
 	 *   std::cout << "Port Type: " << sensor.get_config();
 	 * }
