@@ -115,5 +115,8 @@ void moveToPose(Pose target, Time timeout, MoveToPoseParams params, MoveToPoseSe
         settings.leftMotors.move(out.left);
         settings.rightMotors.move(out.right);
     }
+    // stop motors
+    settings.leftMotors.brake();
+    settings.rightMotors.brake();
 }
 } // namespace lemlib

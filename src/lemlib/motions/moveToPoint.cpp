@@ -88,6 +88,9 @@ void moveToPoint(V2Position target, Time timeout, MoveToPointParams params, Move
         settings.leftMotors.move(out.left);
         settings.rightMotors.move(out.right);
     }
+    // stop motors
+    settings.leftMotors.brake();
+    settings.rightMotors.brake();
 }
 
 }; // namespace lemlib

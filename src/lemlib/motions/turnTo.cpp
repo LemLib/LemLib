@@ -110,7 +110,7 @@ void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams p
     settings.rightMotors.setBrakeMode(rightBrakeMode);
 
     // stop the drivetrain
-    settings.leftMotors.move(0);
-    settings.rightMotors.move(0);
+    settings.leftMotors.brake();
+    settings.rightMotors.brake();
 }
 } // namespace lemlib
