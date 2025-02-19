@@ -103,6 +103,17 @@ void moveToPose(Pose target, Time timeout, MoveToPoseParams params, MoveToPoseSe
             prevLateralOut = out;
             return out;
         }();
+
+        // print debug info
+        logHelper.debug("Moving with {:.4f} lateral power, {:.4f} angular power, {:.4f} lateral error, {:.4f} angular "
+                        "error, {:.4f} dt",
+                        lateralOut, angularOut, lateralError, angularError, helper.getDelta());
+
+        // calculate drivetrain outputs
+        const auto out = desaturate(lateralOut, angularOut);
+        // move the drivetrain
+        settings.leftMotors.move(out.left);
+        settings.rightMotors.move(out.right);
     }
 }
 } // namespace lemlib
