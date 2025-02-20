@@ -1,5 +1,8 @@
 #include "lemlib/motions/follow.hpp"
 #include "LemLog/logger/Helper.hpp"
+#include "lemlib/MotionCancelHelper.hpp"
+#include "lemlib/Timer.hpp"
+#include "lemlib/util.hpp"
 
 using namespace units;
 
@@ -193,88 +196,69 @@ static LookaheadPoint findLookaheadPoint(LookaheadPoint lastLookaheadPoint, Pose
     return lastLookaheadPoint;
 }
 
-void follow(const asset& path, Length lookaheadDistance, Time timeout, bool reversed, FollowSettings settings) {
-    std::vector<Waypoint> pathPoints = getPath(path); // get list of path points
-    if (pathPoints.size() == 0) {
+void follow(const asset& asset, Length lookaheadDistance, Time timeout, FollowParams params, FollowSettings settings) {
+    const std::vector<Waypoint> path = getPath(asset); // get list of path points
+    if (path.size() == 0) {
         logHelper.error("No points in path! Do you have the right format? Skipping motion");
         return;
     }
-    Pose pose = settings.poseGetter();
-    Pose lastPose = pose;
-    LookaheadPoint lookaheadPose = {0_in, 0_in, 0};
-    LookaheadPoint lastLookahead = {pathPoints.at(0).x, pathPoints.at(0).y, 0};
-    float curvature;
-    float targetVel;
-    float prevLeftVel = 0;
-    float prevRightVel = 0;
-    int closestPoint;
-    float leftInput = 0;
-    float rightInput = 0;
-    float prevVel = 0;
-    int compState = pros::competition::get_status();
-    distTraveled = 0;
+    LookaheadPoint lastLookahead = {path.at(0).x, path.at(0).y, 0};
+    Number prevVel = 0;
 
-    // loop until the robot is within the end tolerance
-    for (int i = 0; i < timeout / 10 && pros::competition::get_status() == compState && this->motionRunning; i++) {
+    lemlib::MotionCancelHelper helper(10_msec); // cancel helper
+    Timer timer(timeout);
+    while (!timer.isDone() && helper.wait()) {
         // get the current position of the robot
-        pose = this->getPose(true);
-        if (!forwards) pose.theta -= M_PI;
-
-        // update completion vars
-        distTraveled += pose.distance(lastPose);
-        lastPose = pose;
+        const Pose pose = [&] {
+            Pose out = settings.poseGetter();
+            if (params.reversed) out.orientation -= 180_stDeg;
+            return out;
+        }();
 
         // find the closest point on the path to the robot
-        closestPoint = findClosest(pose, pathPoints);
+        int closestPoint = findClosest(pose, path);
         // if the robot is at the end of the path, then stop
-        if (pathPoints.at(closestPoint).theta == 0) break;
+        if (path.at(closestPoint).speed == 0) break;
 
         // find the lookahead point
-        lookaheadPose = lookaheadPoint(lastLookahead, pose, pathPoints, closestPoint, lookahead);
+        const LookaheadPoint lookaheadPose =
+            findLookaheadPoint(lastLookahead, pose, path, closestPoint, lookaheadDistance);
         lastLookahead = lookaheadPose; // update last lookahead position
 
         // get the curvature of the arc between the robot and the lookahead point
-        float curvatureHeading = M_PI / 2 - pose.theta;
-        curvature = findLookaheadCurvature(pose, curvatureHeading, lookaheadPose);
+        const Curvature curvature = getSignedTangentArcCurvature(pose, lookaheadPose);
 
         // get the target velocity of the robot
-        targetVel = pathPoints.at(closestPoint).theta;
-        targetVel = slew(targetVel, prevVel, lateralSettings.slew);
-        prevVel = targetVel;
-
+        const Number targetVel = [&] {
+            Number out = path.at(closestPoint).speed;
+            out = slew(out, prevVel, params.lateralSlew, helper.getDelta());
+            prevVel = out;
+            return out;
+        }();
         // calculate target left and right velocities
-        float targetLeftVel = targetVel * (2 + curvature * drivetrain.trackWidth) / 2;
-        float targetRightVel = targetVel * (2 - curvature * drivetrain.trackWidth) / 2;
+
+        Number targetLeftVel = targetVel * (2 + curvature * settings.trackWidth) / 2;
+        Number targetRightVel = targetVel * (2 - curvature * settings.trackWidth) / 2;
 
         // ratio the speeds to respect the max speed
-        float ratio = std::max(std::fabs(targetLeftVel), std::fabs(targetRightVel)) / 127;
+        float ratio = max(abs(targetLeftVel), abs(targetRightVel)) / 127;
         if (ratio > 1) {
             targetLeftVel /= ratio;
             targetRightVel /= ratio;
         }
 
-        // update previous velocities
-        prevLeftVel = targetLeftVel;
-        prevRightVel = targetRightVel;
-
         // move the drivetrain
-        if (forwards) {
-            drivetrain.leftMotors->move(targetLeftVel);
-            drivetrain.rightMotors->move(targetRightVel);
+        if (params.reversed) {
+            settings.leftMotors.move(-targetRightVel);
+            settings.rightMotors.move(-targetLeftVel);
         } else {
-            drivetrain.leftMotors->move(-targetRightVel);
-            drivetrain.rightMotors->move(-targetLeftVel);
+            settings.leftMotors.move(targetLeftVel);
+            settings.rightMotors.move(targetRightVel);
         }
-
-        pros::delay(10);
     }
 
     // stop the robot
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
-    // set distTraveled to -1 to indicate that the function has finished
-    distTraveled = -1;
-    // give the mutex back
-    this->endMotion();
+    settings.leftMotors.brake();
+    settings.rightMotors.brake();
 }
 } // namespace lemlib
