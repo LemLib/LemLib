@@ -1,9 +1,6 @@
 #pragma once
 
-#include "hardware/Motor/MotorGroup.hpp"
-#include "units/Pose.hpp"
-#include "lemlib/ExitCondition.hpp"
-#include "lemlib/PID.hpp"
+#include "lemlib/config.hpp"
 #include <functional>
 
 namespace lemlib {
@@ -13,18 +10,18 @@ struct MoveToPointParams {
         Number maxLateralSpeed = 1;
         Number minLateralSpeed = 0;
         Number maxAngularSpeed = 1;
-        Number lateralSlew = INFINITY;
-        Number angularSlew = INFINITY;
+        Number lateralSlew = lateral_slew;
+        Number angularSlew = angular_slew;
         Length earlyExitRange = 0_in;
 };
 
 struct MoveToPointSettings {
-        PID angularPID;
-        PID lateralPID;
-        ExitConditionGroup<Length> exitConditions;
-        std::function<units::Pose()> poseGetter;
-        lemlib::MotorGroup& leftMotors;
-        lemlib::MotorGroup& rightMotors;
+        PID angularPID = angular_pid;
+        PID lateralPID = lateral_pid;
+        ExitConditionGroup<Length> exitConditions = lateral_exit_conditions;
+        std::function<units::Pose()> poseGetter = pose_getter;
+        lemlib::MotorGroup& leftMotors = left_motors;
+        lemlib::MotorGroup& rightMotors = right_motors;
 };
 
 void moveToPoint(units::V2Position target, Time timeout, MoveToPointParams params, MoveToPointSettings settings);

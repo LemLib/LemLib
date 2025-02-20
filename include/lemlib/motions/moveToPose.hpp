@@ -1,33 +1,30 @@
 #pragma once
 
-#include "hardware/Motor/MotorGroup.hpp"
-#include "units/Pose.hpp"
-#include "lemlib/ExitCondition.hpp"
-#include "lemlib/PID.hpp"
+#include "lemlib/config.hpp"
 #include <functional>
 
 namespace lemlib {
 
 struct MoveToPoseParams {
         bool reversed = false;
-        Number driftCompensation = 2; // TODO: figure out how we're going to deal with a user defined default
+        Number driftCompensation = drift_compensation;
         Number lead = 0.6;
         Number maxLateralSpeed = 1;
         Number minLateralSpeed = 0;
         Number maxAngularSpeed = 1;
-        Number lateralSlew = INFINITY;
-        Number angularSlew = INFINITY;
+        Number lateralSlew = lateral_slew;
+        Number angularSlew = angular_slew;
         Length earlyExitRange = 0_in;
 };
 
 struct MoveToPoseSettings {
-        PID angularPID;
-        PID lateralPID;
-        ExitConditionGroup<Length> lateralExitConditions;
-        ExitConditionGroup<AngleRange> angularExitConditions;
-        std::function<units::Pose()> poseGetter;
-        lemlib::MotorGroup& leftMotors;
-        lemlib::MotorGroup& rightMotors;
+        PID angularPID = angular_pid;
+        PID lateralPID = lateral_pid;
+        ExitConditionGroup<Length> lateralExitConditions = lateral_exit_conditions;
+        ExitConditionGroup<AngleRange> angularExitConditions = angular_exit_conditions;
+        std::function<units::Pose()> poseGetter = pose_getter;
+        lemlib::MotorGroup& leftMotors = left_motors;
+        lemlib::MotorGroup& rightMotors = right_motors;
 };
 
 void moveToPose(units::Pose target, Time timeout, MoveToPoseParams params, MoveToPoseSettings settings);
