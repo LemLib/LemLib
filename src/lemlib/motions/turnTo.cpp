@@ -90,6 +90,7 @@ void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams p
         const Number motorPower = [&] {
             Number raw = settings.angularPID.update(to_stRad(deltaTheta));
             if (!settling) raw = slew(raw, prevMotorPower, params.slew, helper.getDelta(), slewDirection);
+            if (params.lockedSide) raw *= 2;
             return constrainPower(raw, params.maxSpeed, params.minSpeed);
         }();
 
@@ -101,8 +102,12 @@ void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams p
                         helper.getDelta());
 
         // move the motors
-        settings.leftMotors.move(-motorPower);
-        settings.rightMotors.move(motorPower);
+        if (!params.lockedSide || *params.lockedSide == TurnToParams::LockedSide::RIGHT) {
+            settings.leftMotors.move(-motorPower);
+        }
+        if (!params.lockedSide || *params.lockedSide == TurnToParams::LockedSide::LEFT) {
+            settings.rightMotors.move(motorPower);
+        }
     }
 
     // apply original brake modes
