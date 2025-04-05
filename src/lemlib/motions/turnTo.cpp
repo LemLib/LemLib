@@ -102,11 +102,15 @@ void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams p
                         helper.getDelta());
 
         // move the motors
-        if (!params.lockedSide || *params.lockedSide == TurnToParams::LockedSide::RIGHT) {
-            settings.leftMotors.move(-motorPower);
-        }
-        if (!params.lockedSide || *params.lockedSide == TurnToParams::LockedSide::LEFT) {
-            settings.rightMotors.move(motorPower);
+        settings.leftMotors.move(-motorPower);
+        settings.rightMotors.move(motorPower);
+        // check which side of the drivetrain to lock, if any
+        if (params.lockedSide) {
+            if (*params.lockedSide == TurnToParams::LockedSide::LEFT) {
+                settings.leftMotors.brake();
+            } else {
+                settings.rightMotors.brake();
+            }
         }
     }
 
