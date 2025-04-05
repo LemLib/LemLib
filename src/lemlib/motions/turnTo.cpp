@@ -90,7 +90,6 @@ void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams p
         const Number motorPower = [&] {
             Number raw = settings.angularPID.update(to_stRad(deltaTheta));
             if (!settling) raw = slew(raw, prevMotorPower, params.slew, helper.getDelta(), slewDirection);
-            if (params.lockedSide) raw *= 2;
             return constrainPower(raw, params.maxSpeed, params.minSpeed);
         }();
 
