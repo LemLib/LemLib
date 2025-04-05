@@ -103,6 +103,14 @@ void turnTo(std::variant<Angle, V2Position> target, Time timeout, TurnToParams p
         // move the motors
         settings.leftMotors.move(-motorPower);
         settings.rightMotors.move(motorPower);
+        // check which side of the drivetrain to lock, if any
+        if (params.lockedSide) {
+            if (*params.lockedSide == TurnToParams::LockedSide::LEFT) {
+                settings.leftMotors.brake();
+            } else {
+                settings.rightMotors.brake();
+            }
+        }
     }
 
     // apply original brake modes
