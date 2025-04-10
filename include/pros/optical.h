@@ -7,7 +7,7 @@
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * \copyright (c) 2017-2023, Purdue University ACM SIGBots.
+ * \copyright (c) 2017-2024, Purdue University ACM SIGBots.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -472,7 +472,7 @@ int32_t optical_disable_gesture(uint8_t port);
  * \param port
  *        The V5 Optical Sensor port number from 1-21
  * \return Integration time in milliseconds if the operation is successful 
- * or PROS_ERR if the operation failed, setting errno.
+ * or PROS_ERR_F if the operation failed, setting errno.
  */
 double optical_get_integration_time(uint8_t port);
 
