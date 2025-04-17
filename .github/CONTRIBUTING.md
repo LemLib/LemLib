@@ -174,10 +174,11 @@ You can improve the documentation by:
 
 Changes should be requested via a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to the LemLib repository. You can use the [Pull Request Template](https://github.com/LemLib/LemLib/blob/master/.github/PULL_REQUEST_TEMPLATE.md) to structure your pull request. Additionally, you should verify that the documentation builds correctly on your machine.
 
-You can do so by installing Doxygen, and all of the python dependencies listed in `docs/requirements.txt`. Once you've done that, run the following commands to render the documentation:
+You can do so by installing [Doxygen](https://www.doxygen.nl/download.html). Once you've done that, run the following commands to render the documentation:
 
 ```sh
 cd docs
+pip install -r requirements.txt
 doxygen
 make html
 ```
@@ -201,7 +202,7 @@ We use our own style guide for LemLib. Here are the most important rules:
 
 For further information, check out [.clang-format](../.clang-format).
 
-We use the [clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) extension to format our code. You can use the `.clang-format` file in the root directory of the project to configure your IDE to use the same formatting rules as we do. You can also use the `clang-format` command line tool to format your code. You can find more information about the tool [here](https://clang.llvm.org/docs/ClangFormat.html).
+We use the [clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) extension to format our code. You can use the `.clang-format` file in the root directory of the project to configure your IDE to use the same formatting rules as we do. In VSCode, you will want to make sure your `Editor: Default Formatter` is set to Clangd if you have another editor installed.
 
 
 ### 💄Commit Messages
