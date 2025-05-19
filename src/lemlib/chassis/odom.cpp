@@ -14,7 +14,8 @@
 pros::Task* trackingTask = nullptr;
 
 // global variables
-lemlib::OdomSensors odomSensors(nullptr, nullptr, nullptr, nullptr, nullptr); // the sensors to be used for odometry
+lemlib::OdomSensors odomSensors(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                                nullptr); // the sensors to be used for odometry
 lemlib::Drivetrain drive(nullptr, nullptr, 0, 0, 0, 0); // the drivetrain to be used for odometry
 lemlib::Pose odomPose(0, 0, 0); // the pose of the robot
 lemlib::Pose odomSpeed(0, 0, 0); // the speed of the robot
@@ -175,7 +176,45 @@ void lemlib::update() {
     odomSpeed.x = ema((odomPose.x - prevPose.x) / 0.01, odomSpeed.x, 0.95);
     odomSpeed.y = ema((odomPose.y - prevPose.y) / 0.01, odomSpeed.y, 0.95);
     odomSpeed.theta = ema((odomPose.theta - prevPose.theta) / 0.01, odomSpeed.theta, 0.95);
+    // --- LIDAR correction ---
+    if (abs(odomPose.x) > 36 || abs(odomPose.y) > 36) { // <-- your custom condition function
+        // angle is assumed to be relative to global frame or robot frame based on your system
+        float lidarAngle = fmod(fmod(odomPose.theta, 360) + 360, 360); // in deg, 0-360 wrapped
+        float lidarX;
+        float lidarY;
+        if (odomPose.x > 36) {
+            if (lidarAngle > 340 || lidarAngle < 20) { // right distance from right wall
+                lidarX = 71.5 - (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*cos(lidarAngle-0));
+            } else if (abs(lidarAngle - 180) < 20) { // left distance from right wall
+                lidarX = 71.5 - (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*cos(lidarAngle-180));
+            }
+        } else if (odomPose.x < -36) {
+            if (lidarAngle > 340 || lidarAngle < 20) { // left distance from left wall
+                lidarX = -71.5 + (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*cos(lidarAngle-0));
+            } else if (abs(lidarAngle - 180) < 20) { // right distance from left wall
+                lidarX = -71.5 + (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*cos(lidarAngle-180));
+            }
+        }
 
+        if (odomPose.y > 36) {
+            if (abs(lidarAngle - 270) < 20) { // right distance from top wall
+                lidarX = 71.5 - (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*cos(lidarAngle-270));
+            } else if (abs(lidarAngle - 90) < 20) { // left distance from top wall
+                lidarX = 71.5 - (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*cos(lidarAngle-90));
+            }
+        } else if (odomPose.y < -36) {
+            if (abs(lidarAngle - 270) < 20) { // left distance from bottom wall
+                lidarX = -71.5 + (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*cos(lidarAngle-270));
+            } else if (abs(lidarAngle - 90) < 20) { // right distance from bottom wall
+                lidarX = 71.5 - (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*cos(lidarAngle-90));
+            }
+        }
+        // Use these directly, or fuse with odometry using a filter
+        // For now, let's blend with odometry using simple averaging (or use a weighted average)
+        float alpha = 0.8; // weighting factor for blending
+        odomPose.x = alpha * lidarX + (1 - alpha) * odomPose.x;
+        odomPose.y = alpha * lidarY + (1 - alpha) * odomPose.y;
+    }
     // calculate local speed
     odomLocalSpeed.x = ema(localX / 0.01, odomLocalSpeed.x, 0.95);
     odomLocalSpeed.y = ema(localY / 0.01, odomLocalSpeed.y, 0.95);

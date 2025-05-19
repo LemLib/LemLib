@@ -25,6 +25,9 @@ class OdomSensors {
          * @param vertical2 pointer to the second vertical tracking wheel
          * @param horizontal1 pointer to the first horizontal tracking wheel
          * @param horizontal2 pointer to the second horizontal tracking wheel
+         * @param distance1 pointer to the first lidar
+         * @param distance2 pointer to the second lidar
+         * 
          * @param imu pointer to the IMU
          *
          * @b Example
@@ -41,11 +44,13 @@ class OdomSensors {
          * @endcode
          */
         OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
-                    TrackingWheel* horizontal2, pros::Imu* imu);
+                    TrackingWheel* horizontal2, DistanceSensor* distance1, DistanceSensor* distance2,pros::Imu* imu);
         TrackingWheel* vertical1;
         TrackingWheel* vertical2;
         TrackingWheel* horizontal1;
         TrackingWheel* horizontal2;
+        DistanceSensor* distance1;
+        DistanceSensor* distance2;
         pros::Imu* imu;
 };
 
@@ -232,7 +237,7 @@ enum class DriveSide {
     RIGHT /** lock the right side of the drivetrain */
 };
 
-/**
+/*
  * @brief Parameters for Chassis::swingToPoint
  *
  * We use a struct to simplify customization. Chassis::swingToPoint has many

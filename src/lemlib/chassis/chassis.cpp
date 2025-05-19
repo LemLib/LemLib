@@ -7,14 +7,18 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/odom.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/chassis/distanceSensor.hpp"
+
 #include "pros/rtos.hpp"
 
 lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
-                                 TrackingWheel* horizontal2, pros::Imu* imu)
+                                 TrackingWheel* horizontal2, DistanceSensor* distance1, DistanceSensor* distance2, pros::Imu* imu)
     : vertical1(vertical1),
       vertical2(vertical2),
       horizontal1(horizontal1),
       horizontal2(horizontal2),
+      distance1(distance1),
+      distance2(distance2),
       imu(imu) {}
 
 lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth,
