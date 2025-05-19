@@ -177,7 +177,7 @@ void lemlib::update() {
     odomSpeed.y = ema((odomPose.y - prevPose.y) / 0.01, odomSpeed.y, 0.95);
     odomSpeed.theta = ema((odomPose.theta - prevPose.theta) / 0.01, odomSpeed.theta, 0.95);
     // --- LIDAR correction ---
-    if (abs(odomPose.x) > 36 || abs(odomPose.y) > 36) { // <-- your custom condition function
+    if (abs(odomPose.x) > 36 || abs(odomPose.y) > 36) {
         // angle is assumed to be relative to global frame or robot frame based on your system
         float lidarAngle = fmod(fmod(odomPose.theta, 360) + 360, 360); // in deg, 0-360 wrapped
         float lidarX;
@@ -209,7 +209,7 @@ void lemlib::update() {
                 lidarX = 71.5 - (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*cos(lidarAngle-90));
             }
         }
-        // Use these directly, or fuse with odometry using a filter
+
         // For now, let's blend with odometry using simple averaging (or use a weighted average)
         float alpha = 0.8; // weighting factor for blending
         odomPose.x = alpha * lidarX + (1 - alpha) * odomPose.x;
