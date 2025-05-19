@@ -4,6 +4,7 @@
 #include "pros/imu.hpp"
 #include "lemlib/asset.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "lemlib/chassis/distanceSensor.hpp"
 #include "lemlib/pose.hpp"
 #include "lemlib/pid.hpp"
 #include "lemlib/exitcondition.hpp"
@@ -27,7 +28,7 @@ class OdomSensors {
          * @param horizontal2 pointer to the second horizontal tracking wheel
          * @param distance1 pointer to the first lidar
          * @param distance2 pointer to the second lidar
-         * 
+         *
          * @param imu pointer to the IMU
          *
          * @b Example
@@ -44,7 +45,7 @@ class OdomSensors {
          * @endcode
          */
         OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertical2, TrackingWheel* horizontal1,
-                    TrackingWheel* horizontal2, DistanceSensor* distance1, DistanceSensor* distance2,pros::Imu* imu);
+                    TrackingWheel* horizontal2, DistanceSensor* distance1, DistanceSensor* distance2, pros::Imu* imu);
         TrackingWheel* vertical1;
         TrackingWheel* vertical2;
         TrackingWheel* horizontal1;
@@ -53,7 +54,6 @@ class OdomSensors {
         DistanceSensor* distance2;
         pros::Imu* imu;
 };
-
 /**
  * @brief class containing constants for a chassis controller
  */

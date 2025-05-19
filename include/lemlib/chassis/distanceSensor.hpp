@@ -7,7 +7,6 @@
 
 namespace lemlib {
 
-
 class DistanceSensor {
     public:
         
@@ -46,12 +45,6 @@ class DistanceSensor {
          *
          * @b Example
          * @code {.cpp}
-         * void initialize() {
-         *     // create a tracking wheel with an offset of 0.5 inches
-         *     lemlib::TrackingWheel exampleTrackingWheel(&exampleEncoder, lemlib::Omniwheel::NEW_275, 0.5);
-         *     // this prints 0.5 to the terminal, the offset of the tracking wheel
-         *     std::cout << "offset: " << exampleTrackingWheel.getOffset() << std::endl;
-         * }
          * @endcode
          */
         float getOffset();
