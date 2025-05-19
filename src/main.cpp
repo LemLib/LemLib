@@ -63,8 +63,8 @@ lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel
                             nullptr, // vertical tracking wheel 2, set to nullptr as we don't have a second one
                             &horizontal, // horizontal tracking wheel
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
-                            &right, //right side distance
-                            nullptr, //left side distance
+                            &right, // right side distance
+                            nullptr, // left side distance
                             &imu // inertial sensor
 );
 
