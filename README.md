@@ -7,14 +7,13 @@
     <img src="https://img.shields.io/badge/version-v0.5.2-blue?style=for-the-badge">
 </p>
 <hr>
-Welcome to LemLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.
+Welcome to RiderLib! This open-source PROS template aims to introduce common algorithms like Pure Pursuit and Odometry for new and experienced teams alike.
 
-The creation of this template was inspired by [EZ-Template](https://github.com/EZ-Robotics/EZ-Template) and [OkapiLib](https://github.com/OkapiLib/OkapiLib). We aim to develop a library that strikes a balance between ease-of-use, akin to that of EZ-Template, and comprehensive functionality, similar to that of OkapiLib.
+This template was forked from [Lemlib](https://github.com/LemLib/LemLib) and inspired by [EZ-Template](https://github.com/EZ-Robotics/EZ-Template) and [OkapiLib](https://github.com/OkapiLib/OkapiLib). My goal was to include easy LIDAR using VEX distance sensors in conjunction with the Lemlib 0.5.2 algorithms.
 
-> Want a place to chat with the devs and other users? Join our [Discord server](https://discord.gg/pCHr7XZUTj).
 
 ## License
-This project is licensed under the MIT license. Check [LICENSE](https://github.com/LemLib/LemLib/blob/master/LICENSE) for more details.
+This project is licensed under the MIT license. Check [LICENSE](https://github.com/sykevrc/RiderLib/blob/master/LICENSE) for more details.
 
 ## Features
 - Generic PID class
