@@ -1,9 +1,9 @@
-<img src="docs/assets/LemLib_Banner_V3.png">
+
 <p align="center">
-    <img src="https://img.shields.io/github/contributors/LemLib/LemLib?style=for-the-badge">
-    <img src="https://img.shields.io/github/stars/LemLib/LemLib?style=for-the-badge">
-    <img src="https://img.shields.io/github/downloads/LemLib/LemLib/total?style=for-the-badge">
-    <img src="https://img.shields.io/github/actions/workflow/status/LemLib/LemLib/pros-build.yml?style=for-the-badge">
+    <img src="https://img.shields.io/github/contributors/sykevrc/RiderLib?style=for-the-badge">
+    <img src="https://img.shields.io/github/stars/sykevrc/RiderLib?style=for-the-badge">
+    <img src="https://img.shields.io/github/downloads/sykevrc/RiderLib/total?style=for-the-badge">
+    <img src="https://img.shields.io/github/actions/workflow/status/sykevrc/RiderLib/pros-build.yml?style=for-the-badge">
     <img src="https://img.shields.io/badge/version-v0.5.2-blue?style=for-the-badge">
 </p>
 <hr>
@@ -25,7 +25,7 @@ This project is licensed under the MIT license. Check [LICENSE](https://github.c
 - Driver Control
 
 ## Example Project
-You can find a fully annotated example project [here](https://github.com/LemLib/LemLib/blob/stable/src/main.cpp).
+You can find a fully annotated example project [here](https://github.com/sykevrc/RiderLib/blob/stable/src/main.cpp).
 
 ## Tutorials
 The [tutorials](https://lemlib.readthedocs.io/en/v0.5.0/tutorials/1_getting_started.html) provide a detailed walkthrough through all the features of LemLib. It covers everything from installation to Path Following:
@@ -59,13 +59,13 @@ Yes.
 Per the RECF student-centred policy, in the context of third-party libraries.
 > Students should be able to understand and explain the code used on their robots
 
-In other words, you need to know how LemLib works. You don't need to know the details like all the math, just more or less how the algorithm works. If you want to learn more about LemLib, you can look through the documentation and ask questions on our Discord server.
+In other words, you need to know how LemLib works. You don't need to know the details like all the math, just more or less how the algorithm works. If you want to learn more about RiderLib, you can look through the documentation and ask questions on the Lemlib Discord server.
 
 ## Documentation
 Check out the [Documentation](https://lemlib.readthedocs.io/en/v0.5.0/index.html).
 
 ## Contributing
-Want to contribute? Please read [CONTRIBUTING.md](https://github.com/LemLib/LemLib/blob/master/.github/CONTRIBUTING.md) and join our [Discord server](https://discord.gg/pCHr7XZUTj).
+Want to contribute? Please read [CONTRIBUTING.md](https://github.com/sykevrc/RiderLib/blob/master/.github/CONTRIBUTING.md) and join the [Discord server](https://discord.gg/pCHr7XZUTj). I am a member in there under the tag sykex1
 
 ## Code of Conduct
 See the [Code of Conduct](https://github.com/LemLib/LemLib/blob/master/.github/CODE_OF_CONDUCT.md) on how to behave like an adult.
