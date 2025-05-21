@@ -31,10 +31,10 @@ lemlib::DistanceSensor right(&rightdist, 5.75);
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
-                              14, // 10 inch track width
+                              14, // 14 inch track width
                               (circ / M_PI) / 2, // found using empirical testing
-                              360, // drivetrain rpm is 360
-                              2 // horizontal drift is 2. If we had traction wheels, it would have been 8
+                              450, // drivetrain rpm is 450
+                              8 // horizontal drift is 8. Since we had traction wheels, it is 8
 );
 
 // lateral motion controller
@@ -166,7 +166,6 @@ void autonomous() {
     chassis.waitUntilDone();
     pros::lcd::print(4, "pure pursuit finished!");
 }
-
 /**
  * Runs in driver control
  */
