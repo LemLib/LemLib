@@ -1,6 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 
+const int circ = 1.0; //find this by pushing the chassis 60 inches and multiplying that by (motor cart rpm / wheel rpm).
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
@@ -28,8 +29,8 @@ lemlib::DistanceSensor right(&rightdist, 5.75);
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
-                              10, // 10 inch track width
-                              lemlib::Omniwheel::NEW_4, // using new 4" omnis
+                              14, // 10 inch track width
+                              (circ/M_PI)/2, // found using empirical testing
                               360, // drivetrain rpm is 360
                               2 // horizontal drift is 2. If we had traction wheels, it would have been 8
 );
