@@ -1,7 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 
-const int circ = 1.0; //find this by pushing the chassis 60 inches and multiplying that by (motor cart rpm / wheel rpm).
+const int circ = 1.0; //find this by pushing the chassis forward 60 inches 5 times and average them.
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
