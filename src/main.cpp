@@ -1,7 +1,9 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 
-const int circ = 1.0; //find this by pushing the chassis forward 60 inches 5 times and average them.
+const int circ = 4.0; // find this by pushing the chassis forward 60 inches 5 times and average all motor revolution counts.
+// the value of circ will be (60*motor_rpm) / (average_rev_counts*wheel_rpm)
+
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
@@ -30,7 +32,7 @@ lemlib::DistanceSensor right(&rightdist, 5.75);
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
                               14, // 10 inch track width
-                              (circ/M_PI)/2, // found using empirical testing
+                              (circ / M_PI) / 2, // found using empirical testing
                               360, // drivetrain rpm is 360
                               2 // horizontal drift is 2. If we had traction wheels, it would have been 8
 );
