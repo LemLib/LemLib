@@ -21,6 +21,12 @@ template <> struct LookupName<Quantity<std::ratio<0>, std::ratio<0>, std::ratio<
         using Named = Temperature;
 };
 
+template <> struct std::formatter<Temperature> : std::formatter<double> {
+        auto format(const Temperature& quantity, std::format_context& ctx) const {
+            return std::format_to(ctx.out(), "{}_k", quantity.internal());
+        }
+};
+
 inline std::ostream& operator<<(std::ostream& os, const Temperature& quantity) {
     os << quantity.internal() << " k";
     return os;

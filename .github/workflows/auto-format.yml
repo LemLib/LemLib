@@ -19,11 +19,11 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Format code # Outputs the correctly formatted code
-      uses: DoozyX/clang-format-lint-action@v0.18 
+      uses: d-griet/clang-format-lint-action@99a106be2f3f1a92d9783ea7c744fde62d8ce1fa
       with:
         source: './src/lemlib ./include/lemlib'
         extensions: 'hpp,cpp'
-        clangFormatVersion: 18
+        clangFormatVersion: 19
         inplace: true # Same as `clang-format -i`
         
     # Commits the correctly formatted files to the repository

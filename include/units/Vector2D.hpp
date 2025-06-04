@@ -3,6 +3,7 @@
 #include "units/Angle.hpp"
 
 namespace units {
+
 /**
  * @class Vector2D
  *
@@ -43,8 +44,8 @@ template <isQuantity T> class Vector2D {
          */
         constexpr static Vector2D fromPolar(Angle t, T m) {
             m = abs(m);
-            t = constrainAngle360(t);
-            return Vector2D<T>(m * cos(t), m * sin(t));
+            t = units::constrainAngle360(t);
+            return Vector2D<T>(m * units::cos(t), m * units::sin(t));
         }
 
         /**
@@ -200,13 +201,6 @@ template <isQuantity T> class Vector2D {
         }
 
         /**
-         * @brief angle of the vector from the origin
-         *
-         * @return Angle
-         */
-        constexpr Angle theta() const { return atan2(this->y, this->x); }
-
-        /**
          * @brief magnitude of the vector
          *
          * @return T
@@ -228,7 +222,7 @@ template <isQuantity T> class Vector2D {
          * @return T
          */
         constexpr T distanceTo(const Vector2D<T>& other) const {
-            return sqrt(square(this->x - other.x, 2) + square(this->y - other.y, 2));
+            return sqrt(square(this->x - other.x) + square(this->y - other.y));
         }
 
         /**
@@ -238,30 +232,7 @@ template <isQuantity T> class Vector2D {
          *
          * @return Vector2D<T>
          */
-        constexpr Vector2D<T> normalize() const { return (*this) / magnitude(); }
-
-        /**
-         * @brief rotate the vector by an angle
-         *
-         * @param angle
-         */
-        constexpr void rotateBy(Angle angle) {
-            const T m = magnitude();
-            const Angle t = theta() + angle;
-            this->x = m * cos(t);
-            this->y = m * sin(t);
-        }
-
-        /**
-         * @brief rotate the vector to an angle
-         *
-         * @param angle
-         */
-        constexpr void rotateTo(Angle angle) {
-            const T m = magnitude();
-            this->x = m * cos(angle);
-            this->y = m * sin(angle);
-        }
+        constexpr Vector2D<Number> normalize() const { return (*this) / magnitude(); }
 
         /**
          * @brief get a copy of this vector rotated by an angle
@@ -269,16 +240,12 @@ template <isQuantity T> class Vector2D {
          * @param angle
          * @return Vector2D<T>
          */
-        constexpr Vector2D<T> rotatedBy(Angle angle) const { return fromPolar(theta() + angle, magnitude()); }
-
-        /**
-         * @brief get a copy of this vector rotated to an angle
-         *
-         * @param angle
-         * @return Vector2D<T>
-         */
-        constexpr Vector2D<T> rotatedTo(Angle angle) const { return fromPolar(angle, magnitude()); }
+        constexpr Vector2D<T> rotatedBy(Angle angle) const {
+            return fromPolar(Vector2D<T>({T(0.0), T(0.0)}).angleTo(*this) + angle, magnitude());
+        }
 };
+
+template <typename T> inline constexpr Vector2D<T> origin({T(0.0), T(0.0)});
 
 /**
  * @brief * operator overload. Multiplies a quantity and a vector
@@ -316,4 +283,25 @@ typedef Vector2D<Length> V2Position;
 typedef Vector2D<LinearVelocity> V2Velocity;
 typedef Vector2D<LinearAcceleration> V2Acceleration;
 typedef Vector2D<Force> V2Force;
+
 } // namespace units
+
+template <typename T> struct std::formatter<units::Vector2D<T>> : std::formatter<T> {
+        // Optionally parse format specifiers for T
+        constexpr auto parse(auto& ctx) { return formatter<T>::parse(ctx); }
+
+        auto format(const units::Vector2D<T>& vector, format_context& ctx) const {
+            auto it = ctx.out();
+            it = format_to(it, "(");
+
+            // Format vector.x using the base formatter<T>
+            it = static_cast<const formatter<T>*>(this)->format(vector.x, ctx);
+            it = format_to(it, ", ");
+
+            // Format vector.y using the base formatter<T>
+            it = static_cast<const formatter<T>*>(this)->format(vector.y, ctx);
+            it = format_to(it, ")");
+
+            return it;
+        }
+};

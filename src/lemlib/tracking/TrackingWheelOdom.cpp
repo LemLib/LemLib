@@ -1,15 +1,44 @@
 #include "lemlib/tracking/TrackingWheelOdom.hpp"
+#include "hardware/Encoder/V5RotationSensor.hpp"
+#include "hardware/Encoder/ADIEncoder.hpp"
 #include "LemLog/logger/Helper.hpp"
 #include "units/Vector2D.hpp"
 
 static logger::Helper helper("lemlib/odom/tracking_wheel_odom");
 
 namespace lemlib {
-TrackingWheel::TrackingWheel(Encoder* encoder, Length diameter, Length offset)
+TrackingWheel::TrackingWheel(Encoder* encoder, Length diameter, Length offset, Number ratio)
     : m_encoder(encoder),
       m_diameter(diameter),
       m_offset(offset),
-      m_lastTotal(to_stRad(encoder->getAngle()) * M_PI * diameter) {}
+      m_ratio(ratio),
+      m_lastTotal(to_stRot(encoder->getAngle()) * M_PI * diameter * m_ratio) {}
+
+TrackingWheel::TrackingWheel(ReversibleSmartPort port, Length diameter, Length offset, Number ratio)
+    : m_encoder(new V5RotationSensor(port)),
+      m_diameter(diameter),
+      m_offset(offset),
+      m_ratio(ratio),
+      m_lastTotal(to_stRot(m_encoder->getAngle()) * M_PI * diameter * m_ratio),
+      m_deallocate(true) {}
+
+TrackingWheel::TrackingWheel(ADIPort topPort, ADIPort bottomPort, bool reversed, Length diameter, Length offset,
+                             Number ratio)
+    : m_encoder(new ADIEncoder(topPort, bottomPort, reversed)),
+      m_diameter(diameter),
+      m_offset(offset),
+      m_ratio(ratio),
+      m_lastTotal(to_stRot(m_encoder->getAngle()) * M_PI * diameter * m_ratio),
+      m_deallocate(true) {}
+
+TrackingWheel::TrackingWheel(SmartPort expanderPort, ADIPort topPort, ADIPort bottomPort, bool reversed,
+                             Length diameter, Length offset, Number ratio)
+    : m_encoder(new ADIEncoder(expanderPort, topPort, bottomPort, reversed)),
+      m_diameter(diameter),
+      m_offset(offset),
+      m_ratio(ratio),
+      m_lastTotal(to_stRot(m_encoder->getAngle()) * M_PI * diameter * m_ratio),
+      m_deallocate(true) {}
 
 Length TrackingWheel::getDistanceTraveled() { return to_stRot(m_encoder->getAngle()) * M_PI * m_diameter; }
 
@@ -26,8 +55,12 @@ Length TrackingWheel::getOffset() { return m_offset; }
 
 int TrackingWheel::reset() { return m_encoder->setAngle(0_stDeg); }
 
-TrackingWheelOdometry::TrackingWheelOdometry(std::vector<IMU*> imus, std::vector<TrackingWheel> verticalWheels,
-                                             std::vector<TrackingWheel> horizontalWheels)
+TrackingWheel::~TrackingWheel() {
+    if (m_deallocate) delete m_encoder;
+}
+
+TrackingWheelOdometry::TrackingWheelOdometry(std::vector<IMU*> imus, std::vector<TrackingWheel*> verticalWheels,
+                                             std::vector<TrackingWheel*> horizontalWheels)
     : m_Imus(imus),
       m_verticalWheels(verticalWheels),
       m_horizontalWheels(horizontalWheels) {}
@@ -68,15 +101,15 @@ struct TrackingWheelData {
  *
  * @return LateralDelta the position delta
  */
-static TrackingWheelData findLateralDelta(std::vector<TrackingWheel>& sensors) {
+static TrackingWheelData findLateralDelta(std::vector<TrackingWheel*>& sensors) {
     for (int i = 0; i < sensors.size(); ++i) {
-        TrackingWheel& sensor = sensors.at(i);
-        const Length data = sensor.getDistanceDelta();
+        TrackingWheel* sensor = sensors.at(i);
+        const Length data = sensor->getDistanceDelta();
         if (data.internal() == INFINITY) { // error checking
             sensors.erase(sensors.begin() + i);
             --i;
             helper.log(logger::Level::WARN, "Failed to get data from tracking wheel, removing tracking wheel!");
-        } else return {data, sensor.getOffset()};
+        } else return {data, sensor->getOffset()};
     }
     // return 0 if no data was found
     return {0_m, 0_m};
@@ -90,14 +123,14 @@ static TrackingWheelData findLateralDelta(std::vector<TrackingWheel>& sensors) {
  * @return std::nullopt there's not enough tracking wheels to calculate the heading
  * @return std::optional<Angle> the heading
  */
-static std::optional<Angle> calculateWheelHeading(std::vector<TrackingWheel>& trackingWheels) {
+static std::optional<Angle> calculateWheelHeading(std::vector<TrackingWheel*>& trackingWheels) {
     // check that there are enough tracking wheels
     if (trackingWheels.size() < 2) return std::nullopt;
     // get data
-    const Length distance1 = trackingWheels.at(0).getDistanceTraveled();
-    const Length distance2 = trackingWheels.at(1).getDistanceTraveled();
-    const Length offset1 = trackingWheels.at(0).getOffset();
-    const Length offset2 = trackingWheels.at(1).getOffset();
+    const Length distance1 = trackingWheels.at(0)->getDistanceTraveled();
+    const Length distance2 = trackingWheels.at(1)->getDistanceTraveled();
+    const Length offset1 = trackingWheels.at(0)->getOffset();
+    const Length offset2 = trackingWheels.at(1)->getOffset();
     // check that the offsets aren't the same
     if (offset1 == offset2) {
         helper.log(logger::Level::WARN, "Tracking wheel offsets are equal, removing one tracking wheel!");

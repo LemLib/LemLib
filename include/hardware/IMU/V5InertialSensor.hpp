@@ -1,25 +1,12 @@
 #pragma once
 
+#include "hardware/Port.hpp"
 #include "hardware/IMU/IMU.hpp"
 #include "pros/imu.hpp"
 
 namespace lemlib {
 class V5InertialSensor : public IMU {
     public:
-        /**
-         * @brief Construct a new V5 Inertial Sensor
-         *
-         * @param imu the inertial sensor
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *    // Create a new V5 Inertial Sensor on port 1
-         *    lemlib::V5InertialSensor imu = pros::Imu(1);
-         * }
-         * @endcode
-         */
-        V5InertialSensor(pros::Imu imu);
         /**
          * @brief Construct a new V5 Inertial Sensor
          *
@@ -33,7 +20,21 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        V5InertialSensor(std::uint8_t port);
+        V5InertialSensor(SmartPort port);
+        /**
+         * @brief Create a new V5 Inertial Sensor
+         *
+         * @param imu the inertial sensor
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *    // Create a new V5 Inertial Sensor on port 1
+         *    lemlib::V5InertialSensor imu = lemlib::V5InertialSensor::from_pros_imu(pros::Imu(1));
+         * }
+         * @endcode
+         */
+        static V5InertialSensor from_pros_imu(pros::Imu imu);
         /**
          * @brief calibrate the V5 Inertial Sensor
          *
@@ -221,7 +222,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        int setGyroScalar(double scalar) override;
+        int setGyroScalar(Number scalar) override;
         /**
          * @brief Get the gyro scalar for the IMU
          *
@@ -247,7 +248,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        double getGyroScalar() override;
+        Number getGyroScalar() override;
     private:
         Angle m_offset = 0_stRot;
         pros::Imu m_imu;

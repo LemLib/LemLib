@@ -1,6 +1,7 @@
 #pragma once
 
-#include "hardware/encoder/Encoder.hpp"
+#include "hardware/Encoder/Encoder.hpp"
+#include "hardware/Port.hpp"
 #include "hardware/IMU/IMU.hpp"
 #include "pros/rtos.hpp"
 #include "units/Pose.hpp"
@@ -19,6 +20,7 @@ class TrackingWheel {
          * @param encoder pointer to the encoder which should be used for tracking
          * @param diameter the diameter of the wheel
          * @param offset how far the tracking wheel is from the turning center
+         * @param ratio the gear ratio, driven gear / driving gear. Defaults to 1
          *
          * @b Example:
          * @code {.cpp}
@@ -29,7 +31,64 @@ class TrackingWheel {
          * lemlib::TrackingWheel trackingWheel(&encoder, 2.75_in, -3_in);
          * @endcode
          */
-        TrackingWheel(Encoder* encoder, Length diameter, Length offset);
+        TrackingWheel(Encoder* encoder, Length diameter, Length offset, Number ratio = 1);
+        /**
+         * @brief Construct a new Tracking Wheel object using a V5 Rotation Sensor
+         *
+         * @param port the port of the rotation sensor. To reverse, make the port negative
+         * @param diameter the diameter of the wheel
+         * @param offset how far the tracking wheel is from the turning center
+         * @param ratio the gear ratio, driven gear / driving gear. Defaults to 1
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // create a tracking wheel with a rotation sensor on port 1, which is reversed,
+         * // has a diameter of 2.75 inches, and is offset 2 inches to the right
+         * lemlib::TrackingWheel trackingWheel(-1, 2.75_in, 2_in);
+         * @endcode
+         */
+        TrackingWheel(ReversibleSmartPort port, Length diameter, Length offset, Number ratio = 1);
+        /**
+         * @brief Construct a new Tracking Wheel object using an Optical Shaft Encoder
+         *
+         * @param topPort the top port of the optical shaft encoder
+         * @param bottomPort the bottom port of the optical shaft encoder
+         * @param reversed whether the encoder should be reversed or not
+         * @param diameter the diameter of the wheel
+         * @param offset how far the tracking wheel is from the turning center
+         * @param ratio the gear ratio, driven gear / driving gear. Defaults to 1
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // create a tracking wheel with an optical shaft encoder on ports 'A' and 'B',
+         * // which is not reversed, has a diameter of 2 inches, and is offset 4 inches
+         * // to the right, and has a gear ratio of 2:1
+         * lemlib::TrackingWheel trackingWheel('A', 'B', false, 2_in, 4_in, 2);
+         * @endcode
+         */
+        TrackingWheel(ADIPort topPort, ADIPort bottomPort, bool reversed, Length diameter, Length offset,
+                      Number ratio = 1);
+        /**
+         * @brief Construct a new Tracking Wheel object using an Optical Shaft Encoder on an ADI expander
+         *
+         * @param expanderPort the port the ADIExpander is connected to
+         * @param topPort the top port of the optical shaft encoder
+         * @param bottomPort the bottom port of the optical shaft encoder
+         * @param reversed whether the encoder should be reversed or not
+         * @param diameter the diameter of the wheel
+         * @param offset how far the tracking wheel is from the turning center
+         * @param ratio the gear ratio, driven gear / driving gear. Defaults to 1
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // create a tracking wheel with an optical shaft encoder on ports 'E' and 'F',
+         * // on an ADI expander on port 3, which is reversed, has a diameter of 2 inches,
+         * // and is offset 0 inches
+         * lemlib::TrackingWheel trackingWheel(3, 'E', 'F', true, 2_in, 0_in);
+         * @endcode
+         */
+        TrackingWheel(SmartPort expanderPort, ADIPort topPort, ADIPort bottomPort, bool reversed, Length diameter,
+                      Length offset, Number ratio = 1);
         /**
          * @brief Get the distance traveled by the tracking wheel since this function was last called.
          * This function is not thread safe.
@@ -127,11 +186,19 @@ class TrackingWheel {
          * @endcode
          */
         int reset();
+        /**
+         * @brief Destroy the Tracking Wheel object
+         *
+         * This function deallocates the encoder pointer unless the pointer was passed to the constructor
+         */
+        ~TrackingWheel();
     private:
         Encoder* m_encoder;
         Length m_diameter;
         Length m_offset;
+        Number m_ratio;
         Length m_lastTotal;
+        bool m_deallocate = false;
 };
 
 /**
@@ -197,8 +264,8 @@ class TrackingWheelOdometry {
          * lemlib::TrackingWheelOdometry odom({}, {verticalWheel}, {horizontalWheel1, horizontalWheel2});
          * @endcode
          */
-        TrackingWheelOdometry(std::vector<IMU*> imus, std::vector<TrackingWheel> verticalWheels,
-                              std::vector<TrackingWheel> horizontalWheels);
+        TrackingWheelOdometry(std::vector<IMU*> imus, std::vector<TrackingWheel*> verticalWheels,
+                              std::vector<TrackingWheel*> horizontalWheels);
         /**
          * @brief Get the estimated Pose of the robot
          *
@@ -300,7 +367,7 @@ class TrackingWheelOdometry {
         Angle m_offset = 0_stDeg;
         std::optional<pros::Task> m_task = std::nullopt;
         std::vector<IMU*> m_Imus;
-        std::vector<TrackingWheel> m_verticalWheels;
-        std::vector<TrackingWheel> m_horizontalWheels;
+        std::vector<TrackingWheel*> m_verticalWheels;
+        std::vector<TrackingWheel*> m_horizontalWheels;
 };
 } // namespace lemlib
