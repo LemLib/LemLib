@@ -50,7 +50,7 @@ Here's an example of how you'd use it:
 
 ```cpp
 // turn to the point (53, 53) with a timeout of 1000 ms
-chassis.turnTo(53, 53, 1000);
+chassis.turnToPoint(53, 53, 1000);
 ```
 
 Similar to `turnToHeading`, the motion also takes two optional arguments, `params` and `async`. 
@@ -66,8 +66,12 @@ Swing motions are unique in that they only use half the drivetrain to move.
 Here's an example of how you'd use a swing turn:
 
 ```cpp
-chassis.setPose(0,0,0); // the robot now thinks that it's at (0,0) with heading of 0 degrees
-chassis.swingToHeading(45, 4000); // swing to face 45 degrees, with a timeout of 4000 ms
+chassis.setPose(0,0,0); // the robot now thinks that its at (0,0) with heading of 0 degrees
+chassis.swingToHeading(
+    45, // heading of 45 degrees
+    DriveSide::LEFT, // lock the left hand side of the drive (only the right hand side wheels will move)
+    4000 // timeout of 4000 milliseconds
+);
 ```
 
 The following illustration shows that this motion looks like if everything worked successfully:
