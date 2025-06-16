@@ -1,38 +1,39 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 
-const int circ = 4.0; // find this by pushing the chassis forward 60 inches 5 times and average all motor revolution counts.
+const double circ = 7.739+7.742; // find this by pushing the chassis forward 60 inches 5 times and average all motor revolution counts.
 // the value of circ will be (60*motor_rpm) / (average_rev_counts*wheel_rpm)
 
+const double calc = 60/(circ*0.75);
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::MotorGroup leftMotors({-5, 4, -3},
+pros::MotorGroup leftMotors({-1,-2,-3},
                             pros::MotorGearset::blue); // left motor group - ports 3 (reversed), 4, 5 (reversed)
-pros::MotorGroup rightMotors({6, -9, 7}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
+pros::MotorGroup rightMotors({8,9,10}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
 
-// Inertial Sensor on port 10
-pros::Imu imu(10);
+// Inertial Sensor on port 5
+pros::Imu imu(5);
 
 // tracking wheels
 // horizontal tracking wheel encoder. Rotation sensor, port 20, not reversed
 pros::Rotation horizontalEnc(20);
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
-pros::Rotation verticalEnc(-11);
+pros::Rotation verticalEnc(-4);
 // distance sensor, right side on port 12
 pros::Distance rightdist(12);
 // horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -5.75);
+lemlib::TrackingWheel horizontal(&horizontalEnc, 2, -5.75);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
-lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
+lemlib::TrackingWheel vertical(&verticalEnc, 2, -.78);
 // use distance sensor in the drivetrain
 lemlib::DistanceSensor right(&rightdist, 5.75);
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
-                              14, // 14 inch track width
-                              (circ / M_PI) / 2, // found using empirical testing
+                              13.5, // 14 inch track width
+                              (circ / M_PI), // found using empirical testing
                               450, // drivetrain rpm is 450
                               8 // horizontal drift is 8. Since we had traction wheels, it is 8
 );

@@ -66,5 +66,7 @@ class DistanceSensor {
          */
     private:
         float distance;
+        float offset;
+        pros::Distance* sensor;
 };
 } // namespace lemlib
