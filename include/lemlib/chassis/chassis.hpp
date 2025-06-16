@@ -922,7 +922,7 @@ class Chassis {
         bool motionRunning = false;
         bool motionQueued = false;
 
-        float distTraveled = 0;
+        float distTraveled = -1;
 
         ControllerSettings lateralSettings;
         ControllerSettings angularSettings;
