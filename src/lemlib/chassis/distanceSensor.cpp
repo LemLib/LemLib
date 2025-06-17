@@ -10,7 +10,7 @@ float DistanceSensor::getOffset() {
 }
 
 float DistanceSensor::getDistance() {
-    return sensor->get();  // or sensor->get_distance() depending on your API
+    return 0.03937008*(sensor->get());  // or sensor->get_distance() depending on your API
 }
 
 }
