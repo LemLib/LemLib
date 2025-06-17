@@ -1,8 +1,8 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 
-const double circ = 7.739+7.742; // find this by pushing the chassis forward 60 inches 5 times and average all motor revolution counts.
-// the value of circ will be (60*motor_rpm) / (average_rev_counts*wheel_rpm)
+const double circ = 7.739; // find this by pushing the chassis forward 60 inches 5 times and average all motor revolution counts.
+// the value of circ will be (60*motor_rpm) / (average_rev_counts*wheel_rpm)+7.742
 
 const double calc = 60/(circ*0.75);
 // controller
@@ -18,21 +18,24 @@ pros::Imu imu(5);
 
 // tracking wheels
 // horizontal tracking wheel encoder. Rotation sensor, port 20, not reversed
-pros::Rotation horizontalEnc(20);
+//pros::Rotation horizontalEnc(20);
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
 pros::Rotation verticalEnc(-4);
 // distance sensor, right side on port 12
-pros::Distance rightdist(12);
+pros::Distance rightdist(7);
+pros::Distance leftdist(6);
+
 // horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
-lemlib::TrackingWheel horizontal(&horizontalEnc, 2, -5.75);
+//lemlib::TrackingWheel horizontal(&horizontalEnc, 2, -5.75);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
 lemlib::TrackingWheel vertical(&verticalEnc, 2, -.78);
 // use distance sensor in the drivetrain
-lemlib::DistanceSensor right(&rightdist, 5.75);
+lemlib::DistanceSensor right(&rightdist, 7.75);
+lemlib::DistanceSensor left(&leftdist, 7.75);
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
-                              13.5, // 14 inch track width
+                              11.5, // 14 inch track width
                               (circ / M_PI), // found using empirical testing
                               450, // drivetrain rpm is 450
                               8 // horizontal drift is 8. Since we had traction wheels, it is 8
@@ -65,10 +68,10 @@ lemlib::ControllerSettings angularController(2, // proportional gain (kP)
 // sensors for odometry
 lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel
                             nullptr, // vertical tracking wheel 2, set to nullptr as we don't have a second one
-                            &horizontal, // horizontal tracking wheel
+                            nullptr, // horizontal tracking wheel
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &right, // right side distance
-                            nullptr, // left side distance
+                            &left, // left side distance
                             &imu // inertial sensor
 );
 
@@ -104,7 +107,6 @@ void initialize() {
 
     // for more information on how the formatting for the loggers
     // works, refer to the fmtlib docs
-
     // thread to for brain screen and position logging
     pros::Task screenTask([&]() {
         while (true) {
@@ -113,7 +115,8 @@ void initialize() {
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
             // log position telemetry
-            printf("%6f, %6f, %6f", chassis.getPose().x, chassis.getPose().y, chassis.getPose().y);
+            
+            printf("%.2f,%.2f,%.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
             // delay to save resources
             pros::delay(50);
         }
