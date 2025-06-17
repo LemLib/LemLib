@@ -99,7 +99,7 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
-
+    chassis.setPose(24,0,0);
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
     // lemlib::bufferedStdout().setRate(...);
@@ -114,6 +114,7 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            controller.print(0, 0, "D: %s", rightdist.get());
             // log position telemetry
             
             printf("%.2f,%.2f,%.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);

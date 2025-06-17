@@ -1,5 +1,4 @@
 import tkinter as tk
-import re  # Only needs to be added once in your imports
 from tkinter import ttk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -8,11 +7,8 @@ import time
 import os
 import random
 
-FILE_PATH = "pose.txt"
-HISTORY_LENGTH = 10  # configurable trail length
-def make_float(num):
-        num = num.replace(u'\N{MINUS SIGN}', '-')
-        return float(num)
+FILE_PATH = "pose"
+HISTORY_LENGTH = 30  # configurable trail length
 
 class PosePlotter:
     def __init__(self, root):
@@ -21,8 +17,8 @@ class PosePlotter:
 
         # Set up Matplotlib figure and axis
         self.fig, self.ax = plt.subplots(figsize=(6, 6))
-        self.ax.set_xlim(-40,40)
-        self.ax.set_ylim(-40,40)
+        self.ax.set_xlim(-72, 72)
+        self.ax.set_ylim(-72, 72)
         self.ax.set_xlabel("X (inches)")
         self.ax.set_ylabel("Y (inches)")
         self.ax.set_title("Robot Position (Live)")
@@ -70,43 +66,44 @@ class PosePlotter:
 
     def generate_test_data(self):
         with open(FILE_PATH, "w") as f:
-            x = random.uniform(-40,40)
-            y = random.uniform(-40,40)
+            x = random.uniform(-72, 72)
+            y = random.uniform(-72, 72)
             theta = random.uniform(-180, 180)
             f.write(f"{x:.2f}, {y:.2f}, {theta:.2f}")
-    
+
     def update_loop(self):
+        skip_chars = 4
         while self.running:
             try:
                 if os.path.exists(FILE_PATH):
-                    with open(FILE_PATH,'r', encoding='utf-16-le') as f:
+                    with open(FILE_PATH, "r", encoding="utf-16") as f:
                         lines = f.read().splitlines()
-                        if lines:
-                            last_line = lines[-1].strip()
-                            if last_line:
-                                parts = last_line.split(",")
-                                if len(parts) == 3:
-                                    x_str, y_str, theta_str = parts
+                        for line in reversed(lines):
+                            try:
+                                if line:
+                                    #line = line[skip_chars:] 
+                                    x_str, y_str, theta_str = line.split(",")
                                     x = float(x_str)
                                     y = float(y_str)
                                     theta = float(theta_str)
-
                                     self.history.append((x, y, theta))
                                     if len(self.history) > HISTORY_LENGTH:
                                         self.history.pop(0)
                                     
-                                    self.plot()
                                     self.readout_label.config(
-                                        text=f"Last pose: ({x:.4f}, {y:.4f}) θ={theta:.4f}°"
-                                    )
+                                            text=f"Last pose: ({x:.4f}, {y:.4f}) θ={theta:.4f}°")
+                                    self.plot()
+                                    break
+                            except ValueError:
+                                continue  # Skip malformed lines
             except Exception as e:
                 print("Error:", e)
             time.sleep(0.1)
 
     def plot(self):
         self.ax.clear()
-        self.ax.set_xlim(-40,40)
-        self.ax.set_ylim(-40,40)
+        self.ax.set_xlim(-72, 72)
+        self.ax.set_ylim(-72, 72)
         self.ax.set_xlabel("X (inches)")
         self.ax.set_ylabel("Y (inches)")
         self.ax.set_title("Robot Position (Live)")
@@ -116,7 +113,7 @@ class PosePlotter:
             self.ax.plot(xs, ys, 'bo-', markersize=4)
             x, y, theta = self.history[-1]
             self.ax.plot(x, y, 'ro')  # Latest point
-            self.ax.annotate(f"({x:.1f}, {y:.1f}) θ={theta:.1f}°", (x, y), textcoords="offset points", xytext=(10, 10))
+            self.ax.annotate(f"({x:.4f}, {y:.4f}) θ={theta:.4f}°", (x, y), textcoords="offset points", xytext=(10, 10))
 
         self.canvas.draw_idle()
 
