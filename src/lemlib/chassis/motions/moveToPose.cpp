@@ -7,6 +7,7 @@
 
 void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params, bool async) {
     // take the mutex
+    this->waitUntilDone();
     pros::Task task([&]() {
         this->requestMotionStart();
         // were all motions cancelled?
