@@ -99,7 +99,6 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
-    chassis.setPose(24,0,0);
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
     // lemlib::bufferedStdout().setRate(...);
@@ -114,10 +113,10 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            controller.print(0, 0, "D: %s", rightdist.get());
+            //controller.print(0, 0, "D: %s", rightdist.get());
             // log position telemetry
             
-            printf("%.2f,%.2f,%.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
+            printf("%.4f,%.4f,%.4f,%.4f,%.4f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta,rightdist.get(), leftdist.get());
             // delay to save resources
             pros::delay(50);
         }
@@ -183,6 +182,12 @@ void opcontrol() {
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         // move the chassis with curvature drive
         chassis.arcade(leftY, rightX);
+
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1))
+        {
+            chassis.setPose(24,0,0);
+
+        }
         // delay to save resources
         pros::delay(10);
     }

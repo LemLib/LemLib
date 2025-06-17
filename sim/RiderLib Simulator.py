@@ -6,6 +6,7 @@ from threading import Thread
 import time
 import os
 import random
+import math
 
 FILE_PATH = "pose"
 HISTORY_LENGTH = 30  # configurable trail length
@@ -36,7 +37,7 @@ class PosePlotter:
         self.readout_label.pack(side=tk.LEFT, padx=10)
 
         self.history = []
-
+        self.dist = []
         self.running = True
         self.update_thread = Thread(target=self.update_loop, daemon=True)
         self.update_thread.start()
@@ -65,11 +66,13 @@ class PosePlotter:
         self.canvas.draw_idle()
 
     def generate_test_data(self):
-        with open(FILE_PATH, "w") as f:
+        with open(FILE_PATH, "w",encoding="utf-16") as f:
             x = random.uniform(-72, 72)
             y = random.uniform(-72, 72)
             theta = random.uniform(-180, 180)
-            f.write(f"{x:.2f}, {y:.2f}, {theta:.2f}")
+            right = random.uniform(-360, 360)
+            left = random.uniform(-360, 360)
+            f.write(f"{x:.2f}, {y:.2f}, {theta:.2f}, {right:.2f}, {left:.2f}")
 
     def update_loop(self):
         skip_chars = 4
@@ -82,16 +85,20 @@ class PosePlotter:
                             try:
                                 if line:
                                     #line = line[skip_chars:] 
-                                    x_str, y_str, theta_str = line.split(",")
+                                    x_str, y_str, theta_str, right_str, left_str = line.split(",")
                                     x = float(x_str)
                                     y = float(y_str)
                                     theta = float(theta_str)
+                                    right = float(right_str)
+                                    left = float(left_str)
                                     self.history.append((x, y, theta))
                                     if len(self.history) > HISTORY_LENGTH:
                                         self.history.pop(0)
-                                    
+                                        
+                                    if right < 800 or left < 800:
+                                        self.dist.append((right, left))
                                     self.readout_label.config(
-                                            text=f"Last pose: ({x:.4f}, {y:.4f}) θ={theta:.4f}°")
+                                            text=f"Last pose: ({x:.4f}, {y:.4f}) θ={theta:.4f}°, r={right:.4f}, l={left:.4f}")
                                     self.plot()
                                     break
                             except ValueError:
@@ -111,11 +118,41 @@ class PosePlotter:
         if self.history:
             xs, ys, _ = zip(*self.history)
             self.ax.plot(xs, ys, 'bo-', markersize=4)
+
+            # Current pose
             x, y, theta = self.history[-1]
             self.ax.plot(x, y, 'ro')  # Latest point
-            self.ax.annotate(f"({x:.4f}, {y:.4f}) θ={theta:.4f}°", (x, y), textcoords="offset points", xytext=(10, 10))
+            self.ax.annotate(f"({x:.2f}, {y:.2f}) θ={theta:.2f}°", (x, y), textcoords="offset points", xytext=(10, 10))
+
+            # Plot rays if available
+            if hasattr(self, 'dist') and self.dist:
+                try:
+                    right, left = self.dist[-1]  # get last right and left values
+
+                    # Convert angle to radians
+                    angle_rad = math.radians(theta)
+
+                    # Perpendicular directions for left/right rays
+                    left_dx = math.cos(angle_rad + math.pi / 2)
+                    left_dy = math.sin(angle_rad + math.pi / 2)
+                    right_dx = math.cos(angle_rad - math.pi / 2)
+                    right_dy = math.sin(angle_rad - math.pi / 2)
+
+                    # Ray endpoints
+                    lx = x + left * left_dx
+                    ly = y + left * left_dy
+                    rx = x + right * right_dx
+                    ry = y + right * right_dy
+
+                    # Draw rays
+                    self.ax.plot([x, lx], [y, ly], 'g-', label='Left Ray')
+                    self.ax.plot([x, rx], [y, ry], 'm-', label='Right Ray')
+                    self.ax.legend(loc='upper right')
+                except Exception as e:
+                    print("Ray plotting error:", e)
 
         self.canvas.draw_idle()
+
 
     def on_close(self):
         self.running = False
