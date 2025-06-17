@@ -7,6 +7,9 @@
 #include "pros/rtos.h"
 
 void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params, bool async) {
+    /**
+     * Mutex that is used to block until the motion has started.
+     */
     pros::Mutex startedMutex;
     pros::Task task([&]() {
         startedMutex.take();
