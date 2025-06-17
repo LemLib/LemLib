@@ -4,14 +4,17 @@
 #include "lemlib/timer.hpp"
 #include "lemlib/util.hpp"
 #include "pros/misc.hpp"
+#include "pros/rtos.h"
 
 void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, MoveToPoseParams params, bool async) {
-    // take the mutex
-    this->waitUntilDone();
+    pros::Mutex startedMutex;
     pros::Task task([&]() {
+        startedMutex.take();
         this->requestMotionStart();
+        startedMutex.give();
         // were all motions cancelled?
         if (!this->motionRunning) return;
+
         // reset PIDs and exit conditions
         lateralPID.reset();
         lateralLargeExit.reset();
@@ -154,10 +157,10 @@ void lemlib::Chassis::moveToPose(float x, float y, float theta, int timeout, Mov
         distTraveled = -1;
         this->endMotion();
     });
-    if (async) {
-        pros::delay(10); // delay to give the task time to start
-        return;
-    } else {
-        this->waitUntilDone();
+    pros::delay(10);
+    startedMutex.take(TIMEOUT_MAX);
+    if (!async) {
+        do pros::delay(10);
+        while (!(task.get_state() == pros::E_TASK_STATE_INVALID || task.get_state() == pros::E_TASK_STATE_SUSPENDED));
     }
 }
