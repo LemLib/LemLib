@@ -70,8 +70,8 @@ class PosePlotter:
             x = random.uniform(-72, 72)
             y = random.uniform(-72, 72)
             theta = random.uniform(-180, 180)
-            right = random.uniform(-360, 360)
-            left = random.uniform(-360, 360)
+            right = random.uniform(0, 360)
+            left = random.uniform(0, 360)
             f.write(f"{x:.2f}, {y:.2f}, {theta:.2f}, {right:.2f}, {left:.2f}")
 
     def update_loop(self):
@@ -89,8 +89,8 @@ class PosePlotter:
                                     x = float(x_str)
                                     y = float(y_str)
                                     theta = float(theta_str)
-                                    right = float(right_str)
-                                    left = float(left_str)
+                                    right = float(right_str)*0.03937
+                                    left = float(left_str)*0.03937
                                     self.history.append((x, y, theta))
                                     if len(self.history) > HISTORY_LENGTH:
                                         self.history.pop(0)
@@ -133,10 +133,10 @@ class PosePlotter:
                     angle_rad = math.radians(theta)
 
                     # Perpendicular directions for left/right rays
-                    left_dx = math.cos(angle_rad + math.pi / 2)
-                    left_dy = math.sin(angle_rad + math.pi / 2)
-                    right_dx = math.cos(angle_rad - math.pi / 2)
-                    right_dy = math.sin(angle_rad - math.pi / 2)
+                    left_dx = -math.sin(angle_rad + math.pi / 2)
+                    left_dy = -math.cos(angle_rad + math.pi / 2)
+                    right_dx = -math.sin(angle_rad - math.pi / 2)
+                    right_dy = -math.cos(angle_rad - math.pi / 2)
 
                     # Ray endpoints
                     lx = x + left * left_dx

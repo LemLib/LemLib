@@ -115,8 +115,9 @@ void initialize() {
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
             //controller.print(0, 0, "D: %s", rightdist.get());
             // log position telemetry
-            
-            printf("%.4f,%.4f,%.4f,%.4f,%.4f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta,rightdist.get(), leftdist.get());
+            float lidarAngle = fmod(chassis.getPose().theta, 360.0f);     // Wrap within [-360, 360)
+            if (lidarAngle < 0) lidarAngle += 360.0f;
+            printf("%.4f,%.4f,%.4f,%d,%d\n", chassis.getPose().x, chassis.getPose().y, lidarAngle,rightdist.get(), leftdist.get());
             // delay to save resources
             pros::delay(50);
         }
