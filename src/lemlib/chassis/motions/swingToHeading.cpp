@@ -109,6 +109,6 @@ void lemlib::Chassis::swingToHeading(float theta, DriveSide lockedSide, int time
     startedMutex.take(TIMEOUT_MAX);
     if (!async) {
         do pros::delay(10);
-        while (!(task.get_state() == pros::E_TASK_STATE_INVALID || task.get_state() == pros::E_TASK_STATE_SUSPENDED));
+        while (!(task.get_state() == pros::E_TASK_STATE_INVALID || task.get_state() == pros::E_TASK_STATE_SUSPENDED || task.get_state() == pros::E_TASK_STATE_DELETED));
     }
 }

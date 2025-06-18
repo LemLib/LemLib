@@ -113,6 +113,6 @@ void lemlib::Chassis::swingToPoint(float x, float y, DriveSide lockedSide, int t
     startedMutex.take(TIMEOUT_MAX);
     if (!async) {
         do pros::delay(10);
-        while (!(task.get_state() == pros::E_TASK_STATE_INVALID || task.get_state() == pros::E_TASK_STATE_SUSPENDED));
+        while (!(task.get_state() == pros::E_TASK_STATE_INVALID || task.get_state() == pros::E_TASK_STATE_SUSPENDED || task.get_state() == pros::E_TASK_STATE_DELETED));
     }
 }
