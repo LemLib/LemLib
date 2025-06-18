@@ -135,6 +135,6 @@ void lemlib::Chassis::moveToPoint(float x, float y, int timeout, MoveToPointPara
     startedMutex.take(TIMEOUT_MAX);
     if (!async) {
         do pros::delay(10);
-        while (!(task.get_state() == pros::E_TASK_STATE_INVALID || task.get_state() == pros::E_TASK_STATE_SUSPENDED));
+        while (!(task.get_state() == pros::E_TASK_STATE_INVALID || task.get_state() == pros::E_TASK_STATE_SUSPENDED || task.get_state() == pros::E_TASK_STATE_DELETED));
     }
 }
