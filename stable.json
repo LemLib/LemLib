@@ -1,6 +1,16 @@
 [
   {
     "metadata": {
+      "location": "https://github.com/LemLib/LemLib/releases/download/v0.5.6/LemLib%400.5.6.zip"
+    },
+    "name": "LemLib",
+    "py/object": "pros.conductor.templates.base_template.BaseTemplate",
+    "supported_kernels": "^4.2.1",
+    "target": "v5",
+    "version": "0.5.6"
+  },
+  {
+    "metadata": {
       "location": "https://github.com/LemLib/LemLib/releases/download/v0.5.5/LemLib%400.5.5.zip"
     },
     "name": "LemLib",
@@ -198,15 +208,5 @@
     "supported_kernels": "^3.7.3",
     "target": "v5",
     "version": "0.3.0"
-  },
-  {
-    "metadata": {
-      "location": "https://github.com/LemLib/LemLib/releases/download/v0.2.0/LemLib%400.2.0.zip"
-    },
-    "name": "LemLib",
-    "py/object": "pros.conductor.templates.base_template.BaseTemplate",
-    "supported_kernels": "^3.7.3",
-    "target": "v5",
-    "version": "0.2.0"
   }
 ]
