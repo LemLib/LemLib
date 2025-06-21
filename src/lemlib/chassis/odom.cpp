@@ -74,6 +74,27 @@ lemlib::Pose lemlib::estimatePose(float time, bool radians) {
     return futurePose;
 }
 
+// Helper: wrap angle to [0, 360)
+float wrapAngle(float angle) {
+    angle = fmod(angle, 360.0f);
+    if (angle < 0) angle += 360.0f;
+    return angle;
+}
+
+// Helper: check if angle is within a wrapped range
+bool angleInRange(float angle, float start, float end) {
+    angle = wrapAngle(angle);
+    start = wrapAngle(start);
+    end = wrapAngle(end);
+    if (start < end) return angle >= start && angle <= end;
+    return angle >= start || angle <= end;
+}
+
+// Helper: compute smallest angular difference
+float angleDiff(float a, float b) {
+    float diff = fmod((a - b + 540.0f), 360.0f) - 180.0f;
+    return fabs(diff);
+}
 void lemlib::update() {
     // TODO: add particle filter
     // get the current sensor values
@@ -222,48 +243,111 @@ void lemlib::update() {
         //}
     //}
         
-// --- LIDAR correction alg 0.2 ---
-    if(odomSensors.distance1->getDistance()<900 || odomSensors.distance2->getDistance()<900 || (odomSpeed.x < 10 &&odomSpeed.y < 10)){
+// --- LIDAR correction alg 0.2 (best version)---
+    //  if((odomSensors.distance1->getDistance()<900 || odomSensors.distance2->getDistance()<900 )&&(odomSpeed.x < 10 &&odomSpeed.y < 10&&deltaHeading<5)){
         
-            //angle is assumed to be relative to global frame or robot frame based on system
-            float lidarAngle = fmod(heading, 360.0f);     // Wrap within [-360, 360)
-            if (lidarAngle < 0) lidarAngle += 360.0f;  // Wrap into [0, 360)
-            float lidarX=odomPose.x;
-            float lidarY=odomPose.y;
-            if (odomPose.x > 0) {
-                if (lidarAngle > 340 || lidarAngle < 20)  { // right distance from right wall
-                    lidarX = 60;//71.5 - (7.75+odomSensors.distance1->getDistance()*0.0394*cos(degToRad(lidarAngle-0)));
-                } else if (abs(lidarAngle - 180) < 20) { // left distance from right wall
-                    lidarX = 71.5 - (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*0.0394*cos(degToRad(lidarAngle-180)));
-                }
-            } else if (odomPose.x < 0) {
-                if (lidarAngle > 340 || lidarAngle < 20) { // left distance from left wall
-                    lidarX = -71.5 + (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*0.0394*cos(degToRad(lidarAngle-0)));
-                } else if (abs(lidarAngle - 180) < 20) { // right distance from left wall
-                    lidarX = -71.5 + (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*0.0394*cos(degToRad(lidarAngle-180)));
-                }
-            }
+    // //         //angle is assumed to be relative to global frame or robot frame based on system
+    //         float lidarAngle = fmod(heading, 360.0f);     // Wrap within [-360, 360)
+    //         if (lidarAngle < 0) lidarAngle += 360.0f;  // Wrap into [0, 360)
+    //         float lidarX=odomPose.x;
+    //         float lidarY=odomPose.y;
+    //         if (odomPose.x > 0) {
+    //             if (lidarAngle > 340 && lidarAngle < 20)  { // right distance from right wall
+    //                 lidarX = 71.5 - (7.75+odomSensors.distance1->getDistance()*0.0394*cos(degToRad(lidarAngle-0)));
+    //             } else if (lidarAngle > 160 && lidarAngle < 200) { // left distance from right wall
+    //                 lidarX = 71.5 - (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*0.0394*cos(degToRad(abs(lidarAngle-180))));
+    //             }
+    //         } else if (odomPose.x < 0) {
+    //             if (lidarAngle > 340 && lidarAngle < 20) { // left distance from left wall
+    //                 lidarX = -71.5 + (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*0.0394*cos(degToRad(abs(lidarAngle-0))));
+    //             } else if (lidarAngle > 160 && lidarAngle < 200) { // right distance from left wall
+    //                 lidarX = -71.5 + (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*0.0394*cos(degToRad(abs(lidarAngle-180))));
+    //             }
+    //         }
 
-            if (odomPose.y > 0) {
-                if (abs(lidarAngle - 270) < 20) { // right distance from top wall
-                    lidarY = 71.5 - (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*0.0394*cos(degToRad(lidarAngle-270)));
-                } else if (abs(lidarAngle - 90) < 20) { // left distance from top wall
-                    lidarY = 71.5 - (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*0.0394*cos(degToRad(lidarAngle-90)));
-                }
-            } else if (odomPose.y < 0) {
-                if (abs(lidarAngle - 270) < 20) { // left distance from bottom wall
-                    lidarY = -71.5 + (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*0.0394*cos(degToRad(lidarAngle-270)));
-                } else if (abs(lidarAngle - 90) < 20) { // right distance from bottom wall
-                    lidarY = 71.5 - (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*0.0394*cos(degToRad(lidarAngle-90)));
-                }
-            }
+    //         if (odomPose.y > 0) {
+    //             if (lidarAngle > 250 && lidarAngle < 290) { // right distance from top wall
+    //                 lidarY = 71.5 - (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*0.0394*cos(degToRad(abs(lidarAngle-270))));
+    //             } else if (lidarAngle > 70 && lidarAngle < 110) { // left distance from top wall
+    //                 lidarY = 71.5 - (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*0.0394*cos(degToRad(abs(lidarAngle-90))));
+    //             }
+    //         } else if (odomPose.y < 0) {
+    //             if (lidarAngle > 250 && lidarAngle < 290) { // left distance from bottom wall
+    //                 lidarY = -71.5 + (odomSensors.distance2->getOffset()+odomSensors.distance2->getDistance()*0.0394*cos(degToRad(abs(lidarAngle-270))));
+    //             } else if (lidarAngle > 70 && lidarAngle < 110) { // right distance from bottom wall
+    //                 lidarY = -71.5 + (odomSensors.distance1->getOffset()+odomSensors.distance1->getDistance()*0.0394*cos(degToRad(abs(lidarAngle-90))));
+    //             }
+    //         }
         
-        // For now, let's blend with odometry using simple averaging (or use a weighted average)
-        float alpha = 0.2; // weighting factor for blending
+    //     // For now, let's blend with odometry using simple averaging (or use a weighted average)
+    //     float alpha = 0.1; // weighting factor for blending
         
-        odomPose.x = lidarX;//alpha * lidarX + (1 - alpha) * odomPose.x;
-        odomPose.y = lidarY;//alpha * lidarY + (1 - alpha) * odomPose.y;
+    //     odomPose.x = alpha * lidarX + (1 - alpha) * odomPose.x;
+    //     odomPose.y = alpha * lidarY + (1 - alpha) * odomPose.y;
         
+    // }
+    // --- LIDAR correction alg 0.3 (cleaned and fixed) ---
+
+
+    // Main correction block
+    if ((odomSensors.distance1->getDistance() < 600 || odomSensors.distance2->getDistance() < 600) &&
+        (fabs(odomSpeed.x) < 10 && fabs(odomSpeed.y) < 10 && fabs(deltaHeading) < 5)) {
+        
+        float lidarAngle = wrapAngle(heading);
+        float lidarX = odomPose.x;
+        float lidarY = odomPose.y;
+
+        // Convert mm to inches
+        constexpr float mmToInches = 0.0394f;
+
+        // Correct X based on walls facing X-axis (right)
+        if (angleInRange(lidarAngle, 350, 10)&&odomSensors.distance1->getDistance()<600) { // Right wall
+            float dist = odomSensors.distance1->getDistance();
+            lidarX = 71.5f - (odomSensors.distance1->getOffset() + dist * mmToInches * cos(degToRad(angleDiff(lidarAngle, 0))));
+        }
+        else if (angleInRange(lidarAngle, 170, 190)&&odomSensors.distance2->getDistance()<600) { // Right wall
+            float dist = odomSensors.distance2->getDistance();
+            lidarX = 71.5f - (odomSensors.distance2->getOffset() + dist * mmToInches * cos(degToRad(angleDiff(lidarAngle, 180))));
+        }
+
+        // Correct X based on walls facing X-axis (left)
+        if (angleInRange(lidarAngle, 350, 10)&&odomSensors.distance2->getDistance()<600) { // Left wall
+            float dist = odomSensors.distance2->getDistance();
+            lidarX = -71.5f + (odomSensors.distance2->getOffset() + dist * mmToInches * cos(degToRad(angleDiff(lidarAngle, 0))));
+        }
+        else if (angleInRange(lidarAngle, 170, 190)&&odomSensors.distance1->getDistance()<600) { // Left wall
+            float dist = odomSensors.distance1->getDistance();
+            lidarX = -71.5f + (odomSensors.distance1->getOffset() + dist * mmToInches * cos(degToRad(angleDiff(lidarAngle, 180))));
+        }
+
+        // Correct Y based on walls facing Y-axis (top)
+        if (angleInRange(lidarAngle, 80, 100)&&odomSensors.distance2->getDistance()<600) { // Top wall
+            float dist = odomSensors.distance2->getDistance();
+            lidarY = 71.5f - (odomSensors.distance2->getOffset() + dist * mmToInches * cos(degToRad(angleDiff(lidarAngle, 90))));
+        }
+        else if (angleInRange(lidarAngle, 260, 280)&&odomSensors.distance1->getDistance()<600) { // Top wall
+            float dist = odomSensors.distance1->getDistance();
+            lidarY = 71.5f - (odomSensors.distance1->getOffset() + dist * mmToInches * cos(degToRad(angleDiff(lidarAngle, 270))));
+        }
+
+        // Correct Y based on walls facing Y-axis (bottom)
+        if (angleInRange(lidarAngle, 80, 100)&&odomSensors.distance1->getDistance()<600) { // Bottom wall
+            float dist = odomSensors.distance1->getDistance();
+            lidarY = 71.5f - (odomSensors.distance1->getOffset() + dist * mmToInches * cos(degToRad(angleDiff(lidarAngle, 90))));
+        }
+        else if (angleInRange(lidarAngle, 260, 280)&&odomSensors.distance2->getDistance()<600) { // Bottom wall
+            float dist = odomSensors.distance2->getDistance();
+            lidarY = 71.5f - (odomSensors.distance2->getOffset() + dist * mmToInches * cos(degToRad(angleDiff(lidarAngle, 270))));
+        }
+
+        // Blending: weighted average based on how large the correction is
+        float dx = lidarX - odomPose.x;
+        float dy = lidarY - odomPose.y;
+        float correctionMagnitude = sqrt(dx * dx + dy * dy);
+
+        float alpha = fmin(0.2f, correctionMagnitude / 24.0f);  // max alpha 0.5 for large error
+        odomPose.x = alpha * lidarX + (1 - alpha) * odomPose.x;
+        odomPose.y = alpha * lidarY + (1 - alpha) * odomPose.y;
     }
 
     // calculate local speed

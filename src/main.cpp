@@ -143,6 +143,47 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  *
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
+constexpr float degToRad(float deg) { return deg * M_PI / 180; }
+void localize(){
+    float lidarAngle = fmod(chassis.getPose().theta, 360.0f);     // Wrap within [-360, 360)
+    if (lidarAngle < 0) lidarAngle += 360.0f;  // Wrap into [0, 360)
+    float lidarX,x=chassis.getPose().x;
+    float lidarY,y=chassis.getPose().y;
+    if (lidarX > 0) {
+        if (lidarAngle > 340 && lidarAngle < 20)  { // right distance from right wall
+            lidarX = 71.5 - (7.75+right.getDistance()*0.0394*cos(degToRad(lidarAngle-0)));
+        } else if (lidarAngle > 160 && lidarAngle < 200) { // left distance from right wall
+            lidarX = 71.5 - (left.getOffset()+left.getDistance()*0.0394*cos(degToRad(abs(lidarAngle-180))));
+        }
+    } else if (lidarX < 0) {
+        if (lidarAngle > 340 && lidarAngle < 20) { // left distance from left wall
+            lidarX = -71.5 + (left.getOffset()+left.getDistance()*0.0394*cos(degToRad(abs(lidarAngle-0))));
+        } else if (lidarAngle > 160 && lidarAngle < 200) { // right distance from left wall
+            lidarX = -71.5 + (right.getOffset()+right.getDistance()*0.0394*cos(degToRad(abs(lidarAngle-180))));
+        }
+    }
+
+    if (lidarY > 0) {
+        if (lidarAngle > 250 && lidarAngle < 290) { // right distance from top wall
+            lidarY = 71.5 - (right.getOffset()+right.getDistance()*0.0394*cos(degToRad(abs(lidarAngle-270))));
+        } else if (lidarAngle > 70 && lidarAngle < 110) { // left distance from top wall
+            lidarY = 71.5 - (left.getOffset()+left.getDistance()*0.0394*cos(degToRad(abs(lidarAngle-90))));
+        }
+    } else if (lidarY < 0) {
+        if (lidarAngle > 250 && lidarAngle < 290) { // left distance from bottom wall
+            lidarY = -71.5 + (left.getOffset()+left.getDistance()*0.0394*cos(degToRad(abs(lidarAngle-270))));
+        } else if (lidarAngle > 70 && lidarAngle < 110) { // right distance from bottom wall
+            lidarY = -71.5 + (right.getOffset()+right.getDistance()*0.0394*cos(degToRad(abs(lidarAngle-90))));
+        }
+    }
+
+    // For now, let's blend with odometry using simple averaging (or use a weighted average)
+    float alpha = 0.1; // weighting factor for blending
+    
+    lidarX = alpha * lidarX + (1 - alpha) * x;
+    lidarY = alpha * lidarY + (1 - alpha) * y;
+    chassis.setPose(lidarX,lidarY,chassis.getPose().theta);
+}
 void autonomous() {
     // Move to x: 20 and y: 15, and face heading 90. Timeout set to 4000 ms
     chassis.moveToPose(20, 15, 90, 4000);

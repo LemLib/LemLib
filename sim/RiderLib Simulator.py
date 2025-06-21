@@ -89,8 +89,8 @@ class PosePlotter:
                                     x = float(x_str)
                                     y = float(y_str)
                                     theta = float(theta_str)
-                                    right = float(right_str)*0.03937
-                                    left = float(left_str)*0.03937
+                                    right = float(right_str)*0.03937+7.75
+                                    left = float(left_str)*0.03937+7.75
                                     self.history.append((x, y, theta))
                                     if len(self.history) > HISTORY_LENGTH:
                                         self.history.pop(0)
@@ -123,7 +123,7 @@ class PosePlotter:
             x, y, theta = self.history[-1]
             self.ax.plot(x, y, 'ro')  # Latest point
             self.ax.annotate(f"({x:.2f}, {y:.2f}) θ={theta:.2f}°", (x, y), textcoords="offset points", xytext=(10, 10))
-
+            self.draw_robot_box(x, y, theta, length=6, width=6)  # customize box size here
             # Plot rays if available
             if hasattr(self, 'dist') and self.dist:
                 try:
@@ -147,12 +147,39 @@ class PosePlotter:
                     # Draw rays
                     self.ax.plot([x, lx], [y, ly], 'g-', label='Left Ray')
                     self.ax.plot([x, rx], [y, ry], 'm-', label='Right Ray')
+
                     self.ax.legend(loc='upper right')
                 except Exception as e:
                     print("Ray plotting error:", e)
 
         self.canvas.draw_idle()
 
+    def draw_robot_box(self, x, y, theta_deg, length=14, width=13.5):
+        theta = math.radians(theta_deg)
+
+        # Define rectangle corners in local coordinates (centered at origin)
+        half_l =  8
+        half_w = 6.75
+        corners = [
+            (-half_l, -half_w),
+            (-half_l,  half_w),
+            ( half_l,  half_w),
+            ( half_l, -half_w)
+        ]
+
+        # Rotate and translate corners
+        rotated = []
+        for cx, cy in corners:
+            rx = cx * math.sin(theta) - cy * math.cos(theta)
+            ry = cx * math.cos(theta) + cy * math.sin(theta)
+            rotated.append((x + rx, y + ry))
+
+        # Close the box loop
+        rotated.append(rotated[0])
+
+        # Unpack and plot
+        xs, ys = zip(*rotated)
+        self.ax.plot(xs, ys, 'r--', linewidth=1.5)  # dashed red rectangle
 
     def on_close(self):
         self.running = False
