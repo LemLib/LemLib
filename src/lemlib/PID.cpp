@@ -29,7 +29,6 @@ Number PID::update(Number error) {
 
     // calculate the derivative (change in error / time passed)
     const Number derivative = (dt != 0_sec) ? (error - m_previousError) / to_sec(dt) : 0;
-    m_previousError = error;
 
     // calculate the integral (change in error * time passed)
     m_integral += error * to_sec(dt);
@@ -37,6 +36,8 @@ Number PID::update(Number error) {
     if (sgn(error) != sgn((m_previousError)) && m_signFlipReset) m_integral = 0;
     // anti windup range. Unless error is small enough, set the integral to 0
     if (abs(error) > m_windupRange && m_windupRange != 0) m_integral = 0;
+
+    m_previousError = error;
 
     // output. error * kP + integral * kP + derivative * kD
     return error * m_gains.kP + m_integral * m_gains.kI + derivative * m_gains.kD;

@@ -43,5 +43,34 @@ void move(std::function<void(void)> _motion, std::optional<uint32_t> _priority) 
     pros::delay(1); // force context switch, so the motion starts running immediately
 }
 
-void cancel() {}
+bool isMoving() {
+    // if the mutex is free, no motion is running
+    if (mutex.take(0)) {
+        mutex.give();
+        return false;
+    }
+    return true;
+}
+
+void cancel() {
+    // if the task is currently running a motion, notify it so the motion can break out of its loop
+    if (isMoving()) motionTask.notify();
+}
+
+void waitUntilPoint(units::V2Position target, Length radius, std::function<units::Pose()> poseGetter) {
+    do {
+        const units::Pose pose = poseGetter();
+        if (pose.distanceTo(target) <= radius) return;
+        pros::delay(5);
+    } while (isMoving());
+}
+
+void waitUntilDistance(Length dist, std::function<units::Pose()> poseGetter) {
+    const units::V2Position start = poseGetter();
+    do {
+        const units::Pose pose = poseGetter();
+        if (pose.distanceTo(start) >= dist) return;
+        pros::delay(5);
+    } while (isMoving());
+}
 } // namespace lemlib::motion_handler

@@ -91,7 +91,7 @@ static std::vector<Waypoint> getPath(const asset& asset) {
         waypoint.y = from_in(std::stod(pointInput.at(1))); // y position
         waypoint.speed = std::stod(pointInput.at(2)); // velocity
         path.push_back(waypoint); // save data
-        logHelper.debug("read point {}", waypoint);
+        logHelper.debug("read point {}", static_cast<const V2Position&>(waypoint));
     }
 
     return path;

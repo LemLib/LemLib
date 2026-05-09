@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <functional>
 #include <optional>
+#include "units/units.hpp"
+#include "units/Pose.hpp"
 
 namespace lemlib::motion_handler {
 /**
@@ -98,4 +100,40 @@ bool isMoving();
  * @endcode
  */
 void cancel();
+/**
+ * @brief wait until the robot is within a radius of a given point
+ *
+ * @b Example:
+ * @code {.cpp}
+ * // runs during the autonomous period
+ * void autonomous() {
+ *   // move the robot to a (60, 40).
+ *   lemlib::moveToPoint({60_in, 40_in}, 5_sec, params, settings);
+ *   // wait until the robot is in an 8-inch radius from (50, 30).
+ *   lemlib::motion_handler::waitUntilPoint({50_in, 30_in}, 8_in, [] { return odom.getPose(); });
+ *   // cancel the motion
+ *   lemlib::motion_handler::cancel();
+ *   pros::delay(10); // give the task time to stop
+ * }
+ * @endcode
+ */
+void waitUntilPoint(units::V2Position target, Length radius, std::function<units::Pose()> poseGetter);
+/**
+ * @brief wait until the robot has traveled a given distance from where this function was called
+ *
+ * @b Example:
+ * @code {.cpp}
+ * // runs during the autonomous period
+ * void autonomous() {
+ *   // move the robot to a (60, 40).
+ *   lemlib::moveToPoint({60_in, 40_in}, 5_sec, params, settings);
+ *   // wait until the robot has traveled 12 inches since the function has been called.
+ *   lemlib::motion_handler::waitUntilDistance(12_in, [] { return odom.getPose(); });
+ *   // cancel the motion
+ *   lemlib::motion_handler::cancel();
+ *   pros::delay(10); // give the task time to stop
+ * }
+ * @endcode
+ */
+void waitUntilDistance(Length dist, std::function<units::Pose()> poseGetter);
 } // namespace lemlib::motion_handler
