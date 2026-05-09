@@ -7,40 +7,40 @@ namespace lemlib::motion_handler {
 
 constexpr uint32_t NOTIFICATION_TIMEOUT = std::numeric_limits<std::uint32_t>::max();
 
-static logger::Helper logHelper("lemlib/motions");
+static logger::Helper _logHelper("lemlib/motions");
 
-static std::optional<std::function<void(void)>> motion;
-static pros::Mutex mutex;
-static uint32_t priority = TASK_PRIORITY_DEFAULT;
+static std::optional<std::function<void(void)>> _motion;
+static pros::Mutex _mutex;
+static uint32_t _priority = TASK_PRIORITY_DEFAULT;
 
 // motion task
-static pros::Task motionTask([] {
+static pros::Task _motionTask([] {
     while (pros::Task::notify_take(true, NOTIFICATION_TIMEOUT)) {
-        std::lock_guard lock(mutex); // get mutex
-        pros::Task::current().set_priority(priority); // set priority back to regular value
+        std::lock_guard lock(_mutex); // get mutex
+        pros::Task::current().set_priority(_priority); // set priority back to regular value
         // run motion
-        if (motion) (*motion)();
-        else logHelper.error("motion task notified, but no motion to run! This is a bug and should be reported");
+        if (_motion) (*_motion)();
+        else _logHelper.error("motion task notified, but no motion to run! This is a bug and should be reported");
         // set motion to nullopt
-        motion = std::nullopt;
+        _motion = std::nullopt;
     }
 });
 
-void move(std::function<void(void)> _motion, std::optional<uint32_t> _priority) {
-    std::lock_guard lock(mutex); // wait for any running motion to finish
+void move(std::function<void(void)> motion, std::optional<uint32_t> priority) {
+    std::lock_guard lock(_mutex); // wait for any running motion to finish
     // run the motion
-    motion = _motion;
+    _motion = motion;
     // set the priority of the task
-    priority = _priority ? *_priority : pros::Task::current().get_priority();
-    motionTask.set_priority(TASK_PRIORITY_MAX); // temporarily set the motion task priority to max
-    motionTask.notify(); // tell the motion handler it can run
+    _priority = priority ? *priority : pros::Task::current().get_priority();
+    _motionTask.set_priority(TASK_PRIORITY_MAX); // temporarily set the motion task priority to max
+    _motionTask.notify(); // tell the motion handler it can run
     pros::delay(1); // force context switch, so the motion starts running immediately
 }
 
 bool isMoving() {
     // if the mutex is free, no motion is running
-    if (mutex.take(0)) {
-        mutex.give();
+    if (_mutex.take(0)) {
+        _mutex.give();
         return false;
     }
     return true;
@@ -48,7 +48,7 @@ bool isMoving() {
 
 void cancel() {
     // if the task is currently running a motion, notify it so the motion can break out of its loop
-    if (isMoving()) motionTask.notify();
+    if (isMoving()) _motionTask.notify();
 }
 
 void waitUntilPoint(units::V2Position target, Length radius, std::function<units::Pose()> poseGetter) {
