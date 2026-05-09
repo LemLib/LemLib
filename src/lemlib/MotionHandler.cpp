@@ -27,13 +27,7 @@ static pros::Task motionTask([] {
 });
 
 void move(std::function<void(void)> _motion, std::optional<uint32_t> _priority) {
-    // check for a very improbable edge case
-    if (mutex.take(0) && !motion) pros::delay(10);
-    if (mutex.take(0) && !motion) {
-        logHelper.error("mutex error! This is a bug and should be reported! Skipping queued motion");
-        return;
-    }
-    std::lock_guard lock(mutex); // wait for the motion to finish
+    std::lock_guard lock(mutex); // wait for any running motion to finish
     // run the motion
     motion = _motion;
     // set the priority of the task
