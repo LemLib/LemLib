@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstdint>
 #include <functional>
+#include <optional>
 #include "units/units.hpp"
 #include "units/Pose.hpp"
 
@@ -37,7 +39,7 @@ namespace lemlib::motion_handler {
  * }
  * @endcode
  */
-void move(std::function<void(void)> f);
+void move(std::function<void(void)> _motion, std::optional<uint32_t> _priority);
 /**
  * @brief cancel the currently running motion, if it exists
  *
