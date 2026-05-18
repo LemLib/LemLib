@@ -20,7 +20,7 @@ class TrackingWheel {
          * @param encoder pointer to the encoder which should be used for tracking
          * @param diameter the diameter of the wheel
          * @param offset how far the tracking wheel is from the turning center
-         * @param ratio the gear ratio, driven gear / driving gear. Defaults to 1
+         * @param ratio the gear ratio, gear attached to sensor / gear attached to wheel. Defaults to 1
          *
          * @b Example:
          * @code {.cpp}
@@ -38,7 +38,7 @@ class TrackingWheel {
          * @param port the port of the rotation sensor. To reverse, make the port negative
          * @param diameter the diameter of the wheel
          * @param offset how far the tracking wheel is from the turning center
-         * @param ratio the gear ratio, driven gear / driving gear. Defaults to 1
+         * @param ratio the gear ratio, gear attached to sensor / gear attached to wheel. Defaults to 1
          *
          * @b Example:
          * @code {.cpp}
@@ -56,7 +56,7 @@ class TrackingWheel {
          * @param reversed whether the encoder should be reversed or not
          * @param diameter the diameter of the wheel
          * @param offset how far the tracking wheel is from the turning center
-         * @param ratio the gear ratio, driven gear / driving gear. Defaults to 1
+         * @param ratio the gear ratio, gear attached to sensor / gear attached to wheel. Defaults to 1
          *
          * @b Example:
          * @code {.cpp}
@@ -77,7 +77,7 @@ class TrackingWheel {
          * @param reversed whether the encoder should be reversed or not
          * @param diameter the diameter of the wheel
          * @param offset how far the tracking wheel is from the turning center
-         * @param ratio the gear ratio, driven gear / driving gear. Defaults to 1
+         * @param ratio the gear ratio, gear attached to sensor / gear attached to wheel. Defaults to 1
          *
          * @b Example:
          * @code {.cpp}
