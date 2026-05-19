@@ -66,7 +66,7 @@ class TrackingWheel {
          * lemlib::TrackingWheel trackingWheel('A', 'B', false, 2_in, 4_in, 2);
          * @endcode
          */
-        TrackingWheel(ADIPort topPort, ADIPort bottomPort, bool reversed, Length diameter, Length offset,
+        TrackingWheel(ADIPair ports, bool reversed, Length diameter, Length offset,
                       Number ratio = 1);
         /**
          * @brief Construct a new Tracking Wheel object using an Optical Shaft Encoder on an ADI expander
@@ -87,7 +87,7 @@ class TrackingWheel {
          * lemlib::TrackingWheel trackingWheel(3, 'E', 'F', true, 2_in, 0_in);
          * @endcode
          */
-        TrackingWheel(SmartPort expanderPort, ADIPort topPort, ADIPort bottomPort, bool reversed, Length diameter,
+        TrackingWheel(SmartPort expanderPort, ADIPair ports, bool reversed, Length diameter,
                       Length offset, Number ratio = 1);
         /**
          * @brief Get the distance traveled by the tracking wheel since this function was last called.

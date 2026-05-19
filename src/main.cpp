@@ -13,8 +13,8 @@ lemlib::MotorGroup leftDrive({-1, 11, -12, 13}, 360_rpm);
 
 lemlib::V5InertialSensor imu(1);
 
-lemlib::TrackingWheel verticalTracker('E', 'F', true, 2.75_in, 26.5_cm / 2);
-lemlib::TrackingWheel horizontalTracker('G', 'H', false, 2.75_in, -26.5_cm / 2);
+lemlib::TrackingWheel verticalTracker({'E', 'F'}, true, 2.75_in, 26.5_cm / 2);
+lemlib::TrackingWheel horizontalTracker({'G', 'H'}, false, 2.75_in, -26.5_cm / 2);
 
 lemlib::TrackingWheelOdometry odom({&imu}, {&verticalTracker}, {&horizontalTracker});
 
