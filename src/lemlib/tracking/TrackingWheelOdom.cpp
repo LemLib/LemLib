@@ -22,8 +22,7 @@ TrackingWheel::TrackingWheel(ReversibleSmartPort port, Length diameter, Length o
       m_lastTotal(to_stRot(m_encoder->getAngle()) * M_PI * diameter * m_ratio),
       m_deallocate(true) {}
 
-TrackingWheel::TrackingWheel(ADIPair ports, bool reversed, Length diameter, Length offset,
-                             Number ratio)
+TrackingWheel::TrackingWheel(ADIPair ports, bool reversed, Length diameter, Length offset, Number ratio)
     : m_encoder(new ADIEncoder(ports, reversed)),
       m_diameter(diameter),
       m_offset(offset),
@@ -31,8 +30,8 @@ TrackingWheel::TrackingWheel(ADIPair ports, bool reversed, Length diameter, Leng
       m_lastTotal(to_stRot(m_encoder->getAngle()) * M_PI * diameter * m_ratio),
       m_deallocate(true) {}
 
-TrackingWheel::TrackingWheel(SmartPort expanderPort, ADIPair ports, bool reversed,
-                             Length diameter, Length offset, Number ratio)
+TrackingWheel::TrackingWheel(SmartPort expanderPort, ADIPair ports, bool reversed, Length diameter, Length offset,
+                             Number ratio)
     : m_encoder(new ADIEncoder(expanderPort, ports, reversed)),
       m_diameter(diameter),
       m_offset(offset),
