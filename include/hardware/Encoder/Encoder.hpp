@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hardware/Device.hpp"
 #include "units/Angle.hpp"
 
 namespace lemlib {
@@ -9,31 +10,8 @@ namespace lemlib {
  * An encoder is a device that measures the angle of a rotating object. This class is abstract, and must be implemented
  * by a subclass.
  */
-class Encoder {
+class Encoder : public Device {
     public:
-        /**
-         * @brief whether the encoder is connected
-         *
-         * @return 0 if its not connected
-         * @return 1 if it is connected
-         * @return INT_MAX if there is an error, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     Encoder* encoder;
-         *     const int result = encoder->isConnected();
-         *     if (result == 1) {
-         *         std::cout << "Encoder is connected!" << std::endl;
-         *     } else if (result == 0) {
-         *         std::cout << "Encoder is not connected!" << std::endl;
-         *     } else {
-         *         std::cout << "Error checking if encoder is connected!" << std::endl;
-         *     }
-         * }
-         * @endcode
-         */
-        virtual int isConnected() = 0;
         /**
          * @brief Get the relative angle measured by the encoder
          *
@@ -56,7 +34,7 @@ class Encoder {
          * }
          * @endcode
          */
-        virtual Angle getAngle() = 0;
+        virtual Angle getAngle() const = 0;
         /**
          * @brief Set the relative angle of the encoder
          *
@@ -80,7 +58,7 @@ class Encoder {
          * }
          * @endcode
          */
-        virtual int setAngle(Angle angle) = 0;
+        virtual int32_t setAngle(Angle angle) = 0;
         virtual ~Encoder() = default;
 };
 } // namespace lemlib

@@ -7,7 +7,7 @@
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * \copyright (c) 2017-2023, Purdue University ACM SIGBots.
+ * \copyright (c) 2017-2024, Purdue University ACM SIGBots.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -163,7 +163,7 @@ class Motor : public AbstractMotor, public Device {
 	 * This movement is relative to the current position of the motor as given in
 	 * pros::Motor::motor_get_position(). Providing 10.0 as the position parameter
 	 * would result in the motor moving clockwise 10 units (counter clockwise if reversed),
-	 *  no matter what the current position is.
+	 * no matter what the current position is.
 	 *
 	 * \note This function simply sets the target for the motor, it does not block
 	 * program execution until the movement finishes.
@@ -274,7 +274,7 @@ class Motor : public AbstractMotor, public Device {
 	 * \b Example
 	 * \code
 	 *  void autonomous() {
-	 *	Motor motor(1);
+	 *  Motor motor(1);
 	 *   motor.move_voltage(12000);
 	 *   pros::delay(1000); // Move at max voltage for 1 second
 	 *   motor.brake();
@@ -1097,6 +1097,37 @@ class Motor : public AbstractMotor, public Device {
 	std::int32_t is_reversed(const std::uint8_t index = 0) const;
 
 	/**
+	 * Gets the type of the motor
+	 *
+	 * \note This is one of many Motor functions that takes in an optional index parameter.
+	 * 		 This parameter can be ignored by most users but exists to give a shared base class
+	 * 		 for motors and motor groups
+	 *
+	 * This function uses the following values of errno when an error state is
+	 * reached:
+	 *
+	 * ENODEV - The port cannot be configured as a motor
+	 *
+	 * EOVERFLOW - The index is non 0
+	 *
+	 * \param index Optional parameter.
+	 * 		  The zero-indexed index of the motor to get the type of.
+	 * 		  By default index is 0, and will return an error for a non-zero index
+	 *
+	 * \return One of MotorType according to the type of the motor,
+	 * or pros::MotorType::invalid if the operation failed.
+	 *
+	 * \b Example
+	 * \code
+	 * void initialize() {
+	 *   pros::Motor motor (1, E_MOTOR_GEARSET_06, E_MOTOR_ENCODER_COUNTS);
+	 *   std::cout << "Motor Type: " << motor.get_type();
+	 * }
+	 * \endcode
+	 */
+	MotorType get_type(const std::uint8_t index = 0) const;
+
+	/**
 	 * Sets one of Motor_Brake to the motor.
 	 * \note This is one of many Motor functions that takes in an optional index parameter.
 	 * 		 This parameter can be ignored by most users but exists to give a shared base class
@@ -1437,7 +1468,7 @@ class Motor : public AbstractMotor, public Device {
 	 *   motor.move_absolute(100, 100); // This does not cause a movement
 	 *
 	 *   motor.set_zero_position(80);
-	 *   motor.move_absolute(100, 100); // Moves 80 units forward
+	 *   motor.move_absolute(100, 100); // Moves 20 units forward
 	 * }
 	 * \endcode
 	 *
@@ -1695,7 +1726,7 @@ class Motor : public AbstractMotor, public Device {
 	 *   while (true) {
 	 *     motor = master.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
 	 *     std::cout << "Motor Faults: " << motor.get_faults_all()[0];
-	 * 	   pros::delay(2);
+	 *     pros::delay(2);
 	 *   }
 	 * }
 	 * \endcode
@@ -2077,6 +2108,26 @@ class Motor : public AbstractMotor, public Device {
 	std::vector<std::int32_t> is_reversed_all(void) const;
 
 	/**
+	 * Gets a vector containing the type of the motor.
+	 *
+	 * This function uses the following values of errno when an error state is
+	 * reached:
+	 * ENODEV - The port cannot be configured as a motor
+	 *
+	 * \return A vector containing one of MotorType according to the type of the motor,
+	 * or pros::MotorType::invalid if the operation failed.
+	 *
+	 * \b Example
+	 * \code
+	 * void initialize() {
+	 *   pros::Motor motor (1, E_MOTOR_GEARSET_06, E_MOTOR_ENCODER_COUNTS);
+	 *   std::cout << "Motor Type: " << motor.get_type_all()[0];
+	 * }
+	 * \endcode
+	 */
+	std::vector<MotorType> get_type_all(void) const;
+
+	/**
 	 * Sets one of Motor_Brake to the motor.
 	 *
 	 * This function uses the following values of errno when an error state is
@@ -2352,7 +2403,7 @@ class Motor : public AbstractMotor, public Device {
 	 *   motor.move_absolute(100, 100); // This does not cause a movement
 	 *
 	 *   motor.set_zero_position_all(80);
-	 *   motor.move_absolute(100, 100); // Moves 80 units forward
+	 *   motor.move_absolute(100, 100); // Moves 20 units forward
 	 * }
 	 * \endcode
 	 *
@@ -2405,7 +2456,7 @@ namespace literals {
  * }
  * \endcode
  */
-const pros::Motor operator"" _mtr(const unsigned long long int m);
+const pros::Motor operator""_mtr(const unsigned long long int m);
 /**
  * Constructs a reversed Motor from a literal ending in _rmtr
  *
@@ -2419,7 +2470,7 @@ const pros::Motor operator"" _mtr(const unsigned long long int m);
  * }
  * \endcode
  */
-const pros::Motor operator"" _rmtr(const unsigned long long int m);
+const pros::Motor operator""_rmtr(const unsigned long long int m);
 }  // namespace literals
 }  // namespace v5
 }  // namespace pros

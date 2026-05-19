@@ -3,6 +3,7 @@
 #include "hardware/Encoder/Encoder.hpp"
 #include "hardware/Port.hpp"
 #include "pros/adi.hpp"
+#include "pros/rtos.hpp"
 
 namespace lemlib {
 /**
@@ -27,25 +28,23 @@ class ADIEncoder : public Encoder {
         /**
          * @brief Construct a new Optical Shaft Encoder
          *
-         * @param topPort the top port of the optical shaft encoder (1-8, 'a'-'h', or 'A'-'H')
-         * @param bottomPort the bottom port of the optical shaft encoder (1-8, 'a'-'h', or 'A'-'H')
+         * @param ports the two ports for the optical shaft encoder (1-8, 'a'-'h', 'A'-'H')
          * @param reversed whether the encoder is reversed or not
          *
          * @b Example:
          * @code {.cpp}
          * void initialize() {
          *     // optical shaft encoder on ports 'a' and 'b', which is reversed
-         *     lemlib::ADIEncoder encoder('a', 'b', true);
+         *     lemlib::ADIEncoder encoder({'a', 'b'}, true);
          * }
          * @endcode
          */
-        ADIEncoder(ADIPort topPort, ADIPort bottomPort, bool reversed);
+        ADIEncoder(ADIPair ports, bool reversed);
         /**
          * @brief Construct a new Optical Shaft Encoder
          *
          * @param expanderPort the port of the ADI Expander
-         * @param topPort the top port of the optical shaft encoder (1-8, 'a'-'h', or 'A'-'H')
-         * @param bottomPort the bottom port of the optical shaft encoder (1-8, 'a'-'h', or 'A'-'H')
+         * @param ports the two ports for the optical shaft encoder (1-8, 'a'-'h', 'A'-'H')
          * @param reversed whether the encoder is reversed or not
          *
          * @b Example:
@@ -54,11 +53,20 @@ class ADIEncoder : public Encoder {
          *     // optical shaft encoder on an ADI Expander
          *     // ADIExpander port: 2, top port: 'c', bottom port: 'd'
          *     // encoder is not reversed
-         *     lemlib::ADIEncoder(2, 'c', 'd'. false);
+         *     lemlib::ADIEncoder(2, {'c', 'd'}, false);
          * }
          * @endcode
          */
-        ADIEncoder(SmartPort expanderPort, ADIPort topPort, ADIPort bottomPort, bool reversed);
+        ADIEncoder(SmartPort expanderPort, ADIPair ports, bool reversed);
+        /**
+         * @brief ADIEncoder copy constructor
+         *
+         * Because pros::Mutex does not have a copy constructor, an explicit
+         * copy constructor for the ADIEncoder is necessary
+         *
+         * @param other the ADIEncoder to copy
+         */
+        ADIEncoder(const ADIEncoder& other);
         /**
          * @brief whether the encoder is connected
          *
@@ -74,7 +82,7 @@ class ADIEncoder : public Encoder {
          * @return INT_MAX if there is an error, setting errno
          */
         [[deprecated("This function is not implemented due to hardware limitations")]]
-        int isConnected() override;
+        int32_t isConnected() const override;
         /**
          * @brief Get the relative angle measured by the encoder
          *
@@ -101,7 +109,7 @@ class ADIEncoder : public Encoder {
          * }
          * @endcode
          */
-        Angle getAngle() override;
+        Angle getAngle() const override;
         /**
          * @brief Set the relative angle of the encoder
          *
@@ -130,8 +138,9 @@ class ADIEncoder : public Encoder {
          * }
          * @endcode
          */
-        int setAngle(Angle angle) override;
+        int32_t setAngle(Angle angle) override;
     private:
+        mutable pros::Mutex m_mutex;
         pros::adi::Encoder m_encoder;
         Angle m_offset = 0_stDeg;
 };

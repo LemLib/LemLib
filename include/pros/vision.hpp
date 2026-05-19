@@ -7,7 +7,7 @@
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * \copyright (c) 2017-2023, Purdue University ACM SIGBots.
+ * \copyright (c) 2017-2024, Purdue University ACM SIGBots.
  * All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -781,7 +781,7 @@ namespace literals {
  * }
  * \endcode
  */
-const pros::Vision operator"" _vis(const unsigned long long int m);
+const pros::Vision operator""_vis(const unsigned long long int m);
 }  // namespace literals
 }  // namespace pros
 #endif  // _PROS_VISION_HPP_

@@ -105,4 +105,34 @@ class ADIPort {
         std::uint8_t m_port;
 };
 
+class ADIPair {
+    public:
+        consteval ADIPair(std::int64_t port_1, std::int64_t port_2)
+            : m_port_1(port_1),
+              m_port_2(port_2) {
+            auto lower_port = std::min(std::uint8_t {m_port_1}, std::uint8_t {m_port_2});
+            auto higher_port = std::max(std::uint8_t {m_port_1}, std::uint8_t {m_port_2});
+            if (higher_port - lower_port != 1 || lower_port % 2 != 1)
+                detail::ceval_assert<"Invalid pair: valid pairs are A&B, C&D, E&F, G&H">();
+        }
+
+        constexpr ADIPair(std::int64_t port_1, std::int64_t port_2, DynamicPort)
+            : m_port_1(port_1, runtime_check_port),
+              m_port_2(port_2, runtime_check_port) {
+            auto lower_port = std::min(std::uint8_t {m_port_1}, std::uint8_t {m_port_2});
+            auto higher_port = std::max(std::uint8_t {m_port_1}, std::uint8_t {m_port_2});
+            if (higher_port - lower_port != 1 || lower_port % 2 != 1) {
+                m_port_1 = ADIPort(0, runtime_check_port);
+                m_port_2 = ADIPort(0, runtime_check_port);
+            }
+        }
+
+        constexpr ADIPort first() const { return m_port_1; }
+
+        constexpr ADIPort second() const { return m_port_2; }
+    private:
+        ADIPort m_port_1;
+        ADIPort m_port_2;
+};
+
 } // namespace lemlib

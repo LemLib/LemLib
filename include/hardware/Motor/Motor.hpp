@@ -1,9 +1,10 @@
 #pragma once
 
-#include "pros/motors.hpp"
 #include "hardware/Encoder/Encoder.hpp"
 #include "hardware/Port.hpp"
 #include "units/Temperature.hpp"
+#include "pros/rtos.hpp"
+#include "pros/motors.hpp"
 
 namespace lemlib {
 
@@ -27,6 +28,15 @@ class Motor : public Encoder {
          * @endcode
          */
         Motor(ReversibleSmartPort port, AngularVelocity outputVelocity);
+        /**
+         * @brief Motor copy constructor
+         *
+         * Because pros::Mutex does not have a copy constructor, an explicit
+         * copy constructor is necessary
+         *
+         * @param other the Motor to copy
+         */
+        Motor(const Motor& other);
         /**
          * @brief Create a new Motor object
          *
@@ -68,7 +78,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int move(Number percent);
+        int32_t move(Number percent);
         /**
          * @brief move the motor at a given angular velocity
          *
@@ -93,7 +103,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int moveVelocity(AngularVelocity velocity);
+        int32_t moveVelocity(AngularVelocity velocity);
         /**
          * @brief brake the motor
          *
@@ -117,7 +127,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int brake();
+        int32_t brake();
         /**
          * @brief set the brake mode of the motor
          *
@@ -143,7 +153,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int setBrakeMode(BrakeMode mode);
+        int32_t setBrakeMode(BrakeMode mode);
         /**
          * @brief get the brake mode of the motor
          *
@@ -193,7 +203,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int isConnected() override;
+        int32_t isConnected() const override;
         /**
          * @brief Get the relative angle measured by the motor
          *
@@ -220,7 +230,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        Angle getAngle() override;
+        Angle getAngle() const override;
         /**
          * @brief Set the relative angle of the motor
          *
@@ -251,7 +261,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int setAngle(Angle angle) override;
+        int32_t setAngle(Angle angle) override;
         /**
          * @brief Get the offset of the motor encoder
          *
@@ -302,7 +312,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int setOffset(Angle offset);
+        int32_t setOffset(Angle offset);
         /**
          * @brief Get the type of the motor
          *
@@ -333,7 +343,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        MotorType getType();
+        MotorType getType() const;
         /**
          * @brief get whether the motor is reversed
          *
@@ -354,7 +364,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int isReversed() const;
+        int32_t isReversed() const;
         /**
          * @brief set whether the motor should be reversed or not
          *
@@ -370,7 +380,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int setReversed(bool reversed);
+        int32_t setReversed(bool reversed);
         /**
          * @brief Get the port the motor is connected to
          *
@@ -435,7 +445,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int setCurrentLimit(Current limit);
+        int32_t setCurrentLimit(Current limit);
         /**
          * @brief Get the temperature of the motor
          *
@@ -478,8 +488,24 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int setOutputVelocity(AngularVelocity outputVelocity);
+        int32_t setOutputVelocity(AngularVelocity outputVelocity);
+        /**
+         * @brief Get the output velocity of the motor
+         *
+         * @return AngularVelocity
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor(1, 360_rpm);
+         *     // get the motor output
+         *     std::cout << motor.getOutputVelocity() << std::endl; // output: 360_rpm
+         * }
+         * @endcode
+         */
+        AngularVelocity getOutputVelocity() const;
     private:
+        mutable pros::Mutex m_mutex;
         AngularVelocity m_outputVelocity;
         Angle m_offset = 0_stDeg;
         ReversibleSmartPort m_port;

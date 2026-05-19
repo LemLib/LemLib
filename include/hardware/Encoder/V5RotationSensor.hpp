@@ -26,6 +26,15 @@ class V5RotationSensor : public Encoder {
          */
         V5RotationSensor(ReversibleSmartPort port);
         /**
+         * @brief V5RotationSensor copy constructor
+         *
+         * Because pros::Mutex does not have a copy constructor, an explicit
+         * copy constructor for the V5RotationSensor is necessary
+         *
+         * @param other the V5RotationSensor to copy
+         */
+        V5RotationSensor(const V5RotationSensor& other);
+        /**
          * @brief Create a new V5 Rotation Sensor
          *
          * @param encoder the pros::Rotation object to use
@@ -59,7 +68,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        int isConnected() override;
+        int32_t isConnected() const override;
         /**
          * @brief Get the relative angle measured by the V5 Rotation Sensor
          *
@@ -87,7 +96,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        Angle getAngle() override;
+        Angle getAngle() const override;
         /**
          * @brief Set the relative angle of the V5 Rotation Sensor
          *
@@ -116,7 +125,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        int setAngle(Angle angle) override;
+        int32_t setAngle(Angle angle) override;
         /**
          * @brief returns whether the V5 Rotation Sensor is reversed or not
          *
@@ -136,7 +145,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        int isReversed() const;
+        int32_t isReversed() const;
         /**
          * @brief Set whether the V5 Rotation Sensor is reversed or not
          *
@@ -157,8 +166,9 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        int setReversed(bool reversed);
+        int32_t setReversed(bool reversed);
     private:
+        mutable pros::Mutex m_mutex;
         Angle m_offset = 0_stRot;
         bool m_reversed;
         int m_port;
