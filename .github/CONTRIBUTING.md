@@ -126,10 +126,10 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/LemLib
 > Using a development environment different from the one recommended below is fine, but you will have to adjust the steps yourself.
 
 > [!NOTE]
-> We do not recommend using the C/C++ extension, as its slow for linting and autocomplete.
+> We do not recommend using the C/C++ extension, as it's slow for linting and autocomplete.
 
 > [!NOTE]
-> At a minimum, we recommend the PROS and clangd extensions
+> At a minimum, we recommend the PROS and clangd extensions.
 
 
 We recommend using [Visual Studio Code](https://code.visualstudio.com/) as your IDE. It is free, (mostly) open-source, and cross-platform.
